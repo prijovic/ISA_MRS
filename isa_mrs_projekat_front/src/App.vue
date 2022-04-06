@@ -1,16 +1,12 @@
 <template>
-  <InitialPage/>
+  <router-view/>
 </template>
 
 <script>
-import InitialPage from "@/components/InitialPage";
-
 export default {
-  name: 'App',
-  components: {
-    InitialPage
-  }
+  name: 'App'
 }
+
 </script>
 
 <style>
