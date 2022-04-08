@@ -1,5 +1,6 @@
 <template>
   <div class="sidebar rounded-right" :style="{width:sidebarWidth}">
+    <MenuLink to="/#" icon="dashboard">Dashboard</MenuLink>
     <MenuLink to="/#" icon="envelope">Requests</MenuLink>
     <MenuLink to="/#" icon="users">Users</MenuLink>
     <MenuLink to="/#" icon="mountain-sun">Adventures</MenuLink>
@@ -16,13 +17,13 @@
 </template>
 
 <script>
-import {collapsed, toggleSidebar, sidebarWidth} from "@/components/Administrator/AdminMainView/components/TheAdminSidebar/state";
+import {collapsed, toggleSidebar, sidebarWidth} from "@/components/state";
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import { library } from "@fortawesome/fontawesome-svg-core";
-import { faAngleDoubleLeft, faAward, faEnvelope, faBullhorn, faHouse, faUsers, faShip, faMountainSun, faCoins, faComments} from "@fortawesome/free-solid-svg-icons";
+import { faAngleDoubleLeft, faAward, faEnvelope, faBullhorn, faHouse, faUsers, faShip, faMountainSun, faCoins, faComments, faDashboard} from "@fortawesome/free-solid-svg-icons";
 import MenuLink from "@/components/GeneralComponents/MenuLink";
 
-library.add(faAngleDoubleLeft, faAward, faEnvelope, faBullhorn, faHouse, faUsers, faShip, faMountainSun, faCoins, faComments);
+library.add(faAngleDoubleLeft, faAward, faEnvelope, faBullhorn, faHouse, faUsers, faShip, faMountainSun, faCoins, faComments, faDashboard);
 
 export default {
   name: "TheAdminSidebar",

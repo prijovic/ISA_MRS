@@ -4,9 +4,9 @@
       <font-awesome-icon icon="user"/>
     </button>
     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
-      <MenuLink icon="address-card" to="#">View Profile</MenuLink>
-      <MenuLink icon="key" to="#">Change Password</MenuLink>
-      <MenuLink icon="remove" to="#">Delete Account</MenuLink>
+      <MenuLink icon="address-card" :to="userType.concat('/profile')">View Profile</MenuLink>
+      <MenuLink icon="key" :to="userType.concat('/changePass')">Change Password</MenuLink>
+      <MenuLink icon="remove" :to="userType.concat('/delAcc')">Delete Account</MenuLink>
       <div class="dropdown-divider"></div>
       <MenuLink icon="sign-out" to="#">Sign Out</MenuLink>
     </div>
@@ -23,6 +23,7 @@ library.add(faUser, faAddressCard, faKey, faRemove, faSignOut);
 
 export default {
   name: "UserProfileButton",
+  props: {userType:String},
   components: {
     FontAwesomeIcon,
     MenuLink
@@ -30,7 +31,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
   .dropdown {
     color: #f7f7f2;
     background-color: #378220;

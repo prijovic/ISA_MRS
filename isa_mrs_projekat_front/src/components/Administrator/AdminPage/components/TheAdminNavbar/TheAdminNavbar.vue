@@ -4,7 +4,7 @@
       <img class="d-inline-block rounded-circle align-top" src="@/assets/leaf_app_logo.svg" width="40" height="40" alt="">
       <h2 class="d-inline-block align-bottom">Rental Service</h2>
     </div>
-    <user-profile-button></user-profile-button>
+    <user-profile-button user-type="admin"></user-profile-button>
   </nav>
 </template>
 
