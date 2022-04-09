@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 import AdminMainView from "@/components/Administrator/AdminMainView/AdminMainView";
+import OwnerMainView from "@/components/VacationRentalOwner/OwnerMainView/OwnerMainView";
 
 const routes = [
     {
@@ -11,6 +12,11 @@ const routes = [
         path: "/admin",
         name: "AdminMainView",
         component: AdminMainView
+    },
+    {
+        path: "/vacationRentalOwner",
+        name: "OwnerMainView",
+        component: OwnerMainView
     }
 ]
 
