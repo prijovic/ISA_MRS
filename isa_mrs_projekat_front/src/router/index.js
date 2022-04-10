@@ -79,12 +79,12 @@ const routes = [
             public: false
         }
     }
-]
+];
 
 const router = createRouter({
     history: createWebHistory(process.env.BASE_URL),
     routes
-})
+});
 
 router.beforeEach((to, from, next) => {
    if (!to.meta.public) {
@@ -98,4 +98,4 @@ router.beforeEach((to, from, next) => {
    }
 });
 
-export default router
+export default router;

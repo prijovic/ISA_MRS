@@ -2,7 +2,6 @@ package rs.ac.uns.ftn.siit.isa_mrs.controller;
 
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import rs.ac.uns.ftn.siit.isa_mrs.exception.InvalidPassword;
@@ -15,7 +14,6 @@ import java.util.*;
 import static rs.ac.uns.ftn.siit.isa_mrs.util.Paths.*;
 
 @RestController
-@Slf4j
 @RequiredArgsConstructor
 @RequestMapping(USER_CONTROLLER)
 public class UserController {

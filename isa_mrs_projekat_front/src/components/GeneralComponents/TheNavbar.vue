@@ -11,7 +11,6 @@
 
 <script>
 import UserProfileButton from "@/components/GeneralComponents/UserProfileButton";
-import store from "@/store";
 
 export default {
   name: "TheAdminNavbar",
@@ -20,7 +19,7 @@ export default {
   },
   computed: {
     userIsLoggedIn() {
-      return store.getters.user !== null
+      return this.$store.getters.user !== null
     }
   }
 }

@@ -30,6 +30,7 @@ export default {
   methods: {
     handleSignOut() {
       this.$store.dispatch("user", null);
+      this.$store.dispatch("email", null);
       this.$store.dispatch("access_token", null);
       this.$store.dispatch("refresh_token", null);
       this.$router.push("/");

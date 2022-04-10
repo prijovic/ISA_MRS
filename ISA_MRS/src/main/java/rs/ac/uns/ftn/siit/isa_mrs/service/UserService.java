@@ -11,5 +11,4 @@ public interface UserService {
     Optional<User> getUser(String email);
     void updateUserPassword(Long id, String password);
     void updateUserPassword(String email, String password);
-
 }
