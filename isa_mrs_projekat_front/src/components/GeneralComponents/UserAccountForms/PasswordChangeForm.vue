@@ -6,7 +6,8 @@
 
     <div class="form-group">
       <label for="inputPassword1">Old Password</label>
-      <input type="password" id="inputPassword1" class="form-control col-sm-auto col-lg-4" aria-describedby="passwordHelpBlock" placeholder="Old password">
+      <input type="password" id="inputPassword1" v-model="oldPassword" class="form-control col-sm-auto col-lg-4" aria-describedby="passwordHelpBlock" placeholder="Old password">
+      <p style="color:red" v-if='!isNewPassword'>New password can't be same as old.</p>
     </div>
 
     <div class="form-group">
@@ -24,7 +25,7 @@
       <p style="color:red" v-if='notSamePasswords'>Passwords don't match.</p>
     </div>
 
-    <button class="btn btn-default" @click='resetPasswords' :disabled='!(passwordsFilled && !notSamePasswords && passwordValidation.valid)'>
+    <button class="btn btn-default" @click.prevent='resetPasswords' :disabled='!(passwordsFilled && !notSamePasswords && passwordValidation.valid) && isNewPassword'>
       Submit
     </button>
 
@@ -32,6 +33,7 @@
 </template>
 
 <script>
+import axios from "axios/index";
 
 export default {
   name: "PasswordChangeForm",
@@ -43,24 +45,43 @@ export default {
         { message:"8-20 characters required.", regex:/.{8,20}/ },
         { message:"One number required.", regex:/[0-9]+/ }
       ],
+      oldPassword:'',
       password:'',
       checkPassword:'',
-      passwordVisible:false,
       submitted:false,
       type:'password'
     }
   },
   methods: {
-    resetPasswords () {
-      this.password = ''
-      this.checkPassword = ''
-      this.submitted = true
-      setTimeout(() => {
-        this.submitted = false
-      }, 2000)
+    async resetPasswords () {
+      try {
+        await axios.put("/Users/passChange", {
+          email: this.$store.getters.email,
+          oldPassword: this.oldPassword,
+          newPassword: this.newPassword
+        }, {
+          headers: {
+            Authorization: "Bearer " + this.$store.getters.access_token
+          }
+        });
+        this.$notify({
+          title: "Password change",
+          text: "Password change was successful.",
+          position: "bottom right",
+          type: "success"
+        });
+      } catch (e) {
+        alert(e.message);
+      }
     }
   },
   computed: {
+    isNewPassword() {
+      if (this.passwordsFilled) {
+        return this.oldPassword !== this.password;
+      }
+      return true;
+    },
     notSamePasswords () {
       if (this.passwordsFilled) {
         return (this.password !== this.checkPassword)
@@ -69,7 +90,7 @@ export default {
       }
     },
     passwordsFilled () {
-      return (this.password !== '' && this.checkPassword !== '')
+      return (this.oldPassword !== '' && this.password !== '' && this.checkPassword !== '')
     },
     passwordValidation () {
       let errors = []

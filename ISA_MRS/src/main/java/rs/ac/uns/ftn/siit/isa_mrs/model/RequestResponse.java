@@ -1,7 +1,6 @@
 package rs.ac.uns.ftn.siit.isa_mrs.model;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import rs.ac.uns.ftn.siit.isa_mrs.model.Request;
 import rs.ac.uns.ftn.siit.isa_mrs.model.Response;
 
@@ -10,8 +9,9 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
-@Getter
-@Setter
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "request_response")
 public class RequestResponse extends Response {
     @OneToOne

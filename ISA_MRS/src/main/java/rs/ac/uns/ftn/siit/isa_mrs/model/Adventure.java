@@ -4,13 +4,13 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.Set;
+import java.util.Collection;
 
 @Entity
 @Getter
 @Setter
 @Table(name = "adventure")
 public class Adventure extends RentalObject {
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "adventure", cascade = CascadeType.ALL)
-    private Set<AdventureEquipment> adventureEquipment = new java.util.LinkedHashSet<>();
+    @OneToMany(mappedBy = "adventure", cascade = CascadeType.ALL)
+    private Collection<AdventureEquipment> adventureEquipment = new java.util.LinkedHashSet<>();
 }

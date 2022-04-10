@@ -1,14 +1,14 @@
 package rs.ac.uns.ftn.siit.isa_mrs.model;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.ConductType;
 
 import javax.persistence.*;
 
 @Entity
-@Getter
-@Setter
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "conduct_rule")
 public class ConductRule {
     @Id

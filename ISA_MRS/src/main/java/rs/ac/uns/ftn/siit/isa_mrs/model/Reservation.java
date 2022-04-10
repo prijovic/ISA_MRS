@@ -1,15 +1,15 @@
 package rs.ac.uns.ftn.siit.isa_mrs.model;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.Set;
+import java.util.Collection;
 
 @Entity
-@Getter
-@Setter
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "reservation")
 public class Reservation {
     @Id
@@ -19,10 +19,10 @@ public class Reservation {
     private int people;
     private boolean equipmentRequired;
     private LocalDateTime timeStamp;
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "reservation", cascade = CascadeType.ALL)
-    private Set<Review> reviews = new java.util.LinkedHashSet<>();
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "reservation")
-    private Set<Report> reports = new java.util.LinkedHashSet<>();
+    @OneToMany(mappedBy = "reservation", cascade = CascadeType.ALL)
+    private Collection<Review> reviews = new java.util.LinkedHashSet<>();
+    @OneToMany(mappedBy = "reservation")
+    private Collection<Report> reports = new java.util.LinkedHashSet<>();
     @ManyToOne
     private RentalObject rentalObject;
     @ManyToOne

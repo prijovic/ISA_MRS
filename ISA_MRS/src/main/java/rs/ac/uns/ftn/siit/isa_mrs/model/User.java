@@ -1,7 +1,7 @@
 package rs.ac.uns.ftn.siit.isa_mrs.model;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+import org.springframework.lang.Nullable;
 import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.UserType;
 
 import javax.persistence.*;
@@ -9,9 +9,10 @@ import javax.persistence.*;
 @Table(name = "users")
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Setter
-@Getter
-public abstract class User {
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false)
@@ -26,7 +27,7 @@ public abstract class User {
     private UserType userType;
     @ManyToOne
     private Address address;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne
     private Request request;
 
 }

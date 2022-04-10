@@ -4,11 +4,11 @@
       <font-awesome-icon icon="user"/>
     </button>
     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
-      <MenuLink icon="address-card" :to="userType.concat('/profile')">View Profile</MenuLink>
-      <MenuLink icon="key" :to="userType.concat('/changePass')">Change Password</MenuLink>
-      <MenuLink icon="remove" :to="userType.concat('/delAcc')">Delete Account</MenuLink>
+      <MenuLink icon="address-card" :to="profile">View Profile</MenuLink>
+      <MenuLink icon="key" :to="password">Change Password</MenuLink>
+      <MenuLink icon="remove" :to="delAcc">Delete Account</MenuLink>
       <div class="dropdown-divider"></div>
-      <MenuLink icon="sign-out" to="#">Sign Out</MenuLink>
+      <MenuLink icon="sign-out" @click="handleSignOut" to="#">Sign Out</MenuLink>
     </div>
   </div>
 </template>
@@ -23,10 +23,28 @@ library.add(faUser, faAddressCard, faKey, faRemove, faSignOut);
 
 export default {
   name: "UserProfileButton",
-  props: {userType:String},
   components: {
     FontAwesomeIcon,
     MenuLink
+  },
+  methods: {
+    handleSignOut() {
+      this.$store.dispatch("user", null);
+      this.$store.dispatch("access_token", null);
+      this.$store.dispatch("refresh_token", null);
+      this.$router.push("/");
+    }
+  },
+  computed: {
+    profile() {
+      return "/" + this.$store.getters.user + "/profile";
+    },
+    password() {
+      return "/" + this.$store.getters.user + "/changePass";
+    },
+    delAcc() {
+      return "/" + this.$store.getters.user + "/delAcc";
+    }
   }
 }
 </script>
