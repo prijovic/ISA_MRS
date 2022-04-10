@@ -1,5 +1,6 @@
 <template>
   <div class="sidebar rounded-right" :style="{width:sidebarWidth}">
+    <MenuLink to="/#" icon="home">Home</MenuLink>
     <MenuLink to="/#" icon="ship">Boats</MenuLink>
     <MenuLink to="/#" icon="circle-check">Reservations</MenuLink>
     <MenuLink to="/#" icon="comments">Reviews</MenuLink>
@@ -11,13 +12,13 @@
 </template>
 
 <script>
-import {collapsed, toggleSidebar, sidebarWidth} from "@/components/BoatOwner/BoatOwnerMainView/components/TheBoatOwnerSidebar/state";
+import {collapsed, toggleSidebar, sidebarWidth} from "@/components/state";
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import {library} from "@fortawesome/fontawesome-svg-core";
-import {faAngleDoubleLeft, faShip, faCircleCheck, faComments, faCalendarDays} from "@fortawesome/free-solid-svg-icons";
+import {faAngleDoubleLeft, faHome, faShip, faCircleCheck, faComments, faCalendarDays} from "@fortawesome/free-solid-svg-icons";
 import MenuLink from "@/components/GeneralComponents/MenuLink";
 
-library.add(faAngleDoubleLeft, faShip, faCircleCheck, faComments, faCalendarDays);
+library.add(faAngleDoubleLeft, faHome, faShip, faCircleCheck, faComments, faCalendarDays);
 
 export default {
   name: "TheBoatOwnerSidebar",

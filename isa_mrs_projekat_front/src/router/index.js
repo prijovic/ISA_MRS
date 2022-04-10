@@ -8,8 +8,11 @@ import AccountDeletionForm from "@/components/GeneralComponents/UserAccountForms
 import InitView from "@/components/UnregisteredUser/InitView";
 import TheUnregisteredUserSidebar from "@/components/UnregisteredUser/TheUnregisteredUserSidebar";
 import store from "@/store";
-import TheFishingInstructorSidebar
-    from "@/components/FishingInstructor/FishingInstructorPage/components/TheFishingInstructorSidebar/TheFishingInstructorSidebar";
+import TheFishingInstructorSidebar from "@/components/FishingInstructor/FishingInstructorPage/components/TheFishingInstructorSidebar/TheFishingInstructorSidebar";
+import OwnerContentPage from "@/components/VacationRentalOwner/VacationRentalOwnerPage/components/OwnerContentPage/OwnerContentPage";
+import TheOwnerSidebar from "@/components/VacationRentalOwner/VacationRentalOwnerPage/components/TheOwnerSidebar/TheOwnerSidebar";
+import BoatOwnerContentPage from "@/components/BoatOwner/BoatOwnerPage/components/BoatOwnerMainView/BoatOwnerContentPage";
+import TheBoatOwnerSidebar from "@/components/BoatOwner/BoatOwnerPage/components/TheBoatOwnerSidebar/TheBoatOwnerSidebar";
 
 const routes = [
     {
@@ -78,7 +81,52 @@ const routes = [
         meta: {
             public: false
         }
+    },
+    {
+        path: "/vacationRentalOwner",
+        name: "VacationRentalOwnerHome",
+        components: {
+            default: OwnerContentPage,
+            sidebar: TheOwnerSidebar,
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
+        path: "/vacationRentalOwner/changePass",
+        name: "VacationRentalOwnerChangePassword",
+        components: {
+            default: PasswordChangeForm,
+            sidebar: TheOwnerSidebar,
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
+        path: "/boatOwner",
+        name: "BoatOwnerHome",
+        components: {
+            default: BoatOwnerContentPage,
+            sidebar: TheBoatOwnerSidebar,
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
+        path: "/boatOwner/changePass",
+        name: "BoatOwnerChangePassword",
+        components: {
+            default: PasswordChangeForm,
+            sidebar: TheBoatOwnerSidebar,
+        },
+        meta: {
+            public: false
+        }
     }
+
 ]
 
 const router = createRouter({
