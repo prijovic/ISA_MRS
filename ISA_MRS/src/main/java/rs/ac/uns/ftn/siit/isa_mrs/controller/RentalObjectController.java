@@ -7,7 +7,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import rs.ac.uns.ftn.siit.isa_mrs.exception.RentalNotFound;
+import rs.ac.uns.ftn.siit.isa_mrs.model.Boat;
 import rs.ac.uns.ftn.siit.isa_mrs.model.VacationRental;
+import rs.ac.uns.ftn.siit.isa_mrs.service.BoatService;
 import rs.ac.uns.ftn.siit.isa_mrs.service.VacationRentalService;
 
 import java.util.Collection;
@@ -22,6 +24,7 @@ import static rs.ac.uns.ftn.siit.isa_mrs.util.Paths.*;
 public class RentalObjectController {
 
     private VacationRentalService vacationRentalService;
+    private BoatService boatService;
 
     @GetMapping(GET_VACATION_RENTAL)
     public VacationRental getVacationRental(Long id) {
@@ -37,6 +40,22 @@ public class RentalObjectController {
     @GetMapping(GET_VACATION_RENTALS)
     public Collection<VacationRental> getVacationRentals() {
         return vacationRentalService.getVacationRentals();
+    }
+
+    @GetMapping(GET_BOAT)
+    public Boat getBoat(Long id) {
+        Optional<Boat> boat = boatService.getBoat(id);
+        if (boat.isPresent()) {
+            return boat.get();
+        }
+        else {
+            throw new RentalNotFound(HttpStatus.NOT_FOUND, "id: " + id);
+        }
+    }
+
+    @GetMapping(GET_BOATS)
+    public Collection<Boat> getBoats() {
+        return boatService.getBoats();
     }
 
 }
