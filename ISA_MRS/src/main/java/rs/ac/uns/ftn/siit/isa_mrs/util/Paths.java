@@ -13,4 +13,6 @@ public class Paths {
     public static final String GET_VACATION_RENTALS = RENTAL_OBJECT_CONTROLLER + "/getVacationRentals";
     public static final String GET_BOAT = RENTAL_OBJECT_CONTROLLER + "/getBoat";
     public static final String GET_BOATS = RENTAL_OBJECT_CONTROLLER + "/getBoats";
+    public static final String GET_ADVENTURE = RENTAL_OBJECT_CONTROLLER + "/getAdventure";
+    public static final String GET_ADVENTURES = RENTAL_OBJECT_CONTROLLER + "/getAdventures";
 }
