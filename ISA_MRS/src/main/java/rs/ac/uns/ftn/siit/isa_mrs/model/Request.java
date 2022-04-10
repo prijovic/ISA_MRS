@@ -1,7 +1,6 @@
 package rs.ac.uns.ftn.siit.isa_mrs.model;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.RequestStatus;
 import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.RequestType;
 
@@ -9,8 +8,9 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Getter
-@Setter
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "request")
 public class Request {
     @Id
@@ -23,6 +23,6 @@ public class Request {
     private String reason;
     @OneToOne
     private User user;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne
     private RequestResponse response;
 }

@@ -1,15 +1,15 @@
 package rs.ac.uns.ftn.siit.isa_mrs.model;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.Set;
+import java.util.Collection;
 
 @Entity
-@Setter
-@Getter
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "special_offer")
 public class SpecialOffer {
     @Id
@@ -21,7 +21,7 @@ public class SpecialOffer {
     private int capacity;
     private double discount;
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "specialOffer")
-    private Set<Service> includedServices = new java.util.LinkedHashSet<>();
+    private Collection<Service> includedServices = new java.util.LinkedHashSet<>();
     @ManyToOne
     @JoinColumn(name = "rental_object_id")
     private RentalObject rentalObject;

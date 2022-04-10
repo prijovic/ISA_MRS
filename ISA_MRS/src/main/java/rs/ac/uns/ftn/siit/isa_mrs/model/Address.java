@@ -4,8 +4,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.Collection;
 import java.util.HashSet;
-import java.util.Set;
 
 @Table(name = "address")
 @Entity
@@ -18,5 +18,5 @@ public class Address {
     private Long id;
     private String name;
     @OneToMany(mappedBy = "address")
-    private Set<User> users = new HashSet<>();
+    private Collection<User> users = new HashSet<>();
 }

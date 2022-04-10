@@ -5,5 +5,6 @@ public enum UserType {
     Instructor,
     VacationRentalOwner,
     BoatOwner,
-    Admin
+    Admin,
+    SuperAdmin
 }

@@ -1,14 +1,8 @@
 <template>
   <div class="sidebar rounded-right" :style="{width:sidebarWidth}">
-    <MenuLink to="/#" icon="envelope">Requests</MenuLink>
-    <MenuLink to="/#" icon="users">Users</MenuLink>
     <MenuLink to="/#" icon="mountain-sun">Adventures</MenuLink>
     <MenuLink to="/#" icon="ship">Boats</MenuLink>
     <MenuLink to="/#" icon="house">Rental Houses</MenuLink>
-    <MenuLink to="/#" icon="comments">Reviews</MenuLink>
-    <MenuLink to="/#" icon="bullhorn">Reports</MenuLink>
-    <MenuLink to="/#" icon="coins">Finances</MenuLink>
-    <MenuLink to="/#" icon="award">Loyalty Program</MenuLink>
     <span class="collapse-icon" :class="{'rotate-180': collapsed}" @click="toggleSidebar">
       <font-awesome-icon icon="angle-double-left"></font-awesome-icon>
     </span>
@@ -16,19 +10,19 @@
 </template>
 
 <script>
-import {collapsed, toggleSidebar, sidebarWidth} from "@/components/Administrator/AdminMainView/components/TheAdminSidebar/state";
+import MenuLink from "@/components/GeneralComponents/MenuLink";
+import {collapsed, toggleSidebar, sidebarWidth} from "@/components/state";
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import { library } from "@fortawesome/fontawesome-svg-core";
-import { faAngleDoubleLeft, faAward, faEnvelope, faBullhorn, faHouse, faUsers, faShip, faMountainSun, faCoins, faComments} from "@fortawesome/free-solid-svg-icons";
-import MenuLink from "@/components/GeneralComponents/MenuLink";
+import { faAngleDoubleLeft, faHouse, faShip, faMountainSun } from "@fortawesome/free-solid-svg-icons";
 
-library.add(faAngleDoubleLeft, faAward, faEnvelope, faBullhorn, faHouse, faUsers, faShip, faMountainSun, faCoins, faComments);
+library.add(faAngleDoubleLeft, faHouse, faShip, faMountainSun)
 
 export default {
-  name: "TheAdminSidebar",
+  name: "TheUnregisteredUserNavbar",
   components: {
     MenuLink,
-    FontAwesomeIcon,
+    FontAwesomeIcon
   },
   setup() {
     return {collapsed, toggleSidebar, sidebarWidth};
@@ -44,8 +38,6 @@ export default {
     float: left;
     position: fixed;
     z-index: 0;
-    position: sticky;
-    z-index: 100;
     top: 77px;
     left: 0;
     bottom: 0;

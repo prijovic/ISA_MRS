@@ -1,5 +1,5 @@
 <template>
-  <router-link :to="to" class="link" :class="{active: isActive}">
+  <router-link :to="{path: to}" class="link" :class="{active: isActive}">
     <font-awesome-icon class="icon" :icon="icon"/>
     <transition name="fade">
             <span v-if="!collapsed">
@@ -11,7 +11,7 @@
 
 <script>
 import {computed} from "vue";
-import {collapsed} from "@/components/Administrator/AdminMainView/components/TheAdminSidebar/state";
+import {collapsed} from "@/components/state";
 import {useRoute} from "vue-router"
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 

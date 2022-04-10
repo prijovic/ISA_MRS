@@ -1,15 +1,23 @@
 <template>
-  <router-view/>
   <the-navbar></the-navbar>
   <router-view name="sidebar"/>
-  <div class="container p-0">
+  <div class="container">
     <router-view :style="{'margin-left': sidebarWidth, 'padding': sidebarWidth}"/>
   </div>
 </template>
 
 <script>
+import {sidebarWidth} from "@/components/state";
+import TheNavbar from "@/components/GeneralComponents/TheNavbar";
+
 export default {
-  name: 'App'
+  name: 'App',
+  setup() {
+    return {sidebarWidth};
+  },
+  components: {
+    TheNavbar
+  }
 }
 
 </script>

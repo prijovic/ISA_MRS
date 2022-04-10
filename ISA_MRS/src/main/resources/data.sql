@@ -1,0 +1,3 @@
+-- INSERT INTO address (id, name) VALUES (1, "Adresicaaa");
+-- INSERT INTO users (id, email, is_active, name, password, phone, surname, address_id, user_type)
+--  VALUES (1, "prijovic.uros13@gmail.com", true, "Uros", "Uros12345", "066430250", "Prijovic", 1, 1);

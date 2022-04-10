@@ -12,7 +12,7 @@ import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 
 library.add(faSpinner);
 export default {
-  name: "AdminContentPage",
+  name: "OwnerContentPage",
   components: {
     FontAwesomeIcon
   }
