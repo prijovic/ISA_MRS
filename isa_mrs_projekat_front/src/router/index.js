@@ -8,6 +8,8 @@ import AccountDeletionForm from "@/components/GeneralComponents/UserAccountForms
 import InitView from "@/components/UnregisteredUser/InitView";
 import TheUnregisteredUserSidebar from "@/components/UnregisteredUser/TheUnregisteredUserSidebar";
 import store from "@/store";
+import TheFishingInstructorSidebar
+    from "@/components/FishingInstructor/FishingInstructorPage/components/TheFishingInstructorSidebar/TheFishingInstructorSidebar";
 
 const routes = [
     {
@@ -68,10 +70,10 @@ const routes = [
     },
     {
         path: "/fishingInstructor",
-        name: "FishingInstructorDashboard",
+        name: "FishingInstructorHome",
         components: {
             default: FishingInstructorPage,
-            sidebar: TheAdminSidebar
+            sidebar: TheFishingInstructorSidebar
         },
         meta: {
             public: false

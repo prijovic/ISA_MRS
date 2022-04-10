@@ -41,6 +41,7 @@ public class IsaMrsApplication {
     CommandLineRunner run(UserService userService) {
         return args -> {
             userService.updateUserPassword(1L, "a");
+            userService.updateUserPassword(2L, "123");
         };
     }
 

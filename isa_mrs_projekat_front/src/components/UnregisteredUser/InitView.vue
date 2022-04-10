@@ -32,6 +32,11 @@ export default {
 
     }
   },
+  async created() {
+    this.$store.dispatch("user", null);
+    this.$store.dispatch("access_token", null);
+    this.$store.dispatch("refresh_token", null);
+  },
   methods: {
     async handleSubmit() {
       const response = await axios.post("login", {
@@ -47,6 +52,9 @@ export default {
       if (response.data.user_type === "SuperAdmin") {
         this.$store.dispatch("user", "admin");
         await this.$router.push("/admin");
+      } else if (response.data.user_type === "Instructor") {
+        this.$store.dispatch("user", "fishingInstructor");
+        await this.$router.push("/fishingInstructor");
       }
     }
   }
