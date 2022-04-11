@@ -10,6 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import rs.ac.uns.ftn.siit.isa_mrs.service.UserService;
+import rs.ac.uns.ftn.siit.isa_mrs.service.VacationRentalService;
 
 import static rs.ac.uns.ftn.siit.isa_mrs.util.Paths.CROSS_ORIGIN;
 
@@ -38,10 +39,12 @@ public class IsaMrsApplication {
     }
 
     @Bean
-    CommandLineRunner run(UserService userService) {
+    CommandLineRunner run(UserService userService, VacationRentalService vrc) {
         return args -> {
             userService.updateUserPassword(1L, "a");
             userService.updateUserPassword(2L, "123");
+            vrc.getVacationRental(1L);
+            vrc.getVacationRentals();
         };
     }
 
