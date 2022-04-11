@@ -10,6 +10,7 @@
 </template>
 
 <script>
+
 import UserProfileButton from "@/components/GeneralComponents/UserProfileButton";
 
 export default {
