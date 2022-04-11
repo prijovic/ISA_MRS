@@ -35,9 +35,10 @@ export default {
   methods: {
     async sendRequest () {
       try {
-        await axios.put("/Users/delAcc", {
+        await axios.post("/Users/delAcc", {
           email: this.$store.getters.email,
-          enteredRequest: this.enteredRequest
+          enteredRequest: this.enteredRequest,
+          requestType: "AccountDeletion"
         }, {
           headers: {
             Authorization: "Bearer " + this.$store.getters.access_token
