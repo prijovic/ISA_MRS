@@ -1,5 +1,5 @@
 <template>
-  <form class="px-4 py-3 rounded">
+  <form class="px-4 py-3 rounded content-center">
     <div class="form-text">
       <h3>Password change</h3>
     </div>

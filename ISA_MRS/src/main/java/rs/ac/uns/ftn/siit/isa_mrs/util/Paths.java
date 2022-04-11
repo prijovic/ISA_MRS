@@ -6,6 +6,7 @@ public class Paths {
     public static final String LOGIN = "/login";
     public static final String REFRESH_TOKEN = "/refreshToken";
     public static final String USER_CONTROLLER = "/Users";
+    public static  final String REQUEST_CONTROLLER = "/Requests";
     public static final String PASSWORD_CHANGE = USER_CONTROLLER + "/passChange";
     public static final String DELETE_USER = USER_CONTROLLER + "/del";
 }

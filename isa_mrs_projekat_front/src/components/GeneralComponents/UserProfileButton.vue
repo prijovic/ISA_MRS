@@ -4,11 +4,11 @@
       <font-awesome-icon icon="user"/>
     </button>
     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
-      <MenuLink icon="address-card" :to="profile">View Profile</MenuLink>
-      <MenuLink icon="key" :to="password">Change Password</MenuLink>
-      <MenuLink icon="remove" :to="delAcc">Delete Account</MenuLink>
-      <div class="dropdown-divider"></div>
-      <MenuLink icon="sign-out" @click="handleSignOut" to="#">Sign Out</MenuLink>
+      <MenuLink class="dropdown-item" icon="address-card" :to="profile">View Profile</MenuLink>
+      <MenuLink class="dropdown-item" icon="key" :to="password">Change Password</MenuLink>
+      <MenuLink class="dropdown-item" icon="remove" :to="delAcc">Delete Account</MenuLink>
+      <div class="dropdown-item dropdown-divider"></div>
+      <MenuLink class="dropdown-item" icon="sign-out" @click="handleSignOut" to="#">Sign Out</MenuLink>
     </div>
   </div>
 </template>

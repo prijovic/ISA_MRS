@@ -17,6 +17,7 @@ import rs.ac.uns.ftn.siit.isa_mrs.filter.CustomAuthorizationFilter;
 import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.UserType;
 
 import static org.springframework.http.HttpMethod.DELETE;
+import static org.springframework.http.HttpMethod.GET;
 import static rs.ac.uns.ftn.siit.isa_mrs.util.Paths.*;
 
 @Configuration
@@ -38,6 +39,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable();
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.authorizeRequests().antMatchers(LOGIN + "**", REFRESH_TOKEN + "**").permitAll();
+        http.authorizeRequests().antMatchers(GET, REQUEST_CONTROLLER + "**")
+                .hasAnyAuthority(UserType.Admin.name(), UserType.SuperAdmin.name());
         http.authorizeRequests().antMatchers(DELETE, USER_CONTROLLER + "**")
                 .hasAnyAuthority(UserType.Admin.name(), UserType.SuperAdmin.name());
         http.authorizeRequests().anyRequest().permitAll();
