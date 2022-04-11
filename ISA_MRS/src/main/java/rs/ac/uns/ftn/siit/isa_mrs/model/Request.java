@@ -20,6 +20,7 @@ public class Request {
     private RequestStatus status;
     private RequestType type;
     private LocalDateTime timeStamp;
+    private String reason;
     @OneToOne
     private User user;
     @OneToOne

@@ -5,7 +5,6 @@ import AdminDashboard from "@/components/Administrator/AdminPage/components/Admi
 import PasswordChangeForm from "@/components/GeneralComponents/UserAccountForms/PasswordChangeForm";
 import FishingInstructorPage from "@/components/FishingInstructor/FishingInstructorPage/FishingInstructorPage";
 import AccountDeletionForm from "@/components/GeneralComponents/UserAccountForms/AccountDeletionForm";
-import InitView from "@/components/UnregisteredUser/InitView";
 import TheUnregisteredUserSidebar from "@/components/UnregisteredUser/TheUnregisteredUserSidebar";
 import store from "@/store";
 import TheFishingInstructorSidebar from "@/components/FishingInstructor/FishingInstructorPage/components/TheFishingInstructorSidebar/TheFishingInstructorSidebar";
@@ -13,13 +12,15 @@ import OwnerContentPage from "@/components/VacationRentalOwner/VacationRentalOwn
 import TheOwnerSidebar from "@/components/VacationRentalOwner/VacationRentalOwnerPage/components/TheOwnerSidebar/TheOwnerSidebar";
 import BoatOwnerContentPage from "@/components/BoatOwner/BoatOwnerPage/components/BoatOwnerMainView/BoatOwnerContentPage";
 import TheBoatOwnerSidebar from "@/components/BoatOwner/BoatOwnerPage/components/TheBoatOwnerSidebar/TheBoatOwnerSidebar";
+import AdminRequestsView from "@/components/Administrator/AdminPage/components/AdminMainViews/AdminRequestsView/AdminRequestsView";
+
 
 const routes = [
     {
         path: "/",
         name: "InitHome",
         components: {
-            default: InitView,
+            default: AdminRequestsView,
             sidebar: TheUnregisteredUserSidebar,
         },
         meta: {
