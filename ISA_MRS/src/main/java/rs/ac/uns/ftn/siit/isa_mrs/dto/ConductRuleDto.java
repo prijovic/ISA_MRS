@@ -1,4 +1,4 @@
-package rs.ac.uns.ftn.siit.isa_mrs.model;
+package rs.ac.uns.ftn.siit.isa_mrs.dto;
 
 import lombok.Data;
 import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.ConductType;

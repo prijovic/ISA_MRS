@@ -2,7 +2,7 @@
   <div class="sidebar rounded-right" :style="{width:sidebarWidth}">
     <MenuLink to="/#" icon="mountain-sun">Adventures</MenuLink>
     <MenuLink to="/#" icon="ship">Boats</MenuLink>
-    <MenuLink to="/#" icon="house">Rental Houses</MenuLink>
+    <MenuLink to="/vacationRentals" icon="house">Rental Houses</MenuLink>
     <span class="collapse-icon" :class="{'rotate-180': collapsed}" @click="toggleSidebar">
       <font-awesome-icon icon="angle-double-left"></font-awesome-icon>
     </span>
@@ -34,17 +34,14 @@ export default {
   .sidebar {
     color: #f7f7f2;
     background-color: #378220;
-
     float: left;
     position: fixed;
-    z-index: 0;
+    z-index: 100;
     top: 77px;
     left: 0;
     bottom: 0;
     padding: 0.5em;
-
     transition: 0.3s ease;
-
     display: flex;
     flex-direction: column;
   }
@@ -53,9 +50,7 @@ export default {
     position: absolute;
     bottom: 10px;
     left: 10px;
-
     color: #f7f7f2;
-
     transition: 0.2s linear;
   }
 

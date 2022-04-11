@@ -13,6 +13,7 @@ import OwnerContentPage from "@/components/VacationRentalOwner/VacationRentalOwn
 import TheOwnerSidebar from "@/components/VacationRentalOwner/VacationRentalOwnerPage/components/TheOwnerSidebar/TheOwnerSidebar";
 import BoatOwnerContentPage from "@/components/BoatOwner/BoatOwnerPage/components/BoatOwnerMainView/BoatOwnerContentPage";
 import TheBoatOwnerSidebar from "@/components/BoatOwner/BoatOwnerPage/components/TheBoatOwnerSidebar/TheBoatOwnerSidebar";
+import CardView from "@/components/UnregisteredUser/components/CardView";
 
 const routes = [
     {
@@ -36,6 +37,18 @@ const routes = [
         },
         meta: {
             public: false
+        }
+    },
+    {
+        path: "/vacationRentals",
+        name: "VacationRentals",
+        components: {
+            default: CardView,
+            sidebar: TheUnregisteredUserSidebar,
+        },
+        meta: {
+            disableIfLoggedIn: true,
+            public: true
         }
     },
     {

@@ -3,9 +3,7 @@ package rs.ac.uns.ftn.siit.isa_mrs.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import rs.ac.uns.ftn.siit.isa_mrs.exception.RentalNotFound;
 import rs.ac.uns.ftn.siit.isa_mrs.model.Adventure;
 import rs.ac.uns.ftn.siit.isa_mrs.model.Boat;
@@ -31,7 +29,7 @@ public class RentalObjectController {
     private AdventureService adventureService;
 
     @GetMapping(GET_VACATION_RENTAL)
-    public VacationRental getVacationRental(Long id) {
+    public VacationRental getVacationRental(@RequestParam Long id) {
         Optional<VacationRental> vacationRental = vacationRentalService.getVacationRental(id);
         if (vacationRental.isPresent()) {
             return vacationRental.get();
@@ -47,7 +45,7 @@ public class RentalObjectController {
     }
 
     @GetMapping(GET_BOAT)
-    public Boat getBoat(Long id) {
+    public Boat getBoat(@RequestParam Long id) {
         Optional<Boat> boat = boatService.getBoat(id);
         if (boat.isPresent()) {
             return boat.get();
@@ -63,7 +61,7 @@ public class RentalObjectController {
     }
 
     @GetMapping(GET_ADVENTURE)
-    public Adventure getAdventure(Long id) {
+    public Adventure getAdventure(@RequestParam Long id) {
         Optional<Adventure> adventure = adventureService.getAdventure(id);
         if (adventure.isPresent()) {
             return adventure.get();
