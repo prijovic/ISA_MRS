@@ -13,7 +13,7 @@
     "@fortawesome/vue-fontawesome": "^3.0.0-5",
     "@kyvg/vue3-notification": "^2.3.4",
     "axios": "^0.26.1",
-    "bootstrap": "^4.5.3",
+    "bootstrap": "^5.0.2",
     "core-js": "^3.8.3",
     "fortawesome": "^0.0.1-security",
     "jquery.js": "^0.0.2-security",

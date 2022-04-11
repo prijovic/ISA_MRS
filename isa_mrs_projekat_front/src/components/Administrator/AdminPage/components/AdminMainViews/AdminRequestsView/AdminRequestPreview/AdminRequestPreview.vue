@@ -17,7 +17,7 @@
     </div>
     <div class="row main-col align-items-end">
       <div class="col-md-12 main-col">
-        <p class="h-4" style="color: gray">18.11.2000.</p>
+        <p class="h-4" style="color: gray">{{date}}</p>
       </div>
     </div>
     <div class="row main-col align-items-end">
@@ -73,21 +73,25 @@ export default {
       }
     },
     title() {
-      if (this.request.requestType === "SignUp") {
+      if (this.request.type === "SignUp") {
         return "Sign Up Request";
       } else {
         return "Account Deletion Request";
       }
     },
+    date() {
+      let data = this.request.timeStamp.split("T");
+      let date = null;
+      let first_part = data[0].split("-");
+      let second_part = data[1].split(":");
+      date = first_part[2].concat(".").concat(first_part[1]).concat(".").concat(first_part[0]).concat(".").concat(" at ").concat(second_part[0]).concat(":").concat(second_part[1]);
+      return date;
+    }
   }
 }
 </script>
 
 <style scoped>
-  /*[class*="main-col"] {*/
-  /*  background-color: aquamarine;*/
-  /*  border: 2px solid darkblue;*/
-  /*}*/
   .container {
     background-color: #f7f7f2;
   }

@@ -1,7 +1,7 @@
 <template>
   <div class="sidebar rounded-right" :style="{width:sidebarWidth}">
     <MenuLink to="/#" icon="dashboard">Dashboard</MenuLink>
-    <MenuLink to="/#" icon="envelope">Requests</MenuLink>
+    <MenuLink to="/admin/requests" icon="envelope">Requests</MenuLink>
     <MenuLink to="/#" icon="users">Users</MenuLink>
     <MenuLink to="/#" icon="mountain-sun">Adventures</MenuLink>
     <MenuLink to="/#" icon="ship">Boats</MenuLink>
@@ -44,8 +44,6 @@ export default {
 
     float: left;
     position: fixed;
-    z-index: 0;
-    position: sticky;
     z-index: 100;
     top: 77px;
     left: 0;

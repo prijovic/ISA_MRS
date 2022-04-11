@@ -13,6 +13,7 @@ import TheOwnerSidebar from "@/components/VacationRentalOwner/VacationRentalOwne
 import BoatOwnerContentPage from "@/components/BoatOwner/BoatOwnerPage/components/BoatOwnerMainView/BoatOwnerContentPage";
 import TheBoatOwnerSidebar from "@/components/BoatOwner/BoatOwnerPage/components/TheBoatOwnerSidebar/TheBoatOwnerSidebar";
 import AdminRequestsView from "@/components/Administrator/AdminPage/components/AdminMainViews/AdminRequestsView/AdminRequestsView";
+import InitView from "@/components/UnregisteredUser/InitView";
 
 
 const routes = [
@@ -20,7 +21,7 @@ const routes = [
         path: "/",
         name: "InitHome",
         components: {
-            default: AdminRequestsView,
+            default: InitView,
             sidebar: TheUnregisteredUserSidebar,
         },
         meta: {
@@ -66,6 +67,17 @@ const routes = [
         name: "AdminProfileView",
         components: {
             default: ProfileView,
+            sidebar: TheAdminSidebar,
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
+        path: "/admin/requests",
+        name: "AdminRequests",
+        components: {
+            default: AdminRequestsView,
             sidebar: TheAdminSidebar,
         },
         meta: {

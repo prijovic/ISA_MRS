@@ -1,14 +1,14 @@
 <template>
-  <div class="dropdown ml-auto rounded-circle">
-    <button class="btn rounded-circle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+  <div class="dropdown me-auto">
+    <button class="btn rounded-circle dropdown" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
       <font-awesome-icon icon="user"/>
     </button>
-    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+    <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
       <MenuLink class="dropdown-item" icon="address-card" :to="profile">View Profile</MenuLink>
       <MenuLink class="dropdown-item" icon="key" :to="password">Change Password</MenuLink>
       <MenuLink class="dropdown-item" icon="remove" :to="delAcc">Delete Account</MenuLink>
       <div class="dropdown-item dropdown-divider"></div>
-      <MenuLink class="dropdown-item" icon="sign-out" @click="handleSignOut" to="#">Sign Out</MenuLink>
+      <MenuLink class="dropdown-item" icon="sign-out" @click.prevent="handleSignOut" to="#">Sign Out</MenuLink>
     </div>
   </div>
 </template>
@@ -51,50 +51,22 @@ export default {
 </script>
 
 <style>
-  .dropdown {
-    color: #f7f7f2;
-    background-color: #378220;
-    border: none;
-    outline: none;
-    height: 2em;
-    bottom: 5px;
-  }
-
   .dropdown:active {
     border: none;
     outline: none;
-    color: #378220;
-    background-color: #f7f7f2;
   }
 
-  button:active {
+  .btn:hover, .btn:focus, .btn:active {
     border: none;
     outline: none;
     color: #378220;
     background-color: #f7f7f2;
-  }
-
-  button:hover, button:focus {
-    border: none;
-    outline: none;
   }
 
   .dropdown-menu {
-    color: #f7f7f2;
     background-color: #378220;
-    border: solid 2px #3f5b25;
     padding: 0.5em;
     width: 200px;
-  }
-
-  .dropdown-item {
-    color: #f7f7f2;
-    background-color: #378220;
-  }
-
-  .btn {
-    color: #f7f7f2;
-    background-color: #378220;
   }
 
   font-awesome-icon {

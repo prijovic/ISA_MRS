@@ -56,6 +56,7 @@ export default {
     height: 2em;
 
     color: #f7f7f2;
+    background-color: #378220;
     text-decoration: none;
   }
 

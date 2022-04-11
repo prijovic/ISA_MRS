@@ -1,10 +1,10 @@
 <template>
   <nav class="navbar navbar-expand-lg">
-    <div class="navbar-brand">
+    <div class="navbar-brand col-11">
       <img class="d-inline-block rounded-circle align-top" src="@/assets/leaf_app_logo.svg" width="40" height="40" alt="">
       <h2 class="d-inline-block align-bottom">Rental Service</h2>
     </div>
-    <user-profile-button v-if="userIsLoggedIn"></user-profile-button>
+    <user-profile-button class="col-1" v-if="userIsLoggedIn"></user-profile-button>
 <!--    DODATI LOGIN MENI DUGME -->
   </nav>
 </template>
@@ -29,7 +29,6 @@ export default {
   .navbar {
     background-color: #3F9725;
     z-index: 1;
-    z-index: 100;
     display: flex;
     position: sticky;
     top: 0;

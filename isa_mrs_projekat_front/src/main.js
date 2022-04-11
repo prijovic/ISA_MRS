@@ -1,7 +1,7 @@
 import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
-import 'bootstrap'
+import "bootstrap"
 import "./axios/index";
 import store from "./store/index"
 import Notifications from "@kyvg/vue3-notification"

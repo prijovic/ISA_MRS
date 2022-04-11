@@ -25,7 +25,7 @@
       <p style="color:red" v-if='notSamePasswords'>Passwords don't match.</p>
     </div>
 
-    <button class="btn btn-default" @click.prevent='resetPasswords' :disabled='!(passwordsFilled && !notSamePasswords && passwordValidation.valid) && isNewPassword'>
+    <button class="btn btn-default" @click.prevent='resetPasswords' :disabled='isDisabled'>
       Submit
     </button>
 
@@ -76,6 +76,9 @@ export default {
     }
   },
   computed: {
+    isDisabled() {
+      return !(this.passwordsFilled && !this.notSamePasswords && this.passwordValidation.valid) && this.isNewPassword
+    },
     isNewPassword() {
       if (this.passwordsFilled) {
         return this.oldPassword !== this.password;
@@ -94,15 +97,20 @@ export default {
     },
     passwordValidation () {
       let errors = []
-      for (let condition of this.rules) {
-        if (!condition.regex.test(this.password)) {
-          errors.push(condition.message)
+      if (this.password !== ''){
+        for (let condition of this.rules) {
+          if (!condition.regex.test(this.password)) {
+            errors.push(condition.message)
+          }
+        }
+        if (errors.length === 0) {
+          return { valid:true, errors }
+        } else {
+          return { valid:false, errors }
         }
       }
-      if (errors.length === 0) {
+      else {
         return { valid:true, errors }
-      } else {
-        return { valid:false, errors }
       }
     }
   }
@@ -118,5 +126,17 @@ export default {
     outline: solid 2px #3f5b25;
     margin-top: 10px;
     color: #3f5b25;
+  }
+
+  .btn {
+    margin-top: 15px;
+    background-color: #378220;
+    color: #f7f7f2;
+  }
+
+  .btn:active, .btn:hover, .btn:focus {
+    background-color: #f7f7f2;
+    color: #378220;
+    border: 1px solid #3F9725;
   }
 </style>
