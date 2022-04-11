@@ -63,7 +63,6 @@ export default {
         field: "timeStamp"
       }
     });
-    console.log(this.requests);
   }
 }
 </script>
@@ -105,8 +104,4 @@ export default {
     margin-right: 10px;
   }
 
-  /*[class*="main-col"] {*/
-  /*  background-color: aquamarine;*/
-  /*  border: 2px solid darkblue;*/
-  /*}*/
 </style>

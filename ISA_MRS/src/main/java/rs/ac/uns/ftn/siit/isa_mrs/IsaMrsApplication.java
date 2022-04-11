@@ -43,8 +43,9 @@ public class IsaMrsApplication {
         return args -> {
             userService.updateUserPassword(1L, "a");
             userService.updateUserPassword(2L, "123");
-            vrc.getVacationRental(1L);
-            vrc.getVacationRentals();
+            userService.updateUserPassword(3L, "1");
+//            vrc.getVacationRental(1L);
+//            vrc.getVacationRentals();
         };
     }
 
