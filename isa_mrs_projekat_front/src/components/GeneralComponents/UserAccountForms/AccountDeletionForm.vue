@@ -1,12 +1,13 @@
 <template>
-  <form class="px-4 py-3 rounded">
+  <form class="px-4 py-3 rounded content-center">
     <div class="form-text">
       <font-awesome-icon class="d-inline-block" icon="user-slash" style="color:#3f5b25; height: 28px"></font-awesome-icon>
       <h3 class="d-inline-block">Account Deletion</h3>
     </div>
 
     <div class="form-group">
-      <textarea id="enteredRequest" v-model="enteredRequest" class="form-control" placeholder="Please enter a request..."></textarea>
+      <textarea id="enteredRequest" v-model="enteredRequest" class="form-control" placeholder="Please enter a request..." maxlength="255"></textarea>
+      <p style="color: red; font-size: small" v-if="enteredRequest.length == 255">Oops! The maximum number of characters is 255.</p>
     </div>
 
     <button class="btn btn-default" @click.prevent='sendRequest'>
@@ -53,13 +54,16 @@ export default {
         alert(e.message);
       }
     }
+  },
+  computed: {
+
   }
 }
 </script>
 
 <style scoped>
 form {
-  background-color: #a7ff8a;
+  background-color: #f6f8f5;
   outline: solid 2px #3f5b25;
   margin-top: 40px;
   color: #3f5b25;
