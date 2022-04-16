@@ -4,7 +4,9 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.UserDto;
 import rs.ac.uns.ftn.siit.isa_mrs.exception.InvalidPassword;
 import rs.ac.uns.ftn.siit.isa_mrs.exception.UserNotFound;
 import rs.ac.uns.ftn.siit.isa_mrs.model.User;
@@ -37,6 +39,11 @@ public class UserController {
         else{
             throw new UserNotFound(HttpStatus.NOT_FOUND, "email: " + form.getEmail());
         }
+    }
+
+    @PutMapping(STATUS_CHANGE)
+    public ResponseEntity<UserDto> changeUserStatus(@RequestParam Long id) {
+        return userService.changeUserStatus(id);
     }
 
     @DeleteMapping(DELETE_USER)

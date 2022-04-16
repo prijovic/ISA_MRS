@@ -23,6 +23,7 @@
     "semantic-ui-vue": "^0.11.0",
     "store": "^2.0.12",
     "vue": "^3.2.13",
+    "vue-axios-cors": "^1.0.1",
     "vue-router": "^4.0.14",
     "vuex": "^4.0.2"
   },
@@ -34,9 +35,6 @@
     "@vue/cli-service": "~5.0.0",
     "eslint": "^7.32.0",
     "eslint-plugin-vue": "^8.0.3"
-  },
-  "devServer": {
-    "proxy": "http://localhost:8080"
   },
   "eslintConfig": {
     "root": true,

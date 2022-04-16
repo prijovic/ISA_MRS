@@ -38,10 +38,6 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
         LoginRequest loginRequest = parseLoginRequest(request);
         String email = loginRequest != null ? loginRequest.getEmail() : null;
         String password = loginRequest != null ? loginRequest.getPassword() : null;
-        log.info("==============================================================");
-        log.info("Log In Attempt");
-        log.info("Email: {}", email);
-        log.info("Password: {}", password);
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(email, password);
         return authenticationManager.authenticate(authenticationToken);
     }
@@ -49,7 +45,6 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException{
         User user = (User) authentication.getPrincipal();
-        log.info("Successful Login!");
         Algorithm algorithm = Algorithm.HMAC256("javainuse".getBytes());
         String access_token = JWT.create()
                 .withExpiresAt(new Date(System.currentTimeMillis() + 60 * 60 * 60 * 1000))
@@ -57,18 +52,11 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
                 .withIssuer(request.getRequestURL().toString())
                 .withClaim("roles", user.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
                 .sign(algorithm);
-        String refresh_token = JWT.create()
-                .withSubject(user.getUsername())
-                .withExpiresAt(new Date(System.currentTimeMillis() + 10L * 60 * 60 * 60 * 1000))
-                .withIssuer(request.getRequestURL().toString())
-                .sign(algorithm);
         Map<String, String> tokens = new HashMap<>();
         tokens.put("access_token", access_token);
-        tokens.put("refresh_token", refresh_token);
         tokens.put("user_type", user.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()).get(0));
         tokens.put("email", user.getUsername());
         response.setContentType(APPLICATION_JSON_VALUE);
-        log.info("==============================================================");
         new ObjectMapper().writeValue(response.getOutputStream(), tokens);
     }
 

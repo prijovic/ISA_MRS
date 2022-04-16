@@ -14,10 +14,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import rs.ac.uns.ftn.siit.isa_mrs.filter.CustomAuthenticationFilter;
 import rs.ac.uns.ftn.siit.isa_mrs.filter.CustomAuthorizationFilter;
-import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.UserType;
 
-import static org.springframework.http.HttpMethod.DELETE;
-import static rs.ac.uns.ftn.siit.isa_mrs.util.Paths.*;
 
 @Configuration
 @EnableWebSecurity
@@ -38,12 +35,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable();
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         http.authorizeRequests().anyRequest().permitAll();
-//        http.authorizeRequests().antMatchers(LOGIN + "**", REFRESH_TOKEN + "**").permitAll();
-//        http.authorizeRequests().antMatchers(DELETE, USER_CONTROLLER + "**")
-//                .hasAnyAuthority(UserType.Admin.name(), UserType.SuperAdmin.name());
-        //http.authorizeRequests().anyRequest().permitAll();
         http.addFilter(customAuthenticationFilter);
         http.addFilterBefore(customAuthorizationFilter, UsernamePasswordAuthenticationFilter.class);
+        http.cors();
     }
 
     @Bean

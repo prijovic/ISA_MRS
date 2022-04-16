@@ -5,15 +5,13 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Primary;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.ui.freemarker.FreeMarkerConfigurationFactoryBean;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import rs.ac.uns.ftn.siit.isa_mrs.service.UserService;
-import rs.ac.uns.ftn.siit.isa_mrs.service.VacationRentalService;
-
-import static rs.ac.uns.ftn.siit.isa_mrs.util.Paths.CROSS_ORIGIN;
-
 
 @SpringBootApplication
 public class IsaMrsApplication {
@@ -33,19 +31,25 @@ public class IsaMrsApplication {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**").allowedOrigins(CROSS_ORIGIN);
+                registry.addMapping("/**").allowedOrigins("http://localhost:3000");
             }
         };
     }
 
+    @Primary
     @Bean
-    CommandLineRunner run(UserService userService, VacationRentalService vrc) {
+    public FreeMarkerConfigurationFactoryBean factoryBean() {
+        FreeMarkerConfigurationFactoryBean bean = new FreeMarkerConfigurationFactoryBean();
+        bean.setTemplateLoaderPath("classpath:/templates");
+        return bean;
+    }
+
+    @Bean
+    CommandLineRunner run(UserService userService) {
         return args -> {
             userService.updateUserPassword(1L, "a");
-            userService.updateUserPassword(2L, "123");
-            userService.updateUserPassword(3L, "1");
-//            vrc.getVacationRental(1L);
-//            vrc.getVacationRentals();
+//            userService.updateUserPassword(2L, "123");
+//            userService.updateUserPassword(3L, "1");
         };
     }
 

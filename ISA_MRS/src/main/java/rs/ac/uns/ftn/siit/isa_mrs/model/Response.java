@@ -5,12 +5,11 @@ import lombok.*;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-@Entity
 @Data
+@Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "response")
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public class Response {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
