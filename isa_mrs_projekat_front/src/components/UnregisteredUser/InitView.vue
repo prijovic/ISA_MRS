@@ -56,6 +56,12 @@ export default {
       } else if (response.data.user_type === "Instructor") {
         this.$store.dispatch("user", "fishingInstructor");
         await this.$router.push("/fishingInstructor");
+      } else if (response.data.user_type === "VacationRentalOwner"){
+        this.$store.dispatch("user", "vacationRentalOwner");
+        await this.$router.push("/vacationRentalOwner");
+      } else if (response.data.user_type === "BoatOwner"){
+        this.$store.dispatch("user", "boatOwner");
+        await this.$router.push("/boatOwner");
       }
     }
   }

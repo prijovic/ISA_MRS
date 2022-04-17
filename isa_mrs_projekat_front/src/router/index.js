@@ -163,6 +163,17 @@ const routes = [
         meta: {
             public: false
         }
+    },
+    {
+        path: "/boatOwner/delAcc",
+        name: "BoatOwnerAccountDeletion",
+        components: {
+            default: AccountDeletionForm,
+            sidebar: TheBoatOwnerSidebar,
+        },
+        meta: {
+            public: false
+        }
     }
 ];
 

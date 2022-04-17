@@ -44,6 +44,7 @@ public class IsaMrsApplication {
             userService.updateUserPassword(1L, "a");
             userService.updateUserPassword(2L, "123");
             userService.updateUserPassword(3L, "1");
+            userService.updateUserPassword(4L, "s1");
 //            vrc.getVacationRental(1L);
 //            vrc.getVacationRentals();
         };
