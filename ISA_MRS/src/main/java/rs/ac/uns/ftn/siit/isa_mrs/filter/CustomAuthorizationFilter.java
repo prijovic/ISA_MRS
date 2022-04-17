@@ -26,14 +26,13 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static rs.ac.uns.ftn.siit.isa_mrs.util.Paths.LOGIN;
-import static rs.ac.uns.ftn.siit.isa_mrs.util.Paths.REFRESH_TOKEN;
 
 @Slf4j
 public class CustomAuthorizationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        if (request.getServletPath().equals(LOGIN) || request.getServletPath().equals(REFRESH_TOKEN)) {
+        if (request.getServletPath().equals(LOGIN)) {
             filterChain.doFilter(request, response);
         } else {
             String authorizationHeader = request.getHeader(AUTHORIZATION);
@@ -46,16 +45,13 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
                     String email = decodedJWT.getSubject();
                     String[] roles = decodedJWT.getClaim("roles").asArray(String.class);
                     Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
-                    stream(roles).forEach(role -> {
-                        authorities.add(new SimpleGrantedAuthority(role));
-                    });
+                    stream(roles).forEach(role -> authorities.add(new SimpleGrantedAuthority(role)));
                     UsernamePasswordAuthenticationToken authenticationToken =
                             new UsernamePasswordAuthenticationToken(email, null, authorities);
                     SecurityContextHolder.getContext().setAuthentication(authenticationToken);
                     filterChain.doFilter(request, response);
                 } catch (Exception e) {
-                    log.error("Error logging  in: {}", e.getMessage());
-                    response.setHeader("error", e.getMessage());
+                    response.setHeader("Error", "Invalid token...");
                     response.setStatus(FORBIDDEN.value());
                     Map<String, String> error = new HashMap<>();
                     error.put("error_message", e.getMessage());

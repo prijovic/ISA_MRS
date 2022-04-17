@@ -1,19 +1,16 @@
 package rs.ac.uns.ftn.siit.isa_mrs;
 
+import org.jetbrains.annotations.NotNull;
 import org.modelmapper.ModelMapper;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Primary;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.ui.freemarker.FreeMarkerConfigurationFactoryBean;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import rs.ac.uns.ftn.siit.isa_mrs.service.UserService;
-import rs.ac.uns.ftn.siit.isa_mrs.service.VacationRentalService;
-
-import static rs.ac.uns.ftn.siit.isa_mrs.util.Paths.CROSS_ORIGIN;
-
 
 @SpringBootApplication
 public class IsaMrsApplication {
@@ -32,12 +29,13 @@ public class IsaMrsApplication {
     public WebMvcConfigurer corsConfigurer() {
         return new WebMvcConfigurer() {
             @Override
-            public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**").allowedOrigins(CROSS_ORIGIN);
+            public void addCorsMappings(@NotNull CorsRegistry registry) {
+                registry.addMapping("/**").allowedOrigins("http://localhost:3000");
             }
         };
     }
 
+    @Primary
     @Bean
     CommandLineRunner run(UserService userService, VacationRentalService vrc) {
         return args -> {
@@ -48,6 +46,12 @@ public class IsaMrsApplication {
 //            vrc.getVacationRental(1L);
 //            vrc.getVacationRentals();
         };
+    }
+
+    public FreeMarkerConfigurationFactoryBean factoryBean() {
+        FreeMarkerConfigurationFactoryBean bean = new FreeMarkerConfigurationFactoryBean();
+        bean.setTemplateLoaderPath("classpath:/templates");
+        return bean;
     }
 
     public static void main(String[] args) {

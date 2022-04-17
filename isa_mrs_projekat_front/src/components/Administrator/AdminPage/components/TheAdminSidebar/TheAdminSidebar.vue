@@ -44,8 +44,8 @@ export default {
 
     float: left;
     position: fixed;
-    z-index: 100;
-    top: 77px;
+    z-index: 0;
+    top: 73px;
     left: 0;
     bottom: 0;
     padding: 0.5em;

@@ -7,13 +7,13 @@ import java.io.Serializable;
 
 @Data
 public class UserDto implements Serializable {
-    private final Long id;
-    private final String photo;
-    private final String email;
-    private final String name;
-    private final String surname;
-    private final String phone;
-    private final boolean isActive;
-    private final UserType userType;
-    private final AddressDto address;
+    private Long id;
+    private String photo;
+    private String email;
+    private String name;
+    private String surname;
+    private String phone;
+    private boolean isActive;
+    private UserType userType;
+    private AddressDto address;
 }

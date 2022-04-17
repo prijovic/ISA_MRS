@@ -1,11 +1,19 @@
 <template>
-  <nav class="navbar navbar-expand-lg">
-    <div class="navbar-brand col-11">
-      <img class="d-inline-block rounded-circle align-top" src="@/assets/leaf_app_logo.svg" width="40" height="40" alt="">
-      <h2 class="d-inline-block align-bottom">Rental Service</h2>
+  <nav class="navbar" style="display: block">
+    <div class="container-fluid">
+      <div class="row col-12" style="max-width: 100%">
+        <div class="col-12 d-flex" style="justify-content: space-between">
+          <div class="navbar-brand">
+            <img class="d-inline-block rounded-circle align-top" src="@/assets/leaf_app_logo.svg" width="40" height="40" alt="">
+            <h2 class="d-inline-block align-bottom">Rental Service</h2>
+          </div>
+          <div>
+            <user-profile-button v-if="userIsLoggedIn"></user-profile-button>
+            <!--    DODATI LOGIN MENI DUGME -->
+          </div>
+        </div>
+      </div>
     </div>
-    <user-profile-button class="col-1" v-if="userIsLoggedIn"></user-profile-button>
-<!--    DODATI LOGIN MENI DUGME -->
   </nav>
 </template>
 
