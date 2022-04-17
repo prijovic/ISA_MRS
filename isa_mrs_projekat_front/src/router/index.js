@@ -16,6 +16,8 @@ import TheBoatOwnerSidebar from "@/components/BoatOwner/BoatOwnerPage/components
 import AdminRequestsView from "@/components/Administrator/AdminPage/components/AdminMainViews/AdminRequestsView/AdminRequestsView";
 import InitView from "@/components/UnregisteredUser/InitView";
 import CardView from "@/components/UnregisteredUser/components/CardView";
+import CottagesView
+    from "@/components/VacationRentalOwner/VacationRentalOwnerPage/components/CottagesView/CottagesView";
 
 
 const routes = [
@@ -117,7 +119,7 @@ const routes = [
             sidebar: TheOwnerSidebar,
         },
         meta: {
-            public: false
+            public: true
         }
     },
     {
@@ -129,6 +131,17 @@ const routes = [
         },
         meta: {
             public: false
+        }
+    },
+    {
+        path: "/vacationRentalOwner/cottages",
+        name: "ViewCottages",
+        components: {
+            default: CottagesView,
+            sidebar: TheOwnerSidebar,
+        },
+        meta: {
+            public: true
         }
     },
     {

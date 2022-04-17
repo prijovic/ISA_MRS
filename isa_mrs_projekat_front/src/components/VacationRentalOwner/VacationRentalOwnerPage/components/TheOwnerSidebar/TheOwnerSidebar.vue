@@ -1,7 +1,7 @@
 <template>
   <div class="sidebar rounded-right" :style="{width:sidebarWidth}">
     <MenuLink to="/#" icon="home">Home</MenuLink>
-    <MenuLink to="/#" icon="house-chimney-window">Rental Houses</MenuLink>
+    <MenuLink to="/vacationRentalOwner/cottages" icon="house-chimney-window">Rental Houses</MenuLink>
     <MenuLink to="/#" icon="circle-check">Reservations</MenuLink>
     <MenuLink to="/#" icon="comments">Reviews</MenuLink>
     <MenuLink to="/#" icon="calendar-days">Calendar</MenuLink>
