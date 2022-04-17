@@ -9,7 +9,6 @@ import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.RequestType;
 
 import java.util.Optional;
 
-
 public interface RequestRepo extends JpaRepository<Request, Long> {
     Page<Request> findAllByTypeAndStatus(RequestType type, RequestStatus status, Pageable pageable);
     Page<Request> findALLByStatus(RequestStatus status, Pageable pageable);

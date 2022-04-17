@@ -41,6 +41,16 @@ public class IsaMrsApplication {
         FreeMarkerConfigurationFactoryBean bean = new FreeMarkerConfigurationFactoryBean();
         bean.setTemplateLoaderPath("classpath:/templates");
         return bean;
+
+    CommandLineRunner run(UserService userService, VacationRentalService vrc) {
+        return args -> {
+            userService.updateUserPassword(1L, "a");
+            userService.updateUserPassword(2L, "123");
+            userService.updateUserPassword(3L, "1");
+            userService.updateUserPassword(4L, "s1");
+//            vrc.getVacationRental(1L);
+//            vrc.getVacationRentals();
+        };
     }
 
     public static void main(String[] args) {

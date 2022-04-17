@@ -19,6 +19,7 @@ import rs.ac.uns.ftn.siit.isa_mrs.model.RequestResponse;
 import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.RequestStatus;
 import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.RequestType;
 import rs.ac.uns.ftn.siit.isa_mrs.repository.AdminRepo;
+import rs.ac.uns.ftn.siit.isa_mrs.model.User;
 import rs.ac.uns.ftn.siit.isa_mrs.repository.RequestRepo;
 import rs.ac.uns.ftn.siit.isa_mrs.repository.RequestResponseRepo;
 
@@ -29,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.time.LocalDateTime;
 
 
 @Service
@@ -40,6 +42,7 @@ public class RequestServiceImpl implements RequestService {
     private final AdminRepo adminRepo;
     private final ModelMapper modelMapper;
     private final EmailSenderService emailSenderService;
+    private final UserService userService;
 
     @Override
     public ResponseEntity<PageDto<RequestDto>> findRequestsWithPaginationSortedByField(int offset, int pageSize, String types, String field) {
@@ -114,5 +117,36 @@ public class RequestServiceImpl implements RequestService {
         model.put("explanation", response.getComment());
         model.put("adminMail", response.getOperator().getEmail());
         return model;
+
+    @Override
+    public Page<Request> findRequestsWithPaginationSortedByField(int offset, int pageSize, String field) {
+        return requestRepo.findAll(PageRequest.of(offset, pageSize).withSort(Sort.by(field)));
+    }
+
+    @Override
+    public ResponseEntity<RequestDto> createRequest(String email, String password, String reason, String requestType){
+        ResponseEntity<User> userResponseEntity = userService.getUser(email, password);
+        if (userResponseEntity.getStatusCode().equals(HttpStatus.NOT_FOUND)) {
+            return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+        }
+        if (!userResponseEntity.getStatusCode().equals(HttpStatus.OK)) {
+            return new ResponseEntity<>(null, userResponseEntity.getStatusCode());
+        }
+        else {
+            try {
+                Request request = new Request();
+                request.setReason(reason);
+                request.setType(RequestType.valueOf(requestType));
+                request.setTimeStamp(LocalDateTime.now());
+                request.setUser(userResponseEntity.getBody());
+                requestRepo.save(request);
+                RequestDto requestDto = modelMapper.map(request, RequestDto.class);
+                return new ResponseEntity<>(requestDto, HttpStatus.OK);
+            } catch (IllegalArgumentException e) {
+                return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+            } catch (Exception e) {
+                return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }
     }
 }
