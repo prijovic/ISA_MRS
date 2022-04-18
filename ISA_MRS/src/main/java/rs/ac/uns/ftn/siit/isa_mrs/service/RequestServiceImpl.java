@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.PageDto;
 import rs.ac.uns.ftn.siit.isa_mrs.model.User;
@@ -30,7 +31,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.time.LocalDateTime;
 
 
 @Service
@@ -42,6 +42,8 @@ public class RequestServiceImpl implements RequestService {
     private final AdminRepo adminRepo;
     private final ModelMapper modelMapper;
     private final EmailSenderService emailSenderService;
+    private final PasswordEncoder passwordEncoder;
+    private final UserService userService;
 
     @Override
     public ResponseEntity<PageDto<RequestDto>> findRequestsWithPaginationSortedByField(int offset, int pageSize, String types, String field) {
@@ -108,7 +110,8 @@ public class RequestServiceImpl implements RequestService {
 
     @Override
     public ResponseEntity<RequestDto> createRequest(String email, String password, String reason, String requestType){
-        ResponseEntity<User> userResponseEntity = userService.getUser(email, password);
+        String encodedPassword = passwordEncoder.encode(password);
+        ResponseEntity<User> userResponseEntity = userService.getUser(email, encodedPassword);
         if (userResponseEntity.getStatusCode().equals(HttpStatus.NOT_FOUND)) {
             return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
         }

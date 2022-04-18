@@ -1,12 +1,8 @@
 package rs.ac.uns.ftn.siit.isa_mrs.service;
 
-import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.RequestDto;
-import rs.ac.uns.ftn.siit.isa_mrs.model.Request;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.PageDto;
-import rs.ac.uns.ftn.siit.isa_mrs.dto.RequestDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.RespondedRequestDto;
 
 public interface RequestService {

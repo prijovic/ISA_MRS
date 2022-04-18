@@ -1,8 +1,10 @@
 package rs.ac.uns.ftn.siit.isa_mrs.security;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -15,6 +17,10 @@ import rs.ac.uns.ftn.siit.isa_mrs.filter.CustomAuthenticationFilter;
 import rs.ac.uns.ftn.siit.isa_mrs.filter.CustomAuthorizationFilter;
 import rs.ac.uns.ftn.siit.isa_mrs.service.CustomUserDetailsServiceImpl;
 
+import static rs.ac.uns.ftn.siit.isa_mrs.util.Paths.DELETE_ACCOUNT;
+import static rs.ac.uns.ftn.siit.isa_mrs.util.Paths.USER_CONTROLLER;
+
+@Slf4j
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor

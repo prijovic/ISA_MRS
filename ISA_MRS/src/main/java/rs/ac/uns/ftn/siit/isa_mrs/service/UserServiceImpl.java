@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.UserDto;
@@ -29,24 +28,23 @@ public class UserServiceImpl implements UserService {
             Optional<User> userOptional = userRepo.findByEmail(email);
             if (userOptional.isPresent()) {
                 User user = userOptional.get();
-                if (passwordEncoder.matches(oldPassword, user.getPassword())){
+                if (passwordEncoder.matches(oldPassword, user.getPassword())) {
                     String encodedPassword = passwordEncoder.encode(newPassword);
                     user.setPassword(encodedPassword);
                     userRepo.save(user);
                     UserDto userDto = modelMapper.map(user, UserDto.class);
                     return new ResponseEntity<>(userDto, HttpStatus.OK);
-                }
-                else {
+                } else {
                     return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
                 }
-            }
-            else {
+            } else {
                 return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
             }
         } catch (Exception e) {
             log.error(e.getMessage());
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
 
     @Override
     public ResponseEntity<UserDto> changeUserStatus(Long id) {
@@ -65,4 +63,13 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    @Override
+    public ResponseEntity<User> getUser(String email, String password) {
+        try{
+            Optional<User> user = userRepo.findByEmailAndPassword(email, password);
+            return user.map(value -> new ResponseEntity<>(value, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(null, HttpStatus.NOT_FOUND));
+        } catch(Exception e){
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }

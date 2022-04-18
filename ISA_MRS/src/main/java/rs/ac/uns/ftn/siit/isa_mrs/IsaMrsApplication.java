@@ -2,6 +2,7 @@ package rs.ac.uns.ftn.siit.isa_mrs;
 
 import org.jetbrains.annotations.NotNull;
 import org.modelmapper.ModelMapper;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -11,6 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.ui.freemarker.FreeMarkerConfigurationFactoryBean;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import rs.ac.uns.ftn.siit.isa_mrs.service.UserService;
 
 @SpringBootApplication
 public class IsaMrsApplication {
@@ -32,19 +34,6 @@ public class IsaMrsApplication {
             public void addCorsMappings(@NotNull CorsRegistry registry) {
                 registry.addMapping("/**").allowedOrigins("http://localhost:3000");
             }
-        };
-    }
-
-    @Primary
-    @Bean
-    CommandLineRunner run(UserService userService, VacationRentalService vrc) {
-        return args -> {
-            userService.updateUserPassword(1L, "a");
-            userService.updateUserPassword(2L, "123");
-            userService.updateUserPassword(3L, "1");
-            userService.updateUserPassword(4L, "s1");
-//            vrc.getVacationRental(1L);
-//            vrc.getVacationRentals();
         };
     }
 
