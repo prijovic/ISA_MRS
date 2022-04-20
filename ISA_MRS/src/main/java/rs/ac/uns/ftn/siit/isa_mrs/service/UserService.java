@@ -8,4 +8,5 @@ public interface UserService {
     ResponseEntity<UserDto> updateUserPassword(String email, String oldPassword, String newPassword);
     ResponseEntity<UserDto> changeUserStatus(Long id);
     ResponseEntity<User> getUser(String email, String password);
+    ResponseEntity<UserDto> addNewUser(User user);
 }

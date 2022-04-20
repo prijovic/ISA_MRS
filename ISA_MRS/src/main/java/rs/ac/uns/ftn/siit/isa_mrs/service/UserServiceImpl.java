@@ -9,6 +9,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.UserDto;
 import rs.ac.uns.ftn.siit.isa_mrs.model.User;
+import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.UserType;
 import rs.ac.uns.ftn.siit.isa_mrs.repository.UserRepo;
 
 import javax.persistence.EntityNotFoundException;
@@ -70,6 +71,24 @@ public class UserServiceImpl implements UserService {
             return user.map(value -> new ResponseEntity<>(value, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(null, HttpStatus.NOT_FOUND));
         } catch(Exception e){
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    public ResponseEntity<UserDto> addNewUser(User user) {
+        try {
+            if (user.getUserType().equals(UserType.Admin)) {
+                user.setActive(true);
+            }
+            else {
+                user.setActive(false);
+            }
+            userRepo.save(user);
+            UserDto userDto = modelMapper.map(user, UserDto.class);
+            return new ResponseEntity<>(userDto, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+
         }
     }
 }

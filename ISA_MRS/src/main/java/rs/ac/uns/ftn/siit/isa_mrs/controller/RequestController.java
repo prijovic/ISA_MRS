@@ -28,13 +28,11 @@ public class RequestController {
         return requestService.findRequestsWithPaginationSortedByField(page, pageSize, types, field);
     }
 
-    @CrossOrigin(CROSS_ORIGIN)
     @PutMapping("/request")
     public ResponseEntity<RespondedRequestDto> changeRequestStatus(@RequestParam Long id, @RequestParam String status, @RequestParam String reason, @RequestParam String adminEmail) {
         return requestService.changeRequestStatus(id, status, reason, adminEmail);
     }
 
-    @CrossOrigin(CROSS_ORIGIN)
     @PostMapping(DELETE_ACCOUNT)
     public ResponseEntity<RequestDto> createDeleteAccountRequest(@RequestBody AccountDeletionRequestForm requestForm){
         return requestService.createRequest(requestForm.getEmail(), requestForm.getPassword(), requestForm.getEnteredRequest(), requestForm.getRequestType());
@@ -48,5 +46,4 @@ public class RequestController {
         private String requestType;
 
     }
-
 }
