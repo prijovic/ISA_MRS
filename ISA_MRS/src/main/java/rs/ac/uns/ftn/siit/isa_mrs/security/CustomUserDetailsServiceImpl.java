@@ -1,4 +1,4 @@
-package rs.ac.uns.ftn.siit.isa_mrs.service;
+package rs.ac.uns.ftn.siit.isa_mrs.security;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
 
+/** Class that specifies which user data will be used for the authentication. */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -24,12 +25,8 @@ public class CustomUserDetailsServiceImpl implements UserDetailsService {
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         Optional<User> userResult = userRepo.findByEmail(email);
         if (userResult.isEmpty()) {
-            log.info("User with email {} was not found in the database.", email);
-            throw new UsernameNotFoundException("User with email " + email+ " was not found in the database.");
+            throw new UsernameNotFoundException("User with email " + email + " was not found in the database.");
         }
-        User user = userResult.get();
-        Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority(user.getUserType().name()));
-        return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), authorities);
+        return userResult.get();
     }
 }

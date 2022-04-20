@@ -32,7 +32,7 @@ export default {
 
     }
   },
-  async created() {
+  created() {
     this.$store.dispatch("user", null);
     this.$store.dispatch("email", null);
     this.$store.dispatch("access_token", null);

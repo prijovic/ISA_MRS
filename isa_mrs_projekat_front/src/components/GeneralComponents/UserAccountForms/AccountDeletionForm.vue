@@ -59,7 +59,7 @@ export default {
     submitRequest () {
       axios.post("/Requests/delAcc", {
         email: this.email,
-        passwordConfirmation: this.passwordConfirmation,
+        password: this.passwordConfirmation,
         enteredRequest: this.enteredRequest,
         requestType: 'AccountDeletion'
       }, {

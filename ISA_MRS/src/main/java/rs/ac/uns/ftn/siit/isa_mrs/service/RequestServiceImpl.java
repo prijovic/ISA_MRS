@@ -9,8 +9,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.PageDto;
+import rs.ac.uns.ftn.siit.isa_mrs.model.User;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.RequestDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.RespondedRequestDto;
 import rs.ac.uns.ftn.siit.isa_mrs.model.Admin;
@@ -19,18 +21,15 @@ import rs.ac.uns.ftn.siit.isa_mrs.model.RequestResponse;
 import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.RequestStatus;
 import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.RequestType;
 import rs.ac.uns.ftn.siit.isa_mrs.repository.AdminRepo;
-import rs.ac.uns.ftn.siit.isa_mrs.model.User;
 import rs.ac.uns.ftn.siit.isa_mrs.repository.RequestRepo;
 import rs.ac.uns.ftn.siit.isa_mrs.repository.RequestResponseRepo;
+import rs.ac.uns.ftn.siit.isa_mrs.repository.UserRepo;
 
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.time.LocalDateTime;
+import java.util.*;
+
 
 
 @Service
@@ -42,7 +41,9 @@ public class RequestServiceImpl implements RequestService {
     private final AdminRepo adminRepo;
     private final ModelMapper modelMapper;
     private final EmailSenderService emailSenderService;
-    private final UserService userService;
+    private final PasswordEncoder passwordEncoder;
+    private final UserRepo userRepo;
+
 
     @Override
     public ResponseEntity<PageDto<RequestDto>> findRequestsWithPaginationSortedByField(int offset, int pageSize, String types, String field) {
@@ -89,6 +90,14 @@ public class RequestServiceImpl implements RequestService {
             requestResponseRepo.save(requestResponse);
             request.setResponse(requestResponse);
             requestRepo.save(request);
+            User user = request.getUser();
+            if (request.getType().equals(RequestType.AccountDeletion)) {
+                user.setActive(false);
+            }
+            else if (request.getType().equals(RequestType.SignUp)){
+                user.setActive(true);
+            }
+            userRepo.save(user);
             emailSenderService.sendRequestHandledEmail(request, createRequestResponseMailModel(request, requestResponse));
             RespondedRequestDto requestDto = modelMapper.map(requestRepo.getById(id), RespondedRequestDto.class);
             return new ResponseEntity<>(requestDto, HttpStatus.OK);
@@ -107,6 +116,39 @@ public class RequestServiceImpl implements RequestService {
         }
     }
 
+    @Override
+    public ResponseEntity<RequestDto> createRequest(String email, String password, String reason, String requestType){
+        log.info("E-mail: {}", email);
+        log.info("Password: {}", password);
+        Optional<User> user = userRepo.findByEmail(email);
+        if (user.isEmpty()){
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
+        else if (!passwordEncoder.matches(password, user.get().getPassword())) {
+            log.info(user.get().getPassword());
+            return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+        }
+        else {
+            try {
+                User userValue = user.get();
+                Request request = new Request();
+                request.setReason(reason);
+                request.setType(RequestType.valueOf(requestType));
+                request.setTimeStamp(LocalDateTime.now());
+                request.setUser(user.get());
+                requestRepo.save(request);
+                userValue.setRequest(request);
+                userRepo.save(userValue);
+                RequestDto requestDto = modelMapper.map(request, RequestDto.class);
+                return new ResponseEntity<>(requestDto, HttpStatus.OK);
+            } catch (IllegalArgumentException e) {
+                return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+            } catch (Exception e) {
+                return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }
+    }
+
     private Map<String, Object> createRequestResponseMailModel(Request request, RequestResponse response) {
         Map<String, Object> model = new HashMap<>();
         model.put("status", request.getStatus().toString().toLowerCase());
@@ -117,36 +159,5 @@ public class RequestServiceImpl implements RequestService {
         model.put("explanation", response.getComment());
         model.put("adminMail", response.getOperator().getEmail());
         return model;
-
-    @Override
-    public Page<Request> findRequestsWithPaginationSortedByField(int offset, int pageSize, String field) {
-        return requestRepo.findAll(PageRequest.of(offset, pageSize).withSort(Sort.by(field)));
-    }
-
-    @Override
-    public ResponseEntity<RequestDto> createRequest(String email, String password, String reason, String requestType){
-        ResponseEntity<User> userResponseEntity = userService.getUser(email, password);
-        if (userResponseEntity.getStatusCode().equals(HttpStatus.NOT_FOUND)) {
-            return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
-        }
-        if (!userResponseEntity.getStatusCode().equals(HttpStatus.OK)) {
-            return new ResponseEntity<>(null, userResponseEntity.getStatusCode());
-        }
-        else {
-            try {
-                Request request = new Request();
-                request.setReason(reason);
-                request.setType(RequestType.valueOf(requestType));
-                request.setTimeStamp(LocalDateTime.now());
-                request.setUser(userResponseEntity.getBody());
-                requestRepo.save(request);
-                RequestDto requestDto = modelMapper.map(request, RequestDto.class);
-                return new ResponseEntity<>(requestDto, HttpStatus.OK);
-            } catch (IllegalArgumentException e) {
-                return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
-            } catch (Exception e) {
-                return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
     }
 }
