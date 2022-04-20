@@ -5,11 +5,13 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
+import rs.ac.uns.ftn.siit.isa_mrs.security.JwtConfig;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -28,7 +30,9 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static rs.ac.uns.ftn.siit.isa_mrs.util.Paths.LOGIN;
 
 @Slf4j
+@RequiredArgsConstructor
 public class CustomAuthorizationFilter extends OncePerRequestFilter {
+    private final JwtConfig jwtConfig;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -36,10 +40,11 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
         } else {
             String authorizationHeader = request.getHeader(AUTHORIZATION);
-            if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+            String tokenPrefix = jwtConfig.getTokenPrefix();
+            if (authorizationHeader != null && authorizationHeader.startsWith(tokenPrefix)) {
                 try {
-                    String token = authorizationHeader.substring("Bearer ".length());
-                    Algorithm algorithm = Algorithm.HMAC256("javainuse".getBytes());
+                    String token = authorizationHeader.substring(tokenPrefix.length());
+                    Algorithm algorithm = Algorithm.HMAC256(jwtConfig.getSecretKey().getBytes());
                     JWTVerifier verifier = JWT.require(algorithm).build();
                     DecodedJWT decodedJWT = verifier.verify(token);
                     String email = decodedJWT.getSubject();

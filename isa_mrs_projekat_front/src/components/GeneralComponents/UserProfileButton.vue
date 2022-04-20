@@ -29,9 +29,7 @@ export default {
   },
   methods: {
     handleSignOut() {
-      this.$store.dispatch("user", null);
-      this.$store.dispatch("email", null);
-      this.$store.dispatch("access_token", null);
+      this.$store.dispatch("reset_state");
       this.$router.push("/");
     }
   },

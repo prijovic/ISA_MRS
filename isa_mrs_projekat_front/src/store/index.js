@@ -1,10 +1,14 @@
 import {createStore} from "vuex";
 
-const state = {
-    user: null,
-    email: null,
-    access_token: null,
+const getDefaultState = () => {
+  return {
+      user: null,
+      email: null,
+      access_token: null,
+  }
 };
+
+const state = getDefaultState();
 
 const store = createStore({
     state,
@@ -31,6 +35,9 @@ const store = createStore({
         },
         access_token(context, access_token) {
             context.commit("access_token", access_token);
+        },
+        reset_state(context) {
+            context.commit("reset_state")
         }
     },
     mutations: {
@@ -42,6 +49,9 @@ const store = createStore({
         },
         access_token(state, access_token) {
             state.access_token = access_token;
+        },
+        reset_state(state) {
+            Object.assign(state, getDefaultState());
         }
     }
 });
