@@ -12,7 +12,6 @@ import java.util.LinkedHashSet;
 @Setter
 @Table(name = "admin")
 public class Admin extends User {
-    private boolean isNew;
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "operator", cascade = CascadeType.ALL)
     private Collection<Response> responses = new LinkedHashSet<>();
 }

@@ -118,8 +118,6 @@ public class RequestServiceImpl implements RequestService {
 
     @Override
     public ResponseEntity<RequestDto> createRequest(String email, String password, String reason, String requestType){
-        log.info("E-mail: {}", email);
-        log.info("Password: {}", password);
         Optional<User> user = userRepo.findByEmail(email);
         if (user.isEmpty()){
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
@@ -132,6 +130,7 @@ public class RequestServiceImpl implements RequestService {
             try {
                 User userValue = user.get();
                 Request request = new Request();
+                request.setStatus(RequestStatus.Pending);
                 request.setReason(reason);
                 request.setType(RequestType.valueOf(requestType));
                 request.setTimeStamp(LocalDateTime.now());
