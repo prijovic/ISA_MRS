@@ -19,7 +19,7 @@ public class UserController {
     private final UserService userService;
 
     @PutMapping(PASSWORD_CHANGE)
-    public ResponseEntity<UserDto> updateUserPassword(@RequestBody @NotNull PasswordChangeForm form) {
+    public ResponseEntity<UserDto> updateUserPassword(@RequestBody PasswordChangeForm form) {
         return userService.updateUserPassword(form.getEmail(), form.getOldPassword(), form.getNewPassword());
     }
 

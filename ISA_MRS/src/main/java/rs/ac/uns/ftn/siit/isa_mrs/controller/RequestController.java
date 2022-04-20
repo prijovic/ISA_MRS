@@ -12,7 +12,6 @@ import rs.ac.uns.ftn.siit.isa_mrs.dto.RequestDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.RespondedRequestDto;
 import rs.ac.uns.ftn.siit.isa_mrs.service.RequestService;
 import static rs.ac.uns.ftn.siit.isa_mrs.util.Paths.DELETE_ACCOUNT;
-import static rs.ac.uns.ftn.siit.isa_mrs.util.Paths.CROSS_ORIGIN;
 import static rs.ac.uns.ftn.siit.isa_mrs.util.Paths.REQUEST_CONTROLLER;
 
 @Slf4j

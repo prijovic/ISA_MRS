@@ -65,16 +65,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResponseEntity<User> getUser(String email, String password) {
-        try{
-            Optional<User> user = userRepo.findByEmailAndPassword(email, password);
-            return user.map(value -> new ResponseEntity<>(value, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(null, HttpStatus.NOT_FOUND));
-        } catch(Exception e){
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    @Override
     public ResponseEntity<UserDto> addNewUser(User user) {
         try {
             if (user.getUserType().equals(UserType.Admin)) {

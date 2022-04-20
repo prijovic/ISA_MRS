@@ -8,10 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.ui.freemarker.FreeMarkerConfigurationFactoryBean;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import static rs.ac.uns.ftn.siit.isa_mrs.util.Paths.CROSS_ORIGIN;
 
 @SpringBootApplication
 @ConfigurationPropertiesScan
@@ -25,19 +22,6 @@ public class IsaMrsApplication {
     @Bean
     PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
-    }
-
-    @Bean
-    public WebMvcConfigurer corsConfigurer() {
-        return new WebMvcConfigurer() {
-            @Override
-            public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**")
-                        .allowCredentials(true)
-                        .allowedMethods("POST", "GET", "PUT", "DELETE", "OPTIONS")
-                        .allowedOrigins(CROSS_ORIGIN);
-            }
-        };
     }
 
     public FreeMarkerConfigurationFactoryBean factoryBean() {
