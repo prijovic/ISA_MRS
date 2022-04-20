@@ -18,7 +18,6 @@ import static rs.ac.uns.ftn.siit.isa_mrs.util.Paths.*;
 public class UserController {
     private final UserService userService;
 
-    @CrossOrigin(origins = CROSS_ORIGIN)
     @PutMapping(PASSWORD_CHANGE)
     public ResponseEntity<UserDto> updateUserPassword(@RequestBody @NotNull PasswordChangeForm form) {
         return userService.updateUserPassword(form.getEmail(), form.getOldPassword(), form.getNewPassword());

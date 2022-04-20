@@ -23,7 +23,6 @@ import static rs.ac.uns.ftn.siit.isa_mrs.util.Paths.*;
 @RequiredArgsConstructor
 @RequestMapping(RENTAL_OBJECT_CONTROLLER)
 public class RentalObjectController {
-
     private VacationRentalService vacationRentalService;
     private BoatService boatService;
     private AdventureService adventureService;

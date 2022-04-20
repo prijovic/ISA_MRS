@@ -26,10 +26,8 @@ public class RequestController {
         return requestService.findRequestsWithPaginationSortedByField(page, pageSize, types, field);
     }
 
-    @CrossOrigin(CROSS_ORIGIN)
     @PutMapping("/request")
     public ResponseEntity<RespondedRequestDto> changeRequestStatus(@RequestParam Long id, @RequestParam String status, @RequestParam String reason, @RequestParam String adminEmail) {
         return requestService.changeRequestStatus(id, status, reason, adminEmail);
     }
-
 }
