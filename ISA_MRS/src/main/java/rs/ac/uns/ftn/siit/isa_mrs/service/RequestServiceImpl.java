@@ -9,7 +9,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.PageDto;
@@ -89,6 +88,14 @@ public class RequestServiceImpl implements RequestService {
             requestResponseRepo.save(requestResponse);
             request.setResponse(requestResponse);
             requestRepo.save(request);
+            User user = request.getUser();
+            if (request.getType().equals(RequestType.AccountDeletion)) {
+                user.setActive(false);
+            }
+            else if (request.getType().equals(RequestType.SignUp)){
+                user.setActive(true);
+            }
+            userRepo.save(user);
             emailSenderService.sendRequestHandledEmail(request, createRequestResponseMailModel(request, requestResponse));
             RespondedRequestDto requestDto = modelMapper.map(requestRepo.getById(id), RespondedRequestDto.class);
             return new ResponseEntity<>(requestDto, HttpStatus.OK);
