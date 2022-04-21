@@ -32,11 +32,10 @@ export default {
 
     }
   },
-  async created() {
+  created() {
     this.$store.dispatch("user", null);
     this.$store.dispatch("email", null);
     this.$store.dispatch("access_token", null);
-    this.$store.dispatch("refresh_token", null);
   },
   methods: {
     async handleSubmit() {
@@ -49,13 +48,18 @@ export default {
       this.$store.dispatch("user", response.data.user_type);
       this.$store.dispatch("email", this.email);
       this.$store.dispatch("access_token", response.data.access_token)
-      this.$store.dispatch("refresh_token", response.data.refresh_token)
       if (response.data.user_type === "SuperAdmin") {
         this.$store.dispatch("user", "admin");
         await this.$router.push("/admin");
       } else if (response.data.user_type === "Instructor") {
         this.$store.dispatch("user", "fishingInstructor");
         await this.$router.push("/fishingInstructor");
+      } else if (response.data.user_type === "VacationRentalOwner"){
+        this.$store.dispatch("user", "vacationRentalOwner");
+        await this.$router.push("/vacationRentalOwner");
+      } else if (response.data.user_type === "BoatOwner"){
+        this.$store.dispatch("user", "boatOwner");
+        await this.$router.push("/boatOwner");
       }
     }
   }

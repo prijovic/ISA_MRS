@@ -1,5 +1,5 @@
 <template>
-  <div class="dropdown me-auto">
+  <div class="dropdown d-flex justify-content-start">
     <button class="btn rounded-circle dropdown" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
       <font-awesome-icon icon="user"/>
     </button>
@@ -29,10 +29,7 @@ export default {
   },
   methods: {
     handleSignOut() {
-      this.$store.dispatch("user", null);
-      this.$store.dispatch("email", null);
-      this.$store.dispatch("access_token", null);
-      this.$store.dispatch("refresh_token", null);
+      this.$store.dispatch("reset_state");
       this.$router.push("/");
     }
   },
@@ -51,11 +48,6 @@ export default {
 </script>
 
 <style>
-  .dropdown:active {
-    border: none;
-    outline: none;
-  }
-
   .btn:hover, .btn:focus, .btn:active {
     border: none;
     outline: none;
@@ -63,13 +55,24 @@ export default {
     background-color: #f7f7f2;
   }
 
+  .btn {
+    background-color: #378220;
+    color: #f7f7f2;
+  }
+
   .dropdown-menu {
     background-color: #378220;
+    color: #f7f7f2;
     padding: 0.5em;
-    width: 200px;
+    width: 100px;
+  }
+
+  .dropdown-item {
+    background-color: #378220;
   }
 
   font-awesome-icon {
     height: 2em;
+    color: #f7f7f2;
   }
 </style>
