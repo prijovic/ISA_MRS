@@ -2,18 +2,22 @@ package rs.ac.uns.ftn.siit.isa_mrs.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.AdventureDto;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.BoatDto;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.PageDto;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.VacationRentalDto;
 import rs.ac.uns.ftn.siit.isa_mrs.exception.RentalNotFound;
 import rs.ac.uns.ftn.siit.isa_mrs.model.Adventure;
 import rs.ac.uns.ftn.siit.isa_mrs.model.Boat;
 import rs.ac.uns.ftn.siit.isa_mrs.model.VacationRental;
-import rs.ac.uns.ftn.siit.isa_mrs.repository.AdventureRepo;
 import rs.ac.uns.ftn.siit.isa_mrs.service.AdventureService;
 import rs.ac.uns.ftn.siit.isa_mrs.service.BoatService;
 import rs.ac.uns.ftn.siit.isa_mrs.service.VacationRentalService;
 
-import java.util.Collection;
 import java.util.Optional;
 
 import static rs.ac.uns.ftn.siit.isa_mrs.util.Paths.*;
@@ -27,6 +31,7 @@ public class RentalObjectController {
     private VacationRentalService vacationRentalService;
     private BoatService boatService;
     private AdventureService adventureService;
+    private final ModelMapper modelMapper;
 
     @GetMapping(GET_VACATION_RENTAL)
     public VacationRental getVacationRental(@RequestParam Long id) {
@@ -40,8 +45,9 @@ public class RentalObjectController {
     }
 
     @GetMapping(GET_VACATION_RENTALS)
-    public Collection<VacationRental> getVacationRentals() {
-        return vacationRentalService.getVacationRentals();
+    public ResponseEntity<PageDto<VacationRentalDto>> getVacationRentalsWithPaginationAndSort(
+            @RequestParam Integer page, @RequestParam Integer pageSize, @RequestParam String field) {
+        return vacationRentalService.findVacationRentalsWithPaginationSortedByField(page, pageSize, field);
     }
 
     @GetMapping(GET_BOAT)
@@ -56,8 +62,9 @@ public class RentalObjectController {
     }
 
     @GetMapping(GET_BOATS)
-    public Collection<Boat> getBoats() {
-        return boatService.getBoats();
+    public ResponseEntity<PageDto<BoatDto>> getBoatsWithPaginationAndSort(
+            @RequestParam Integer page, @RequestParam Integer pageSize, @RequestParam String field) {
+        return boatService.findBoatsWithPaginationSortedByField(page, pageSize, field);
     }
 
     @GetMapping(GET_ADVENTURE)
@@ -72,8 +79,9 @@ public class RentalObjectController {
     }
 
     @GetMapping(GET_ADVENTURES)
-    public Collection<Adventure> getAdventures() {
-        return adventureService.getAdventures();
+    public ResponseEntity<PageDto<AdventureDto>> getAdventuresWithPaginationAndSort(
+            @RequestParam Integer page, @RequestParam Integer pageSize, @RequestParam String field) {
+        return adventureService.findAdventuresWithPaginationSortedByField(page, pageSize, field);
     }
 
 }

@@ -15,7 +15,7 @@ import TheBoatOwnerSidebar from "@/components/BoatOwner/BoatOwnerPage/components
 
 import AdminRequestsView from "@/components/Administrator/AdminPage/components/AdminMainViews/AdminRequestsView/AdminRequestsView";
 import InitView from "@/components/UnregisteredUser/InitView";
-import CardView from "@/components/UnregisteredUser/components/CardView";
+import CardView from "@/components/UnregisteredUser/components/CardMenu";
 
 
 const routes = [
