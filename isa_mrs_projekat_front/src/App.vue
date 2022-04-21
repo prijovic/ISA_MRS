@@ -2,7 +2,7 @@
   <the-navbar></the-navbar>
   <router-view name="sidebar"/>
   <div class="container">
-    <router-view :style="{'margin-left': sidebarWidth, 'padding': sidebarWidth}"/>
+    <router-view :style="{'padding': sidebarWidth}"/>
   </div>
 </template>
 

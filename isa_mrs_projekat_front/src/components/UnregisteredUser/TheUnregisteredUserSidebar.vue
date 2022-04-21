@@ -58,4 +58,5 @@ export default {
     transform: rotate(180deg);
     transition: 0.2s linear;
   }
+
 </style>
