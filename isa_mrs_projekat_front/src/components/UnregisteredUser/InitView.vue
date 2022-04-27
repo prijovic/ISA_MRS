@@ -17,14 +17,19 @@
         <button type="submit" class="btn btn-primary">Sign in</button>
       </div>
     </div>
+    <AvailabilityPeriodSelector></AvailabilityPeriodSelector>
   </form>
 </template>
 
 <script>
 import axios from "axios";
+import AvailabilityPeriodSelector from "@/components/RentalObjectOwner/components/AvailabilityPeriodSelector";
 
 export default {
   name: "InitView",
+  components: {
+    AvailabilityPeriodSelector
+  },
   data() {
     return {
       email: "",
