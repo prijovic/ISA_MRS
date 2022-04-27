@@ -48,6 +48,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public void updateUserPassword(Long id, String newPassword) {
+        User user = userRepo.getById(id);
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepo.save(user);
+    }
+
+    @Override
     public ResponseEntity<UserDto> changeUserStatus(Long id) {
         try {
             User searchResult = userRepo.getById(id);
