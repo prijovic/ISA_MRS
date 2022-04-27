@@ -16,6 +16,7 @@ import TheBoatOwnerSidebar from "@/components/BoatOwner/BoatOwnerPage/components
 import AdminRequestsView from "@/components/Administrator/AdminPage/components/AdminMainViews/AdminRequestsView/AdminRequestsView";
 import InitView from "@/components/UnregisteredUser/InitView";
 import CardView from "@/components/UnregisteredUser/components/CardView";
+import RegistrationPage from "@/components/UnregisteredUser/components/RegistrationPage";
 
 
 const routes = [
@@ -24,6 +25,18 @@ const routes = [
         name: "InitHome",
         components: {
             default: InitView,
+            sidebar: TheUnregisteredUserSidebar,
+        },
+        meta: {
+            disableIfLoggedIn: true,
+            public: true
+        }
+    },
+    {
+        path: "/registration",
+        name: "Registration",
+        components: {
+            default: RegistrationPage,
             sidebar: TheUnregisteredUserSidebar,
         },
         meta: {
