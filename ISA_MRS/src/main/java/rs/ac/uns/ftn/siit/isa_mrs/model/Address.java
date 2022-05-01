@@ -16,7 +16,10 @@ public class Address {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false)
     private Long id;
-    private String name;
-    @OneToMany(mappedBy = "address")
-    private Collection<User> users = new HashSet<>();
+    private String country;
+    private String city;
+    private String street;
+    private int number;
+    private double latitude;
+    private double longitude;
 }
