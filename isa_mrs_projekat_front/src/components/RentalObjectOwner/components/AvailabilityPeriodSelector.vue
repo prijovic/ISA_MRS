@@ -17,9 +17,11 @@
 
 <script>
 import {DatePicker} from "v-calendar"
+import axios from "axios";
+import store from "@/store";
 
 export default {
-  // props: ["rentalId"],
+  props: ["rentalId"],
   components: {
     DatePicker
   },
@@ -30,6 +32,12 @@ export default {
     };
   },
   computed: {
+    accessToken() {
+      return store.state.access_token;
+    },
+    getRentalObjectId() {
+      return this.rentalId;
+    },
     startDate() {
       return new Date();
     },
@@ -121,9 +129,42 @@ export default {
       this.date = null;
     },
     confirm() {
-      alert("PRIHVATAM" + this.dates);
+      axios.post("/RentalObjects/periods",
+       {
+              id: this.getRentalObjectId,
+              dates: this.dates
+            },
+      {
+              headers: {
+                          Authorization: "Bearer " + this.accessToken,
+                        }
+            })
+          .then((response)=> {
+            const message = "Availability period is successfully set for " + response.data.name + ".";
+            this.$notify({
+              title: "Availability period settings",
+              text: message,
+              type: "success"
+            });
+            this.$emit("requestManaged");
+          })
+          .catch((error) =>{
+            if (error.response.status===404) {
+              this.$notify({
+                title: "Rental Object Not Found",
+                text: "Rental object the specified id does not exist!" ,
+                type: "warn"
+              })
+            } else if (error.response.status===500) {
+              this.$notify({
+                title: "Internal Server Error",
+                text: "Something went wrong on the server! Please try again later...",
+                type: "error"
+              })
+            }
+          })
     }
-  },
+  }
 }
 </script>
 
