@@ -3,7 +3,7 @@ package rs.ac.uns.ftn.siit.isa_mrs.model;
 import lombok.*;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Entity
 @Data
@@ -15,8 +15,8 @@ public class TimePeriod {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false)
     private Long id;
-    private LocalDateTime initDate;
-    private LocalDateTime termDate;
+    private LocalDate initDate;
+    private LocalDate termDate;
     @ManyToOne
     @JoinColumn(name = "rental_object_id")
     private RentalObject rentalObject;

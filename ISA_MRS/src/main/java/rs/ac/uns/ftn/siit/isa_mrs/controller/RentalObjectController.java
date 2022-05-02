@@ -1,5 +1,6 @@
 package rs.ac.uns.ftn.siit.isa_mrs.controller;
 
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -10,14 +11,19 @@ import rs.ac.uns.ftn.siit.isa_mrs.dto.AdventureDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BoatDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.PageDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.VacationRentalDto;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.RentalObjectPeriodsDto;
 import rs.ac.uns.ftn.siit.isa_mrs.exception.RentalNotFound;
 import rs.ac.uns.ftn.siit.isa_mrs.model.Adventure;
 import rs.ac.uns.ftn.siit.isa_mrs.model.Boat;
 import rs.ac.uns.ftn.siit.isa_mrs.model.VacationRental;
 import rs.ac.uns.ftn.siit.isa_mrs.service.AdventureService;
 import rs.ac.uns.ftn.siit.isa_mrs.service.BoatService;
+import rs.ac.uns.ftn.siit.isa_mrs.service.RentalObjectService;
 import rs.ac.uns.ftn.siit.isa_mrs.service.VacationRentalService;
 
+import java.time.LocalDate;
+import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 import static rs.ac.uns.ftn.siit.isa_mrs.util.Paths.*;
@@ -27,6 +33,7 @@ import static rs.ac.uns.ftn.siit.isa_mrs.util.Paths.*;
 @RequiredArgsConstructor
 @RequestMapping(RENTAL_OBJECT_CONTROLLER)
 public class RentalObjectController {
+    private final RentalObjectService rentalObjectService;
     private VacationRentalService vacationRentalService;
     private BoatService boatService;
     private AdventureService adventureService;
@@ -83,4 +90,14 @@ public class RentalObjectController {
         return adventureService.findAdventuresWithPaginationSortedByField(page, pageSize, field);
     }
 
+    @PostMapping(AVAILABILITY_PERIOD)
+    public ResponseEntity<RentalObjectPeriodsDto> setPeriods(@RequestBody PeriodsSettingForm periodsSettingForm) {
+        return rentalObjectService.setAvailabilityPeriods(periodsSettingForm.getId(), periodsSettingForm.getDates());
+    }
+
+    @Data
+    static class PeriodsSettingForm{
+        private Long id;
+        private List<LocalDate> dates;
+    }
 }
