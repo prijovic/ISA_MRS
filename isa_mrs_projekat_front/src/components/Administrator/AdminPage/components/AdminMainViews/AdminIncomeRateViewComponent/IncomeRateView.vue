@@ -36,8 +36,8 @@
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import {library} from "@fortawesome/fontawesome-svg-core";
 import {faPencil} from "@fortawesome/free-solid-svg-icons";
-// import {useStore} from "vuex";
-// import axios from "axios";
+import {useStore} from "vuex";
+import axios from "axios";
 
 library.add(faPencil);
 
@@ -65,20 +65,26 @@ export default {
     }
   },
   mounted() {
-    // const store = useStore();
-    // axios.get("/Requests/requests", {headers: {
-    //     Authorization: "Bearer " + store.state.access_token,
-    //   },
-    //   params: {
-    //     page: this.currentPage,
-    //     pageSize: this.pageSize,
-    //     field: "timeStamp",
-    //     types: "all"
-    //   }},
-    // ).then(response => {
-    //   this.requests = response.data.content;
-    //   this.numberOfPages = response.data.pages;
-    // });
+    const store = useStore();
+    axios.get("/Profits/fees", {headers: {
+        Authorization: "Bearer " + store.state.access_token,
+      }}
+    ).then(response => {
+      const fees = response.data;
+      fees.forEach((fee) => {
+        let result = fee.value;
+        if (fee.feeType === "Percentile") {
+          result += "%";
+        }
+        if (fee.rentalObjectType === "Boat") {
+          this.boatRate = result;
+        } else if (fee.rentalObjectType === "Adventure") {
+          this.adventureRate = result;
+        } else {
+          this.houseRate = result;
+        }
+      });
+    });
   }
 }
 </script>
