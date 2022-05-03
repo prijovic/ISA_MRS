@@ -10,10 +10,10 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "request_response")
 public class RequestResponse extends Response {
     @OneToOne
     private Request request;

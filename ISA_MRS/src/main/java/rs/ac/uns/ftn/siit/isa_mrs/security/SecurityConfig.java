@@ -17,8 +17,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import rs.ac.uns.ftn.siit.isa_mrs.filter.CustomAuthenticationFilter;
-import rs.ac.uns.ftn.siit.isa_mrs.filter.CustomAuthorizationFilter;
+import rs.ac.uns.ftn.siit.isa_mrs.security.filter.CustomAuthenticationFilter;
+import rs.ac.uns.ftn.siit.isa_mrs.security.filter.CustomAuthorizationFilter;
 
 import java.util.Arrays;
 import java.util.List;

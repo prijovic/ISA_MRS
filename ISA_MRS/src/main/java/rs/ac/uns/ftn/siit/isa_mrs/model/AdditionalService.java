@@ -5,18 +5,19 @@ import lombok.*;
 import javax.persistence.*;
 
 @Entity
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "additional_service")
 public class AdditionalService {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false)
     private Long id;
     private String name;
-    private double price;
+    private Double price;
     @ManyToOne
-    @JoinColumn(name = "rental_object_id")
     private RentalObject rentalObject;
+    @ManyToOne
+    private Reservation reservation;
 }

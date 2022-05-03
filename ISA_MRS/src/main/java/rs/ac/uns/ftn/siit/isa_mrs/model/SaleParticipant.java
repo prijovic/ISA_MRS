@@ -7,10 +7,9 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 
 @Entity
-@Inheritance(strategy = InheritanceType.JOINED)
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+@Getter
+@Setter
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public class SaleParticipant extends User {
-    private int points;
+    private Integer points;
 }

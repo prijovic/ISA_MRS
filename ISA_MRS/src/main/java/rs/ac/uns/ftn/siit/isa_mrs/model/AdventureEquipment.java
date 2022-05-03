@@ -8,12 +8,11 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "adventure_equipment")
 public class AdventureEquipment extends Equipment {
     @ManyToOne
-    @JoinColumn(name = "adventure_id")
     private Adventure adventure;
 }

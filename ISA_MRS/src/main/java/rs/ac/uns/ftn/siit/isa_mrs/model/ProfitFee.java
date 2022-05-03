@@ -9,7 +9,8 @@ import javax.persistence.UniqueConstraint;
 
 
 @Entity
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class ProfitFee extends Fee {

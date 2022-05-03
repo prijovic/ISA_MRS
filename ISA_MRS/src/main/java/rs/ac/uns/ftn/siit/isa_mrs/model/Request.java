@@ -9,10 +9,10 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "request")
 public class Request {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -20,7 +20,6 @@ public class Request {
     private Long id;
     private RequestStatus status;
     private RequestType type;
-    @JsonFormat(pattern="dd.MM.yyyy. HH:mm:ss")
     private LocalDateTime timeStamp;
     private String reason;
     @OneToOne

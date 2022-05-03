@@ -1,7 +1,6 @@
 package rs.ac.uns.ftn.siit.isa_mrs.dto;
 
 import lombok.Data;
-import rs.ac.uns.ftn.siit.isa_mrs.model.ReservationDto;
 import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.RentalObjectType;
 
 import java.io.Serializable;
