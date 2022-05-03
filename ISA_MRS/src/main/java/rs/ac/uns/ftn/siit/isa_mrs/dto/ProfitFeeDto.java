@@ -8,7 +8,7 @@ import java.io.Serializable;
 
 @Data
 public class ProfitFeeDto implements Serializable {
-    private final double value;
-    private final FeeType feeType;
-    private final RentalObjectType rentalObjectType;
+    private double value;
+    private FeeType feeType;
+    private RentalObjectType rentalObjectType;
 }

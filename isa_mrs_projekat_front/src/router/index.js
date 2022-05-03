@@ -17,6 +17,8 @@ import AdminRequestsView from "@/components/Administrator/AdminPage/components/A
 import InitView from "@/components/UnregisteredUser/InitView";
 import CardView from "@/components/UnregisteredUser/components/CardView";
 import RegistrationPage from "@/components/UnregisteredUser/components/RegistrationPage";
+import IncomeRateChangeForm
+    from "@/components/Administrator/AdminPage/components/AdminMainViews/AdminIncomeIncomeRateComponents/IncomeRateChangeForm";
 
 
 const routes = [
@@ -105,6 +107,17 @@ const routes = [
         name: "AdminRequests",
         components: {
             default: AdminRequestsView,
+            sidebar: TheAdminSidebar,
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
+        path: "/admin/incomeRates",
+        name: "AdminIncomeRates",
+        components: {
+            default: IncomeRateChangeForm,
             sidebar: TheAdminSidebar,
         },
         meta: {

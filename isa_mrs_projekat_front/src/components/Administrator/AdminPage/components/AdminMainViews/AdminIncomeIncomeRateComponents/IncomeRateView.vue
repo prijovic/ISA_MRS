@@ -4,9 +4,9 @@
       <ul>
         <li><h3>Income Rate</h3></li>
         <li>
-          <button class="btn btn-default">
+          <router-link class="btn btn-default" to="/admin/incomeRates">
             <font-awesome-icon icon="pencil"></font-awesome-icon>
-          </button>
+          </router-link>
         </li>
       </ul>
     </div>
@@ -75,6 +75,9 @@ export default {
         let result = fee.value;
         if (fee.feeType === "Percentile") {
           result += "%";
+        }
+        if (fee.feeType === "Free") {
+          result = "Free";
         }
         if (fee.rentalObjectType === "Boat") {
           this.boatRate = result;
