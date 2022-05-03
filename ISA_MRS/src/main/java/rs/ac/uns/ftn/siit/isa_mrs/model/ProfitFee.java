@@ -7,7 +7,8 @@ import javax.persistence.Entity;
 
 
 @Entity
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class ProfitFee extends Fee {

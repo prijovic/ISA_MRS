@@ -1,4 +1,4 @@
-package rs.ac.uns.ftn.siit.isa_mrs.filter;
+package rs.ac.uns.ftn.siit.isa_mrs.security.filter;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;

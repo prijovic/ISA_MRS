@@ -1,9 +1,18 @@
 package rs.ac.uns.ftn.siit.isa_mrs.model;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import javax.persistence.*;
 
 @Entity
-@Table(name = "cancellation_fee")
+@Setter
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor
 public class CancellationFee extends Fee {
+    @OneToOne
+    private RentalObject rentalObject;
 }

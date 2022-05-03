@@ -6,10 +6,10 @@ import javax.persistence.*;
 import java.time.LocalDate;
 
 @Entity
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "time_period")
 public class TimePeriod {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -18,6 +18,7 @@ public class TimePeriod {
     private LocalDate initDate;
     private LocalDate termDate;
     @ManyToOne
-    @JoinColumn(name = "rental_object_id")
     private RentalObject rentalObject;
+    @OneToOne
+    private Reservation reservation;
 }
