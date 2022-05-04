@@ -1,23 +1,27 @@
 package rs.ac.uns.ftn.siit.isa_mrs.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.Collection;
+import java.util.LinkedHashSet;
 
+@Entity
 @Getter
 @Setter
-@Entity
-@Table(name = "boat")
+@NoArgsConstructor
+@AllArgsConstructor
 public class Boat extends RentalObject {
     private String type;
-    private double length;
+    private Double length;
     private String engineNumber;
-    private double enginePower;
-    private double maxSpeed;
+    private Double enginePower;
+    private Double maxSpeed;
     @OneToMany(mappedBy = "boat", cascade = CascadeType.ALL)
-    private Collection<NavigationEquipment> navigationEquipment = new java.util.LinkedHashSet<>();
+    private Collection<NavigationEquipment> navigationEquipment = new LinkedHashSet<>();
     @OneToMany(mappedBy = "boat", cascade = CascadeType.ALL)
-    private Collection<FishingEquipment> fishingEquipment = new java.util.LinkedHashSet<>();
+    private Collection<FishingEquipment> fishingEquipment = new LinkedHashSet<>();
 }

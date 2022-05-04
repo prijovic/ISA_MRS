@@ -9,13 +9,16 @@ import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.UserType;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 
-@Table(name = "users")
+
 @Entity
-@Inheritance(strategy = InheritanceType.JOINED)
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "users")
+@Inheritance(strategy = InheritanceType.JOINED)
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -33,6 +36,10 @@ public class User implements UserDetails {
     private Address address;
     @OneToOne
     private Request request;
+    @OneToMany(mappedBy = "author")
+    private Collection<Report> reports = new HashSet<>();
+    @OneToMany(mappedBy = "author")
+    private Collection<Review> reviews = new HashSet<>();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

@@ -5,11 +5,11 @@ import lombok.*;
 import javax.persistence.*;
 
 @Entity
-@Inheritance(strategy = InheritanceType.JOINED)
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "equipment")
+@Inheritance(strategy = InheritanceType.JOINED)
 public class Equipment {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

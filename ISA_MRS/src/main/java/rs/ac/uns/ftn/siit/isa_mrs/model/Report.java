@@ -6,10 +6,10 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "report")
 public class Report {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -19,6 +19,8 @@ public class Report {
     private LocalDateTime timeStamp;
     @ManyToOne
     private Reservation reservation;
+    @ManyToOne
+    private User author;
     @OneToOne(cascade = CascadeType.ALL)
     private ReportResponse response;
 }

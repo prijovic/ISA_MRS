@@ -13,6 +13,7 @@ import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.UserType;
 import rs.ac.uns.ftn.siit.isa_mrs.repository.UserRepo;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.Collection;
 import java.util.Optional;
 
 @Slf4j
@@ -45,6 +46,15 @@ public class UserServiceImpl implements UserService {
             log.error(e.getMessage());
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @Override
+    public void encryptUsersPasswords() {
+        Collection<User> users = userRepo.findAll();
+        users.forEach((user) -> {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+            userRepo.save(user);
+        });
     }
 
     @Override

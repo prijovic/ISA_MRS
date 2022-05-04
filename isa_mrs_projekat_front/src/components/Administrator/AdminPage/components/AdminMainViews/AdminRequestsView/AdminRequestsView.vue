@@ -23,9 +23,6 @@
                 </label>
               </div>
             </div>
-            <div class="col-md-3 main-col">
-              <button class="btn btn-default"><font-awesome-icon class="icon" icon="paper-plane"/>My Responses</button>
-            </div>
           </div>
           <!-- Reviews listing -->
           <AdminRequestPreview v-for="(request, index) in this.requests" v-on:requestManaged="filterRequests()" :key="index" :request="request"/>
@@ -207,43 +204,9 @@ export default {
     margin-left:0;
   }
 
-  .btn-default {
-     display: flex;
-     align-items: center;
-
-     cursor: pointer;
-     position: relative;
-     font-weight: 400;
-     user-select: none;
-
-     margin: 0.1em 0;
-     padding: 0.2em;
-     border-radius: 0.25em;
-     height: 2em;
-
-     color: #f7f7f2;
-    background-color: #3F9725;
-     text-decoration: none;
-   }
-
-  .btn-default:hover, .btn-default:active {
-    color: #378220;
-    background-color: #f7f7f2;
-  }
-
-  .btn-default .icon {
-    flex-shrink: 0;
-    margin-right: 10px;
-  }
-
   .page-link {
     color: #378220;
   }
-
-  /*.disabled {*/
-  /*  background-color: #378220;*/
-  /*  color: #f7f7f2;*/
-  /*}*/
 
   h4.no-result {
     color: red;
