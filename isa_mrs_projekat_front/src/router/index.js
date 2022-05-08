@@ -130,7 +130,7 @@ const routes = [
             sidebar: TheOwnerSidebar,
         },
         meta: {
-            public: false
+            public: true
         }
     },
     {
