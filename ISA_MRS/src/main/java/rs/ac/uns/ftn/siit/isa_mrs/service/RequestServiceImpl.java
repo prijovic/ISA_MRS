@@ -50,6 +50,7 @@ public class RequestServiceImpl implements RequestService {
         PageDto<RequestDto> result = new PageDto<>();
         try{
             Pageable pageable = PageRequest.of(offset, pageSize).withSort(Sort.by(field));
+            log.info(requestRepo.findAll().toString());
             Page<Request> requestPage;
             if (types.equals("all")) {
                 requestPage = requestRepo.findALLByStatus(RequestStatus.Pending, pageable);

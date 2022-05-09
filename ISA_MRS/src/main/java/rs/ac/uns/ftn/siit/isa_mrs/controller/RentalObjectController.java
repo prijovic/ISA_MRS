@@ -36,7 +36,7 @@ public class RentalObjectController {
     private final RentalObjectService rentalObjectService;
     private VacationRentalService vacationRentalService;
     private BoatService boatService;
-    private AdventureService adventureService;
+    private final AdventureService adventureService;
     private final ModelMapper modelMapper;
 
     @GetMapping(GET_VACATION_RENTAL)
@@ -73,21 +73,17 @@ public class RentalObjectController {
         return boatService.findBoatsWithPaginationSortedByField(page, pageSize, field);
     }
 
-    @GetMapping(GET_ADVENTURE)
-    public Adventure getAdventure(@RequestParam Long id) {
-        Optional<Adventure> adventure = adventureService.getAdventure(id);
-        if (adventure.isPresent()) {
-            return adventure.get();
-        }
-        else {
-            throw new RentalNotFound(HttpStatus.NOT_FOUND, "id: " + id);
-        }
-    }
-
     @GetMapping(GET_ADVENTURES)
     public ResponseEntity<PageDto<AdventureDto>> getAdventuresWithPaginationAndSort(
             @RequestParam Integer page, @RequestParam Integer pageSize, @RequestParam String field) {
         return adventureService.findAdventuresWithPaginationSortedByField(page, pageSize, field);
+    }
+
+    @GetMapping(GET_ADVENTURES + "Instructor")
+    public ResponseEntity<PageDto<AdventureDto>> getAdventuresForInstructor(
+            @RequestParam Integer page, @RequestParam Integer pageSize,
+            @RequestParam String field, @RequestParam String email) {
+        return adventureService.findAdventuresWithPaginationSortedByFieldAndFilteredByOwner(page, pageSize, field, email);
     }
 
     @PostMapping(AVAILABILITY_PERIOD)

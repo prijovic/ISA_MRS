@@ -6,7 +6,7 @@ import java.io.Serializable;
 
 @Data
 public class AdditionalServiceDto implements Serializable {
-    private final Long id;
-    private final String name;
-    private final double price;
+    private Long id;
+    private String name;
+    private double price;
 }

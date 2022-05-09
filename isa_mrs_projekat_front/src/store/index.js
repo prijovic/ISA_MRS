@@ -5,6 +5,7 @@ const getDefaultState = () => {
       user: null,
       email: null,
       access_token: null,
+      rentalId: null
   }
 };
 
@@ -22,6 +23,9 @@ const store = createStore({
         access_token: (state) => {
             return state.access_token;
         },
+        rentalId: (state) => {
+            return state.rentalId;
+        },
         isAuthenticated: (state) => {
             return state.access_token != null;
         }
@@ -36,6 +40,9 @@ const store = createStore({
         access_token(context, access_token) {
             context.commit("access_token", access_token);
         },
+        rentalId(context, rentalId) {
+            context.commit("rentalId", rentalId);
+        },
         reset_state(context) {
             context.commit("reset_state")
         }
@@ -49,6 +56,9 @@ const store = createStore({
         },
         access_token(state, access_token) {
             state.access_token = access_token;
+        },
+        rentalId(state, rentalId) {
+            state.rentalId = rentalId;
         },
         reset_state(state) {
             Object.assign(state, getDefaultState());

@@ -17,6 +17,10 @@ import AdminRequestsView from "@/components/Administrator/AdminPage/components/A
 import InitView from "@/components/UnregisteredUser/InitView";
 import CardView from "@/components/UnregisteredUser/components/CardView";
 import RegistrationPage from "@/components/UnregisteredUser/components/RegistrationPage";
+import FishingInstructorAdventuresView
+    from "@/components/FishingInstructor/FishingInstructorPage/components/InstructorMainViews/InstructorAllAdventuresView/InstructorAllAdventuresView";
+import FishingInstructorAdventureProfileView
+    from "@/components/FishingInstructor/FishingInstructorPage/components/InstructorMainViews/InstructorAllAdventuresView/InstructorAdventureProfile/InstructorAdventureProfile";
 
 
 const routes = [
@@ -116,6 +120,28 @@ const routes = [
         name: "FishingInstructorHome",
         components: {
             default: FishingInstructorPage,
+            sidebar: TheFishingInstructorSidebar
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
+        path: "/fishingInstructor/adventures",
+        name: "FishingInstructorAdventures",
+        components: {
+            default: FishingInstructorAdventuresView,
+            sidebar: TheFishingInstructorSidebar
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
+        path: "/fishingInstructor/adventure",
+        name: "FishingInstructorAdventure",
+        components: {
+            default: FishingInstructorAdventureProfileView,
             sidebar: TheFishingInstructorSidebar
         },
         meta: {
