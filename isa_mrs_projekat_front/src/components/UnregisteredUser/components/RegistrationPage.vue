@@ -11,19 +11,19 @@
                 <option value="Client" selected="selected">Client</option>
                 <option value="VacationRentalOwner">Vacation Rental Owner</option>
                 <option value="BoatOwner">Boat Owner</option>
-                <option value="FishingInstructor">Instructor</option>
+                <option value="FishingInstructor">Fishing instructor</option>
                 <option v-if="isAdmin" value="Admin">Admin</option>
               </select>
             </div>
-            <div class="row mb-3" v-bind:style="{color: isNamePresent ? '#3f5b25':'red'}">
+            <div class="row mb-3" v-bind:style="{color: isNamePresent || isNamePresent === null ? '#3f5b25':'red'}">
               <p class="h6 ps-0 pb-0"><i>Name:</i></p>
               <input class="ps-1 h5" type="text" id="name" v-model="user.name" placeholder="E.g. Tamara">
             </div>
-            <div class="row mb-3" v-bind:style="{color: isSurnamePresent ? '#3f5b25':'red'}">
+            <div class="row mb-3" v-bind:style="{color: isSurnamePresent || isSurnamePresent === null ? '#3f5b25':'red'}">
               <p class="h6 ps-0 pb-0"><i>Surname:</i></p>
               <input class="ps-1 h5" type="text" id="surname" v-model="user.surname" placeholder="E.g. Volas">
             </div>
-            <div class="row mb-3" v-bind:style="{color: isEmailPresent ? '#3f5b25':'red'}">
+            <div class="row mb-3" v-bind:style="{color: isEmailPresent || isEmailPresent === null ? '#3f5b25':'red'}">
               <p class="h6 ps-0 pb-0"><i>E-mail:</i></p>
               <input class="ps-1 h5" type="email" id="email" v-model="user.email" placeholder="E.g. john@gmail.com">
             </div>
@@ -141,28 +141,71 @@ export default {
     },
     submit() {
       console.log("submit");
-      axios.post("/", {
-        email: this.email,
-      }, {
+      axios.post("/Requests/signUp", null, {
         headers: {
-          Authorization: "Bearer " + this.accessToken
-        }
+          Authorization: "Bearer " + this.accessToken,
+        },
+        params: {
+          userType: this.userType,
+          name: this.name,
+          surname: this.surname,
+          phoneNumber: this.phoneNumber,
+          email: this.email,
+          photo: this.photo,
+          reason: this.reason,
+          address: {
+            country: this.country,
+            city: this.city,
+            street: this.street,
+            number: this.number,
+            latitude: this.latitude,
+            longitude: this.longitude
+          }
+        },
       })
       .then(() => {
+        let message = "Registration request sent successfully. ";
+        if(this.userType === "Client") message += "Confirmation email has been sent to " + this.email;
+        else message += "Your request is pending. Keep checking your email for a response."
         this.$notify( {
           title: "Sign up",
-          text: "Request successfully sent.",
+          text: message,
           position: "bottom right",
-          type: "success"
+          type: "error"
         });
+      })
+      .catch(error => {
+        if (error.response.status === 422) {
+          this.$notify({
+            title: "Invalid email",
+            text: "User with email " + this.email + " already exists. Please enter a different email.",
+            position: "bottom right",
+            type: "warn"
+          })
+        } else if (error.response.status === 400) {
+          this.$notify({
+            title: "Invalid Request Status",
+            text: "Bad registration request.",
+            position: "bottom right",
+            type: "warn"
+          })
+        } else if (error.response.status === 500) {
+          this.$notify({
+            title: "Internal Server Error",
+            text: "Something went wrong on the server! Please try again later...",
+            position: "bottom right",
+            type: "error"
+          })
+        }
       })
     },
     isInputPresent() {
-      this.isNamePresent = this.user.name;
-      this.isSurnamePresent = this.user.surname;
-      this.isEmailPresent = this.user.email;
+      this.isNamePresent = Boolean(this.user.name);
+      this.isSurnamePresent = Boolean(this.user.surname);
+      this.isEmailPresent = Boolean(this.user.email);
+      console.log("{}   {}   {}",this.isNamePresent,this.isSurnamePresent,this.isEmailPresent);
       this.isReasonPresent = !(!this.user.reason && this.user.userType !== "Client" && this.user.userType !== "Admin");
-      this.allInputsPresent = !!(this.isNamePresent && this.isSurnamePresent && this.isEmailPresent && this.isReasonPresent);
+      this.allInputsPresent = this.isNamePresent && this.isSurnamePresent && this.isEmailPresent && this.isReasonPresent;
     },
     validatePhone() {
       if (this.user.phoneNumber === null) {
@@ -210,6 +253,7 @@ export default {
       this.user.photo = event.target.files[0];
     },
     onInput(phone, phoneObject) {
+      console.log("Broj:" + phoneObject);
       if (phoneObject?.formatted) {
         if (this.user.phoneNumber === phoneObject.formatted) {
           this.user.phoneNumber = null;

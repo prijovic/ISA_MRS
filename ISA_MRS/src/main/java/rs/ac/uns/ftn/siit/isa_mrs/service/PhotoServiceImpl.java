@@ -22,16 +22,17 @@ public class PhotoServiceImpl implements PhotoService {
     private final PhotoRepo photoRepo;
 
     @Override
-    public ResponseEntity<FileSystemResource> getPhoto(String id) {
+    public ResponseEntity<byte[]> getPhoto(String id) {
         try {
             Optional<Photo> photo = photoRepo.findByPhoto(id);
-            return photo.map(value -> new ResponseEntity<>(new FileSystemResource(
-                    Paths.get("./src/main/java/rs/ac/uns/ftn/siit/isa_mrs/resources/photos/" + id + ".jpg")),
-                            HttpStatus.OK))
-                    .orElseGet(() -> new ResponseEntity<>(null, HttpStatus.NOT_FOUND));
+            if (photo.isEmpty()) {
+                return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+            }
+            FileSystemResource resource = new FileSystemResource(Paths.get("src").toAbsolutePath().resolve("main").resolve("resources").resolve("static/photos").resolve(id + ".jpg"));
+            //byte[] media = toByteArray()
+            return new ResponseEntity<>(null, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
 }

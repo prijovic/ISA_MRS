@@ -15,6 +15,7 @@ import rs.ac.uns.ftn.siit.isa_mrs.dto.RentalObjectPeriodsDto;
 import rs.ac.uns.ftn.siit.isa_mrs.exception.RentalNotFound;
 import rs.ac.uns.ftn.siit.isa_mrs.model.Adventure;
 import rs.ac.uns.ftn.siit.isa_mrs.model.Boat;
+import rs.ac.uns.ftn.siit.isa_mrs.model.RentalObject;
 import rs.ac.uns.ftn.siit.isa_mrs.model.VacationRental;
 import rs.ac.uns.ftn.siit.isa_mrs.service.AdventureService;
 import rs.ac.uns.ftn.siit.isa_mrs.service.BoatService;
@@ -34,20 +35,14 @@ import static rs.ac.uns.ftn.siit.isa_mrs.util.Paths.*;
 @RequestMapping(RENTAL_OBJECT_CONTROLLER)
 public class RentalObjectController {
     private final RentalObjectService rentalObjectService;
-    private VacationRentalService vacationRentalService;
-    private BoatService boatService;
-    private AdventureService adventureService;
+    private final VacationRentalService vacationRentalService;
+    private final BoatService boatService;
+    private final AdventureService adventureService;
     private final ModelMapper modelMapper;
 
     @GetMapping(GET_VACATION_RENTAL)
-    public VacationRental getVacationRental(@RequestParam Long id) {
-        Optional<VacationRental> vacationRental = vacationRentalService.getVacationRental(id);
-        if (vacationRental.isPresent()) {
-            return vacationRental.get();
-        }
-        else {
-            throw new RentalNotFound(HttpStatus.NOT_FOUND, "id: " + id);
-        }
+    public ResponseEntity<VacationRentalDto> getVacationRental(@RequestParam Long id) {
+        return vacationRentalService.getVacationRental(id);
     }
 
     @GetMapping(GET_VACATION_RENTALS)

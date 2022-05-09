@@ -9,4 +9,6 @@ public class RentalObjectOwnerDto implements Serializable {
     private final Long id;
     private final String name;
     private final String surname;
+    private final String email;
+    private final PhotoDto photo;
 }
