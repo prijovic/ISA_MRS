@@ -15,12 +15,16 @@ import TheBoatOwnerSidebar from "@/components/BoatOwner/BoatOwnerPage/components
 
 import AdminRequestsView from "@/components/Administrator/AdminPage/components/AdminMainViews/AdminRequestsView/AdminRequestsView";
 import InitView from "@/components/UnregisteredUser/InitView";
-import CardView from "@/components/UnregisteredUser/components/CardView";
 import RegistrationPage from "@/components/UnregisteredUser/components/RegistrationPage";
 import FishingInstructorAdventuresView
     from "@/components/FishingInstructor/FishingInstructorPage/components/InstructorMainViews/InstructorAllAdventuresView/InstructorAllAdventuresView";
 import FishingInstructorAdventureProfileView
     from "@/components/FishingInstructor/FishingInstructorPage/components/InstructorMainViews/InstructorAllAdventuresView/InstructorAdventureProfile/InstructorAdventureProfile";
+import CardMenu from "@/components/UnregisteredUser/components/CardMenu";
+import ClientMainView from "@/components/Client/ClientPage/components/ClientMainView";
+import ClientSidebar from "@/components/Client/ClientPage/components/ClientSidebar/ClientSidebar";
+import RentalProfile from "@/components/UnregisteredUser/components/RentalProfile";
+
 
 
 const routes = [
@@ -63,7 +67,7 @@ const routes = [
         path: "/vacationRentals",
         name: "VacationRentals",
         components: {
-            default: CardView,
+            default: CardMenu,
             sidebar: TheUnregisteredUserSidebar,
         },
         meta: {
@@ -213,7 +217,63 @@ const routes = [
         meta: {
             public: false
         }
+    },
+    {
+        path: "/client",
+        name: "Client",
+        components: {
+            default: ClientMainView,
+            sidebar: ClientSidebar,
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
+        path: "/client/vacationRentals",
+        name: "ClientVacationRentals",
+        components: {
+            default: CardMenu,
+            sidebar: ClientSidebar,
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
+        path: "/client/boats",
+        name: "ClientBoats",
+        components: {
+            default: CardMenu,
+            sidebar: ClientSidebar,
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
+        path: "/client/adventures",
+        name: "ClientAdventures",
+        components: {
+            default: CardMenu,
+            sidebar: ClientSidebar,
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
+        path: "/client/RentalProfile",
+        name: "RentalProfile",
+        components: {
+            default: RentalProfile,
+            sidebar: ClientSidebar,
+        },
+        meta: {
+            public: false
+        },
     }
+
 ];
 
 

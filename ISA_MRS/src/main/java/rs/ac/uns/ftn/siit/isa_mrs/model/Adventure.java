@@ -17,4 +17,5 @@ public class Adventure extends RentalObject {
     private Double duration;
     @OneToMany(mappedBy = "adventure", cascade = CascadeType.ALL)
     private Collection<AdventureEquipment> adventureEquipment = new java.util.LinkedHashSet<>();
+    private Double duration;
 }

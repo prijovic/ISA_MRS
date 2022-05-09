@@ -1,5 +1,6 @@
 package rs.ac.uns.ftn.siit.isa_mrs.service;
 
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -11,19 +12,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.SignUpDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.PageDto;
-import rs.ac.uns.ftn.siit.isa_mrs.model.User;
+import rs.ac.uns.ftn.siit.isa_mrs.model.*;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.RequestDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.RespondedRequestDto;
-import rs.ac.uns.ftn.siit.isa_mrs.model.Admin;
-import rs.ac.uns.ftn.siit.isa_mrs.model.Request;
-import rs.ac.uns.ftn.siit.isa_mrs.model.RequestResponse;
 import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.RequestStatus;
 import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.RequestType;
-import rs.ac.uns.ftn.siit.isa_mrs.repository.AdminRepo;
-import rs.ac.uns.ftn.siit.isa_mrs.repository.RequestRepo;
-import rs.ac.uns.ftn.siit.isa_mrs.repository.RequestResponseRepo;
-import rs.ac.uns.ftn.siit.isa_mrs.repository.UserRepo;
+import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.UserType;
+import rs.ac.uns.ftn.siit.isa_mrs.repository.*;
 
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
@@ -43,6 +40,10 @@ public class RequestServiceImpl implements RequestService {
     private final EmailSenderService emailSenderService;
     private final PasswordEncoder passwordEncoder;
     private final UserRepo userRepo;
+    private final AddressRepo addressRepo;
+    private final SaleParticipantRepo saleParticipantRepo;
+    private final RentalObjectOwnerRepo rentalOwnerRepo;
+    private final ClientRepo clientRepo;
 
 
     @Override
@@ -71,7 +72,8 @@ public class RequestServiceImpl implements RequestService {
                 return new ResponseEntity<>(result, HttpStatus.OK);
             }
         } catch (Exception e) {
-            return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+            log.error(e.getMessage());
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -159,5 +161,90 @@ public class RequestServiceImpl implements RequestService {
         model.put("explanation", response.getComment());
         model.put("adminMail", response.getOperator().getEmail());
         return model;
+    }
+
+    @Override
+    public ResponseEntity<RequestDto> createSignUpRequest(SignUpDto sud) {
+        Optional<User> user = userRepo.findByEmail(sud.getEmail());
+        if (user.isPresent()){
+            return new ResponseEntity<>(null, HttpStatus.UNPROCESSABLE_ENTITY);
+        }
+        else {
+            try {
+                Address address = new Address();
+                address.setCountry(sud.getAddress().getCountry());
+                address.setCity(sud.getAddress().getCity());
+                address.setStreet(sud.getAddress().getStreet());
+                address.setNumber(sud.getAddress().getNumber());
+                address.setLatitude(sud.getAddress().getLatitude());
+                address.setLongitude(sud.getAddress().getLongitude());
+                addressRepo.save(address);
+
+                if(sud.getUserType() == UserType.Client) {
+                    Client client = new Client();
+                    client.setUserType(sud.getUserType());
+                    client.setName(sud.getName());
+                    client.setSurname(sud.getSurname());
+                    client.setEmail(sud.getEmail());
+                    client.setPhone(sud.getPhoneNumber());
+                    client.setPhoto(sud.getPhoto());
+                    client.setActive(false);
+                    client.setAddress(address);
+                    client.setPoints(0);
+                    clientRepo.save(client);
+                    // send email
+                    return new ResponseEntity<>(null, HttpStatus.OK);
+                }
+
+                Request request = new Request();
+                request.setStatus(RequestStatus.Pending);
+                request.setReason(sud.getReason());
+                request.setType(RequestType.SignUp);
+                request.setTimeStamp(LocalDateTime.now());
+
+                if(sud.getUserType() == UserType.Admin) {
+                    Admin admin = new Admin();
+                    admin.setUserType(sud.getUserType());
+                    admin.setName(sud.getName());
+                    admin.setSurname(sud.getSurname());
+                    admin.setEmail(sud.getEmail());
+                    admin.setPhone(sud.getPhoneNumber());
+                    admin.setPhoto(sud.getPhoto());
+                    admin.setActive(false);
+                    admin.setAddress(address);
+                    adminRepo.save(admin);
+                    request.setUser(admin);
+                    requestRepo.save(request);
+                    admin.setRequest(request);
+                    // send email
+                }
+                else {
+                    RentalObjectOwner owner = new RentalObjectOwner();
+                    owner.setUserType(sud.getUserType());
+                    owner.setName(sud.getName());
+                    owner.setSurname(sud.getSurname());
+                    owner.setEmail(sud.getEmail());
+                    owner.setPhone(sud.getPhoneNumber());
+                    owner.setPhoto(sud.getPhoto());
+                    owner.setActive(false);
+                    owner.setAddress(address);
+                    owner.setPoints(0);
+                    rentalOwnerRepo.save(owner);
+                    request.setUser(owner);
+                    requestRepo.save(request);
+                    owner.setRequest(request);
+                }
+
+                RequestDto requestDto = modelMapper.map(request, RequestDto.class);
+                return new ResponseEntity<>(requestDto, HttpStatus.OK);
+
+
+
+            } catch (IllegalArgumentException e) {
+                return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+            } catch (Exception e) {
+                return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }
     }
 }

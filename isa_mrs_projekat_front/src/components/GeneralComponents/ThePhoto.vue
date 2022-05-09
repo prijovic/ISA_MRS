@@ -8,17 +8,22 @@ import axios from "axios";
 export default {
   name: "ThePhoto",
   props: ["photo"],
-  computed: {
-    img() {
-      return axios.get("/Photos/{photo}", {
-        headers: {
-          Authorization: "Bearer " + this.$store.getters.access_token
-        },
-        params: {
-          id: this.photo
-        }
-      });
+  data() {
+    return {
+      img: null
     }
+  },
+  mounted() {
+      axios.get("/Photos/" + this.photo, {
+      headers: {
+        Authorization: "Bearer " + this.$store.getters.access_token
+      },
+      params: {
+        id: this.photo
+      }
+    }).then(response => {
+        this.img = "data:image/...;base64,"+response.data;
+      });
   }
 }
 </script>

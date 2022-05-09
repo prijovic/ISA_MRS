@@ -1,5 +1,5 @@
 <template>
-  <div class="container-fluid px-4 py-3 rounded">
+  <div class="container-fluid px-4 py-3 rounded" spellcheck="false" >
     <div class="row main">
       <div class="col main pt-3">
         <div class="row">
@@ -11,24 +11,26 @@
                 <option value="Client" selected="selected">Client</option>
                 <option value="VacationRentalOwner">Vacation Rental Owner</option>
                 <option value="BoatOwner">Boat Owner</option>
-                <option value="FishingInstructor">Instructor</option>
+                <option value="FishingInstructor">Fishing instructor</option>
                 <option v-if="isAdmin" value="Admin">Admin</option>
               </select>
             </div>
-            <div class="row mb-3">
+            <div class="row mb-3" v-bind:style="{color: isNamePresent || isNamePresent === null ? '#3f5b25':'red'}">
               <p class="h6 ps-0 pb-0"><i>Name:</i></p>
               <input class="ps-1 h5" type="text" id="name" v-model="user.name" placeholder="E.g. Tamara">
             </div>
-            <div class="row mb-3">
+            <div class="row mb-3" v-bind:style="{color: isSurnamePresent || isSurnamePresent === null ? '#3f5b25':'red'}">
               <p class="h6 ps-0 pb-0"><i>Surname:</i></p>
               <input class="ps-1 h5" type="text" id="surname" v-model="user.surname" placeholder="E.g. Volas">
             </div>
-            <div class="row mb-3">
+            <div class="row mb-3" v-bind:style="{color: isEmailPresent || isEmailPresent === null ? '#3f5b25':'red'}">
               <p class="h6 ps-0 pb-0"><i>E-mail:</i></p>
               <input class="ps-1 h5" type="email" id="email" v-model="user.email" placeholder="E.g. john@gmail.com">
             </div>
-            <div class="row mb-3" v-bind:style="{color: isPhoneValid || isPhoneValid ===null?'#3f5b25':'red'}">
-              <p class="h6 ps-0 pb-0"><i>Phone:</i></p>
+            <div class="row mb-3">
+              <p class="h6 ps-0 pb-0" v-bind:style="{color: isPhoneValid || isPhoneValid ===null?'#3f5b25':'red'}">
+                <i>Phone:</i>
+              </p>
               <vue-tel-input v-model="user.phoneNumber" mode="international" @input="onInput"></vue-tel-input>
             </div>
             <div v-if="!isAdmin" class="row">
@@ -63,6 +65,10 @@
               <p class="h6 ps-0 pb-0"><i>Number:</i></p>
               <input v-model="user.address.number" class="ps-1 h5" type="text" id="number" placeholder="House Number">
             </div>
+            <div v-if="isRentalObjectOwner" class="row">
+              <textarea class="h6" v-model="user.reason" maxlength="300" rows="4"
+                        placeholder="Why would you like to make an account?"></textarea>
+            </div>
           </div>
           <div class="col-4 main">
           </div>
@@ -88,6 +94,7 @@ import { faHouse } from "@fortawesome/free-solid-svg-icons";
 import { VueTelInput }  from 'vue3-tel-input';
 import 'vue3-tel-input/dist/vue3-tel-input.css'
 import store from "@/store";
+import axios from "axios";
 
 library.add(faHouse)
 
@@ -100,12 +107,13 @@ export default {
   data() {
     return {
       user: {
-        userType: null,
+        userType: "Client",
         name: null,
         surname: null,
         phoneNumber: null,
         email: null,
         photo: null,
+        reason: null,
         address: {
           street: null,
           number: null,
@@ -117,12 +125,87 @@ export default {
       },
       isAddressValid: null,
       isPhoneValid: null,
+      isNamePresent: null,
+      isSurnamePresent: null,
+      isEmailPresent: null,
+      isReasonPresent: null,
+      allInputsPresent: null,
     }
   },
   methods: {
     validateInputs() {
       this.validateAddress();
       this.validatePhone();
+      this.isInputPresent();
+      if(this.allInputsPresent && this.isAddressValid && this.isPhoneValid) this.submit();
+    },
+    submit() {
+      console.log("submit");
+      axios.post("/Requests/signUp", null, {
+        headers: {
+          Authorization: "Bearer " + this.accessToken,
+        },
+        params: {
+          userType: this.userType,
+          name: this.name,
+          surname: this.surname,
+          phoneNumber: this.phoneNumber,
+          email: this.email,
+          photo: this.photo,
+          reason: this.reason,
+          address: {
+            country: this.country,
+            city: this.city,
+            street: this.street,
+            number: this.number,
+            latitude: this.latitude,
+            longitude: this.longitude
+          }
+        },
+      })
+      .then(() => {
+        let message = "Registration request sent successfully. ";
+        if(this.userType === "Client") message += "Confirmation email has been sent to " + this.email;
+        else message += "Your request is pending. Keep checking your email for a response."
+        this.$notify( {
+          title: "Sign up",
+          text: message,
+          position: "bottom right",
+          type: "error"
+        });
+      })
+      .catch(error => {
+        if (error.response.status === 422) {
+          this.$notify({
+            title: "Invalid email",
+            text: "User with email " + this.email + " already exists. Please enter a different email.",
+            position: "bottom right",
+            type: "warn"
+          })
+        } else if (error.response.status === 400) {
+          this.$notify({
+            title: "Invalid Request Status",
+            text: "Bad registration request.",
+            position: "bottom right",
+            type: "warn"
+          })
+        } else if (error.response.status === 500) {
+          this.$notify({
+            title: "Internal Server Error",
+            text: "Something went wrong on the server! Please try again later...",
+            position: "bottom right",
+            type: "error"
+          })
+        }
+      })
+    },
+    isInputPresent() {
+      this.isNamePresent = Boolean(this.user.name);
+      this.isSurnamePresent = Boolean(this.user.surname);
+      this.isEmailPresent = Boolean(this.user.email);
+      console.log("{}   {}   {}",this.isNamePresent,this.isSurnamePresent,this.isEmailPresent);
+      this.isReasonPresent = !(!this.user.reason && this.user.userType !== "Client" && this.user.userType !== "Admin");
+      this.allInputsPresent = this.isNamePresent && this.isSurnamePresent && this.isEmailPresent && this.isReasonPresent;
     },
     validatePhone() {
       if (this.user.phoneNumber === null) {
@@ -170,6 +253,7 @@ export default {
       this.user.photo = event.target.files[0];
     },
     onInput(phone, phoneObject) {
+      console.log("Broj:" + phoneObject);
       if (phoneObject?.formatted) {
         if (this.user.phoneNumber === phoneObject.formatted) {
           this.user.phoneNumber = null;
@@ -183,6 +267,9 @@ export default {
   computed: {
     isAdmin() {
       return store.state.user === "SuperAdmin";
+    },
+    isRentalObjectOwner() {
+      return (this.user.userType !== "Client" && this.user.userType !== "Admin");
     }
   }
 }
@@ -193,6 +280,23 @@ export default {
     outline: solid 2px #3f5b25;
     margin-top: 10px;
     color: #3f5b25;
+  }
+
+  textarea {
+    padding: 5px 10px;
+    resize: none;
+    background-color: #378220;
+    color: #f7f7f2;
+    outline: none;
+    width: 100%;
+    border-radius: 5px;
+    text-align: justify;
+    font-weight: 100;
+  }
+
+  textarea::placeholder{
+    color: white;
+    font-style: italic;
   }
 
   input[type='text'], input[type='email'] {
