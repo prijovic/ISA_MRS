@@ -2,11 +2,9 @@
   <div class="container-fluid rounded p-2 mb-2">
     <router-link to="/fishingInstructor/adventure" class="link" @click="setRentalId">
       <div class="row main-col align-items-end header rounded">
-        <div class="col-sm-5 main-col">
         <div class="col-sm-4 main-col">
           <h4>{{adventure.name}}</h4>
         </div>
-        <div class="col-sm-5 main-col">
           <h4>{{adventure.address.street + ", " + adventure.address.city}}</h4>
         </div>
         <div class="col-sm-2 main-col">
