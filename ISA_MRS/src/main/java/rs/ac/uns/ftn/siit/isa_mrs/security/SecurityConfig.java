@@ -24,6 +24,7 @@ import rs.ac.uns.ftn.siit.isa_mrs.security.filter.CustomAuthorizationFilter;
 import java.util.Arrays;
 import java.util.List;
 
+import static rs.ac.uns.ftn.siit.isa_mrs.util.Paths.*;
 
 @Slf4j
 @Configuration
