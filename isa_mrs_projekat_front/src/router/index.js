@@ -142,6 +142,39 @@ const routes = [
         }
     },
     {
+        path: "/fishingInstructor/changePass",
+        name: "FishingInstructorPassword",
+        components: {
+            default: PasswordChangeForm,
+            sidebar: TheFishingInstructorSidebar,
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
+        path: "/fishingInstructor/delAcc",
+        name: "FishingInstructorDeletion",
+        components: {
+            default: AccountDeletionForm,
+            sidebar: TheFishingInstructorSidebar,
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
+        path: "/fishingInstructor/profile",
+        name: "FishingInstructorView",
+        components: {
+            default: ProfileView,
+            sidebar: TheFishingInstructorSidebar,
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
         path: "/fishingInstructor/adventures",
         name: "FishingInstructorAdventures",
         components: {
@@ -286,7 +319,6 @@ const routes = [
     }
 
 ];
-
 
 const router = createRouter({
     history: createWebHistory(process.env.BASE_URL),
