@@ -4,11 +4,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -22,7 +24,6 @@ import rs.ac.uns.ftn.siit.isa_mrs.security.filter.CustomAuthorizationFilter;
 import java.util.Arrays;
 import java.util.List;
 
-import static rs.ac.uns.ftn.siit.isa_mrs.util.Paths.CROSS_ORIGIN;
 
 @Slf4j
 @Configuration
@@ -40,6 +41,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Override
+    public void configure(WebSecurity web) throws Exception {
+        web.ignoring().antMatchers(HttpMethod.POST, REQUEST_CONTROLLER + SIGN_UP);
+        web.ignoring().antMatchers(HttpMethod.GET, "/", "/webjars/**", "/*.html", "/favicon.ico", "/**/*.html",
+                "/**/*.css", "/**/*.js");
+    }
+
+    @Override
     protected void configure(HttpSecurity http) throws Exception {
         CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManagerBean(), jwtConfig);
         CustomAuthorizationFilter customAuthorizationFilter = new CustomAuthorizationFilter(jwtConfig);
@@ -54,6 +62,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .addFilterAfter(customAuthorizationFilter, CustomAuthenticationFilter.class)
                 .authorizeRequests()
                 .antMatchers("/login").permitAll()
+                .antMatchers(LOGIN).permitAll()
+                .antMatchers(HttpMethod.POST,REQUEST_CONTROLLER + SIGN_UP).permitAll()
                 .anyRequest().authenticated();
     }
 

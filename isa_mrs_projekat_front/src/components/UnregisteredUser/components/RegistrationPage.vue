@@ -31,7 +31,7 @@
               <p class="h6 ps-0 pb-0" v-bind:style="{color: isPhoneValid || isPhoneValid ===null?'#3f5b25':'red'}">
                 <i>Phone:</i>
               </p>
-              <vue-tel-input v-model="user.phoneNumber" mode="international" @input="onInput"></vue-tel-input>
+              <vue-tel-input v-model="phoneInput" mode="international" defaultCountry="RS" :preferredCountries=preferredCountries :onlyCountries=onlyCountries @input="telephone"></vue-tel-input>
             </div>
             <div v-if="!isAdmin" class="row">
               <p class="h6 ps-0 pb-0"><i>Profile pic <small>(optional)</small>:</i></p>
@@ -106,6 +106,9 @@ export default {
   },
   data() {
     return {
+      preferredCountries: ['RS', 'BA', 'ME', 'HR'],
+      onlyCountries: ['RS', 'AL', 'BG', 'BA', 'HR', 'ME', 'SI', 'RO', 'MK'],
+      phoneInput: null,
       user: {
         userType: "Client",
         name: null,
@@ -140,12 +143,26 @@ export default {
       if(this.allInputsPresent && this.isAddressValid && this.isPhoneValid) this.submit();
     },
     submit() {
-      console.log("submit");
-      axios.post("/", {
-        email: this.email,
-      }, {
+      axios.post("/Requests/signUp", null, {
         headers: {
-          Authorization: "Bearer " + this.accessToken
+          Authorization: "Bearer " + this.accessToken,
+        },
+        params: {
+          userType: this.user.userType,
+          name: this.user.name,
+          surname: this.user.surname,
+          phoneNumber: this.user.phoneNumber,
+          email: this.user.email,
+          photo: this.user.photo,
+          reason: this.user.reason,
+          address: {
+            country: this.user.address.country,
+            city: this.user.address.city,
+            street: this.user.address.street,
+            number: this.user.address.number,
+            latitude: this.user.address.latitude,
+            longitude: this.user.address.longitude
+          }
         }
       })
       .then(() => {
@@ -158,20 +175,14 @@ export default {
       })
     },
     isInputPresent() {
-      this.isNamePresent = this.user.name;
-      this.isSurnamePresent = this.user.surname;
-      this.isEmailPresent = this.user.email;
+      this.isNamePresent = Boolean(this.user.name);
+      this.isSurnamePresent = Boolean(this.user.surname);
+      this.isEmailPresent = Boolean(this.user.email);
       this.isReasonPresent = !(!this.user.reason && this.user.userType !== "Client" && this.user.userType !== "Admin");
       this.allInputsPresent = !!(this.isNamePresent && this.isSurnamePresent && this.isEmailPresent && this.isReasonPresent);
     },
     validatePhone() {
-      if (this.user.phoneNumber === null) {
-        console.log("Nema broja");
-        this.isPhoneValid = false;
-      } else {
-        console.log(this.user.phoneNumber);
-        this.isPhoneValid = true;
-      }
+      this.isPhoneValid = this.user.phoneNumber !== null;
     },
     validateAddress() {
       const apiKey = 'VrDrl5BjEA0Whvb-chHbFz96HV4qlCXB-yoiTRRLKno';
@@ -186,7 +197,6 @@ export default {
       .then(data => {
         const responseView = data.Response.View;
         if (responseView.length === 0) {
-          console.log("NEMA ADRESE!")
           this.isAddressValid = false;
         }
         else {
@@ -197,26 +207,21 @@ export default {
           this.user.address.street = address.Street;
           this.user.address.longitude = location.Longitude;
           this.user.address.latitude = location.Latitude;
-          console.log(this.user.address);
           this.isAddressValid = true;
         }
       })
-      .catch(error => {
-        console.log(error);
+      .catch(() => {
         this.isAddressValid = false;
       });
     },
     onFileSelected(event) {
       this.user.photo = event.target.files[0];
     },
-    onInput(phone, phoneObject) {
-      if (phoneObject?.formatted) {
-        if (this.user.phoneNumber === phoneObject.formatted) {
-          this.user.phoneNumber = null;
-        }
-        else {
-          this.user.phoneNumber = phoneObject.formatted;
-        }
+    telephone(phone, phoneObject) {
+      if (phoneObject?.valid) {
+        this.user.phoneNumber = phoneObject.number;
+      } else if (phoneObject) {
+        this.user.phoneNumber = null;
       }
     }
   },
