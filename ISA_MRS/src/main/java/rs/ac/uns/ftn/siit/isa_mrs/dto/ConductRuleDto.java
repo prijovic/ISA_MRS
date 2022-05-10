@@ -7,7 +7,7 @@ import java.io.Serializable;
 
 @Data
 public class ConductRuleDto implements Serializable {
-    private final Long id;
-    private final ConductType type;
-    private final String rule;
+    private Long id;
+    private ConductType type;
+    private String rule;
 }

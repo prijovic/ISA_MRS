@@ -6,6 +6,6 @@ import java.io.Serializable;
 
 @Data
 public class RoomDto implements Serializable {
-    private final Long id;
-    private final int beds;
+    private Long id;
+    private Integer beds;
 }

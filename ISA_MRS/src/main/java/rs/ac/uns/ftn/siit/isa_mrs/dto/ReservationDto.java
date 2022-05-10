@@ -9,7 +9,7 @@ import java.util.Collection;
 
 @Data
 public class ReservationDto implements Serializable {
-    private final Long id;
-    private final Collection<ReviewDto> reviews;
-    private final ClientDto client;
+    private Long id;
+    private Collection<ReviewDto> reviews;
+    private ClientDto client;
 }

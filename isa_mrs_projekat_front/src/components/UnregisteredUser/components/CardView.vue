@@ -1,81 +1,99 @@
 <template>
-  <div class="card col-xl-3 col-lg-4 col-md-6 col-sm-6 col-xs-12 p-0">
-    <!--
-    <router-link :to="{path: to}" class="link" :class="{active: isActive}">
-      <ThePhoto class="card-img-top" :photo="rental.photos[0].photo" alt=""/>
-    </router-link> -->
+  <router-link :to="'/client/RentalProfile'" class="link" @click="setRentalIdAndType">
+    <div class="card col-xl-3 col-lg-4 col-md-6 col-sm-6 col-xs-12 p-0">
+      <ThePhoto v-if="doesRentalHavePhotos" class="card-img-top" :photo="rental.photos[0].photo" alt=""/>
+      <div class="card-body">
+        <div class="align-items-center" style="display: flex;">
+            <h1 class="card-title">{{ rental.name }}</h1>
+          <hr class="ms-1">
+        </div>
+        <div v-if="isVacationRental" class="row">
+          <div class="col main-col d-flex justify-content-center" title="Capacity">
+            <p class="h5">
+              <font-awesome-icon class="me-1" icon="user"></font-awesome-icon><strong>{{ rental.capacity }}</strong>
+            </p>
+          </div>
+          <div class="col main-col d-flex justify-content-center" title="Number of rooms">
+            <p class="h5">
+              <font-awesome-icon class="me-1" icon="door-open"></font-awesome-icon><strong>{{ getNumberOfRooms }}</strong>
+            </p>
+          </div>
+          <div id="beds" class="col main-col d-flex justify-content-center" title="">
+            <p class="h5">
+              <font-awesome-icon class="me-1" icon="bed"></font-awesome-icon><strong>{{ getNumberOfBeds }}</strong>
+            </p>
+          </div>
+        </div>
 
-    <a>
-      <ThePhoto class="card-img-top" :photo="rental.photos[0].photo" alt=""/>
-    </a>
-
-    <div class="card-body">
-      <div class="align-items-center" style="display: flex;">
-        <h1 class="card-title">{{ rental.name }}</h1>
-        <hr class="ms-1">
-      </div>
-
-      <div v-if="isVacationRental" class="row">
-        <div class="col main-col d-flex justify-content-center" title="Capacity">
+        <div v-if="!isVacationRental" class="p-1" style="text-align: left;">
           <p class="h5">
-            <i class="bi bi-people-fill me-1"></i><strong>{{ rental.capacity }}</strong>
+            <font-awesome-icon class="me-1" icon="user"></font-awesome-icon>{{ "Capacity: " + rental.capacity }}
           </p>
         </div>
-        <div class="col main-col d-flex justify-content-center" title="Number of rooms">
-          <p class="h5">
-            <i class="bi bi-door-open-fill me-1"></i><strong>{{ getNumberOfRooms }}</strong>
-          </p>
-        </div>
-        <div id="beds" class="col main-col d-flex justify-content-center" title="">
-          <p class="h5">
-            <i class="fa-solid fa-bed me-1"></i><strong>{{ getNumberOfBeds }}</strong>
-          </p>
-        </div>
-      </div>
 
-      <div v-if="!isVacationRental" class="p-1" style="text-align: left;">
-        <p class="h5">
-          <i class="bi bi-people-fill me-1"></i>{{ "Capacity: " + rental.capacity }}
-        </p>
-      </div>
-
-      <div class="row mt-1">
-        <div class="col d-flex justify-content-center">
-          <p class="h4"><strong>Grade: 0★</strong></p>
-        </div>
-        <div class="col d-flex justify-content-center">
-          <p class="h4"><strong>{{ "Price: $" + rental.price }}</strong></p>
+        <div class="row mt-1">
+          <div class="col d-flex justify-content-center">
+            <p class="h4"><strong>Grade: 0★</strong></p>
+          </div>
+          <div class="col d-flex justify-content-center">
+            <p class="h4"><strong>{{ "Price: $" + rental.price }}</strong></p>
+          </div>
         </div>
       </div>
     </div>
-  </div>
+  </router-link>
 </template>
 
 <script>
 import ThePhoto from "@/components/GeneralComponents/ThePhoto";
+import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
+import { library } from "@fortawesome/fontawesome-svg-core";
+import { faUser } from "@fortawesome/free-solid-svg-icons";
+import { faDoorOpen } from "@fortawesome/free-solid-svg-icons";
+import { faBed } from "@fortawesome/free-solid-svg-icons";
+
+library.add(faUser);
+library.add(faDoorOpen);
+library.add(faBed);
 
 export default {
   name: "CardView",
-  components: {ThePhoto},
+  components: {
+    ThePhoto,
+    FontAwesomeIcon,
+  },
   props: ["rental"],
+  data() {
+    return {
+      path: "/client/RentalProfile"
+    }
+  },
   computed: {
     isVacationRental() {
-      return this.rentalObjectType === "VacationRental";
+      console.log("\n\n\n\n\n");
+      console.log("\n\n\n\n\n");
+      console.log(this.rental.name);
+      console.log(this.rental.rentalObjectType);
+      console.log(this.rental.rentalObjectType=== "VacationRental");
+      return this.rentalObjectType !== "VacationRental";
     },
     getNumberOfRooms() {
-      return (this.rental.rooms).size;
+      return (this.rental.rooms).length;
     },
     getNumberOfBeds() {
       let beds = 0;
-      let title = "Beds per room: ";
-      let bedsDiv = document.getElementById('beds');
-      this.rental.rooms.forEach(room => {
-        beds = beds + room.beds;
-        title = title + String(room.beds) + " + ";
-      });
-      title = title.slice(0, -2)
-      bedsDiv.setAttribute("title", title);
+      this.rental.rooms.forEach(room => { beds += room.beds; });
       return beds;
+    },
+    doesRentalHavePhotos() {
+      console.log(this.rental);
+      return this.rental.photos.length > 0;
+    }
+  },
+  methods: {
+    setRentalIdAndType() {
+      this.$store.dispatch("rentalId", this.rental.id);
+      this.$store.dispatch("rentalType", this.rental.rentalObjectType);
     }
   }
 }
@@ -87,6 +105,11 @@ export default {
     object-fit: cover;
     object-position: center;
 
+  }
+
+  a {
+    text-decoration: none;
+    color: black;
   }
 
   hr {
