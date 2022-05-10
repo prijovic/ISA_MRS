@@ -1,6 +1,5 @@
 package rs.ac.uns.ftn.siit.isa_mrs.service;
 
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -28,7 +27,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 
-
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -41,7 +39,6 @@ public class RequestServiceImpl implements RequestService {
     private final PasswordEncoder passwordEncoder;
     private final UserRepo userRepo;
     private final AddressRepo addressRepo;
-    private final SaleParticipantRepo saleParticipantRepo;
     private final RentalObjectOwnerRepo rentalOwnerRepo;
     private final ClientRepo clientRepo;
 
@@ -81,7 +78,6 @@ public class RequestServiceImpl implements RequestService {
     public ResponseEntity<RespondedRequestDto> changeRequestStatus(Long id, String status, String reason, String adminEmail) {
         try {
             Request request = requestRepo.getById(id);
-            log.info(request.getId() + ": " + request.getStatus());
             RequestResponse requestResponse = new RequestResponse();
             requestResponse.setComment(reason);
             requestResponse.setTimeStamp(LocalDateTime.now());
@@ -144,8 +140,10 @@ public class RequestServiceImpl implements RequestService {
                 RequestDto requestDto = modelMapper.map(request, RequestDto.class);
                 return new ResponseEntity<>(requestDto, HttpStatus.OK);
             } catch (IllegalArgumentException e) {
+                log.error(e.getMessage());
                 return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
             } catch (Exception e) {
+                log.error(e.getMessage());
                 return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }

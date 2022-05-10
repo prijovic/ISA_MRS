@@ -7,8 +7,8 @@ import java.time.LocalDateTime;
 
 @Data
 public class ReviewDto implements Serializable {
-    private final Long id;
-    private final String comment;
-    private final int grade;
-    private final LocalDateTime timeStamp;
+    private Long id;
+    private String comment;
+    private Integer grade;
+    private LocalDateTime timeStamp;
 }

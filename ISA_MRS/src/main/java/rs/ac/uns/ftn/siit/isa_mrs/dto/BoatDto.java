@@ -8,21 +8,21 @@ import java.util.Collection;
 
 @Data
 public class BoatDto implements Serializable {
-    private final Long id;
-    private final String name;
-    private final RentalObjectType rentalObjectType;
-    private final String description;
-    private final Collection<PhotoDto> photos;
-    private final int capacity;
-    private final double price;
-    private final Collection<ConductRuleDto> conductRules;
-    private final RentalObjectOwnerDto rentalObjectOwner;
-    private final String type;
-    private final double length;
-    private final String engineNumber;
-    private final double enginePower;
-    private final double maxSpeed;
-    private final Collection<NavigationEquipmentDto> navigationEquipment;
-    private final Collection<FishingEquipmentDto> fishingEquipment;
-    private final Collection<AdditionalServiceDto> additionalServices;
+    private Long id;
+    private String name;
+    private RentalObjectType rentalObjectType;
+    private String description;
+    private Collection<PhotoDto> photos;
+    private Integer capacity;
+    private Double price;
+    private Collection<ConductRuleDto> conductRules;
+    private RentalObjectOwnerDto rentalObjectOwner;
+    private String type;
+    private Double length;
+    private String engineNumber;
+    private Double enginePower;
+    private Double maxSpeed;
+    private Collection<NavigationEquipmentDto> navigationEquipment;
+    private Collection<FishingEquipmentDto> fishingEquipment;
+    private Collection<AdditionalServiceDto> additionalServices;
 }

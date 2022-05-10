@@ -7,9 +7,9 @@ import java.io.Serializable;
 
 @Data
 public class ClientDto implements Serializable {
-    private final Long id;
-    private final String photo;
-    private final String name;
-    private final String surname;
-    private final UserType userType;
+    private Long id;
+    private String photo;
+    private String name;
+    private String surname;
+    private UserType userType;
 }

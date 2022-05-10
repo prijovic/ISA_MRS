@@ -46,29 +46,23 @@ public class VacationRentalServiceImpl implements VacationRentalService{
         PageDto<VacationRentalDto> result = new PageDto<>();
         try{
             Pageable pageable = PageRequest.of(offset, pageSize).withSort(Sort.by(field));
-            log.info("Trazimo vikendice");
             Page<VacationRental> vacationRentalsPage = vacationRentalRepo
                     .findAllByRentalObjectType(RentalObjectType.VacationRental, pageable);
-            log.info("Pronasli smo vikendice: {}", vacationRentalsPage.getNumberOfElements());
             Collection<VacationRentalDto> vacationRentalDtos = new ArrayList<>();
             vacationRentalsPage.getContent().forEach(vacationRental -> {
                 vacationRentalDtos.add(modelMapper.map(vacationRental, VacationRentalDto.class));
-                log.info("Nasli smo vikendicu: {}", vacationRental.getId());
             });
             result.setContent(vacationRentalDtos);
             result.setPages(vacationRentalsPage.getTotalPages());
             result.setCurrentPage(vacationRentalsPage.getNumber() + 1);
             result.setPageSize(vacationRentalsPage.getSize());
             if (vacationRentalsPage.getContent().isEmpty()) {
-                log.info("Status: no content");
                 return new ResponseEntity<>(result, HttpStatus.NO_CONTENT);
             }
             else {
-                log.info("Status: ok");
                 return new ResponseEntity<>(result, HttpStatus.OK);
             }
         } catch (Exception e) {
-            log.error(e.getMessage());
             return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
         }
     }

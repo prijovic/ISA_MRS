@@ -6,6 +6,6 @@ import java.io.Serializable;
 
 @Data
 public class NavigationEquipmentDto implements Serializable {
-    private final Long id;
-    private final String name;
+    private Long id;
+    private String name;
 }
