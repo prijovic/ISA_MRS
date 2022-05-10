@@ -9,7 +9,7 @@ import javax.persistence.InheritanceType;
 @Entity
 @Getter
 @Setter
-@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+@Inheritance(strategy = InheritanceType.JOINED)
 public class SaleParticipant extends User {
     private Integer points;
 }

@@ -10,5 +10,5 @@ import java.util.Optional;
 
 public interface VacationRentalRepo extends JpaRepository<VacationRental, Long> {
     Optional<VacationRental> findById(Long id);
-    Page<VacationRental> findByRentalObjectType(RentalObjectType rentalObjectType, Pageable pageble);
+    Page<VacationRental> findAllByRentalObjectType(RentalObjectType rentalObjectType, Pageable pageable);
 }

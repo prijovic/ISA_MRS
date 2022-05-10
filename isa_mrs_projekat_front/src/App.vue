@@ -4,7 +4,7 @@
 
   <div class="container-fluid" :style="{'padding-left': sidebarWidth}">
     <router-view/>
-    <notifications position="bottom right" style="width: 30vh; height: 10vh"/>
+    <notifications position="bottom right" :max=maxNotif style="font-size: 200px"/>
   </div>
 </template>
 
@@ -17,6 +17,11 @@ export default {
   name: 'App',
   setup() {
     return {sidebarWidth};
+  },
+  computed: {
+    maxNotif() {
+      return 1;
+    }
   },
   components: {
     TheNavbar

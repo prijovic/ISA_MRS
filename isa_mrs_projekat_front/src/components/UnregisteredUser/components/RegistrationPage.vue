@@ -1,5 +1,5 @@
 <template>
-  <div class="container-fluid px-4 py-3 rounded" spellcheck="false" >
+  <div class="container px-4 py-3 rounded" spellcheck="false" >
     <div class="row main">
       <div class="col main pt-3">
         <div class="row">
@@ -11,19 +11,19 @@
                 <option value="Client" selected="selected">Client</option>
                 <option value="VacationRentalOwner">Vacation Rental Owner</option>
                 <option value="BoatOwner">Boat Owner</option>
-                <option value="FishingInstructor">Instructor</option>
+                <option value="FishingInstructor">Fishing instructor</option>
                 <option v-if="isAdmin" value="Admin">Admin</option>
               </select>
             </div>
-            <div class="row mb-3" v-bind:style="{color: isNamePresent ? '#3f5b25':'red'}">
+            <div class="row mb-3" v-bind:style="{color: isNamePresent || isNamePresent === null ? '#3f5b25':'red'}">
               <p class="h6 ps-0 pb-0"><i>Name:</i></p>
               <input class="ps-1 h5" type="text" id="name" v-model="user.name" placeholder="E.g. Tamara">
             </div>
-            <div class="row mb-3" v-bind:style="{color: isSurnamePresent ? '#3f5b25':'red'}">
+            <div class="row mb-3" v-bind:style="{color: isSurnamePresent || isSurnamePresent === null ? '#3f5b25':'red'}">
               <p class="h6 ps-0 pb-0"><i>Surname:</i></p>
               <input class="ps-1 h5" type="text" id="surname" v-model="user.surname" placeholder="E.g. Volas">
             </div>
-            <div class="row mb-3" v-bind:style="{color: isEmailPresent ? '#3f5b25':'red'}">
+            <div class="row mb-3" v-bind:style="{color: isEmailPresent || isEmailPresent === null ? '#3f5b25':'red'}">
               <p class="h6 ps-0 pb-0"><i>E-mail:</i></p>
               <input class="ps-1 h5" type="email" id="email" v-model="user.email" placeholder="E.g. john@gmail.com">
             </div>
@@ -166,12 +166,39 @@ export default {
         }
       })
       .then(() => {
+        let message = "Registration request sent successfully. ";
+        if(this.userType === "Client") message += "Confirmation email has been sent to " + this.email;
+        else message += "Your request is pending. Keep checking your email for a response."
         this.$notify( {
           title: "Sign up",
-          text: "Request successfully sent.",
+          text: message,
           position: "bottom right",
-          type: "success"
+          type: "error"
         });
+      })
+      .catch(error => {
+        if (error.response.status === 422) {
+          this.$notify({
+            title: "Invalid email",
+            text: "User with email " + this.email + " already exists. Please enter a different email.",
+            position: "bottom right",
+            type: "warn"
+          })
+        } else if (error.response.status === 400) {
+          this.$notify({
+            title: "Invalid Request Status",
+            text: "Bad registration request.",
+            position: "bottom right",
+            type: "warn"
+          })
+        } else if (error.response.status === 500) {
+          this.$notify({
+            title: "Internal Server Error",
+            text: "Something went wrong on the server! Please try again later...",
+            position: "bottom right",
+            type: "error"
+          })
+        }
       })
     },
     isInputPresent() {
@@ -179,7 +206,7 @@ export default {
       this.isSurnamePresent = Boolean(this.user.surname);
       this.isEmailPresent = Boolean(this.user.email);
       this.isReasonPresent = !(!this.user.reason && this.user.userType !== "Client" && this.user.userType !== "Admin");
-      this.allInputsPresent = !!(this.isNamePresent && this.isSurnamePresent && this.isEmailPresent && this.isReasonPresent);
+      this.allInputsPresent = this.isNamePresent && this.isSurnamePresent && this.isEmailPresent && this.isReasonPresent;
     },
     validatePhone() {
       this.isPhoneValid = this.user.phoneNumber !== null;
@@ -237,7 +264,7 @@ export default {
 </script>
 
 <style scoped>
-  .container-fluid {
+  .container {
     outline: solid 2px #3f5b25;
     margin-top: 10px;
     color: #3f5b25;
@@ -246,8 +273,8 @@ export default {
   textarea {
     padding: 5px 10px;
     resize: none;
-    background-color: #378220;
-    color: #f7f7f2;
+    background-color: rgb(55, 130, 32, 0.2);
+    color: black;
     outline: none;
     width: 100%;
     border-radius: 5px;
@@ -256,7 +283,7 @@ export default {
   }
 
   textarea::placeholder{
-    color: white;
+    color: black;
     font-style: italic;
   }
 

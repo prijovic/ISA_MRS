@@ -64,13 +64,13 @@
 <script>
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import { library } from "@fortawesome/fontawesome-svg-core";
-import { faPaperPlane, faAngleRight, faAngleDoubleRight, faAngleLeft, faAngleDoubleLeft, faFrown } from "@fortawesome/free-solid-svg-icons";
+import { faAngleRight, faAngleDoubleRight, faAngleLeft, faAngleDoubleLeft, faFrown } from "@fortawesome/free-solid-svg-icons";
 import AdminRequestPreview
   from "@/components/Administrator/AdminPage/components/AdminMainViews/AdminRequestsView/AdminRequestPreview/AdminRequestPreview";
 import axios from "axios/index";
 import { useStore } from "vuex"
 
-library.add(faPaperPlane, faAngleRight, faAngleLeft, faFrown, faAngleDoubleRight, faAngleDoubleLeft);
+library.add(faAngleRight, faAngleLeft, faFrown, faAngleDoubleRight, faAngleDoubleLeft);
 
 export default {
   name: "AdminRequestsView",

@@ -1,6 +1,6 @@
 <template>
   <div class="sidebar rounded-right" :style="{width:sidebarWidth}">
-    <MenuLink to="/#" icon="dashboard">Dashboard</MenuLink>
+    <MenuLink to="/admin" icon="dashboard">Dashboard</MenuLink>
     <MenuLink to="/admin/requests" icon="envelope">Requests</MenuLink>
     <MenuLink to="/#" icon="users">Users</MenuLink>
     <MenuLink to="/#" icon="mountain-sun">Adventures</MenuLink>
