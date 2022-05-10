@@ -1,5 +1,5 @@
 <template>
-  <div class="container-fluid px-4 py-3 rounded" spellcheck="false" >
+  <div class="container px-4 py-3 rounded" spellcheck="false" >
     <div class="row main">
       <div class="col main pt-3">
         <div class="row">
@@ -276,7 +276,7 @@ export default {
 </script>
 
 <style scoped>
-  .container-fluid {
+  .container {
     outline: solid 2px #3f5b25;
     margin-top: 10px;
     color: #3f5b25;
@@ -285,8 +285,8 @@ export default {
   textarea {
     padding: 5px 10px;
     resize: none;
-    background-color: #378220;
-    color: #f7f7f2;
+    background-color: rgb(55, 130, 32, 0.2);
+    color: black;
     outline: none;
     width: 100%;
     border-radius: 5px;
@@ -295,7 +295,7 @@ export default {
   }
 
   textarea::placeholder{
-    color: white;
+    color: black;
     font-style: italic;
   }
 
