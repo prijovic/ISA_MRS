@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 
 @Data
 public class TimePeriodDto implements Serializable {
-    private final Long id;
-    private final LocalDateTime initDate;
-    private final LocalDateTime termDate;
+    private Long id;
+    private LocalDateTime initDate;
+    private LocalDateTime termDate;
 }

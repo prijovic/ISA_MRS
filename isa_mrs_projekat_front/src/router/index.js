@@ -12,11 +12,19 @@ import OwnerContentPage from "@/components/VacationRentalOwner/VacationRentalOwn
 import TheOwnerSidebar from "@/components/VacationRentalOwner/VacationRentalOwnerPage/components/TheOwnerSidebar/TheOwnerSidebar";
 import BoatOwnerContentPage from "@/components/BoatOwner/BoatOwnerPage/components/BoatOwnerMainView/BoatOwnerContentPage";
 import TheBoatOwnerSidebar from "@/components/BoatOwner/BoatOwnerPage/components/TheBoatOwnerSidebar/TheBoatOwnerSidebar";
-
 import AdminRequestsView from "@/components/Administrator/AdminPage/components/AdminMainViews/AdminRequestsView/AdminRequestsView";
 import InitView from "@/components/UnregisteredUser/InitView";
-import CardView from "@/components/UnregisteredUser/components/CardView";
 import RegistrationPage from "@/components/UnregisteredUser/components/RegistrationPage";
+import IncomeRateChangeForm
+    from "@/components/Administrator/AdminPage/components/AdminMainViews/AdminIncomeIncomeRateComponents/IncomeRateChangeForm";
+import FishingInstructorAdventuresView
+    from "@/components/FishingInstructor/FishingInstructorPage/components/InstructorMainViews/InstructorAllAdventuresView/InstructorAllAdventuresView";
+import FishingInstructorAdventureProfileView
+    from "@/components/FishingInstructor/FishingInstructorPage/components/InstructorMainViews/InstructorAllAdventuresView/InstructorAdventureProfile/InstructorAdventureProfile";
+import CardMenu from "@/components/UnregisteredUser/components/CardMenu";
+import ClientMainView from "@/components/Client/ClientPage/components/ClientMainView";
+import ClientSidebar from "@/components/Client/ClientPage/components/ClientSidebar/ClientSidebar";
+import RentalProfile from "@/components/UnregisteredUser/components/RentalProfile";
 
 
 const routes = [
@@ -59,7 +67,7 @@ const routes = [
         path: "/vacationRentals",
         name: "VacationRentals",
         components: {
-            default: CardView,
+            default: CardMenu,
             sidebar: TheUnregisteredUserSidebar,
         },
         meta: {
@@ -112,10 +120,76 @@ const routes = [
         }
     },
     {
+        path: "/admin/incomeRates",
+        name: "AdminIncomeRates",
+        components: {
+            default: IncomeRateChangeForm,
+            sidebar: TheAdminSidebar,
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
         path: "/fishingInstructor",
         name: "FishingInstructorHome",
         components: {
             default: FishingInstructorPage,
+            sidebar: TheFishingInstructorSidebar
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
+        path: "/fishingInstructor/changePass",
+        name: "FishingInstructorPassword",
+        components: {
+            default: PasswordChangeForm,
+            sidebar: TheFishingInstructorSidebar,
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
+        path: "/fishingInstructor/delAcc",
+        name: "FishingInstructorDeletion",
+        components: {
+            default: AccountDeletionForm,
+            sidebar: TheFishingInstructorSidebar,
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
+        path: "/fishingInstructor/profile",
+        name: "FishingInstructorView",
+        components: {
+            default: ProfileView,
+            sidebar: TheFishingInstructorSidebar,
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
+        path: "/fishingInstructor/adventures",
+        name: "FishingInstructorAdventures",
+        components: {
+            default: FishingInstructorAdventuresView,
+            sidebar: TheFishingInstructorSidebar
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
+        path: "/fishingInstructor/adventure",
+        name: "FishingInstructorAdventure",
+        components: {
+            default: FishingInstructorAdventureProfileView,
             sidebar: TheFishingInstructorSidebar
         },
         meta: {
@@ -187,9 +261,64 @@ const routes = [
         meta: {
             public: false
         }
+    },
+    {
+        path: "/client",
+        name: "Client",
+        components: {
+            default: ClientMainView,
+            sidebar: ClientSidebar,
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
+        path: "/client/vacationRentals",
+        name: "ClientVacationRentals",
+        components: {
+            default: CardMenu,
+            sidebar: ClientSidebar,
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
+        path: "/client/boats",
+        name: "ClientBoats",
+        components: {
+            default: CardMenu,
+            sidebar: ClientSidebar,
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
+        path: "/client/adventures",
+        name: "ClientAdventures",
+        components: {
+            default: CardMenu,
+            sidebar: ClientSidebar,
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
+        path: "/client/RentalProfile",
+        name: "RentalProfile",
+        components: {
+            default: RentalProfile,
+            sidebar: ClientSidebar,
+        },
+        meta: {
+            public: false
+        },
     }
-];
 
+];
 
 const router = createRouter({
     history: createWebHistory(process.env.BASE_URL),

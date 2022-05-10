@@ -20,10 +20,8 @@ import static rs.ac.uns.ftn.siit.isa_mrs.util.Paths.PHOTO_CONTROLLER;
 public class PhotoController {
     private final PhotoService photoService;
 
-    @GetMapping(value = "/{id}", produces = MediaType.IMAGE_JPEG_VALUE)
-    public ResponseEntity<FileSystemResource> getPhoto(@PathVariable String id) {
+    @GetMapping(value = "/{id}")
+    public ResponseEntity<byte[]> getPhoto(@PathVariable String id) {
         return photoService.getPhoto(id);
     }
-
-
 }

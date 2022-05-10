@@ -1,30 +1,42 @@
 <template>
-  <div>
-    <font-awesome-icon class="d-inline-block" icon="spinner" style="color: gray; height: 30px"></font-awesome-icon>
-    <h2 class="d-inline-block">Building...</h2>
-    <AvailabilityPeriodSelector></AvailabilityPeriodSelector>
+  <div class="row">
+    <div class="col-1"></div>
+    <div class="col-10">
+      <div class="row">
+        <div class="container rounded">
+          <p>GRAPH</p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-3">
+          <income-rate-view></income-rate-view>
+        </div>
+        <div class="col-9">
+          <div class="container rounded">
+            <p>USER CATEGORIES</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-1"></div>
   </div>
 </template>
 
 <script>
-import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
-import { library } from "@fortawesome/fontawesome-svg-core";
-import { faSpinner } from "@fortawesome/free-solid-svg-icons";
-import AvailabilityPeriodSelector from "@/components/RentalObjectOwner/components/AvailabilityPeriodSelector";
 
-library.add(faSpinner);
-
+import IncomeRateView
+  from "@/components/Administrator/AdminPage/components/AdminMainViews/AdminIncomeIncomeRateComponents/IncomeRateView";
 export default {
   name: "AdminContentPage",
-  components: {
-    AvailabilityPeriodSelector,
-    FontAwesomeIcon
-  }
+  components: {IncomeRateView},
 }
+
 </script>
 
 <style scoped>
-h2 {
-  color: gray;
+.container {
+  outline: solid 2px #3f5b25;
+  margin-top: 10px;
+  color: #3f5b25;
 }
 </style>

@@ -60,6 +60,9 @@ export default {
       } else if (response.data.user_type === "BoatOwner"){
         this.$store.dispatch("user", "boatOwner");
         await this.$router.push("/boatOwner");
+      } else if (response.data.user_type === "Client") {
+        this.$store.dispatch("user", "client");
+        await this.$router.push("/client");
       }
     }
   }

@@ -1,7 +1,7 @@
 <template>
   <div class="sidebar rounded-right" :style="{width:sidebarWidth}">
     <MenuLink to="/#" icon="home">Home</MenuLink>
-    <MenuLink to="/#" icon="mountain-sun">Adventures</MenuLink>
+    <MenuLink to="/fishingInstructor/adventures" icon="mountain-sun">Adventures</MenuLink>
     <MenuLink to="/#" icon="book">Reservation History</MenuLink>
     <MenuLink to="/#" icon="calendar">Calendar</MenuLink>
     <span class="collapse-icon" :class="{'rotate-180': collapsed}" @click="toggleSidebar">

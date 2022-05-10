@@ -10,7 +10,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.PageDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.VacationRentalDto;
 import rs.ac.uns.ftn.siit.isa_mrs.model.VacationRental;
@@ -23,18 +22,22 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
 @Slf4j
 public class VacationRentalServiceImpl implements VacationRentalService{
 
     private final VacationRentalRepo vacationRentalRepo;
     private final ModelMapper modelMapper;
 
-
     @Override
-    public Optional<VacationRental> getVacationRental(Long id) {
-        log.info("Getting vacation rental by id {}.", id);
-        return vacationRentalRepo.findById(id);
+    public ResponseEntity<VacationRentalDto> getVacationRental(Long id) {
+        try{
+            Optional<VacationRental> rental = vacationRentalRepo.findById(id);
+            return rental.map(vacationRental -> new ResponseEntity<>(modelMapper.map(vacationRental, VacationRentalDto.class), HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        }
+        catch (Exception e) {
+            log.error(e.getMessage());
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @Override
@@ -44,10 +47,11 @@ public class VacationRentalServiceImpl implements VacationRentalService{
         try{
             Pageable pageable = PageRequest.of(offset, pageSize).withSort(Sort.by(field));
             Page<VacationRental> vacationRentalsPage = vacationRentalRepo
-                    .findByRentalObjectType(RentalObjectType.VacationRental, pageable);
+                    .findAllByRentalObjectType(RentalObjectType.VacationRental, pageable);
             Collection<VacationRentalDto> vacationRentalDtos = new ArrayList<>();
-            vacationRentalsPage.getContent().forEach(vacationRental -> vacationRentalDtos
-                    .add(modelMapper.map(vacationRental, VacationRentalDto.class)));
+            vacationRentalsPage.getContent().forEach(vacationRental -> {
+                vacationRentalDtos.add(modelMapper.map(vacationRental, VacationRentalDto.class));
+            });
             result.setContent(vacationRentalDtos);
             result.setPages(vacationRentalsPage.getTotalPages());
             result.setCurrentPage(vacationRentalsPage.getNumber() + 1);

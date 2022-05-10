@@ -4,5 +4,5 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.ResponseEntity;
 
 public interface PhotoService {
-    ResponseEntity<FileSystemResource> getPhoto(String photo);
+    ResponseEntity<byte[]> getPhoto(String photo);
 }
