@@ -95,6 +95,7 @@ public class RentalObjectController {
 
     @PostMapping(ADD_VACATION_RENTAL)
     public ResponseEntity<VacationRentalDto> addVacationRental(@RequestBody AddVacationRentalDto avrd){
+        log.info("Kontroler");
         return vacationRentalService.addNewVacationRental(avrd);
     }
 

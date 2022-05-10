@@ -6,10 +6,10 @@ import java.io.Serializable;
 
 @Data
 public class AddressDto implements Serializable {
-    private final String country;
-    private final String city;
-    private final String street;
-    private final Integer number;
-    private final Double latitude;
-    private final Double longitude;
+    private String country;
+    private String city;
+    private String street;
+    private Integer number;
+    private Double latitude;
+    private Double longitude;
 }

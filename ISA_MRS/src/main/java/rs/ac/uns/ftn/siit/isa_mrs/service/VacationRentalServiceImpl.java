@@ -77,7 +77,11 @@ public class VacationRentalServiceImpl implements VacationRentalService{
 
     @Override
     public ResponseEntity<VacationRentalDto> addNewVacationRental(AddVacationRentalDto vrd) {
+        log.info("Uslo u kontroler");
+        log.info(vrd.getName());
+        log.info(vrd.getOwnerEmail());
         Optional<RentalObjectOwner> owner = ownerRepo.findByEmail(vrd.getOwnerEmail());
+        log.info(String.valueOf(owner));
         if (owner.isEmpty()){
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
@@ -92,6 +96,7 @@ public class VacationRentalServiceImpl implements VacationRentalService{
                 address.setLatitude(vrd.getAddress().getLatitude());
                 address.setLongitude(vrd.getAddress().getLongitude());
                 addressRepo.save(address);
+                log.info("Adresa napravljena");
 
                 CancellationFee cancellationFee = new CancellationFee();
                 cancellationFee.setFeeType(vrd.getCancellationFee().getFeeType());
@@ -116,6 +121,7 @@ public class VacationRentalServiceImpl implements VacationRentalService{
                     additionalServiceRepo.save(additionalService);
                     additionalServices.add(additionalService);
                 }
+                log.info("Dodatne usluge napravljene");
                 vacationRental.setAdditionalServices(additionalServices);
 
                 Collection<ConductRule> conductRules = new ArrayList<>();
@@ -136,7 +142,7 @@ public class VacationRentalServiceImpl implements VacationRentalService{
                     rooms.add(room);
                 }
                 vacationRental.setRooms(rooms);
-
+                log.info("Dodate sobe");
                 Collection<Photo> photos = new ArrayList<>();
                 for(var item : vrd.getPhotos()){
                     Photo photo = new Photo();

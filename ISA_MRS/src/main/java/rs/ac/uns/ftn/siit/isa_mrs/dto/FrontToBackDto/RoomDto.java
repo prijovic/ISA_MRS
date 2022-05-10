@@ -6,5 +6,5 @@ import java.io.Serializable;
 
 @Data
 public class RoomDto implements Serializable {
-    private final Integer beds;
+    private Integer beds;
 }

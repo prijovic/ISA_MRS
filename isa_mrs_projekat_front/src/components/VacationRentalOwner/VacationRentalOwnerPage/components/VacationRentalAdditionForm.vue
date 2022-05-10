@@ -73,10 +73,10 @@
               <div class="modal-body">
                 <div class="row mb-1" v-for="(additionalService, k) in vacationRental.additionalServices" :key="k">
                   <div class="col">
-                    <input type="text" id="additionalServiceName" v-model="additionalService.name" placeholder="Input name">
+                    <input type="text" id="additionalServiceName" v-model="additionalService.serviceName" placeholder="Input name">
                   </div>
                   <div class="col">
-                    <input type="number" id="additionalServicePrice" v-model="additionalService.price" placeholder="Input price">
+                    <input type="number" id="additionalServicePrice" v-model="additionalService.servicePrice" placeholder="Input price">
                   </div>
                   <div class="col">
                     <span>
@@ -180,23 +180,17 @@ export default {
     return{
       vacationRental: {
         name: null,
-        ownerEmail: store.state.email,
+        ownerEmail: null,
         description: null,
         photos: [],
         capacity: null,
         price: null,
-        additionalServices: [
-          {
-            name: null,
-            price: null
-          }
-        ],
-        conductRules: [
-          {
-            rule: null,
-            conductType: null
-          }
-        ],
+        serviceName: null,
+        servicePrice:null,
+        additionalServices: [],
+        rule: null,
+        conductType: null,
+        conductRules: [],
         cancellationFee: {
           feeType: null,
           value: null
@@ -209,11 +203,8 @@ export default {
           latitude: null,
           longitude: null
         },
-        rooms: [
-          {
-            beds: null
-          }
-        ]
+        beds: null,
+        rooms: []
       },
       isAddressValid: null,
       isNamePresent: null,
@@ -221,13 +212,38 @@ export default {
       allInputsPresent:null
     }
   },
+  mounted() {
+    this.vacationRental.ownerEmail = store.state.email
+  },
   methods: {
     addVacationRental(){
-      axios.post("/VacationRentals/addVacationRental", {
-        vacationRental: this.vacationRental
-      }, {
+      console.log(this.vacationRental.ownerEmail);
+      axios.post("/RentalObjects/addVacationRental", null, {
         headers: {
           Authorization: "Bearer " + this.accessToken
+        },
+        params: {
+          name: this.name,
+          ownerEmail: this.ownerEmail,
+          description: this.description,
+          photos: this.photos,
+          capacity: this.capacity,
+          price: this.price,
+          additionalServices: this.additionalServices,
+          conductRules: this.conductRules,
+          cancellationFee: {
+            feeType: this.feeType,
+            value: this.value
+          },
+          address: {
+            country: this.country,
+            city: this.city,
+            street: this.street,
+            number: this.number,
+            latitude: this.latitude,
+            longitude: this.longitude
+          },
+          rooms: this.rooms
         }
       })
       .then(() => {
@@ -261,19 +277,19 @@ export default {
       })
     },
     addService() {
-      this.vacationRental.additionalServices.push({ name: null, price: null });
+      this.vacationRental.additionalServices.push({ name: this.serviceName, price: this.servicePrice });
     },
     removeService(index) {
       this.vacationRental.additionalServices.splice(index, 1);
     },
     addRule() {
-      this.vacationRental.conductRules.push({ rule: null, conductType: null });
+      this.vacationRental.conductRules.push({ rule: this.rule, conductType: this.conductType });
     },
     removeRule(index) {
       this.vacationRental.conductRules.splice(index, 1);
     },
     addRooms() {
-      this.vacationRental.rooms.push({ beds: null });
+      this.vacationRental.rooms.push({ beds: this.beds });
     },
     removeRooms(index) {
       this.vacationRental.rooms.splice(index, 1);
