@@ -180,22 +180,11 @@ export default {
     return{
       vacationRental: {
         name: null,
-        address: {
-          street: null,
-          number: null,
-          city: null,
-          country: null,
-          latitude: null,
-          longitude: null
-        },
+        ownerEmail: store.state.email,
         description: null,
         photos: [],
         capacity: null,
         price: null,
-        cancellationFee: {
-            feeType: null,
-            value: null
-        },
         additionalServices: [
           {
             name: null,
@@ -208,6 +197,18 @@ export default {
             conductType: null
           }
         ],
+        cancellationFee: {
+          feeType: null,
+          value: null
+        },
+        address: {
+          street: null,
+          number: null,
+          city: null,
+          country: null,
+          latitude: null,
+          longitude: null
+        },
         rooms: [
           {
             beds: null
@@ -222,8 +223,7 @@ export default {
   },
   methods: {
     addVacationRental(){
-      axios.post("/VacationRentals/add", {
-        email: this.email,
+      axios.post("/VacationRentals/addVacationRental", {
         vacationRental: this.vacationRental
       }, {
         headers: {
@@ -325,9 +325,6 @@ export default {
   computed: {
     accessToken(){
       return store.state.access_token;
-    },
-    email(){
-      return store.state.email;
     }
   }
 }

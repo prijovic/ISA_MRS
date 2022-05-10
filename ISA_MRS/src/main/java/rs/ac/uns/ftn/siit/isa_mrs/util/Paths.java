@@ -14,6 +14,7 @@ public class Paths {
     public static final String INCOME_FEES = "/fees";
     public static final String GET_VACATION_RENTAL = "/getVacationRental";
     public static final String GET_VACATION_RENTALS = "/getVacationRentals";
+    public static final String ADD_VACATION_RENTAL = "/addVacationRental";
     public static final String GET_BOAT = "/getBoat";
     public static final String GET_BOATS = "/getBoats";
     public static final String GET_ADVENTURE = "/getAdventure";

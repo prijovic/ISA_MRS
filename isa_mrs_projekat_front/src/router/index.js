@@ -204,7 +204,7 @@ const routes = [
             sidebar: TheOwnerSidebar,
         },
         meta: {
-            public: true
+            public: false
         }
     },
     {
