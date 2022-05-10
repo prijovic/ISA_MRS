@@ -165,7 +165,7 @@ public class RequestServiceImpl implements RequestService {
     public ResponseEntity<RequestDto> createSignUpRequest(SignUpDto sud) {
         Optional<User> user = userRepo.findByEmail(sud.getEmail());
         if (user.isPresent()){
-            return new ResponseEntity<>(null, HttpStatus.UNPROCESSABLE_ENTITY);
+            return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
         }
         else {
             try {
@@ -177,35 +177,34 @@ public class RequestServiceImpl implements RequestService {
                 address.setLatitude(sud.getAddress().getLatitude());
                 address.setLongitude(sud.getAddress().getLongitude());
                 addressRepo.save(address);
-
                 if(sud.getUserType() == UserType.Client) {
                     Client client = new Client();
                     client.setUserType(sud.getUserType());
                     client.setName(sud.getName());
                     client.setSurname(sud.getSurname());
+                    client.setPassword(passwordEncoder.encode(sud.getPassword()));
                     client.setEmail(sud.getEmail());
                     client.setPhone(sud.getPhoneNumber());
                     client.setPhoto(sud.getPhoto());
-                    client.setActive(false);
                     client.setAddress(address);
+                    client.setActive(true);
                     client.setPoints(0);
                     clientRepo.save(client);
-                    // send email
-                    return new ResponseEntity<>(null, HttpStatus.OK);
+                    emailSenderService.sendSuccessfulRegistrationEmail(client.getEmail());
+                    return new ResponseEntity<>(HttpStatus.OK);
                 }
-
                 Request request = new Request();
                 request.setStatus(RequestStatus.Pending);
                 request.setReason(sud.getReason());
                 request.setType(RequestType.SignUp);
                 request.setTimeStamp(LocalDateTime.now());
-
                 if(sud.getUserType() == UserType.Admin) {
                     Admin admin = new Admin();
                     admin.setUserType(sud.getUserType());
                     admin.setName(sud.getName());
                     admin.setSurname(sud.getSurname());
                     admin.setEmail(sud.getEmail());
+                    admin.setPassword(passwordEncoder.encode(sud.getPassword()));
                     admin.setPhone(sud.getPhoneNumber());
                     admin.setPhoto(sud.getPhoto());
                     admin.setActive(false);
@@ -213,7 +212,6 @@ public class RequestServiceImpl implements RequestService {
                     adminRepo.save(admin);
                     request.setUser(admin);
                     requestRepo.save(request);
-                    admin.setRequest(request);
                     // send email
                 }
                 else {
@@ -222,6 +220,7 @@ public class RequestServiceImpl implements RequestService {
                     owner.setName(sud.getName());
                     owner.setSurname(sud.getSurname());
                     owner.setEmail(sud.getEmail());
+                    owner.setPassword(passwordEncoder.encode(sud.getPassword()));
                     owner.setPhone(sud.getPhoneNumber());
                     owner.setPhoto(sud.getPhoto());
                     owner.setActive(false);
@@ -230,18 +229,13 @@ public class RequestServiceImpl implements RequestService {
                     rentalOwnerRepo.save(owner);
                     request.setUser(owner);
                     requestRepo.save(request);
-                    owner.setRequest(request);
                 }
-
                 RequestDto requestDto = modelMapper.map(request, RequestDto.class);
                 return new ResponseEntity<>(requestDto, HttpStatus.OK);
-
-
-
             } catch (IllegalArgumentException e) {
-                return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             } catch (Exception e) {
-                return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
     }

@@ -84,6 +84,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public void addFakeUser() {
+        User user = new User();
+        user.setUserType(UserType.Client);
+        user.setActive(true);
+        user.setEmail("a");
+        user.setPassword(passwordEncoder.encode("a"));
+        userRepo.save(user);
+    }
+
+    @Override
     public ResponseEntity<UserDto> addNewUser(User user) {
         try {
             if (user.getUserType().equals(UserType.Admin)) {

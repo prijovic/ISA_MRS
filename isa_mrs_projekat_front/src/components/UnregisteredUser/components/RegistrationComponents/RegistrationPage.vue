@@ -45,7 +45,7 @@
       <div class="col main pt-3">
         <div class="row main">
           <div class="col-2 main"></div>
-          <div class="col-6 main" v-bind:style="{color:!(isAddressValid || isAddressValid===null)?'red':'#3f5b25'}">
+          <div class="col-6 main" v-bind:style="{color:!(isAddressValid===null)?'red':'#3f5b25'}">
             <div class="row">
               <p class="h1 p-0"><font-awesome-icon icon="house"></font-awesome-icon> Address</p>
             </div>
@@ -79,7 +79,7 @@
       <div class="col-4 main"></div>
       <div class="col-4 main px-5">
         <div class="row">
-          <button type="button" @click="validateInputs" class="btn">Sign Up</button>
+          <button type="button" @click="validateInputs" class="btn">Next</button>
         </div>
       </div>
       <div class="col-4 main"></div>
@@ -94,7 +94,7 @@ import { faHouse } from "@fortawesome/free-solid-svg-icons";
 import { VueTelInput }  from 'vue3-tel-input';
 import 'vue3-tel-input/dist/vue3-tel-input.css'
 import store from "@/store";
-import axios from "axios";
+import {useStore} from "vuex";
 
 library.add(faHouse)
 
@@ -103,6 +103,20 @@ export default {
   components: {
     VueTelInput,
     FontAwesomeIcon
+  },
+  mounted() {
+    const store = useStore();
+    const data = store.getters.userDataSignUp;
+    if (data !== null) {
+      this.user = data;
+      this.isAddressValid = null;
+      this.isPhoneValid = null;
+      this.isNamePresent = null;
+      this.isSurnamePresent = null;
+      this.isEmailPresent = false;
+      this.isReasonPresent = null;
+      this.allInputsPresent = null;
+    }
   },
   data() {
     return {
@@ -115,6 +129,7 @@ export default {
         surname: null,
         phoneNumber: null,
         email: null,
+        password: null,
         photo: null,
         reason: null,
         address: {
@@ -140,66 +155,10 @@ export default {
       this.validateAddress();
       this.validatePhone();
       this.isInputPresent();
-      if(this.allInputsPresent && this.isAddressValid && this.isPhoneValid) this.submit();
-    },
-    submit() {
-      axios.post("/Requests/signUp", null, {
-        headers: {
-          Authorization: "Bearer " + this.accessToken,
-        },
-        params: {
-          userType: this.user.userType,
-          name: this.user.name,
-          surname: this.user.surname,
-          phoneNumber: this.user.phoneNumber,
-          email: this.user.email,
-          photo: this.user.photo,
-          reason: this.user.reason,
-          address: {
-            country: this.user.address.country,
-            city: this.user.address.city,
-            street: this.user.address.street,
-            number: this.user.address.number,
-            latitude: this.user.address.latitude,
-            longitude: this.user.address.longitude
-          }
-        }
-      })
-      .then(() => {
-        let message = "Registration request sent successfully. ";
-        if(this.userType === "Client") message += "Confirmation email has been sent to " + this.email;
-        else message += "Your request is pending. Keep checking your email for a response."
-        this.$notify( {
-          title: "Sign up",
-          text: message,
-          position: "bottom right",
-          type: "error"
-        });
-      })
-      .catch(error => {
-        if (error.response.status === 422) {
-          this.$notify({
-            title: "Invalid email",
-            text: "User with email " + this.email + " already exists. Please enter a different email.",
-            position: "bottom right",
-            type: "warn"
-          })
-        } else if (error.response.status === 400) {
-          this.$notify({
-            title: "Invalid Request Status",
-            text: "Bad registration request.",
-            position: "bottom right",
-            type: "warn"
-          })
-        } else if (error.response.status === 500) {
-          this.$notify({
-            title: "Internal Server Error",
-            text: "Something went wrong on the server! Please try again later...",
-            position: "bottom right",
-            type: "error"
-          })
-        }
-      })
+      if (this.allInputsPresent && this.isAddressValid && this.isPhoneValid) {
+        this.$store.dispatch("userDataSignUp", this.user);
+        this.$router.push("/registration/password");
+      }
     },
     isInputPresent() {
       this.isNamePresent = Boolean(this.user.name);
@@ -258,6 +217,9 @@ export default {
     },
     isRentalObjectOwner() {
       return (this.user.userType !== "Client" && this.user.userType !== "Admin");
+    },
+    validInputs() {
+      return this.validInputs();
     }
   }
 }

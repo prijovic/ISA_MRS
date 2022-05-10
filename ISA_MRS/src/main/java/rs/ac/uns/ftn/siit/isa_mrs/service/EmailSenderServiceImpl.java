@@ -14,6 +14,7 @@ import rs.ac.uns.ftn.siit.isa_mrs.model.Request;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 @Slf4j
@@ -31,6 +32,19 @@ public class EmailSenderServiceImpl implements EmailSenderService{
         MimeMessageHelper messageHelper = new MimeMessageHelper(message, MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED);
         Template template = configuration.getTemplate("request-handled-email.ftl");
         String html = FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
+        messageHelper.setTo(email);
+        messageHelper.setText(html, true);
+        messageHelper.setSubject(subject);
+        mailSender.send(message);
+    }
+
+    @Override
+    public void sendSuccessfulRegistrationEmail(String email) throws MessagingException, IOException, TemplateException {
+        final String subject = "Rental Service Registration Status";
+        MimeMessage message = mailSender.createMimeMessage();
+        MimeMessageHelper messageHelper = new MimeMessageHelper(message, MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED);
+        Template template = configuration.getTemplate("successful-registration-email.ftl");
+        String html = FreeMarkerTemplateUtils.processTemplateIntoString(template, new HashMap<>());
         messageHelper.setTo(email);
         messageHelper.setText(html, true);
         messageHelper.setSubject(subject);

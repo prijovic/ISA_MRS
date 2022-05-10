@@ -60,11 +60,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .addFilter(customAuthenticationFilter)
-                .addFilterAfter(customAuthorizationFilter, CustomAuthenticationFilter.class)
                 .authorizeRequests()
                 .antMatchers(LOGIN).permitAll()
                 .antMatchers(HttpMethod.POST,REQUEST_CONTROLLER + SIGN_UP).permitAll()
-                .anyRequest().authenticated();
+                .anyRequest().authenticated()
+                .and()
+                .addFilterAfter(customAuthorizationFilter, CustomAuthenticationFilter.class);
     }
 
     @Bean

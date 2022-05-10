@@ -9,4 +9,5 @@ import java.util.Map;
 
 public interface EmailSenderService {
     void sendRequestHandledEmail(Request request, Map<String, Object> model) throws MessagingException, IOException, TemplateException;
+    void sendSuccessfulRegistrationEmail(String email) throws MessagingException, IOException, TemplateException;
 }

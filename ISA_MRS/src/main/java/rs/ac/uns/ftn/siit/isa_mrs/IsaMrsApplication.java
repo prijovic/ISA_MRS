@@ -36,10 +36,10 @@ public class IsaMrsApplication {
         SpringApplication.run(IsaMrsApplication.class, args);
     }
 
-//    @Bean
-//    CommandLineRunner run(UserService userService) {
-//        return args -> {
-//            userService.encryptUsersPasswords();
-//        };
-//    }
+    @Bean
+    CommandLineRunner run(UserService userService) {
+        return args -> {
+            userService.addFakeUser();
+        };
+    }
 }

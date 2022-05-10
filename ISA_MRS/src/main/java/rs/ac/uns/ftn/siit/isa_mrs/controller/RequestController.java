@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.SignUpDto;
@@ -47,7 +48,7 @@ public class RequestController {
         return requestService.createRequest(requestForm.getEmail(), requestForm.getPassword(), requestForm.getEnteredRequest(), requestForm.getRequestType());
     }
 
-    @PostMapping(SIGN_UP)
+    @PostMapping(value = SIGN_UP)
     public ResponseEntity<RequestDto> createSignUpRequest(@RequestBody SignUpDto sud) {
         return requestService.createSignUpRequest(sud);
     }
