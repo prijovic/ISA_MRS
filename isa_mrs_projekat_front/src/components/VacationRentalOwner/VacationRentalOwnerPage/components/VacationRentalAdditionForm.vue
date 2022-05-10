@@ -1,13 +1,14 @@
 <template>
+  <div class="container-fluid px-4 py-3 rounded">
   <div class="col main pt-3">
     <div class="row">
       <div class="col-1 main"></div>
       <div class="col-4 main">
-        <div class="row mb-3">
+        <div class="row mb-3" v-bind:style="{color: isNamePresent ? '#3f5b25':'red'}">
           <p class="h6 ps-0 pb-0"><i>Name:</i></p>
           <input class="ps-1 h5" type="text" id="name" v-model="vacationRental.name" placeholder="Input name...">
         </div>
-        <div class="row">
+        <div class="row"  v-bind:style="{color:!(isAddressValid || isAddressValid===null)?'red':'#3f5b25'}">
           <p class="h4 p-0"><font-awesome-icon icon="house"></font-awesome-icon> Address</p>
         </div>
         <div class="row mb-3">
@@ -26,13 +27,13 @@
           <p class="h6 ps-0 pb-0"><i>Number:</i></p>
           <input class="ps-1 h5" type="number" id="number" v-model="vacationRental.address.number" placeholder="House Number">
         </div>
-        <div class="row mb-3">
+        <div class="row mb-3" v-bind:style="{color: isDescriptionPresent ? '#3f5b25':'red'}">
           <p class="h6 ps-0 pb-0"><i>Description:</i></p>
           <textarea class="ps-1 h5" maxlength="255" rows="3" v-model="vacationRental.description" placeholder="Input description..." style="resize: none"></textarea>
         </div>
         <div class="row mb-3">
           <p class="h6 ps-0 pb-0"><i>Photos:</i></p>
-          <input class="p-0 h5" type="file" name="photos" @change="onFileSelected" accept="image/jpeg" multiple="multiple"/>
+          <input class="p-0 h5" type="file" name="photos" accept="image/jpeg" multiple="multiple"/>
           <small class="p-0" style="color: grey;">Acceptable: jpg</small>
         </div>
       </div>
@@ -48,14 +49,14 @@
         </div>
         <div class="row mb-3">
           <p class="h6 ps-0 pb-0"><i>Cancellation fee:</i></p>
-          <div class="col-6">
+          <div class="col">
             <select class="form-control" v-model="vacationRental.cancellationFee.feeType" style="width: 100%">
               <option value="Free" selected="selected">Free</option>
               <option value="Fixed">Fixed</option>
               <option value="Percentile">Percentile</option>
             </select>
           </div>
-          <div class="col-6">
+          <div class="col">
             <input class="ps-1 h5" type="number" v-model="vacationRental.cancellationFee.value" placeholder="Input value...">
           </div>
         </div>
@@ -72,10 +73,10 @@
               <div class="modal-body">
                 <div class="row mb-1" v-for="(additionalService, k) in vacationRental.additionalServices" :key="k">
                   <div class="col">
-                    <input type="text" id="additionalServiceName" v-model="additionalService.name" placeholder="Name">
+                    <input type="text" id="additionalServiceName" v-model="additionalService.name" placeholder="Input name">
                   </div>
                   <div class="col">
-                    <input type="number" id="additionalServicePrice" v-model="additionalService.price" placeholder="Price">
+                    <input type="number" id="additionalServicePrice" v-model="additionalService.price" placeholder="Input price">
                   </div>
                   <div class="col">
                     <span>
@@ -90,73 +91,83 @@
           </div>
         </div>
         <div class="row mb-3">
-          <p class="h6 ps-0 pb-0"><i>Rules of conduct:</i></p>
-          <div class="col-6">
-            <button type="button" class="btn btn-default" data-bs-toggle="modal" style="width: 100%" data-bs-target="#staticBackdrop1">Allowed</button>
-          </div>
-          <div class="modal fade" id="staticBackdrop1" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="Label" aria-hidden="true">
-            <div class="modal-dialog">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <h5 class="modal-title" id="Label1" style="color: #3f5b25">Allowed rules of conduct</h5>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                  <div class="row mb-1" v-for="(conductRule, k) in vacationRental.allowedConductRules" :key="k">
-                    <input type="text" id="allowedRule" v-model="conductRule.rule" placeholder="Name">
-                    <div class="col">
+          <button type="button" class="btn btn-default" data-bs-toggle="modal" style="width: 100%" data-bs-target="#staticBackdrop1">Rules of conduct</button>
+        </div>
+        <div class="modal fade" id="staticBackdrop1" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="Label" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="Label1" style="color: #3f5b25">Rules of conduct</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <div class="row mb-1" v-for="(conductRule, k) in vacationRental.conductRules" :key="k">
+                  <div class="col">
+                    <input type="text" id="Rule" v-model="conductRule.rule" placeholder="Name">
+                  </div>
+                  <div class="col">
+                    <select class="form-control" v-model="conductRule.conductType" style="width: 100%">
+                      <option value="Do" selected="selected">Allowed</option>
+                      <option value="DoNot">Not allowed</option>
+                    </select>
+                  </div>
+                  <div class="col">
                     <span>
-                      <font-awesome-icon icon="minus-circle" @click="removeAllowedRule(k)" v-show="k || ( !k && vacationRental.allowedConductRules.length > 1)" style="color: red"></font-awesome-icon>
-                      <font-awesome-icon icon="plus-circle" @click="addAllowedRule()" v-show="k === vacationRental.allowedConductRules.length-1" style="color: #378220"></font-awesome-icon>
+                      <font-awesome-icon icon="minus-circle" @click="removeRule(k)" v-show="k || ( !k && vacationRental.conductRules.length > 1)" style="color: red"></font-awesome-icon>
+                      <font-awesome-icon icon="plus-circle" @click="addRule()" v-show="k === vacationRental.conductRules.length-1" style="color: #378220"></font-awesome-icon>
                     </span>
-                    </div>
                   </div>
                 </div>
-                <div class="modal-footer"></div>
               </div>
+              <div class="modal-footer"></div>
             </div>
           </div>
-          <div class="col-6">
-          <button type="button" class="btn btn-default" data-bs-toggle="modal" style="width: 100%" data-bs-target="#staticBackdrop2">Illicit</button>
-          </div>
-          <div class="modal fade" id="staticBackdrop2" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="Label" aria-hidden="true">
-            <div class="modal-dialog">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <h5 class="modal-title" id="Label2" style="color: #3f5b25">Illicit rules of conduct</h5>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                  <div class="row mb-1" v-for="(conductRule, k) in vacationRental.illicitConductRules" :key="k">
-                    <input type="text" id="rule" v-model="conductRule.rule" placeholder="Please enter a rule...">
-                    <div class="col">
+        </div>
+        <div class="row mb-3">
+          <button type="button" class="btn btn-default" data-bs-toggle="modal" data-bs-target="#staticBackdrop3">Beds per room</button>
+        </div>
+        <div class="modal fade" id="staticBackdrop3" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="Label" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="Label3" style="color: #3f5b25">Number of beds per room</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <div class="row mb-1" v-for="(room, k) in vacationRental.rooms" :key="k">
+                  <div class="col">
+                    <input type="number" id="bedsPerRoom" v-model="room.beds" placeholder="Enter number of beds...">
+                  </div>
+                  <div class="col">
                     <span>
-                      <font-awesome-icon icon="minus-circle" @click="removeIllicitRule(k)" v-show="k || ( !k && vacationRental.illicitConductRules.length > 1)" style="color: red"></font-awesome-icon>
-                      <font-awesome-icon icon="plus-circle" @click="addIllicitRule()" v-show="k === vacationRental.illicitConductRules.length-1" style="color: #378220"></font-awesome-icon>
+                      <font-awesome-icon icon="minus-circle" @click="removeRooms(k)" v-show="k || ( !k && vacationRental.rooms.length > 1)" style="color: red"></font-awesome-icon>
+                      <font-awesome-icon icon="plus-circle" @click="addRooms()" v-show="k === vacationRental.rooms.length-1" style="color: #378220"></font-awesome-icon>
                     </span>
-                    </div>
                   </div>
                 </div>
-                <div class="modal-footer"></div>
               </div>
+              <div class="modal-footer"></div>
             </div>
           </div>
         </div>
         <div class="row main pt-3">
-          <div class="col-4"></div>
-          <div class="col-6">
-            <button type="button" @click="validateInputs" class="btn">Add vacation rental</button>
+          <div class="col-3"></div>
+          <div class="col-8">
+            <button type="button" @click="validateInputs" class="btn btn-lg">Add vacation rental</button>
           </div>
         </div>
       </div>
     </div>
   </div>
+</div>
 </template>
 
 <script>
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faHouse, faMinusCircle, faPlusCircle } from "@fortawesome/free-solid-svg-icons";
+import axios from "axios/index";
+import store from "@/store";
 
 library.add(faHouse, faMinusCircle, faPlusCircle);
 
@@ -191,42 +202,91 @@ export default {
             price: null
           }
         ],
-        allowedConductRules: [
+        conductRules: [
           {
             rule: null,
-            type: 'Do'
+            conductType: null
           }
         ],
-        illicitConductRules: [
+        rooms: [
           {
-            rule: null,
-            type: 'DoNot'
+            beds: null
           }
         ]
-      }
+      },
+      isAddressValid: null,
+      isNamePresent: null,
+      isDescriptionPresent: null,
+      allInputsPresent:null
     }
   },
   methods: {
+    addVacationRental(){
+      axios.post("/VacationRentals/add", {
+        email: this.email,
+        vacationRental: this.vacationRental
+      }, {
+        headers: {
+          Authorization: "Bearer " + this.accessToken
+        }
+      })
+      .then(() => {
+        this.$notify({
+          title: "Adding vacation rental Notification",
+          text: "New vacation rental successfully added.",
+          position: "bottom right",
+          type: "success"
+        });
+      })
+      .catch((error) =>{
+        if(error.response.status===404){
+          this.$notify({
+            title: "User not found",
+            text: "User with the specified e-mail was not found!",
+            type: "warn"
+          })
+        } else if(error.response.status===400) {
+          this.$notify({
+            title: "Invalid Request Status",
+            text: "Request status does not have the right form!",
+            type: "warn"
+          })
+        } else if(error.response.status===500){
+          this.$notify({
+            title: "Internal Server Error",
+            text:"Something went wrong on the server! Please try again later.",
+            type: "error"
+          })
+        }
+      })
+    },
     addService() {
       this.vacationRental.additionalServices.push({ name: null, price: null });
     },
     removeService(index) {
       this.vacationRental.additionalServices.splice(index, 1);
     },
-    addAllowedRule() {
-      this.vacationRental.allowedConductRules.push({ rule: null, type: 'Do' });
+    addRule() {
+      this.vacationRental.conductRules.push({ rule: null, conductType: null });
     },
-    removeAllowedRule(index) {
-      this.vacationRental.allowedConductRules.splice(index, 1);
+    removeRule(index) {
+      this.vacationRental.conductRules.splice(index, 1);
     },
-    addIllicitRule() {
-      this.vacationRental.illicitConductRules.push({ rule: null, type: 'Do' });
+    addRooms() {
+      this.vacationRental.rooms.push({ beds: null });
     },
-    removeIllicitRule(index) {
-      this.vacationRental.illicitConductRules.splice(index, 1);
+    removeRooms(index) {
+      this.vacationRental.rooms.splice(index, 1);
     },
     validateInputs() {
       this.validateAddress();
+      this.isInputPresent();
+      if(this.allInputsPresent && this.isAddressValid) this.addVacationRental();
+    },
+    isInputPresent() {
+      this.isNamePresent = this.vacationRental.name;
+      this.isDescriptionPresent = this.vacationRental.description;
+      this.allInputsPresent = !!(this.isNamePresent && this.isDescriptionPresent);
     },
     validateAddress() {
       const apiKey = 'VrDrl5BjEA0Whvb-chHbFz96HV4qlCXB-yoiTRRLKno';
@@ -261,11 +321,24 @@ export default {
             this.isAddressValid = false;
           });
     }
+  },
+  computed: {
+    accessToken(){
+      return store.state.access_token;
+    },
+    email(){
+      return store.state.email;
+    }
   }
 }
 </script>
 
 <style scoped>
+.container-fluid {
+  outline: solid 2px #3f5b25;
+  margin: 10px;
+  color: #3f5b25;
+}
 input[type='text'], input[type='number'] {
   width: 100%;
   font-weight: 100;
