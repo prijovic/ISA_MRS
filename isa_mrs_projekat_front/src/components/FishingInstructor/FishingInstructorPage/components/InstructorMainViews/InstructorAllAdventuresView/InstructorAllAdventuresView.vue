@@ -6,14 +6,17 @@
         <div class="align-items-center">
           <div class="row main-col align-items-end header rounded mb-1">
             <div class="col-sm-5 main-col">
+            <div class="col-sm-4 main-col">
               <h3>Name</h3>
             </div>
             <div class="col-sm-5 main-col">
+            <div class="col-sm-4 main-col">
               <h3>Place</h3>
             </div>
             <div class="col-sm-2 main-col">
               <h3>Duration</h3>
             </div>
+            <div class="col-sm-2 main-col"></div>
           </div>
           <!-- Reviews listing -->
           <FishingInstructorAdventureView v-for="(adventure, index) in this.adventures" v-on:requestManaged="filterRequests()" :key="index" :adventure="adventure"/>
