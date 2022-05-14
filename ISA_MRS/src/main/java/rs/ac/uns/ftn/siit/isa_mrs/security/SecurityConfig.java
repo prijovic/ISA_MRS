@@ -34,7 +34,9 @@ import static rs.ac.uns.ftn.siit.isa_mrs.util.Paths.*;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final CustomUserDetailsServiceImpl userDetailsService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final JwtGenerator jwtGenerator;
     private final JwtConfig jwtConfig;
+    private final JwtDecoder jwtDecoder;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception{
@@ -44,14 +46,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(WebSecurity web) throws Exception {
         web.ignoring().antMatchers(HttpMethod.POST, REQUEST_CONTROLLER + SIGN_UP);
+        web.ignoring().antMatchers(HttpMethod.PUT, USER_CONTROLLER + "/activate");
         web.ignoring().antMatchers(HttpMethod.GET, "/", "/webjars/**", "/*.html", "/favicon.ico", "/**/*.html",
                 "/**/*.css", "/**/*.js");
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManagerBean(), jwtConfig);
-        CustomAuthorizationFilter customAuthorizationFilter = new CustomAuthorizationFilter(jwtConfig);
+        CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManagerBean(), jwtGenerator);
+        CustomAuthorizationFilter customAuthorizationFilter = new CustomAuthorizationFilter(jwtConfig, jwtDecoder);
         http
                 .cors()
                 .and()
@@ -63,6 +66,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers(LOGIN).permitAll()
                 .antMatchers(HttpMethod.POST,REQUEST_CONTROLLER + SIGN_UP).permitAll()
+                .antMatchers(HttpMethod.PUT, USER_CONTROLLER + "/activate").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .addFilterAfter(customAuthorizationFilter, CustomAuthenticationFilter.class);

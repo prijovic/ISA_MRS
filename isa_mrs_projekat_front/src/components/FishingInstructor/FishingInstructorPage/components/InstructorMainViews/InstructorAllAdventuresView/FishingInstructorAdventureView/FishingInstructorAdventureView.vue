@@ -8,11 +8,9 @@
         <div class="col-sm-4 main-col">
           <h4>{{adventure.address.street + ", " + adventure.address.city}}</h4>
         </div>
-        <div class="col-sm-2 main-col">
         <div class="col-sm-3 main-col">
           <h4>{{duration}}</h4>
         </div>
-        <div class="col-sm-2 main-col">
         <div class="col-sm-1 main-col">
           <button class="btn" @click.prevent="deleteRental">
             <FontAwesomeIcon icon="trash"></FontAwesomeIcon>

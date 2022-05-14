@@ -133,7 +133,7 @@ public class RequestServiceImpl implements RequestService {
                 request.setReason(reason);
                 request.setType(RequestType.valueOf(requestType));
                 request.setTimeStamp(LocalDateTime.now());
-                request.setUser(user.get());
+                request.setUser(userValue);
                 requestRepo.save(request);
                 userValue.setRequest(request);
                 userRepo.save(userValue);
@@ -185,12 +185,11 @@ public class RequestServiceImpl implements RequestService {
                     client.setPassword(passwordEncoder.encode(sud.getPassword()));
                     client.setEmail(sud.getEmail());
                     client.setPhone(sud.getPhoneNumber());
-                    client.setPhoto(sud.getPhoto());
                     client.setAddress(address);
-                    client.setActive(true);
+                    client.setActive(false);
                     client.setPoints(0);
                     clientRepo.save(client);
-                    emailSenderService.sendSuccessfulRegistrationEmail(client.getEmail());
+                    emailSenderService.sendActivationEmail(client);
                     return new ResponseEntity<>(HttpStatus.OK);
                 }
                 Request request = new Request();
@@ -206,7 +205,6 @@ public class RequestServiceImpl implements RequestService {
                     admin.setEmail(sud.getEmail());
                     admin.setPassword(passwordEncoder.encode(sud.getPassword()));
                     admin.setPhone(sud.getPhoneNumber());
-                    admin.setPhoto(sud.getPhoto());
                     admin.setActive(false);
                     admin.setAddress(address);
                     adminRepo.save(admin);
@@ -222,7 +220,6 @@ public class RequestServiceImpl implements RequestService {
                     owner.setEmail(sud.getEmail());
                     owner.setPassword(passwordEncoder.encode(sud.getPassword()));
                     owner.setPhone(sud.getPhoneNumber());
-                    owner.setPhoto(sud.getPhoto());
                     owner.setActive(false);
                     owner.setAddress(address);
                     owner.setPoints(0);
@@ -233,8 +230,10 @@ public class RequestServiceImpl implements RequestService {
                 RequestDto requestDto = modelMapper.map(request, RequestDto.class);
                 return new ResponseEntity<>(requestDto, HttpStatus.OK);
             } catch (IllegalArgumentException e) {
+                log.error(e.getMessage());
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             } catch (Exception e) {
+                log.error(e.getMessage());
                 return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }

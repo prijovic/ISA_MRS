@@ -13,7 +13,6 @@ public class SignUpDto implements Serializable {
     private String phoneNumber;
     private String email;
     private String password;
-    private String photo;
     private String reason;
     private SignUpAddressDto address;
 }

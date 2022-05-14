@@ -2,7 +2,7 @@
   <div class="row">
     <div class="col-2"></div>
     <div class="col-8 pt-5">
-      <form class="px-4 py-3 rounded content-center">
+      <form class="px-4 py-3 rounded content-center form">
         <div class="row">
           <div class="col-2"></div>
           <div class="col-8">
@@ -155,12 +155,6 @@ export default {
 <style scoped>
   h3 {
     text-align: center;
-  }
-
-  form {
-    outline: solid 2px #3f5b25;
-    margin-top: 10px;
-    color: #3f5b25;
   }
 
   .btn {

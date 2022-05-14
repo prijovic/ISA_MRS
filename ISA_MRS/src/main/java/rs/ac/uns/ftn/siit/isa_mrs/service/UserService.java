@@ -12,8 +12,7 @@ public interface UserService {
     ResponseEntity<UserDto> updateUserPassword(String email, String oldPassword, String newPassword);
     void encryptUsersPasswords();
     ResponseEntity<UserDto> changeUserStatus(Long id);
-    void addFakeUser();
-    ResponseEntity<UserDto> addNewUser(User user);
+    ResponseEntity<String> activateUser(String token);
     ResponseEntity<PageDto<UserByTypeDto>> findUsersByTypeWithPaginationSortedByField(int offset, int pageSize,
                                                                                       String field, UserType type);
 }

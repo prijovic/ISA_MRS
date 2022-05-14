@@ -14,7 +14,7 @@ import BoatOwnerContentPage from "@/components/BoatOwner/BoatOwnerPage/component
 import TheBoatOwnerSidebar from "@/components/BoatOwner/BoatOwnerPage/components/TheBoatOwnerSidebar/TheBoatOwnerSidebar";
 import AdminRequestsView from "@/components/Administrator/AdminPage/components/AdminMainViews/AdminRequestsView/AdminRequestsView";
 import InitView from "@/components/UnregisteredUser/InitView";
-import RegistrationPage from "@/components/UnregisteredUser/components/RegistrationComponents/RegistrationPage";
+import RegistrationPage from "@/components/UnregisteredUser/components/RegistrationPage";
 import IncomeRateChangeForm
     from "@/components/Administrator/AdminPage/components/AdminMainViews/AdminIncomeIncomeRateComponents/IncomeRateChangeForm";
 import FishingInstructorAdventuresView
@@ -25,8 +25,7 @@ import CardMenu from "@/components/UnregisteredUser/components/CardMenu";
 import ClientMainView from "@/components/Client/ClientPage/components/ClientMainView";
 import ClientSidebar from "@/components/Client/ClientPage/components/ClientSidebar/ClientSidebar";
 import RentalProfile from "@/components/UnregisteredUser/components/RentalProfile";
-import PasswordSelectionPage
-    from "@/components/UnregisteredUser/components/RegistrationComponents/PasswordSelectionPage";
+import SuccessfulVerificationPage from "@/components/UnregisteredUser/components/SuccessfulVerificationPage";
 
 
 const routes = [
@@ -43,21 +42,22 @@ const routes = [
         }
     },
     {
-        path: "/registration",
-        name: "Registration",
+        path: "/:token",
+        name: "Verification",
         components: {
-            default: RegistrationPage,
+            default: SuccessfulVerificationPage,
             sidebar: TheUnregisteredUserSidebar,
         },
         meta: {
             disableIfLoggedIn: true,
             public: true
         }
-    },    {
-        path: "/registration/password",
-        name: "RegistrationPassword",
+    },
+    {
+        path: "/registration",
+        name: "Registration",
         components: {
-            default: PasswordSelectionPage,
+            default: RegistrationPage,
             sidebar: TheUnregisteredUserSidebar,
         },
         meta: {
