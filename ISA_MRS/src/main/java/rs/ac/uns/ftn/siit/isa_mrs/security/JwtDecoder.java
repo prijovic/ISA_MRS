@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 public class JwtDecoder {
     private final JwtConfig jwtConfig;
 
-    public DecodedToken decodedToken(String authorizationHeader) {
+    public DecodedToken decodeToken(String authorizationHeader) {
         String tokenPrefix = jwtConfig.getTokenPrefix();
         String token = authorizationHeader.substring(tokenPrefix.length());
         Algorithm algorithm = Algorithm.HMAC256(jwtConfig.getSecretKey().getBytes());

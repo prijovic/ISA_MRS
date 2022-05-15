@@ -34,6 +34,12 @@ public class UserController {
         return userService.activateUser(request.getHeader(AUTHORIZATION));
     }
 
+    @CrossOrigin(CROSS_ORIGIN)
+    @PostMapping("/resendVerification")
+    public ResponseEntity<String> resendVerification(HttpServletRequest request) {
+        return userService.resendVerificationMail(request.getHeader(AUTHORIZATION));
+    }
+
     @PutMapping(STATUS_CHANGE)
     public ResponseEntity<UserDto> changeUserStatus(@RequestParam Long id) {
         return userService.changeUserStatus(id);

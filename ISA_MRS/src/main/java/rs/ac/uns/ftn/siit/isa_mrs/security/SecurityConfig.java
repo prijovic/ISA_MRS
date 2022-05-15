@@ -47,6 +47,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public void configure(WebSecurity web) throws Exception {
         web.ignoring().antMatchers(HttpMethod.POST, REQUEST_CONTROLLER + SIGN_UP);
         web.ignoring().antMatchers(HttpMethod.PUT, USER_CONTROLLER + "/activate");
+        web.ignoring().antMatchers(HttpMethod.POST, USER_CONTROLLER + "/resendVerification");
         web.ignoring().antMatchers(HttpMethod.GET, "/", "/webjars/**", "/*.html", "/favicon.ico", "/**/*.html",
                 "/**/*.css", "/**/*.js");
     }
@@ -67,6 +68,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(LOGIN).permitAll()
                 .antMatchers(HttpMethod.POST,REQUEST_CONTROLLER + SIGN_UP).permitAll()
                 .antMatchers(HttpMethod.PUT, USER_CONTROLLER + "/activate").permitAll()
+                .antMatchers(HttpMethod.POST, USER_CONTROLLER + "/resendVerification").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .addFilterAfter(customAuthorizationFilter, CustomAuthenticationFilter.class);

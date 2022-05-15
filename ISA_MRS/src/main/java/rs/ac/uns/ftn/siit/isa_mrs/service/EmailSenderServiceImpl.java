@@ -49,7 +49,7 @@ public class EmailSenderServiceImpl implements EmailSenderService{
         Map<String, Object> model = new HashMap<>();
         List<String> authority = new ArrayList<>();
         authority.add(user.getUserType().name());
-        model.put("link", "http://localhost:3000/" + jwtGenerator.generateJwt(user.getEmail(), "", authority, JwtGenerator.TokenPeriod.OneDay));
+        model.put("link", "http://localhost:3000/" + jwtGenerator.generateJwt(user.getEmail(), "", authority, JwtGenerator.TokenPeriod.OneDay) + "/" + jwtGenerator.generateJwt(user.getEmail(), "", authority, JwtGenerator.TokenPeriod.TwoDays));
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper messageHelper = new MimeMessageHelper(message, MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED);
         Template template = configuration.getTemplate("successful-registration-email.ftl");

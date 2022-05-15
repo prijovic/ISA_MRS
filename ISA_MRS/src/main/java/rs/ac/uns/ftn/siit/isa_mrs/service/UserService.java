@@ -13,6 +13,7 @@ public interface UserService {
     void encryptUsersPasswords();
     ResponseEntity<UserDto> changeUserStatus(Long id);
     ResponseEntity<String> activateUser(String token);
+    ResponseEntity<String> resendVerificationMail(String email);
     ResponseEntity<PageDto<UserByTypeDto>> findUsersByTypeWithPaginationSortedByField(int offset, int pageSize,
                                                                                       String field, UserType type);
 }

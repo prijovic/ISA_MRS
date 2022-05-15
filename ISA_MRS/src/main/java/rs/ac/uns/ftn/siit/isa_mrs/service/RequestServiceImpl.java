@@ -90,15 +90,16 @@ public class RequestServiceImpl implements RequestService {
             request.setResponse(requestResponse);
             requestRepo.save(request);
             User user = request.getUser();
+            RespondedRequestDto requestDto = modelMapper.map(requestRepo.getById(id), RespondedRequestDto.class);
             if (request.getType().equals(RequestType.AccountDeletion)) {
                 user.setActive(false);
             }
             else if (request.getType().equals(RequestType.SignUp)){
-                user.setActive(true);
+                emailSenderService.sendActivationEmail(user);
+                return new ResponseEntity<>(requestDto, HttpStatus.OK);
             }
             userRepo.save(user);
             emailSenderService.sendRequestHandledEmail(request, createRequestResponseMailModel(request, requestResponse));
-            RespondedRequestDto requestDto = modelMapper.map(requestRepo.getById(id), RespondedRequestDto.class);
             return new ResponseEntity<>(requestDto, HttpStatus.OK);
         }
         catch (EntityNotFoundException e){

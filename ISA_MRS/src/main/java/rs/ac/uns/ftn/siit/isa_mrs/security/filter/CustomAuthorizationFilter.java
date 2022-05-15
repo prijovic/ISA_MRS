@@ -1,9 +1,5 @@
 package rs.ac.uns.ftn.siit.isa_mrs.security.filter;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.JWTVerifier;
-import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -42,7 +38,7 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
             String tokenPrefix = jwtConfig.getTokenPrefix();
             if (authorizationHeader != null && authorizationHeader.startsWith(tokenPrefix)) {
                 try {
-                    JwtDecoder.DecodedToken decodedToken = jwtDecoder.decodedToken(authorizationHeader);
+                    JwtDecoder.DecodedToken decodedToken = jwtDecoder.decodeToken(authorizationHeader);
                     String[] roles = decodedToken.getRoles();
                     String email = decodedToken.getEmail();
                     Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();

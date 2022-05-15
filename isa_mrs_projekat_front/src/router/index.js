@@ -25,7 +25,7 @@ import CardMenu from "@/components/UnregisteredUser/components/CardMenu";
 import ClientMainView from "@/components/Client/ClientPage/components/ClientMainView";
 import ClientSidebar from "@/components/Client/ClientPage/components/ClientSidebar/ClientSidebar";
 import RentalProfile from "@/components/UnregisteredUser/components/RentalProfile";
-import SuccessfulVerificationPage from "@/components/UnregisteredUser/components/SuccessfulVerificationPage";
+import VerificationPage from "@/components/UnregisteredUser/components/VerificationPage";
 
 
 const routes = [
@@ -42,10 +42,10 @@ const routes = [
         }
     },
     {
-        path: "/:token",
+        path: "/:token/:refresh",
         name: "Verification",
         components: {
-            default: SuccessfulVerificationPage,
+            default: VerificationPage,
             sidebar: TheUnregisteredUserSidebar,
         },
         meta: {
