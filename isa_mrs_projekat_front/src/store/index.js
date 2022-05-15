@@ -6,7 +6,7 @@ const getDefaultState = () => {
       email: null,
       access_token: null,
       rentalId: null,
-      rentalType: null,
+      rentalType: null
   }
 };
 

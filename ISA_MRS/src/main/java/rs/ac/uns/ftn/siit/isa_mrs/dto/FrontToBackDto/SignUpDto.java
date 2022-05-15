@@ -12,7 +12,7 @@ public class SignUpDto implements Serializable {
     private String surname;
     private String phoneNumber;
     private String email;
-    private String photo;
+    private String password;
     private String reason;
     private SignUpAddressDto address;
 }

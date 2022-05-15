@@ -1,7 +1,5 @@
 package rs.ac.uns.ftn.siit.isa_mrs.security.filter;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -13,14 +11,13 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import rs.ac.uns.ftn.siit.isa_mrs.model.User;
-import rs.ac.uns.ftn.siit.isa_mrs.security.JwtConfig;
+import rs.ac.uns.ftn.siit.isa_mrs.security.JwtGenerator;
 
 import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -31,7 +28,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @RequiredArgsConstructor
 public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     private final AuthenticationManager authenticationManager;
-    private final JwtConfig jwtConfig;
+    private final JwtGenerator jwtGenerator;
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
@@ -45,13 +42,10 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException{
         User user = (User) authentication.getPrincipal();
-        Algorithm algorithm = Algorithm.HMAC256(jwtConfig.getSecretKey().getBytes());
-        String access_token = JWT.create()
-                .withExpiresAt(java.sql.Date.valueOf(LocalDate.now().plusDays(jwtConfig.getTokenExpirationAfterDays())))
-                .withSubject(user.getUsername())
-                .withIssuer(request.getRequestURL().toString())
-                .withClaim("roles", user.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
-                .sign(algorithm);
+        String access_token = jwtGenerator.generateJwt(user.getUsername(),
+                request.getRequestURL().toString(),
+                user.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()),
+                JwtGenerator.TokenPeriod.TwoDays);
         Map<String, String> tokens = new HashMap<>();
         tokens.put("access_token", access_token);
         tokens.put("user_type", user.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()).get(0));

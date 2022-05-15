@@ -12,13 +12,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.PageDto;
-import rs.ac.uns.ftn.siit.isa_mrs.dto.RentalObjectOwnerDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.UserByTypeDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.UserDto;
-import rs.ac.uns.ftn.siit.isa_mrs.model.RentalObjectOwner;
 import rs.ac.uns.ftn.siit.isa_mrs.model.User;
 import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.UserType;
 import rs.ac.uns.ftn.siit.isa_mrs.repository.UserRepo;
+import rs.ac.uns.ftn.siit.isa_mrs.security.JwtDecoder;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
@@ -32,6 +31,8 @@ public class UserServiceImpl implements UserService {
     private final UserRepo userRepo;
     private final PasswordEncoder passwordEncoder;
     private final ModelMapper modelMapper;
+    private final JwtDecoder jwtDecoder;
+    private final EmailSenderService emailSenderService;
 
     @Override
     public ResponseEntity<UserDto> updateUserPassword(String email, String oldPassword, String newPassword) {
@@ -84,22 +85,70 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResponseEntity<UserDto> addNewUser(User user) {
+    public ResponseEntity<String> activateUser(String token) {
+        JwtDecoder.DecodedToken decodedToken;
         try {
-            if (user.getUserType().equals(UserType.Admin)) {
-                user.setActive(true);
-            }
-            else {
-                user.setActive(false);
-            }
-            userRepo.save(user);
-            UserDto userDto = modelMapper.map(user, UserDto.class);
-            return new ResponseEntity<>(userDto, HttpStatus.OK);
+            decodedToken = jwtDecoder.decodeToken(token);
         } catch (Exception e) {
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        try {
+            String email = decodedToken.getEmail();
+            Optional<User> userResult = userRepo.findByEmail(email);
+            if (userResult.isPresent()) {
+                User user = userResult.get();
+                if (user.isActive()) {
+                    return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+                }
+                user.setActive(true);
+                userRepo.save(user);
+                return new ResponseEntity<>(email, HttpStatus.OK);
+            }
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @Override
+    public ResponseEntity<String> resendVerificationMail(String refresh_token) {
+        JwtDecoder.DecodedToken decodedToken;
+        try {
+            decodedToken = jwtDecoder.decodeToken(refresh_token);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        try {
+            String email = decodedToken.getEmail();
+            Optional<User> userResult = userRepo.findByEmail(email);
+            if (userResult.isPresent()) {
+                User user = userResult.get();
+                emailSenderService.sendActivationEmail(user);
+                return new ResponseEntity<>(email, HttpStatus.OK);
+            }
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+//    @Override
+//    public ResponseEntity<UserDto> addNewUser(User user) {
+//        try {
+//            if (user.getUserType().equals(UserType.Admin)) {
+//                user.setActive(true);
+//            }
+//            else {
+//                user.setActive(false);
+//            }
+//            userRepo.save(user);
+//            UserDto userDto = modelMapper.map(user, UserDto.class);
+//            return new ResponseEntity<>(userDto, HttpStatus.OK);
+//        } catch (Exception e) {
+//            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+//
+//        }
+//    }
 
     @Override
     public ResponseEntity<PageDto<UserByTypeDto>> findUsersByTypeWithPaginationSortedByField(int offset,

@@ -1,118 +1,144 @@
 <template>
-  <div class="container px-4 py-3 rounded" spellcheck="false" >
-    <div class="row main">
-      <div class="col main pt-3">
-        <div class="row">
-          <div class="col-4 main"></div>
-          <div class="col-6 main">
-            <div class="row mb-3">
-              <p class="h6 ps-0 pb-0"><i>Type of user:</i></p>
-              <select class="form-control" v-model="user.userType">
-                <option value="Client" selected="selected">Client</option>
-                <option value="VacationRentalOwner">Vacation Rental Owner</option>
-                <option value="BoatOwner">Boat Owner</option>
-                <option value="FishingInstructor">Fishing instructor</option>
-                <option v-if="isAdmin" value="Admin">Admin</option>
-              </select>
-            </div>
-            <div class="row mb-3" v-bind:style="{color: isNamePresent || isNamePresent === null ? '#3f5b25':'red'}">
-              <p class="h6 ps-0 pb-0"><i>Name:</i></p>
-              <input class="ps-1 h5" type="text" id="name" v-model="user.name" placeholder="E.g. Tamara">
-            </div>
-            <div class="row mb-3" v-bind:style="{color: isSurnamePresent || isSurnamePresent === null ? '#3f5b25':'red'}">
-              <p class="h6 ps-0 pb-0"><i>Surname:</i></p>
-              <input class="ps-1 h5" type="text" id="surname" v-model="user.surname" placeholder="E.g. Volas">
-            </div>
-            <div class="row mb-3" v-bind:style="{color: isEmailPresent || isEmailPresent === null ? '#3f5b25':'red'}">
-              <p class="h6 ps-0 pb-0"><i>E-mail:</i></p>
-              <input class="ps-1 h5" type="email" id="email" v-model="user.email" placeholder="E.g. john@gmail.com">
-            </div>
-            <div class="row mb-3">
-              <p class="h6 ps-0 pb-0" v-bind:style="{color: isPhoneValid || isPhoneValid ===null?'#3f5b25':'red'}">
-                <i>Phone:</i>
-              </p>
-              <vue-tel-input v-model="user.phoneNumber" mode="international" @input="onInput"></vue-tel-input>
-            </div>
-            <div v-if="!isAdmin" class="row">
-              <p class="h6 ps-0 pb-0"><i>Profile pic <small>(optional)</small>:</i></p>
-              <input class="p-0 h5" type="file" name="profilePic" @change="onFileSelected" accept="image/jpeg"/>
-              <small class="p-0" style="color: grey;">Acceptable: jpg</small>
+  <div class="row">
+    <div class="col-2"></div>
+    <div class="col-8 pt-5">
+      <div class="container px-4 py-3 rounded form" spellcheck="false" >
+        <div class="container-fluid">
+          <h3>Sign Up</h3>
+          <div class="row main justify-content-center">
+            <div class="row main">
+              <div class="col main">
+                <div class="row">
+                  <div class="col-4"></div>
+                  <div class="col-6">
+                    <div class="row">
+                      <label for="userType">User type</label>
+                      <select class="form-control" v-model="user.userType" id="userType">
+                        <option value="Client" selected="selected">Client</option>
+                        <option value="VacationRentalOwner">Vacation Rental Owner</option>
+                        <option value="BoatOwner">Boat Owner</option>
+                        <option value="FishingInstructor">Fishing instructor</option>
+                        <option v-if="isAdmin" value="Admin">Admin</option>
+                      </select>
+                    </div>
+                    <div class="row">
+                      <label for="name">Name</label>
+                      <input class="form-control" type="text" id="name" v-model="user.name" placeholder="E.g. John" @input="nameIsEntered=true">
+                      <p style="color:red" v-if='!nameIsEntered'>'Name' is a mandatory field.</p>
+                    </div>
+                    <div class="row">
+                      <label for="surname">Surname</label>
+                      <input class="form-control" type="text" id="surname" v-model="user.surname" placeholder="E.g. Doe" @input="surnameIsEntered=true">
+                      <p style="color:red" v-if='!surnameIsEntered'>'Surname' is a mandatory field.</p>
+                    </div>
+                    <div class="row">
+                      <label for="email">Email</label>
+                      <input class="form-control" type="email" id="email" v-model="user.email" placeholder="E.g. john@email.com" @input="emailIsEntered=true">
+                      <p style="color:red" v-if='!emailIsEntered'>'Email' is a mandatory field.</p>
+                      <p style="color:red" v-else-if='!emailValidation'>Invalid email format.</p>
+                    </div>
+                    <div class="row">
+                      <label for="inputPassword2">Password</label>
+                      <input type="password" id="inputPassword2" v-model="user.password" class="form-control col-sm-auto col-lg-4" aria-describedby="passwordHelpBlock" placeholder="New password" @input="passwordISEntered=true">
+                      <p style="color:red" v-if="!passwordISEntered">'Password' is a mandatory field.</p>
+                      <p style="color:red" v-else-if='!passwordValidation.valid'>{{ passwordValidation.errors[0] }}</p>
+                      <small id="passwordHelpBlock" class="form-text text-muted">
+                        Your password must be 8-20 characters long, contain letters and numbers, and must not contain spaces, special characters, or emoji.
+                      </small>
+                    </div>
+                    <div class="row">
+                      <label for="inputPassword3">Confirm Password</label>
+                      <input type="password" id="inputPassword3" v-model.lazy="checkPassword" class="form-control col-sm-auto col-lg-4" aria-describedby="passwordHelpBlock" placeholder="Confirm password" @input="confirmationPasswordIsEntered=true">
+                      <p style="color:red" v-if="!confirmationPasswordIsEntered">'Confirmation Password' is a mandatory field.</p>
+                      <p style="color:red" v-else-if='notSamePasswords'>Passwords don't match.</p>
+                    </div>
+                  </div>
+                  <div class="col-2"></div>
+                </div>
+              </div>
+              <div class="col main">
+                <div class="row">
+                  <div class="col-2"></div>
+                  <div class="col-6">
+                    <div class="row">
+                      <label for="country">Country</label>
+                      <input v-model="user.address.country" class="form-control" type="text" id="country" placeholder="Country" @input="countryIsEntered=true">
+                      <p style="color:red" v-if='!countryIsEntered'>'Country' is a mandatory field.</p>
+                      <p style="color:red" v-if='!addressIsValid'>Invalid address data.</p>
+                    </div>
+                    <div class="row">
+                      <label for="city">City</label>
+                      <input v-model="user.address.city" class="form-control" type="text" id="city" placeholder="City" @input="cityIsEntered=true">
+                      <p style="color:red" v-if='!cityIsEntered'>'City' is a mandatory field.</p>
+                      <p style="color:red" v-if='!addressIsValid'>Invalid address data.</p>
+                    </div>
+                    <div class="row">
+                      <label for="street">Street</label>
+                      <input v-model="user.address.street" class="form-control" type="text" id="street" placeholder="Street" @input="streetIsEntered=true">
+                      <p style="color:red" v-if='!streetIsEntered'>'Street' is a mandatory field.</p>
+                      <p style="color:red" v-if='!addressIsValid'>Invalid address data.</p>
+                    </div>
+                    <div class="row">
+                      <label for="number">Number</label>
+                      <input v-model="user.address.number" class="form-control"  type="text" id="number" placeholder="House Number" @input="numberIsEntered=true">
+                      <p style="color:red" v-if='!numberIsEntered'>'Number' is a mandatory field.</p>
+                      <p style="color:red" v-if='!addressIsValid'>Invalid address data.</p>
+                    </div>
+                    <div class="row">
+                      <label for="phone">Phone</label>
+                      <vue-tel-input v-model="phoneInput" id="phone" mode="international" defaultCountry="RS" :onlyCountries=onlyCountries @input="onTelephoneInput"></vue-tel-input>
+                      <p style="color:red" v-if='!phoneIsValid'>Invalid phone number.</p>
+                    </div>
+                    <div class="row" v-if="isRentalObjectOwner">
+                      <label for="motivationLetter">Motivation Letter</label>
+                      <textarea v-model="user.reason" class="form-control" rows="10" maxlength="300" placeholder="Please describe why you want to join our community in 50-500 characters." id="motivationLetter" @input="reasonIsEntered=true"></textarea>
+                      <p style="color:red" v-if='!reasonIsEntered'>'Motivation Letter' is a mandatory field.</p>
+                      <p style="color:red" v-if='!reasonIsValid'>Minimum characters is 50.</p>
+                    </div>
+                  </div>
+                  <div class="col-4">
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-          <div class="col-2 main"></div>
-        </div>
-      </div>
-      <div class="col main pt-3">
-        <div class="row main">
-          <div class="col-2 main"></div>
-          <div class="col-6 main" v-bind:style="{color:!(isAddressValid || isAddressValid===null)?'red':'#3f5b25'}">
-            <div class="row">
-              <p class="h1 p-0"><font-awesome-icon icon="house"></font-awesome-icon> Address</p>
-            </div>
-            <div class="row mb-3">
-              <p class="h6 ps-0 pb-0"><i>Country:</i></p>
-              <input v-model="user.address.country" class="ps-1 h5" type="text" id="country" placeholder="Country">
-            </div>
-            <div class="row mb-3">
-              <p class="h6 ps-0 pb-0"><i>City:</i></p>
-              <input v-model="user.address.city" class="ps-1 h5" type="text" id="city" placeholder="City">
-            </div>
-            <div class="row mb-3">
-              <p class="h6 ps-0 pb-0"><i>Street:</i></p>
-              <input v-model="user.address.street" class="ps-1 h5" type="text" id="street" placeholder="Street">
-            </div>
-            <div class="row mb-3">
-              <p class="h6 ps-0 pb-0"><i>Number:</i></p>
-              <input v-model="user.address.number" class="ps-1 h5" type="text" id="number" placeholder="House Number">
-            </div>
-            <div v-if="isRentalObjectOwner" class="row">
-              <textarea class="h6" v-model="user.reason" maxlength="300" rows="4"
-                        placeholder="Why would you like to make an account?"></textarea>
-            </div>
-          </div>
-          <div class="col-4 main">
+          <div class="d-flex pt-3 justify-content-center">
+            <button type="button" class="btn m-1" @click="submit">Submit</button>
           </div>
         </div>
       </div>
     </div>
-    <div class="row main pt-3">
-      <div class="col-4 main"></div>
-      <div class="col-4 main px-5">
-        <div class="row">
-          <button type="button" @click="validateInputs" class="btn">Sign Up</button>
-        </div>
-      </div>
-      <div class="col-4 main"></div>
-    </div>
+    <div class="col-2"></div>
   </div>
 </template>
 
 <script>
-import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
-import { library } from "@fortawesome/fontawesome-svg-core";
-import { faHouse } from "@fortawesome/free-solid-svg-icons";
 import { VueTelInput }  from 'vue3-tel-input';
-import 'vue3-tel-input/dist/vue3-tel-input.css'
+import 'vue3-tel-input/dist/vue3-tel-input.css';
 import store from "@/store";
 import axios from "axios";
 
-library.add(faHouse)
-
 export default {
   name: "RegistrationPage",
-  components: {
-    VueTelInput,
-    FontAwesomeIcon
-  },
+  components: {VueTelInput},
   data() {
     return {
+      rules: [
+        { message:'One lowercase letter required.', regex:/[a-z]+/ },
+        { message:"One uppercase letter required.",  regex:/[A-Z]+/ },
+        { message:"8-20 characters required.", regex:/.{8,20}/ },
+        { message:"One number required.", regex:/[0-9]+/ }
+      ],
+      checkPassword:'',
+      onlyCountries: ['RS', 'BA', 'HR', 'ME', 'SI', 'MK'],
+      phoneInput: null,
       user: {
         userType: "Client",
         name: null,
         surname: null,
         phoneNumber: null,
         email: null,
-        photo: null,
+        password: '',
         reason: null,
         address: {
           street: null,
@@ -123,98 +149,225 @@ export default {
           longitude: null
         }
       },
-      isAddressValid: null,
-      isPhoneValid: null,
-      isNamePresent: null,
-      isSurnamePresent: null,
-      isEmailPresent: null,
-      isReasonPresent: null,
-      allInputsPresent: null,
+      nameIsEntered: true,
+      surnameIsEntered: true,
+      emailIsEntered: true,
+      countryIsEntered: true,
+      cityIsEntered: true,
+      streetIsEntered: true,
+      numberIsEntered: true,
+      phoneIsEntered: true,
+      passwordISEntered: true,
+      confirmationPasswordIsEntered: true,
+      reasonIsEntered: true,
+      addressIsValid: true,
+      phoneIsValid: true,
+      reasonIsValid: true
+    }
+  },
+  computed: {
+    accessToken() {
+      return store.state.access_token;
+    },
+    isAdmin() {
+      return store.state.user === "SuperAdmin";
+    },
+    isRentalObjectOwner() {
+      return (this.user.userType !== "Client" && this.user.userType !== "Admin" && this.user.userType !== "SuperAdmin");
+    },
+    isNameEntered() {
+      return Boolean(this.user.name);
+    },
+    isSurnameEntered() {
+      return Boolean(this.user.surname);
+    },
+    isEmailEntered() {
+      return Boolean(this.user.email);
+    },
+    isCountryEntered() {
+      return Boolean(this.user.address.country);
+    },
+    isCityEntered() {
+      return Boolean(this.user.address.city);
+    },
+    isStreetEntered() {
+      return Boolean(this.user.address.street);
+    },
+    isNumberEntered() {
+      return Boolean(this.user.address.number);
+    },
+    isPasswordEntered() {
+      return Boolean(this.user.password);
+    },
+    isConfirmationPasswordEntered() {
+      return Boolean(this.checkPassword);
+    },
+    isReasonEntered() {
+      return Boolean(this.user.reason);
+    },
+    notSamePasswords () {
+      if (this.isPasswordEntered && this.isConfirmationPasswordEntered) {
+        return (this.user.password !== this.checkPassword)
+      } else {
+        return false
+      }
+    },
+    passwordValidation () {
+      let errors = []
+      if (this.user.password !== ''){
+        for (let condition of this.rules) {
+          if (!condition.regex.test(this.user.password)) {
+            errors.push(condition.message)
+          }
+        }
+        if (errors.length === 0) {
+          return { valid:true, errors }
+        } else {
+          return { valid:false, errors }
+        }
+      }
+      else {
+        return { valid:true, errors }
+      }
+    },
+    emailValidation() {
+      if (this.isEmailEntered) {
+        let emailRule = {regex:/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}/};
+        return emailRule.regex.test(this.user.email);
+      }
+      return true;
     }
   },
   methods: {
-    validateInputs() {
-      this.validateAddress();
-      this.validatePhone();
-      this.isInputPresent();
-      if(this.allInputsPresent && this.isAddressValid && this.isPhoneValid) this.submit();
-    },
     submit() {
-      console.log("submit");
-      axios.post("/Requests/signUp", null, {
+      if (this.passwordValidation.valid && !this.notSamePasswords) {
+        if (this.isDataEntered() && this.isDataCorrect()) {
+          this.makeRequest();
+        }
+      }
+    },
+    makeRequest() {
+      axios.post("/Requests/signUp", this.user, {
         headers: {
           Authorization: "Bearer " + this.accessToken,
-        },
-        params: {
-          userType: this.userType,
-          name: this.name,
-          surname: this.surname,
-          phoneNumber: this.phoneNumber,
-          email: this.email,
-          photo: this.photo,
-          reason: this.reason,
-          address: {
-            country: this.country,
-            city: this.city,
-            street: this.street,
-            number: this.number,
-            latitude: this.latitude,
-            longitude: this.longitude
-          }
-        },
-      })
-      .then(() => {
-        let message = "Registration request sent successfully. ";
-        if(this.userType === "Client") message += "Confirmation email has been sent to " + this.email;
-        else message += "Your request is pending. Keep checking your email for a response."
-        this.$notify( {
-          title: "Sign up",
-          text: message,
-          position: "bottom right",
-          type: "error"
-        });
-      })
-      .catch(error => {
-        if (error.response.status === 422) {
-          this.$notify({
-            title: "Invalid email",
-            text: "User with email " + this.email + " already exists. Please enter a different email.",
-            position: "bottom right",
-            type: "warn"
-          })
-        } else if (error.response.status === 400) {
-          this.$notify({
-            title: "Invalid Request Status",
-            text: "Bad registration request.",
-            position: "bottom right",
-            type: "warn"
-          })
-        } else if (error.response.status === 500) {
-          this.$notify({
-            title: "Internal Server Error",
-            text: "Something went wrong on the server! Please try again later...",
-            position: "bottom right",
-            type: "error"
-          })
         }
       })
+          .then(() => {
+            let message = "Successful Sign Up";
+            if(this.user.userType === "Client") message += "Verification email has been sent to " + this.user.email + ". Please go and check your mail.";
+            else message += "Your request is pending. Keep checking your email for a response."
+            this.$notify( {
+              title: "Sign up",
+              text: message,
+              position: "bottom right",
+              type: "success"
+            });
+            this.$router.push("/");
+          })
+          .catch(error => {
+            if (!error.response) {
+              this.$notify({
+                title: "Server error",
+                text: "Server is currently off. Please try again later...",
+                type: "error"
+              });
+            } else if (error.response.status === 422) {
+              this.$notify({
+                title: "Invalid email",
+                text: "User with email " + this.email + " already exists. Please enter a different email.",
+                position: "bottom right",
+                type: "warn"
+              })
+            } else if (error.response.status === 400) {
+              this.$notify({
+                title: "Invalid Request Status",
+                text: "Bad registration request.",
+                position: "bottom right",
+                type: "warn"
+              })
+            } else if (error.response.status === 500) {
+              this.$notify({
+                title: "Internal Server Error",
+                text: "Something went wrong on the server! Please try again later...",
+                position: "bottom right",
+                type: "error"
+              })
+            }
+          })
     },
-    isInputPresent() {
-      this.isNamePresent = Boolean(this.user.name);
-      this.isSurnamePresent = Boolean(this.user.surname);
-      this.isEmailPresent = Boolean(this.user.email);
-      console.log("{}   {}   {}",this.isNamePresent,this.isSurnamePresent,this.isEmailPresent);
-      this.isReasonPresent = !(!this.user.reason && this.user.userType !== "Client" && this.user.userType !== "Admin");
-      this.allInputsPresent = this.isNamePresent && this.isSurnamePresent && this.isEmailPresent && this.isReasonPresent;
-    },
-    validatePhone() {
-      if (this.user.phoneNumber === null) {
-        console.log("Nema broja");
-        this.isPhoneValid = false;
-      } else {
-        console.log(this.user.phoneNumber);
-        this.isPhoneValid = true;
+    isDataEntered() {
+      if (!this.isNameEntered) {
+        this.nameIsEntered = false;
+        return false;
       }
+      if (!this.isSurnameEntered) {
+        this.surnameIsEntered = false;
+        return false;
+      }
+      if (!this.isEmailEntered) {
+        this.emailIsEntered = false;
+        return false;
+      }
+      if (!this.isPasswordEntered) {
+        this.passwordISEntered = false;
+        return false;
+      }
+      if (!this.isConfirmationPasswordEntered) {
+        this.confirmationPasswordIsEntered = false;
+        return false;
+      }
+      if (!this.isCountryEntered) {
+        this.countryIsEntered = false;
+        return false;
+      }
+      if (!this.isCityEntered) {
+        this.cityIsEntered = false;
+        return false;
+      }
+      if (!this.isStreetEntered) {
+        this.streetIsEntered = false;
+        return false;
+      }
+      if (!this.isNumberEntered) {
+        this.numberIsEntered = false;
+        return false;
+      }
+      if (this.isRentalObjectOwner && !this.isReasonEntered) {
+        this.reasonIsEntered = false;
+        return false;
+      }
+      return true;
+    },
+    isDataCorrect() {
+      this.validateAddress();
+      if (!this.addressIsValid) {
+        return false;
+      }
+      if (!this.isPhoneValid()){
+        this.phoneIsValid = false;
+        return false;
+      }
+      if (this.isRentalObjectOwner && this.isReasonValid()) {
+        this.reasonIsValid = false;
+        return false;
+      }
+      return true;
+
+    },
+    onTelephoneInput(phone, phoneObject) {
+      this.phoneIsEntered = true;
+      if (phoneObject?.valid) {
+        this.phoneIsValid = true;
+        this.user.phoneNumber = phoneObject.number;
+      } else if (phoneObject) {
+        this.user.phoneNumber = null;
+      }
+    },
+    isReasonValid() {
+      return this.user.reason.length >= 50;
+    },
+    isPhoneValid() {
+      return Boolean(this.user.phoneNumber);
     },
     validateAddress() {
       const apiKey = 'VrDrl5BjEA0Whvb-chHbFz96HV4qlCXB-yoiTRRLKno';
@@ -225,51 +378,34 @@ export default {
           '&city=' + this.user.address.city +
           '&country=' + this.user.address.country;
       fetch(url)
-      .then(response => response.json())
-      .then(data => {
-        const responseView = data.Response.View;
-        if (responseView.length === 0) {
-          console.log("NEMA ADRESE!")
-          this.isAddressValid = false;
-        }
-        else {
-          const location = responseView[0].Result[0].Location.DisplayPosition;
-          const address = responseView[0].Result[0].Location.Address;
-          this.user.address.city = address.City;
-          this.user.address.country = address.AdditionalData[0].value;
-          this.user.address.street = address.Street;
-          this.user.address.longitude = location.Longitude;
-          this.user.address.latitude = location.Latitude;
-          console.log(this.user.address);
-          this.isAddressValid = true;
-        }
-      })
-      .catch(error => {
-        console.log(error);
-        this.isAddressValid = false;
-      });
+          .then(response => response.json())
+          .then(data => {
+            const responseView = data.Response.View;
+            if (responseView.length === 0) {
+              this.addressIsValid = false;
+            }
+            else {
+              const location = responseView[0].Result[0].Location.DisplayPosition;
+              const address = responseView[0].Result[0].Location.Address;
+              this.user.address.city = this.transliterate(address.City);
+              this.user.address.country = this.transliterate(address.AdditionalData[0].value);
+              this.user.address.street = this.transliterate(address.Street);
+              this.user.address.longitude = location.Longitude;
+              this.user.address.latitude = location.Latitude;
+              this.addressIsValid = true;
+            }
+          })
+          .catch(() => {
+            this.addressIsValid = false;
+          });
     },
-    onFileSelected(event) {
-      this.user.photo = event.target.files[0];
-    },
-    onInput(phone, phoneObject) {
-      console.log("Broj:" + phoneObject);
-      if (phoneObject?.formatted) {
-        if (this.user.phoneNumber === phoneObject.formatted) {
-          this.user.phoneNumber = null;
-        }
-        else {
-          this.user.phoneNumber = phoneObject.formatted;
-        }
-      }
-    }
-  },
-  computed: {
-    isAdmin() {
-      return store.state.user === "SuperAdmin";
-    },
-    isRentalObjectOwner() {
-      return (this.user.userType !== "Client" && this.user.userType !== "Admin");
+    transliterate(word) {
+      let letters = {"Б":"B", "В":"V", "Г":"G", "Д":"D", "Ђ":"Đ", "Ж":"Ž", "З":"Z", "И":"I", "К":"K", "Л":"L", "Љ":"Lj", "М":"M", "Н":"N", "Њ":"Nj", "П":"P",
+        "Р":"R", "С":"S", "Ћ":"Ć", "У":"U", "Ф":"F", "Х":"H", "Ц":"C", "Ч":"Č", "Џ":"Dž", "Ш":"Š", "б":"b", "в":"v", "г":"g", "д":"d", "ђ":"đ", "ж":"ž", "з":"z", "и":"i", "к":"k", "л":"l", "љ":"lj", "м":"m", "н":"n", "њ":"nj", "п":"p",
+        "р":"r", "с":"s", "т":"t", "ћ":"ć", "у":"u", "ф":"f", "х":"h", "ц":"c", "ч":"č", "џ":"dž", "ш":"š"};
+      return word.split('').map(function (char) {
+        return letters[char] || char;
+      }).join("");
     }
   }
 }
@@ -283,30 +419,17 @@ export default {
   }
 
   textarea {
-    padding: 5px 10px;
     resize: none;
-    background-color: rgb(55, 130, 32, 0.2);
-    color: black;
-    outline: none;
     width: 100%;
-    border-radius: 5px;
     text-align: justify;
-    font-weight: 100;
-  }
-
-  textarea::placeholder{
-    color: black;
-    font-style: italic;
   }
 
   input[type='text'], input[type='email'] {
     width: 100%;
-    font-weight: 100;
   }
 
   input::placeholder {
     color: grey;
-    font-weight: 100;
   }
 
   .btn {
@@ -319,5 +442,9 @@ export default {
     background-color: #f7f7f2;
     color: #378220;
     border: 1px solid #3F9725;
+  }
+
+  h3 {
+    text-align: center;
   }
 </style>

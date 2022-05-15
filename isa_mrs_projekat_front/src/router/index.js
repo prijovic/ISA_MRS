@@ -25,6 +25,7 @@ import CardMenu from "@/components/UnregisteredUser/components/CardMenu";
 import ClientMainView from "@/components/Client/ClientPage/components/ClientMainView";
 import ClientSidebar from "@/components/Client/ClientPage/components/ClientSidebar/ClientSidebar";
 import RentalProfile from "@/components/UnregisteredUser/components/RentalProfile";
+import VerificationPage from "@/components/UnregisteredUser/components/VerificationPage";
 
 
 const routes = [
@@ -33,6 +34,18 @@ const routes = [
         name: "InitHome",
         components: {
             default: InitView,
+            sidebar: TheUnregisteredUserSidebar,
+        },
+        meta: {
+            disableIfLoggedIn: true,
+            public: true
+        }
+    },
+    {
+        path: "/:token/:refresh",
+        name: "Verification",
+        components: {
+            default: VerificationPage,
             sidebar: TheUnregisteredUserSidebar,
         },
         meta: {
