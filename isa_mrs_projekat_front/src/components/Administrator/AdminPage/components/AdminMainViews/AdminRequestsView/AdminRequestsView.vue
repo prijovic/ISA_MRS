@@ -25,7 +25,7 @@
             </div>
           </div>
           <!-- Reviews listing -->
-          <AdminRequestPreview v-for="(request, index) in this.requests" v-on:requestManaged="filterRequests()" :key="index" :request="request"/>
+          <AdminRequestPreview v-for="(request, index) in this.requests" @requestManaged="filterRequests" :key="index" :request="request"/>
           <!-- Pagination -->
           <ul class="pagination justify-content-center">
             <li class="page-item" v-if="numberOfPages>2 && currentPage>1">
