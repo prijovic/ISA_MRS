@@ -45,7 +45,7 @@
         </div>
         <div class="row mb-3">
           <p class="h6 ps-0 pb-0"><i>Price:</i></p>
-          <input class="ps-1 h5" type="number" placeholder="Input price...">
+          <input class="ps-1 h5" type="number" v-model="vacationRental.price" placeholder="Input price...">
         </div>
         <div class="row mb-3">
           <p class="h6 ps-0 pb-0"><i>Cancellation fee:</i></p>
@@ -187,10 +187,18 @@ export default {
         price: null,
         serviceName: null,
         servicePrice:null,
-        additionalServices: [],
-        rule: null,
-        conductType: null,
-        conductRules: [],
+        additionalServices: [
+          {
+            serviceName: null,
+            servicePrice:null
+          }
+        ],
+        conductRules: [
+          {
+            rule: null,
+            conductType: null
+          }
+        ],
         cancellationFee: {
           feeType: null,
           value: null
@@ -203,8 +211,11 @@ export default {
           latitude: null,
           longitude: null
         },
-        beds: null,
-        rooms: []
+        rooms: [
+          {
+            beds: null
+          }
+        ]
       },
       isAddressValid: null,
       isNamePresent: null,
@@ -218,6 +229,9 @@ export default {
   methods: {
     addVacationRental(){
       console.log(this.vacationRental.ownerEmail);
+      console.log(this.vacationRental.name);
+      console.log(this.vacationRental.additionalServices.serviceName);
+      console.log(this.vacationRental.cancellationFee.feeType);
       axios.post("/RentalObjects/addVacationRental", null, {
         headers: {
           Authorization: "Bearer " + this.accessToken
@@ -229,8 +243,18 @@ export default {
           photos: this.photos,
           capacity: this.capacity,
           price: this.price,
-          additionalServices: this.additionalServices,
-          conductRules: this.conductRules,
+          additionalServices: [
+            {
+              serviceName: this.serviceName,
+              servicePrice:this.servicePrice
+            }
+          ],
+          conductRules: [
+            {
+              rule: this.rule,
+              conductType: this.conductType
+            }
+          ],
           cancellationFee: {
             feeType: this.feeType,
             value: this.value
@@ -243,7 +267,11 @@ export default {
             latitude: this.latitude,
             longitude: this.longitude
           },
-          rooms: this.rooms
+          rooms: [
+            {
+              beds: this.beds
+            }
+          ]
         }
       })
       .then(() => {
@@ -277,19 +305,19 @@ export default {
       })
     },
     addService() {
-      this.vacationRental.additionalServices.push({ name: this.serviceName, price: this.servicePrice });
+      this.vacationRental.additionalServices.push({ serviceName: null, servicePrice: null });
     },
     removeService(index) {
       this.vacationRental.additionalServices.splice(index, 1);
     },
     addRule() {
-      this.vacationRental.conductRules.push({ rule: this.rule, conductType: this.conductType });
+      this.vacationRental.conductRules.push({ rule: null, conductType: null });
     },
     removeRule(index) {
       this.vacationRental.conductRules.splice(index, 1);
     },
     addRooms() {
-      this.vacationRental.rooms.push({ beds: this.beds });
+      this.vacationRental.rooms.push({ beds: null});
     },
     removeRooms(index) {
       this.vacationRental.rooms.splice(index, 1);
@@ -338,11 +366,6 @@ export default {
           });
     }
   },
-  computed: {
-    accessToken(){
-      return store.state.access_token;
-    }
-  }
 }
 </script>
 

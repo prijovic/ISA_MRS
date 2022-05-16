@@ -226,7 +226,7 @@ const routes = [
             sidebar: TheBoatOwnerSidebar,
         },
         meta: {
-            public: false
+            public: true
         }
     },
     {
