@@ -12,7 +12,6 @@
 import {sidebarWidth} from "@/components/state";
 import TheNavbar from "@/components/GeneralComponents/TheNavbar";
 
-
 export default {
   name: 'App',
   setup() {
@@ -32,4 +31,10 @@ export default {
 
 <style>
 @import "~bootstrap/dist/css/bootstrap.css";
+.form {
+  outline: solid 2px #3f5b25;
+  margin-top: 10px;
+  color: #3f5b25;
+  background-color: #f7f7f2;
+}
 </style>

@@ -1,11 +1,9 @@
 INSERT INTO address (id, country, city, street, number, latitude, longitude) VALUES (1, 'Srbija', 'Novi Sad', 'Ulica Miše Dimitrijevića', 41, 45.24398, 19.83099);
 INSERT INTO users (id, email, is_active, name, password, phone, surname, address_id, user_type) VALUES (1, 'prijovic.uros13@gmail.com', true, 'Uros', 'Uros12345', '066430250', 'Prijovic', 1, 5);
-INSERT INTO request (id, status, time_stamp, type, user_id) VALUES (1, 0, '2022-01-01 15:39:01', 0, 1);
 INSERT INTO admin (id) VALUES (1);
-INSERT INTO users (id, email, is_active, name, password, phone, surname, address_id, user_type) VALUES (2, 'prijovicuros@gmail.com', true, 'Uros', 'Uros12345', '066430250', 'Prijovic', 1, 0);
+INSERT INTO users (id, email, is_active, name, password, phone, surname, address_id, user_type) VALUES (2, 'prijovicu318@gmail.com', true, 'Uros', 'Uros12345', '066430250', 'Prijovic', 1, 0);
 INSERT INTO sale_participant (points, id) VALUES (0, 2);
 INSERT INTO rental_object_owner (id) VALUES (2);
-INSERT INTO request (id, status, time_stamp, type, user_id) VALUES (2, 0, '2022-01-02 00:00:00', 0, 2);
 INSERT INTO users (id, email, is_active, name, password, phone, surname, address_id, user_type) VALUES (3, 'volastamara@gmail.com', 1, 'Tamara', 'kljucko', '6969696969', 'Volan', 1, 3);
 INSERT INTO sale_participant (points, id) VALUES (0, 3);
 INSERT INTO client (id) VALUES (3);

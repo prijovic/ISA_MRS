@@ -4,19 +4,34 @@
     <div class="col-8 pt-5">
       <div class="container-fluid">
         <div class="align-items-center">
-          <div class="row main-col align-items-end header rounded mb-1">
-            <div class="col-sm-5 main-col">
+          <div class="row main-col align-items-end mb-1">
+            <div class="col-sm-4">
+              <input class="form-control" type="search" v-bind="searchInput"/>
+            </div>
+            <div class="col-sm-7">
+              <button class="btn" @click.prevent="">
+                <FontAwesomeIcon icon="filter"></FontAwesomeIcon>
+              </button>
+            </div>
+            <div class="col-sm-1 ms-auto me-0">
+              <button class="btn" @click.prevent="">
+                <FontAwesomeIcon icon="plus"></FontAwesomeIcon>
+              </button>
+            </div>
+          </div>
+          <div class="row main-col align-items-end header rounded mb-3">
+            <div class="col-sm-4 main-col">
               <h3>Name</h3>
             </div>
-            <div class="col-sm-5 main-col">
+            <div class="col-sm-4 main-col">
               <h3>Place</h3>
             </div>
-            <div class="col-sm-2 main-col">
+            <div class="col-sm-4 main-col">
               <h3>Duration</h3>
             </div>
           </div>
           <!-- Reviews listing -->
-          <FishingInstructorAdventureView v-for="(adventure, index) in this.adventures" v-on:requestManaged="filterRequests()" :key="index" :adventure="adventure"/>
+          <FishingInstructorAdventureView v-for="(adventure, index) in this.adventures" v-on:requestManaged="firstPage" :key="index" :adventure="adventure"/>
           <!-- Pagination -->
           <ul class="pagination justify-content-center">
             <li class="page-item" v-if="numberOfPages>2 && currentPage>1">
@@ -63,11 +78,11 @@ import {
   faAngleDoubleRight,
   faAngleLeft,
   faAngleRight,
-  faFrown,
+  faFrown, faFilter, faPlus
 } from "@fortawesome/free-solid-svg-icons";
 import {useStore} from "vuex";
 
-library.add(faAngleRight, faAngleLeft, faFrown, faAngleDoubleRight, faAngleDoubleLeft);
+library.add(faPlus, faFilter, faAngleRight, faAngleLeft, faFrown, faAngleDoubleRight, faAngleDoubleLeft);
 
 
 export default {
@@ -78,6 +93,7 @@ export default {
   },
   data() {
     return {
+      searchInput: null,
       adventures: null,
       numberOfPages: null,
       currentPage: 0,
@@ -148,7 +164,7 @@ export default {
   }
 
   .header {
-    background-color: rgb(68, 100, 173, 0.7);
+    background-color: rgb(63, 91, 37, 0.7);
     color: white;
   }
 
@@ -166,5 +182,10 @@ export default {
 
   .page-link {
     color: #378220;
+  }
+
+  .btn {
+    color: white;
+    background-color: #378220;
   }
 </style>
