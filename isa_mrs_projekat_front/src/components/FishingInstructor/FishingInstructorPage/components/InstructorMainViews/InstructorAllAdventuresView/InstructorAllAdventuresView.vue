@@ -13,7 +13,7 @@
                 <FontAwesomeIcon icon="filter"></FontAwesomeIcon>
               </button>
             </div>
-            <div class="col-sm-1">
+            <div class="col-sm-1 ms-auto me-0">
               <button class="btn" @click.prevent="">
                 <FontAwesomeIcon icon="plus"></FontAwesomeIcon>
               </button>
@@ -164,7 +164,7 @@ export default {
   }
 
   .header {
-    background-color: rgb(68, 100, 173, 0.7);
+    background-color: rgb(63, 91, 37, 0.7);
     color: white;
   }
 

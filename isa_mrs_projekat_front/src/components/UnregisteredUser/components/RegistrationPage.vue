@@ -1,7 +1,7 @@
 <template>
   <div class="row">
     <div class="col-2"></div>
-    <div class="col-8 pt-5">
+    <div class="col-8 pt-5 mb-5">
       <div class="container px-4 py-3 rounded form" spellcheck="false" >
         <div class="container-fluid">
           <h3>Sign Up</h3>
