@@ -11,5 +11,6 @@ import java.util.Optional;
 
 public interface RentalObjectOwnerRepo extends JpaRepository<RentalObjectOwner, Long> {
     Optional<RentalObjectOwner> findById(Long id);
+    Optional<RentalObjectOwner> findByEmail(String email);
     Page<RentalObjectOwner> findAllByUserType(UserType type, Pageable pageable);
 }
