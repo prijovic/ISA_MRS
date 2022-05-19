@@ -8,7 +8,10 @@ import rs.ac.uns.ftn.siit.isa_mrs.dto.UserDto;
 import rs.ac.uns.ftn.siit.isa_mrs.model.User;
 import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.UserType;
 
+import java.util.Collection;
+
 public interface UserService {
+    ResponseEntity<Collection<UserDto>> getUsers();
     ResponseEntity<UserDto> updateUserPassword(String email, String oldPassword, String newPassword);
     void encryptUsersPasswords();
     ResponseEntity<UserDto> changeUserStatus(Long id);

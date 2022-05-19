@@ -37,4 +37,25 @@ export default {
   color: #3f5b25;
   background-color: #f7f7f2;
 }
+
+.btn {
+  background-color: #008970;
+  color: #99EEDF;
+  border: 1px solid #99EEDF;
+}
+
+.btn:active, .btn:hover, .btn:focus {
+  background-color: rgb(0, 137, 112, 0.4);
+  color: white;
+  border: 1px solid #008970;
+}
+
+input[type=checkbox] {
+  opacity: 100%;
+  border: none;
+}
+
+input[type=checkbox]:checked {
+  background-color: rgb(0, 137, 112);
+}
 </style>

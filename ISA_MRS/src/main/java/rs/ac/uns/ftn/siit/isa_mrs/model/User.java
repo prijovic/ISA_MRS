@@ -30,7 +30,7 @@ public class User implements UserDetails {
     private String name;
     private String surname;
     private String phone;
-    private boolean isActive;
+    private Boolean isActive;
     private UserType userType;
     @ManyToOne
     private Address address;

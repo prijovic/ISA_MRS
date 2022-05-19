@@ -35,6 +35,19 @@ public class UserServiceImpl implements UserService {
     private final EmailSenderService emailSenderService;
 
     @Override
+    public ResponseEntity<Collection<UserDto>> getUsers() {
+        try {
+            Collection<User> users = userRepo.findAll();
+            Collection<UserDto> userDtos = new ArrayList<>();
+            users.forEach(user -> userDtos.add(modelMapper.map(user, UserDto.class)));
+            return new ResponseEntity<>(userDtos, HttpStatus.OK);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
     public ResponseEntity<UserDto> updateUserPassword(String email, String oldPassword, String newPassword) {
         try {
             Optional<User> userOptional = userRepo.findByEmail(email);
@@ -71,7 +84,7 @@ public class UserServiceImpl implements UserService {
     public ResponseEntity<UserDto> changeUserStatus(Long id) {
         try {
             User searchResult = userRepo.getById(id);
-            searchResult.setActive(!searchResult.isActive());
+            searchResult.setIsActive(!searchResult.getIsActive());
             userRepo.save(searchResult);
             UserDto userDto = modelMapper.map(searchResult, UserDto.class);
             return new ResponseEntity<>(userDto, HttpStatus.OK);
@@ -97,10 +110,10 @@ public class UserServiceImpl implements UserService {
             Optional<User> userResult = userRepo.findByEmail(email);
             if (userResult.isPresent()) {
                 User user = userResult.get();
-                if (user.isActive()) {
+                if (user.getIsActive()) {
                     return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
                 }
-                user.setActive(true);
+                user.setIsActive(true);
                 userRepo.save(user);
                 return new ResponseEntity<>(email, HttpStatus.OK);
             }

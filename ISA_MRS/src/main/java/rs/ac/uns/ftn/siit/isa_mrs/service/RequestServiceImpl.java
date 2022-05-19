@@ -92,7 +92,7 @@ public class RequestServiceImpl implements RequestService {
             User user = request.getUser();
             RespondedRequestDto requestDto = modelMapper.map(requestRepo.getById(id), RespondedRequestDto.class);
             if (request.getType().equals(RequestType.AccountDeletion)) {
-                user.setActive(false);
+                user.setIsActive(false);
             }
             else if (request.getType().equals(RequestType.SignUp)){
                 emailSenderService.sendActivationEmail(user);
@@ -187,7 +187,7 @@ public class RequestServiceImpl implements RequestService {
                     client.setEmail(sud.getEmail());
                     client.setPhone(sud.getPhoneNumber());
                     client.setAddress(address);
-                    client.setActive(false);
+                    client.setIsActive(false);
                     client.setPoints(0);
                     clientRepo.save(client);
                     emailSenderService.sendActivationEmail(client);
@@ -206,7 +206,7 @@ public class RequestServiceImpl implements RequestService {
                     admin.setEmail(sud.getEmail());
                     admin.setPassword(passwordEncoder.encode(sud.getPassword()));
                     admin.setPhone(sud.getPhoneNumber());
-                    admin.setActive(false);
+                    admin.setIsActive(false);
                     admin.setAddress(address);
                     adminRepo.save(admin);
                     request.setUser(admin);
@@ -221,7 +221,7 @@ public class RequestServiceImpl implements RequestService {
                     owner.setEmail(sud.getEmail());
                     owner.setPassword(passwordEncoder.encode(sud.getPassword()));
                     owner.setPhone(sud.getPhoneNumber());
-                    owner.setActive(false);
+                    owner.setIsActive(false);
                     owner.setAddress(address);
                     owner.setPoints(0);
                     rentalOwnerRepo.save(owner);

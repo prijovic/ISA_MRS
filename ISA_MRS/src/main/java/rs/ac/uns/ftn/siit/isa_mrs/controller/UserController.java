@@ -13,6 +13,8 @@ import rs.ac.uns.ftn.siit.isa_mrs.service.UserService;
 
 import javax.servlet.http.HttpServletRequest;
 
+import java.util.Collection;
+
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static rs.ac.uns.ftn.siit.isa_mrs.util.Paths.*;
 
@@ -22,6 +24,11 @@ import static rs.ac.uns.ftn.siit.isa_mrs.util.Paths.*;
 @RequestMapping(USER_CONTROLLER)
 public class UserController {
     private final UserService userService;
+
+    @GetMapping("/getUsers")
+    public ResponseEntity<Collection<UserDto>> getAllUsers() {
+        return userService.getUsers();
+    }
 
     @PutMapping(PASSWORD_CHANGE)
     public ResponseEntity<UserDto> updateUserPassword(@RequestBody PasswordChangeForm form) {

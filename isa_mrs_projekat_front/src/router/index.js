@@ -26,6 +26,8 @@ import ClientMainView from "@/components/Client/ClientPage/components/ClientMain
 import ClientSidebar from "@/components/Client/ClientPage/components/ClientSidebar/ClientSidebar";
 import RentalProfile from "@/components/UnregisteredUser/components/RentalProfile";
 import VerificationPage from "@/components/UnregisteredUser/components/VerificationPage";
+import AdminUsersView
+    from "@/components/Administrator/AdminPage/components/AdminMainViews/AdminUsersView/AdminUsersView";
 
 
 const routes = [
@@ -70,6 +72,17 @@ const routes = [
         name: "AdminDashboard",
         components: {
             default: AdminDashboard,
+            sidebar: TheAdminSidebar,
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
+        path: "/admin/users",
+        name: "AdminUsers",
+        components: {
+            default: AdminUsersView,
             sidebar: TheAdminSidebar,
         },
         meta: {
