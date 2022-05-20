@@ -48,8 +48,10 @@ export default {
   },
   created() {
     this.$store.dispatch("user", null);
+    this.$store.dispatch("isSuperAdmin", false);
     this.$store.dispatch("email", null);
     this.$store.dispatch("access_token", null);
+    this.$store.dispatch("first_login", null);
   },
   methods: {
     handleSubmit() {
@@ -74,10 +76,16 @@ export default {
               })
               .then(response => {
                 this.$store.dispatch("user", response.data.user_type);
-                this.$store.dispatch("email", this.email);
                 this.$store.dispatch("access_token", response.data.access_token)
+                this.$store.dispatch("first_login", Boolean(response.data.first_login))
+                this.$store.dispatch("email", this.email);
                 if (response.data.user_type === "SuperAdmin") {
                   this.$store.dispatch("user", "admin");
+                  this.$store.dispatch("isSuperAdmin", true);
+                  this.$router.push("/admin");
+                } else if (response.data.user_type === "Admin") {
+                  this.$store.dispatch("user", "admin");
+                  this.$store.dispatch("isSuperAdmin", false);
                   this.$router.push("/admin");
                 } else if (response.data.user_type === "Instructor") {
                   this.$store.dispatch("user", "fishingInstructor");

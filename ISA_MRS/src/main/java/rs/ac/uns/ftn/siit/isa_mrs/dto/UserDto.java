@@ -15,5 +15,6 @@ public class UserDto implements Serializable {
     private String phone;
     private Boolean isActive;
     private UserType userType;
+    private Boolean firstLogin;
     private AddressDto address;
 }

@@ -9,7 +9,6 @@
           </div>
           <div class="align-items-center">
             <user-profile-button v-if="userIsLoggedIn"></user-profile-button>
-            <!--    DODATI LOGIN MENI DUGME -->
           </div>
         </div>
       </div>
@@ -28,7 +27,7 @@ export default {
   },
   computed: {
     userIsLoggedIn() {
-      return this.$store.getters.user !== null
+      return this.$store.getters.user !== null;
     }
   }
 }

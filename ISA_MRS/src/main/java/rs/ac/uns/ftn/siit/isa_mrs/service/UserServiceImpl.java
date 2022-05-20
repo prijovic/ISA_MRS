@@ -2,6 +2,7 @@ package rs.ac.uns.ftn.siit.isa_mrs.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -11,18 +12,19 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.NewUserBasicInfoDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.PageDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.UserByTypeDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.UserDto;
-import rs.ac.uns.ftn.siit.isa_mrs.model.User;
+import rs.ac.uns.ftn.siit.isa_mrs.model.*;
 import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.UserType;
-import rs.ac.uns.ftn.siit.isa_mrs.repository.UserRepo;
+import rs.ac.uns.ftn.siit.isa_mrs.repository.*;
 import rs.ac.uns.ftn.siit.isa_mrs.security.JwtDecoder;
+import rs.ac.uns.ftn.siit.isa_mrs.util.ObjectConverter;
 
 import javax.persistence.EntityNotFoundException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -33,6 +35,11 @@ public class UserServiceImpl implements UserService {
     private final ModelMapper modelMapper;
     private final JwtDecoder jwtDecoder;
     private final EmailSenderService emailSenderService;
+    private final ObjectConverter objectConverter;
+    private final RentalObjectOwnerRepo rentalObjectOwnerRepo;
+    private final ClientRepo clientRepo;
+    private final AdminRepo adminRepo;
+    private final AddressRepo addressRepo;
 
     @Override
     public ResponseEntity<Collection<UserDto>> getUsers() {
@@ -56,18 +63,50 @@ public class UserServiceImpl implements UserService {
                 if (passwordEncoder.matches(oldPassword, user.getPassword())) {
                     String encodedPassword = passwordEncoder.encode(newPassword);
                     user.setPassword(encodedPassword);
+                    user.setFirstLogin(false);
                     userRepo.save(user);
                     UserDto userDto = modelMapper.map(user, UserDto.class);
                     return new ResponseEntity<>(userDto, HttpStatus.OK);
                 } else {
-                    return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+                    return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
                 }
             } else {
-                return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
         } catch (Exception e) {
             log.error(e.getMessage());
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    public ResponseEntity<UserDto> createUser(NewUserBasicInfoDto newUserInfo) {
+        try {
+            if (userRepo.findByEmail(newUserInfo.getEmail()).isPresent()) {
+                return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
+            }
+            Address address = modelMapper.map(newUserInfo.getAddress(), Address.class);
+            addressRepo.save(address);
+            User user = objectConverter.getUserFromNewUserData(newUserInfo, address);
+            String password = generatePassayPassword();
+            user.setPassword(passwordEncoder.encode(password));
+            user.setFirstLogin(true);
+            if (newUserInfo.getUserType().equals(UserType.Client)) {
+                clientRepo.save((Client) user);
+            }
+            else if (newUserInfo.getUserType().equals(UserType.Admin)) {
+                adminRepo.save((Admin) user);
+            }
+            else {
+                rentalObjectOwnerRepo.save((RentalObjectOwner) user);
+            }
+            UserDto userDto = modelMapper.map(user, UserDto.class);
+            emailSenderService.sendActivationNotificationEmail(user, password);
+            return new ResponseEntity<>(userDto, HttpStatus.OK);
+        }
+        catch (Exception e) {
+            log.error(e.getMessage());
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -90,10 +129,10 @@ public class UserServiceImpl implements UserService {
             return new ResponseEntity<>(userDto, HttpStatus.OK);
         }
         catch (EntityNotFoundException e){
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         catch (Exception e) {
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -145,24 +184,6 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-//    @Override
-//    public ResponseEntity<UserDto> addNewUser(User user) {
-//        try {
-//            if (user.getUserType().equals(UserType.Admin)) {
-//                user.setActive(true);
-//            }
-//            else {
-//                user.setActive(false);
-//            }
-//            userRepo.save(user);
-//            UserDto userDto = modelMapper.map(user, UserDto.class);
-//            return new ResponseEntity<>(userDto, HttpStatus.OK);
-//        } catch (Exception e) {
-//            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-//
-//        }
-//    }
-
     @Override
     public ResponseEntity<PageDto<UserByTypeDto>> findUsersByTypeWithPaginationSortedByField(int offset,
                                                                          int pageSize, String field, UserType type) {
@@ -193,5 +214,24 @@ public class UserServiceImpl implements UserService {
             log.error(e.getMessage());
             return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
         }
+    }
+
+    public String generatePassayPassword() {
+        String upperCaseLetters = RandomStringUtils.random(2, 65, 90, true, true);
+        String lowerCaseLetters = RandomStringUtils.random(2, 97, 122, true, true);
+        String numbers = RandomStringUtils.randomNumeric(2);
+        String specialChar = RandomStringUtils.random(2, 33, 47, false, false);
+        String totalChars = RandomStringUtils.randomAlphanumeric(2);
+        String combinedChars = upperCaseLetters.concat(lowerCaseLetters)
+                .concat(numbers)
+                .concat(specialChar)
+                .concat(totalChars);
+        List<Character> pwdChars = combinedChars.chars()
+                .mapToObj(c -> (char) c)
+                .collect(Collectors.toList());
+        Collections.shuffle(pwdChars);
+        return pwdChars.stream()
+                .collect(StringBuilder::new, StringBuilder::append, StringBuilder::append)
+                .toString();
     }
 }

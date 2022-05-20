@@ -80,6 +80,7 @@ export default {
           position: "bottom right",
           type: "success"
         });
+        this.$store.dispatch("first_login", false);
       })
       .catch((error) =>{
         if (error.response.status===404) {

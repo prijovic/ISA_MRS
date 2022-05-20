@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.NewUserBasicInfoDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.PageDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.UserByTypeDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.UserDto;
@@ -28,6 +29,11 @@ public class UserController {
     @GetMapping("/getUsers")
     public ResponseEntity<Collection<UserDto>> getAllUsers() {
         return userService.getUsers();
+    }
+
+    @PostMapping("/addUser")
+    public ResponseEntity<UserDto> addUser(@RequestBody NewUserBasicInfoDto newUserBasicInfoDto) {
+        return userService.createUser(newUserBasicInfoDto);
     }
 
     @PutMapping(PASSWORD_CHANGE)
