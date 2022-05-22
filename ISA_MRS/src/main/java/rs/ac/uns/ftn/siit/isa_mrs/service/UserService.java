@@ -15,6 +15,7 @@ public interface UserService {
     ResponseEntity<UserDto> updateUserPassword(String email, String oldPassword, String newPassword);
     void encryptUsersPasswords();
     ResponseEntity<UserDto> changeUserStatus(Long id);
+    ResponseEntity<Collection<UserDto>> changeUsersStatus(Collection<Long> ids);
     ResponseEntity<String> activateUser(String token);
     ResponseEntity<String> resendVerificationMail(String email);
     ResponseEntity<PageDto<UserByTypeDto>> findUsersByTypeWithPaginationSortedByField(int offset, int pageSize,

@@ -55,14 +55,13 @@ export default {
     border-radius: 0.25em;
     height: 2em;
 
-    color: #f7f7f2;
-    background-color: #378220;
+    color: white;
     text-decoration: none;
   }
 
-  .link:hover, .link:active {
-    color: #378220;
-    background-color: #f7f7f2;
+  .link:hover, .link:active, .link:focus {
+    color: #008970;
+    background-color: white;
   }
 
   .link .icon {

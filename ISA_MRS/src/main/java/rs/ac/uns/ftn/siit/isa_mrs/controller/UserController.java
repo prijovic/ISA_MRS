@@ -3,6 +3,8 @@ package rs.ac.uns.ftn.siit.isa_mrs.controller;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.configurationprocessor.json.JSONArray;
+import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.PageDto;
@@ -13,7 +15,11 @@ import rs.ac.uns.ftn.siit.isa_mrs.service.UserService;
 
 import javax.servlet.http.HttpServletRequest;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static rs.ac.uns.ftn.siit.isa_mrs.util.Paths.*;
@@ -52,6 +58,11 @@ public class UserController {
         return userService.changeUserStatus(id);
     }
 
+    @PutMapping("/multipleUserStatusChange")
+    public ResponseEntity<Collection<UserDto>> changeUsersStatus(@RequestBody ListWrapperClass lwc){
+        return userService.changeUsersStatus(lwc.getList());
+    }
+
     @GetMapping("/getUserType")
     public ResponseEntity<PageDto<UserByTypeDto>> getUsersByTypeWithPaginationAndSort(
             @RequestParam Integer page, @RequestParam Integer pageSize, @RequestParam String field,
@@ -65,5 +76,10 @@ public class UserController {
         private String email;
         private String oldPassword;
         private String newPassword;
+    }
+
+    @Data
+    static class ListWrapperClass {
+        private Collection<Long> list = new ArrayList<>();
     }
 }

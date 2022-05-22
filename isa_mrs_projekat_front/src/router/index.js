@@ -343,7 +343,6 @@ const routes = [
             public: false
         },
     }
-
 ];
 
 const router = createRouter({
@@ -354,7 +353,14 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
    if (!to.meta.public) {
        if (store.getters.isAuthenticated) {
-           next();
+           let redirect_path = "/" + store.getters.user + "/changePass";
+           if (from.path !== redirect_path && store.getters.first_login && from.path !== "/") {
+               next({path:redirect_path});
+           } else if (from.path === redirect_path && store.getters.first_login) {
+               /* pass */
+           } else {
+               next();
+           }
        } else {
            next({path: "/"})
        }

@@ -12,12 +12,12 @@
             <div class="form-group">
               <label for="inputPassword1">Old Password</label>
               <input type="password" id="inputPassword1" v-model="oldPassword" class="form-control col-sm-auto col-lg-4" aria-describedby="passwordHelpBlock" placeholder="Old password">
-              <p style="color:red" v-if='!isNewPassword'>New password can't be same as old.</p>
+              <p style="color: #e23c52" v-if='!isNewPassword'>New password can't be same as old.</p>
             </div>
             <div class="form-group">
               <label for="inputPassword2">New Password</label>
               <input type="password" id="inputPassword2" v-model=password class="form-control col-sm-auto col-lg-4" aria-describedby="passwordHelpBlock" placeholder="New password">
-              <p style="color:red" v-if='!passwordValidation.valid'>{{ passwordValidation.errors[0] }}</p>
+              <p style="color: #e23c52" v-if='!passwordValidation.valid'>{{ passwordValidation.errors[0] }}</p>
               <small id="passwordHelpBlock" class="form-text text-muted">
                 Your password must be 8-20 characters long, contain letters and numbers, and must not contain spaces, special characters, or emoji.
               </small>
@@ -25,10 +25,10 @@
             <div class="form-group">
               <label for="inputPassword3">Confirm Password</label>
               <input type="password" id="inputPassword3" v-model.lazy='checkPassword' class="form-control col-sm-auto col-lg-4" aria-describedby="passwordHelpBlock" placeholder="Confirm password">
-              <p style="color:red" v-if='notSamePasswords'>Passwords don't match.</p>
+              <p style="color: #e23c52" v-if='notSamePasswords'>Passwords don't match.</p>
             </div>
             <div class="text-center">
-              <button class="btn btn-default" @click.prevent='resetPasswords' :disabled='isDisabled'>
+              <button class="btn mt-3" @click.prevent='resetPasswords' :disabled='isDisabled'>
                 Submit
               </button>
             </div>
@@ -155,17 +155,5 @@ export default {
 <style scoped>
   h3 {
     text-align: center;
-  }
-
-  .btn {
-    margin-top: 15px;
-    background-color: #378220;
-    color: #f7f7f2;
-  }
-
-  .btn:active, .btn:hover, .btn:focus {
-    background-color: #f7f7f2;
-    color: #378220;
-    border: 1px solid #3F9725;
   }
 </style>
