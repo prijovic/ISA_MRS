@@ -137,6 +137,25 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public ResponseEntity<Collection<UserDto>> changeUsersStatus(Collection<Long> ids) {
+        Collection<Long> changedStatuses = new ArrayList<>();
+        try {
+            Collection<UserDto> result = new ArrayList<>();
+            ids.forEach(id -> {
+                User user = userRepo.getById(id);
+                user.setIsActive(!user.getIsActive());
+                userRepo.save(user);
+                changedStatuses.add(id);
+                result.add(modelMapper.map(user, UserDto.class));
+            });
+            return new ResponseEntity<>(result, HttpStatus.OK);
+        } catch (Exception e) {
+            changeUsersStatus(changedStatuses);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
     public ResponseEntity<String> activateUser(String token) {
         JwtDecoder.DecodedToken decodedToken;
         try {
