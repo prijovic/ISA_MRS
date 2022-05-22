@@ -85,33 +85,38 @@ export default {
                   this.$store.dispatch("isSuperAdmin", true);
                   if (store.state.first_login) {
                     this.$router.push("/admin/changePass");
+                  } else {
+                    this.$router.push("/admin");
                   }
-                  this.$router.push("/admin");
                 } else if (response.data.user_type === "Admin") {
                   this.$store.dispatch("user", "admin");
                   this.$store.dispatch("isSuperAdmin", false);
                   if (store.state.first_login) {
                     this.$router.push("/admin/changePass");
+                  } else {
+                    this.$router.push("/admin");
                   }
-                  this.$router.push("/admin");
                 } else if (response.data.user_type === "Instructor") {
                   this.$store.dispatch("user", "fishingInstructor");
                   if (store.state.first_login) {
                     this.$router.push("/fishingInstructor/changePass");
+                  } else {
+                    this.$router.push("/fishingInstructor");
                   }
-                  this.$router.push("/fishingInstructor");
                 } else if (response.data.user_type === "VacationRentalOwner") {
                   this.$store.dispatch("user", "vacationRentalOwner");
                   if (store.state.first_login) {
                     this.$router.push("/vacationRentalOwner/changePass");
+                  } else {
+                    this.$router.push("/vacationRentalOwner");
                   }
-                  this.$router.push("/vacationRentalOwner");
                 } else if (response.data.user_type === "BoatOwner") {
                   this.$store.dispatch("user", "boatOwner");
                   if (store.state.first_login) {
                     this.$router.push("/boatOwner/changePass");
+                  } else {
+                    this.$router.push("/boatOwner");
                   }
-                  this.$router.push("/boatOwner");
                 } else if (response.data.user_type === "Client") {
                   this.$store.dispatch("user", "client");
                   if (store.state.first_login) {
