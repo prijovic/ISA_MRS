@@ -28,7 +28,7 @@
               </div>
               <router-link to="/admin/newUser" class="btn btn-default mb-1 d-flex my-auto">
                 <font-awesome-icon class="my-auto pe-2" icon="user-plus"></font-awesome-icon>
-                <h4 class="my-auto">Create Admin</h4>
+                Create Admin
               </router-link>
             </div>
           </div>
@@ -121,8 +121,6 @@ import { library } from "@fortawesome/fontawesome-svg-core";
 import { faUserPlus, faEye } from "@fortawesome/free-solid-svg-icons";
 import {useStore} from "vuex";
 import axios from "axios";
-import AdminUserProfilePreview
-  from "@/components/Administrator/AdminPage/components/AdminMainViews/AdminUsersView/components/AdminUserProfilePreview";
 import store from "@/store";
 
 library.add(faUserPlus, faEye);
