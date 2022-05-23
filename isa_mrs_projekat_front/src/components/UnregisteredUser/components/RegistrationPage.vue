@@ -4,7 +4,8 @@
     <div class="col-8 pt-5 mb-5">
       <div class="container px-4 py-3 rounded form" spellcheck="false" >
         <div class="container-fluid">
-          <h3>Sign Up</h3>
+          <h3 v-if="!isAdmin">Sign Up</h3>
+          <h3 v-else>New User</h3>
           <div class="row main justify-content-center">
             <div class="row main">
               <div class="col main">
@@ -15,42 +16,43 @@
                       <label for="userType">User type</label>
                       <select class="form-control" v-model="user.userType" id="userType">
                         <option value="Client" selected="selected">Client</option>
-                        <option value="VacationRentalOwner">Vacation Rental Owner</option>
+                        <option value="VacationRentalOwner">House Owner</option>
                         <option value="BoatOwner">Boat Owner</option>
-                        <option value="FishingInstructor">Fishing instructor</option>
+                        <option value="FishingInstructor">Fishing Instructor</option>
                         <option v-if="isAdmin" value="Admin">Admin</option>
                       </select>
                     </div>
                     <div class="row">
                       <label for="name">Name</label>
                       <input class="form-control" type="text" id="name" v-model="user.name" placeholder="E.g. John" @input="nameIsEntered=true">
-                      <p style="color:red" v-if='!nameIsEntered'>'Name' is a mandatory field.</p>
+                      <p v-if='!nameIsEntered'>'Name' is a mandatory field.</p>
                     </div>
                     <div class="row">
                       <label for="surname">Surname</label>
                       <input class="form-control" type="text" id="surname" v-model="user.surname" placeholder="E.g. Doe" @input="surnameIsEntered=true">
-                      <p style="color:red" v-if='!surnameIsEntered'>'Surname' is a mandatory field.</p>
+                      <p v-if='!surnameIsEntered'>'Surname' is a mandatory field.</p>
                     </div>
                     <div class="row">
                       <label for="email">Email</label>
-                      <input class="form-control" type="email" id="email" v-model="user.email" placeholder="E.g. john@email.com" @input="emailIsEntered=true">
-                      <p style="color:red" v-if='!emailIsEntered'>'Email' is a mandatory field.</p>
-                      <p style="color:red" v-else-if='!emailValidation'>Invalid email format.</p>
+                      <input class="form-control" type="email" id="email" v-model="user.email" placeholder="E.g. john@email.com" @input="emailChanged">
+                      <p v-if='!emailIsEntered'>'Email' is a mandatory field.</p>
+                      <p v-else-if='!emailValidation'>Invalid email format.</p>
+                      <p v-else-if='!emailIsUnique'>Email is already taken.</p>
                     </div>
-                    <div class="row">
+                    <div v-if="!isAdmin" class="row">
                       <label for="inputPassword2">Password</label>
                       <input type="password" id="inputPassword2" v-model="user.password" class="form-control col-sm-auto col-lg-4" aria-describedby="passwordHelpBlock" placeholder="New password" @input="passwordISEntered=true">
-                      <p style="color:red" v-if="!passwordISEntered">'Password' is a mandatory field.</p>
-                      <p style="color:red" v-else-if='!passwordValidation.valid'>{{ passwordValidation.errors[0] }}</p>
+                      <p v-if="!passwordISEntered">'Password' is a mandatory field.</p>
+                      <p v-else-if='!passwordValidation.valid'>{{ passwordValidation.errors[0] }}</p>
                       <small id="passwordHelpBlock" class="form-text text-muted">
                         Your password must be 8-20 characters long, contain letters and numbers, and must not contain spaces, special characters, or emoji.
                       </small>
                     </div>
-                    <div class="row">
+                    <div v-if="!isAdmin" class="row">
                       <label for="inputPassword3">Confirm Password</label>
                       <input type="password" id="inputPassword3" v-model.lazy="checkPassword" class="form-control col-sm-auto col-lg-4" aria-describedby="passwordHelpBlock" placeholder="Confirm password" @input="confirmationPasswordIsEntered=true">
-                      <p style="color:red" v-if="!confirmationPasswordIsEntered">'Confirmation Password' is a mandatory field.</p>
-                      <p style="color:red" v-else-if='notSamePasswords'>Passwords don't match.</p>
+                      <p v-if="!confirmationPasswordIsEntered">'Confirmation Password' is a mandatory field.</p>
+                      <p  v-else-if='notSamePasswords'>Passwords don't match.</p>
                     </div>
                   </div>
                   <div class="col-2"></div>
@@ -63,37 +65,37 @@
                     <div class="row">
                       <label for="country">Country</label>
                       <input v-model="user.address.country" class="form-control" type="text" id="country" placeholder="Country" @input="countryIsEntered=true">
-                      <p style="color:red" v-if='!countryIsEntered'>'Country' is a mandatory field.</p>
-                      <p style="color:red" v-if='!addressIsValid'>Invalid address data.</p>
+                      <p v-if='!countryIsEntered'>'Country' is a mandatory field.</p>
+                      <p v-if='!addressIsValid'>Invalid address data.</p>
                     </div>
                     <div class="row">
                       <label for="city">City</label>
                       <input v-model="user.address.city" class="form-control" type="text" id="city" placeholder="City" @input="cityIsEntered=true">
-                      <p style="color:red" v-if='!cityIsEntered'>'City' is a mandatory field.</p>
-                      <p style="color:red" v-if='!addressIsValid'>Invalid address data.</p>
+                      <p v-if='!cityIsEntered'>'City' is a mandatory field.</p>
+                      <p v-if='!addressIsValid'>Invalid address data.</p>
                     </div>
                     <div class="row">
                       <label for="street">Street</label>
                       <input v-model="user.address.street" class="form-control" type="text" id="street" placeholder="Street" @input="streetIsEntered=true">
-                      <p style="color:red" v-if='!streetIsEntered'>'Street' is a mandatory field.</p>
-                      <p style="color:red" v-if='!addressIsValid'>Invalid address data.</p>
+                      <p v-if='!streetIsEntered'>'Street' is a mandatory field.</p>
+                      <p v-if='!addressIsValid'>Invalid address data.</p>
                     </div>
                     <div class="row">
                       <label for="number">Number</label>
                       <input v-model="user.address.number" class="form-control"  type="text" id="number" placeholder="House Number" @input="numberIsEntered=true">
-                      <p style="color:red" v-if='!numberIsEntered'>'Number' is a mandatory field.</p>
-                      <p style="color:red" v-if='!addressIsValid'>Invalid address data.</p>
+                      <p v-if='!numberIsEntered'>'Number' is a mandatory field.</p>
+                      <p v-if='!addressIsValid'>Invalid address data.</p>
                     </div>
                     <div class="row">
                       <label for="phone">Phone</label>
                       <vue-tel-input v-model="phoneInput" id="phone" mode="international" defaultCountry="RS" :onlyCountries=onlyCountries @input="onTelephoneInput"></vue-tel-input>
-                      <p style="color:red" v-if='!phoneIsValid'>Invalid phone number.</p>
+                      <p v-if='!phoneIsValid'>Invalid phone number.</p>
                     </div>
-                    <div class="row" v-if="isRentalObjectOwner">
+                    <div class="row" v-if="isRentalObjectOwner && !isAdmin">
                       <label for="motivationLetter">Motivation Letter</label>
                       <textarea v-model="user.reason" class="form-control" rows="10" maxlength="300" placeholder="Please describe why you want to join our community in 50-500 characters." id="motivationLetter" @input="reasonIsEntered=true"></textarea>
-                      <p style="color:red" v-if='!reasonIsEntered'>'Motivation Letter' is a mandatory field.</p>
-                      <p style="color:red" v-if='!reasonIsValid'>Minimum characters is 50.</p>
+                      <p v-if='!reasonIsEntered'>'Motivation Letter' is a mandatory field.</p>
+                      <p v-if='!reasonIsValid'>Minimum characters is 50.</p>
                     </div>
                   </div>
                   <div class="col-4">
@@ -103,7 +105,8 @@
             </div>
           </div>
           <div class="d-flex pt-3 justify-content-center">
-            <button type="button" class="btn m-1" @click="submit">Submit</button>
+            <router-link v-if="isAdmin" to="/admin/users" class="btn btn-red mt-3 me-1">Cancel</router-link>
+            <button type="button" class="btn mt-3" @click="submit">Submit</button>
           </div>
         </div>
       </div>
@@ -162,7 +165,8 @@ export default {
       reasonIsEntered: true,
       addressIsValid: true,
       phoneIsValid: true,
-      reasonIsValid: true
+      reasonIsValid: true,
+      emailIsUnique: true
     }
   },
   computed: {
@@ -170,7 +174,7 @@ export default {
       return store.state.access_token;
     },
     isAdmin() {
-      return store.state.user === "SuperAdmin";
+      return store.state.isSuperAdmin;
     },
     isRentalObjectOwner() {
       return (this.user.userType !== "Client" && this.user.userType !== "Admin" && this.user.userType !== "SuperAdmin");
@@ -239,6 +243,10 @@ export default {
     }
   },
   methods: {
+    emailChanged() {
+      this.emailIsEntered = true;
+      this.emailIsUnique = true;
+    },
     submit() {
       if (this.passwordValidation.valid && !this.notSamePasswords) {
         if (this.isDataEntered() && this.isDataCorrect()) {
@@ -247,53 +255,85 @@ export default {
       }
     },
     makeRequest() {
-      axios.post("/Requests/signUp", this.user, {
-        headers: {
-          Authorization: "Bearer " + this.accessToken,
-        }
-      })
-          .then(() => {
-            let message = "Successful Sign Up";
-            if(this.user.userType === "Client") message += "Verification email has been sent to " + this.user.email + ". Please go and check your mail.";
-            else message += "Your request is pending. Keep checking your email for a response."
-            this.$notify( {
-              title: "Sign up",
-              text: message,
-              position: "bottom right",
-              type: "success"
+      console.log("SALJEM ZAHTEV");
+      if (this.isAdmin) {
+        axios.post("/Users/addUser", this.user, {
+          headers: {
+            Authorization: "Bearer " + this.accessToken,
+          }
+        })
+        .then(() => {
+          this.$notify( {
+            title: "Successful adding",
+            text: "You have successfully added a new user. Verification email has been sent to " + this.user.email + ".",
+            position: "bottom right",
+            type: "success"
+          });
+          this.$router.push("/admin/users");
+        })
+        .catch(error => {
+          if (!error.response) {
+            this.$notify({
+              title: "Server error",
+              text: "Server is currently off. Please try again later...",
+              type: "error"
             });
-            this.$router.push("/");
-          })
-          .catch(error => {
-            if (!error.response) {
-              this.$notify({
-                title: "Server error",
-                text: "Server is currently off. Please try again later...",
-                type: "error"
-              });
-            } else if (error.response.status === 422) {
-              this.$notify({
-                title: "Invalid email",
-                text: "User with email " + this.email + " already exists. Please enter a different email.",
-                position: "bottom right",
-                type: "warn"
-              })
-            } else if (error.response.status === 400) {
-              this.$notify({
-                title: "Invalid Request Status",
-                text: "Bad registration request.",
-                position: "bottom right",
-                type: "warn"
-              })
-            } else if (error.response.status === 500) {
-              this.$notify({
-                title: "Internal Server Error",
-                text: "Something went wrong on the server! Please try again later...",
-                position: "bottom right",
-                type: "error"
-              })
-            }
-          })
+          } else if (error.response.status === 422) {
+            this.emailIsUnique = false;
+          } else if (error.response.status === 500) {
+            this.$notify({
+              title: "Internal Server Error",
+              text: "Something went wrong on the server! Please try again later...",
+              position: "bottom right",
+              type: "error"
+            })
+          }
+        })
+      } else {
+        axios.post("/Requests/signUp", this.user, {
+          headers: {
+            Authorization: "Bearer " + this.accessToken,
+          }
+        })
+        .then(() => {
+          let message = "Successful Sign Up";
+          if(this.user.userType === "Client") message += "Verification email has been sent to " + this.user.email + ". Please go and check your mail.";
+          else message += "Your request is pending. Keep checking your email for a response."
+          this.$notify( {
+            title: "Sign up",
+            text: message,
+            position: "bottom right",
+            type: "success"
+          });
+          this.$router.push("/");
+        })
+        .catch(error => {
+          if (!error.response) {
+            this.$notify({
+              title: "Server error",
+              text: "Server is currently off. Please try again later...",
+              type: "error"
+            });
+          } else if (error.response.status === 422) {
+            this.emailIsUnique = false;
+          } else if (error.response.status === 400) {
+            this.$notify({
+              title: "Invalid Request Status",
+              text: "Bad registration request.",
+              position: "bottom right",
+              type: "warn"
+            })
+          } else if (error.response.status === 500) {
+            this.$notify({
+              title: "Internal Server Error",
+              text: "Something went wrong on the server! Please try again later...",
+              position: "bottom right",
+              type: "error"
+            })
+          }
+        })
+      }
+
     },
     isDataEntered() {
       if (!this.isNameEntered) {
@@ -308,11 +348,11 @@ export default {
         this.emailIsEntered = false;
         return false;
       }
-      if (!this.isPasswordEntered) {
+      if (!this.isPasswordEntered && !this.isAdmin) {
         this.passwordISEntered = false;
         return false;
       }
-      if (!this.isConfirmationPasswordEntered) {
+      if (!this.isConfirmationPasswordEntered  && !this.isAdmin) {
         this.confirmationPasswordIsEntered = false;
         return false;
       }
@@ -332,13 +372,14 @@ export default {
         this.numberIsEntered = false;
         return false;
       }
-      if (this.isRentalObjectOwner && !this.isReasonEntered) {
+      if (this.isRentalObjectOwner && !this.isReasonEntered && !this.isAdmin) {
         this.reasonIsEntered = false;
         return false;
       }
       return true;
     },
-    isDataCorrect() {
+    async isDataCorrect() {
+      this.addressIsValid = false;
       this.validateAddress();
       if (!this.addressIsValid) {
         return false;
@@ -347,12 +388,11 @@ export default {
         this.phoneIsValid = false;
         return false;
       }
-      if (this.isRentalObjectOwner && this.isReasonValid()) {
+      if (this.isRentalObjectOwner && this.isReasonValid() && !this.isAdmin) {
         this.reasonIsValid = false;
         return false;
       }
       return true;
-
     },
     onTelephoneInput(phone, phoneObject) {
       this.phoneIsEntered = true;
@@ -381,6 +421,7 @@ export default {
           .then(response => response.json())
           .then(data => {
             const responseView = data.Response.View;
+            console.log(responseView);
             if (responseView.length === 0) {
               this.addressIsValid = false;
             }
@@ -412,11 +453,6 @@ export default {
 </script>
 
 <style scoped>
-  .container {
-    outline: solid 2px #3f5b25;
-    margin-top: 10px;
-    color: #3f5b25;
-  }
 
   textarea {
     resize: none;
@@ -432,19 +468,10 @@ export default {
     color: grey;
   }
 
-  .btn {
-    margin-top: 15px;
-    background-color: #378220;
-    color: #f7f7f2;
-  }
-
-  .btn:active, .btn:hover, .btn:focus {
-    background-color: #f7f7f2;
-    color: #378220;
-    border: 1px solid #3F9725;
-  }
-
   h3 {
     text-align: center;
+  }
+  p {
+    color: #e23c52;
   }
 </style>

@@ -14,7 +14,7 @@ import java.util.LinkedHashSet;
 @AllArgsConstructor
 public class SpecialOffer {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
     private LocalDateTime initDate;

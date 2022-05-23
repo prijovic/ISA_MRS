@@ -21,7 +21,7 @@ import java.util.HashSet;
 @Inheritance(strategy = InheritanceType.JOINED)
 public class User implements UserDetails {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
     private String photo;
@@ -32,6 +32,7 @@ public class User implements UserDetails {
     private String phone;
     private Boolean isActive;
     private UserType userType;
+    private Boolean firstLogin=false;
     @ManyToOne
     private Address address;
     @OneToOne

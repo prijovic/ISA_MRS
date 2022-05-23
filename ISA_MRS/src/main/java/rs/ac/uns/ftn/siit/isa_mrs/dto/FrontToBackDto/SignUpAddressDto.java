@@ -9,7 +9,7 @@ public class SignUpAddressDto implements Serializable {
     private String country;
     private String city;
     private String street;
-    private int number;
-    private double latitude;
-    private double longitude;
+    private Integer number;
+    private Double latitude;
+    private Double longitude;
 }

@@ -76,6 +76,34 @@ public class VacationRentalServiceImpl implements VacationRentalService{
     }
 
     @Override
+    public ResponseEntity<PageDto<VacationRentalDto>> findVacationRentalsWithPaginationSortedByFieldAndFilteredByOwner(int offset, int pageSize, String field, String ownerEmail) {
+        log.info("Uslo u servis");
+        PageDto<VacationRentalDto> result = new PageDto<>();
+        try{
+            Pageable pageable = PageRequest.of(offset, pageSize).withSort(Sort.by(field));
+            Page<VacationRental> vacationRentalsPage = vacationRentalRepo
+                    .findAllByRentalObjectTypeAndRentalObjectOwnerEmail(RentalObjectType.VacationRental, ownerEmail, pageable);
+            Collection<VacationRentalDto> vacationRentalDtos = new ArrayList<>();
+            vacationRentalsPage.getContent().forEach(vacationRental -> {
+                vacationRentalDtos.add(modelMapper.map(vacationRental, VacationRentalDto.class));
+            });
+            result.setContent(vacationRentalDtos);
+            log.info("result");
+            result.setPages(vacationRentalsPage.getTotalPages());
+            result.setCurrentPage(vacationRentalsPage.getNumber() + 1);
+            result.setPageSize(vacationRentalsPage.getSize());
+            if (vacationRentalsPage.getContent().isEmpty()) {
+                return new ResponseEntity<>(result, HttpStatus.NO_CONTENT);
+            }
+            else {
+                return new ResponseEntity<>(result, HttpStatus.OK);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @Override
     public ResponseEntity<VacationRentalDto> addNewVacationRental(AddVacationRentalDto vrd) {
         log.info("Uslo u servis");
         log.info(vrd.getName());

@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 import rs.ac.uns.ftn.siit.isa_mrs.model.Request;
@@ -28,6 +29,7 @@ public class EmailSenderServiceImpl implements EmailSenderService{
     private final JavaMailSender mailSender;
     private final Configuration configuration;
     private final JwtGenerator jwtGenerator;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public void sendRequestHandledEmail(Request request, Map<String, Object> model) throws MessagingException, IOException, TemplateException {
@@ -49,10 +51,25 @@ public class EmailSenderServiceImpl implements EmailSenderService{
         Map<String, Object> model = new HashMap<>();
         List<String> authority = new ArrayList<>();
         authority.add(user.getUserType().name());
-        model.put("link", "http://localhost:3000/" + jwtGenerator.generateJwt(user.getEmail(), "", authority, JwtGenerator.TokenPeriod.OneDay) + "/" + jwtGenerator.generateJwt(user.getEmail(), "", authority, JwtGenerator.TokenPeriod.TwoDays));
+        model.put("link", "http://localhost:3000/token" + jwtGenerator.generateJwt(user.getEmail(), "", authority, JwtGenerator.TokenPeriod.OneDay) + "/refresh" + jwtGenerator.generateJwt(user.getEmail(), "", authority, JwtGenerator.TokenPeriod.TwoDays));
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper messageHelper = new MimeMessageHelper(message, MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED);
         Template template = configuration.getTemplate("successful-registration-email.ftl");
+        String html = FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
+        messageHelper.setTo(user.getEmail());
+        messageHelper.setText(html, true);
+        messageHelper.setSubject(subject);
+        mailSender.send(message);
+    }
+
+    @Override
+    public void sendActivationNotificationEmail(User user, String password) throws MessagingException, IOException, TemplateException {
+        final String subject = "Account Creation";
+        Map<String, Object> model = new HashMap<>();
+        model.put("password", password);
+        MimeMessage message = mailSender.createMimeMessage();
+        MimeMessageHelper messageHelper = new MimeMessageHelper(message, MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED);
+        Template template = configuration.getTemplate("added-user-email.ftl");
         String html = FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
         messageHelper.setTo(user.getEmail());
         messageHelper.setText(html, true);

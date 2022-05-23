@@ -12,6 +12,7 @@ public class VacationRentalDto implements Serializable {
     private String name;
     private RentalObjectType rentalObjectType;
     private Collection<PhotoDto> photos;
+    private AddressDto address;
     private Integer capacity;
     private Double price;
     private Collection<ReservationDto> reservation;

@@ -9,5 +9,7 @@ public interface VacationRentalService {
     ResponseEntity<VacationRentalDto> getVacationRental(Long id);
     ResponseEntity<PageDto<VacationRentalDto>> findVacationRentalsWithPaginationSortedByField(int offset, int pageSize,
                                                                                               String field);
+    ResponseEntity<PageDto<VacationRentalDto>> findVacationRentalsWithPaginationSortedByFieldAndFilteredByOwner(int offset, int pageSize,
+                                                                                                                String field, String ownerEmail);
     ResponseEntity<VacationRentalDto> addNewVacationRental(AddVacationRentalDto vacationRental);
 }
