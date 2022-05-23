@@ -14,8 +14,8 @@ import BoatOwnerContentPage from "@/components/BoatOwner/BoatOwnerPage/component
 import TheBoatOwnerSidebar from "@/components/BoatOwner/BoatOwnerPage/components/TheBoatOwnerSidebar/TheBoatOwnerSidebar";
 import AdminRequestsView from "@/components/Administrator/AdminPage/components/AdminMainViews/AdminRequestsView/AdminRequestsView";
 import InitView from "@/components/UnregisteredUser/InitView";
-import CottagesView
-    from "@/components/VacationRentalOwner/VacationRentalOwnerPage/components/CottagesView/CottagesView";
+import AllCottagesView
+    from "@/components/VacationRentalOwner/VacationRentalOwnerPage/components/AllCottagesView/AllCottagesView";
 import RegistrationPage from "@/components/UnregisteredUser/components/RegistrationPage";
 import IncomeRateChangeForm
     from "@/components/Administrator/AdminPage/components/AdminMainViews/AdminIncomeIncomeRateComponents/IncomeRateChangeForm";
@@ -271,7 +271,7 @@ const routes = [
         path: "/vacationRentalOwner/cottages",
         name: "ViewCottages",
         components: {
-            default: CottagesView,
+            default: AllCottagesView,
             sidebar: TheOwnerSidebar,
         },
         meta: {

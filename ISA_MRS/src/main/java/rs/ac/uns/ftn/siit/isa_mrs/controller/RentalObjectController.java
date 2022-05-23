@@ -93,4 +93,12 @@ public class RentalObjectController {
         return vacationRentalService.addNewVacationRental(avrd);
     }
 
+    @GetMapping(GET_VACATION_RENTALS + "Owner")
+    public ResponseEntity<PageDto<VacationRentalDto>> getVacationRentalsForOwner(
+            @RequestParam Integer page, @RequestParam Integer pageSize,
+            @RequestParam String field, @RequestParam String email) {
+        log.info("kontroler");
+        return vacationRentalService.findVacationRentalsWithPaginationSortedByFieldAndFilteredByOwner(page, pageSize, field, email);
+    }
+
 }
