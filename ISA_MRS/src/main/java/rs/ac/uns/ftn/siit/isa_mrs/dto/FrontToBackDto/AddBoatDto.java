@@ -6,9 +6,9 @@ import java.io.Serializable;
 import java.util.Collection;
 
 @Data
-public class AddVacationRentalDto implements Serializable {
+public class AddBoatDto implements Serializable {
     private String name;
-    private String ownerEmail;
+    private String boatOwnerEmail;
     private String description;
     private Collection<PhotoDto> photos;
     private Integer capacity;
@@ -17,5 +17,11 @@ public class AddVacationRentalDto implements Serializable {
     private Collection<ConductRuleDto> conductRules;
     private CancellationFeeDto cancellationFee;
     private AddressDto address;
-    private Collection<RoomDto> rooms;
+    private String type;
+    private Double length;
+    private String engineNumber;
+    private Double enginePower;
+    private Double maxSpeed;
+    private Collection<NavigationEquipmentDto> navigationEquipment;
+    private Collection<FishingEquipmentDto> fishingEquipment;
 }

@@ -4,33 +4,40 @@
       <div class="row">
         <div class="col-1 main"></div>
         <div class="col-4 main">
-          <div class="row mb-3" v-bind:style="{color: isNamePresent ? '#3f5b25':'red'}">
+          <div class="row mb-3">
             <p class="h6 ps-0 pb-0"><i>Name:</i></p>
             <input class="ps-1 h5" type="text" id="name" v-model="boat.name" placeholder="Input name...">
+            <p class="small" style="color:red" v-if='!nameIsEntered'>'Name' is a mandatory field.</p>
           </div>
           <div class="row mb-3">
             <p class="h6 ps-0 pb-0"><i>Type:</i></p>
             <input class="ps-1 h5" type="text" id="boatType" v-model="boat.boatType" placeholder="Input type...">
+            <p class="small" style="color:red" v-if='!boatTypeIsEntered'>'Type' is a mandatory field.</p>
           </div>
           <div class="row mb-3">
             <p class="h6 ps-0 pb-0"><i>Length:</i></p>
             <input class="ps-1 h5" type="number" id="boatLength" v-model="boat.boatLength" placeholder="Input length...">
+            <p class="small" style="color:red" v-if='!boatLengthIsEntered'>'Length' is a mandatory field.</p>
           </div>
           <div class="row mb-3">
             <p class="h6 ps-0 pb-0"><i>Engine number:</i></p>
             <input class="ps-1 h5" type="text" id="engineNumber" v-model="boat.engineNumber" placeholder="Input engine number...">
+            <p class="small" style="color:red" v-if='!engineNumberIsEntered'>'Engine number' is a mandatory field.</p>
           </div>
           <div class="row mb-3">
             <p class="h6 ps-0 pb-0"><i>Engine power:</i></p>
             <input class="ps-1 h5" type="number" id="enginePower" v-model="boat.enginePower" placeholder="Input engine power...">
+            <p class="small" style="color:red" v-if='!enginePowerIsEntered'>'Engine power' is a mandatory field.</p>
           </div>
           <div class="row mb-3">
             <p class="h6 ps-0 pb-0"><i>Max speed:</i></p>
             <input class="ps-1 h5" type="text" id="maxSpeed" v-model="boat.maxSpeed" placeholder="Input boat max speed...">
+            <p class="small" style="color:red" v-if='!capacityIsEntered'>'Capacity' is a mandatory field.</p>
           </div>
-          <div class="row mb-3" v-bind:style="{color: isDescriptionPresent ? '#3f5b25':'red'}">
+          <div class="row mb-3">
             <p class="h6 ps-0 pb-0"><i>Description:</i></p>
             <textarea class="ps-1 h5" maxlength="255" rows="3" v-model="boat.description" placeholder="Input description..." style="resize: none"></textarea>
+            <p class="small" style="color:red" v-if='!descriptionIsEntered'>'Description' is a mandatory field.</p>
           </div>
           <div class="row mb-3">
             <p class="h6 ps-0 pb-0"><i>Photos:</i></p>
@@ -40,32 +47,42 @@
           <div class="row mb-3">
             <p class="h6 ps-0 pb-0"><i>Capacity:</i></p>
             <input class="ps-1 h5" type="number" v-model="boat.capacity" placeholder="Input capacity...">
+            <p class="small" style="color:red" v-if='!capacityIsEntered'>'Capacity' is a mandatory field.</p>
           </div>
         </div>
         <div class="col-2 main"></div>
         <div class="col-4 main">
-          <div class="row"  v-bind:style="{color:!(isAddressValid || isAddressValid===null)?'red':'#3f5b25'}">
+          <div class="row">
             <p class="h4 p-0"><font-awesome-icon icon="house"></font-awesome-icon> Address</p>
           </div>
           <div class="row mb-3">
             <p class="h6 ps-0 pb-0"><i>Country:</i></p>
             <input class="ps-1 h5" type="text" id="country" v-model="boat.address.country" placeholder="Country">
+            <p class="small" style="color:red" v-if='!countryIsEntered'>'Country' is a mandatory field.</p>
+            <p class="small" style="color:red" v-if='!addressIsValid'>Invalid address data.</p>
           </div>
           <div class="row mb-3">
             <p class="h6 ps-0 pb-0"><i>City:</i></p>
             <input class="ps-1 h5" type="text" id="city" v-model="boat.address.city" placeholder="City">
+            <p class="small" style="color:red" v-if='!cityIsEntered'>'City' is a mandatory field.</p>
+            <p class="small" style="color:red" v-if='!addressIsValid'>Invalid address data.</p>
           </div>
           <div class="row mb-3">
             <p class="h6 ps-0 pb-0"><i>Street:</i></p>
             <input class="ps-1 h5" type="text" id="street" v-model="boat.address.street" placeholder="Street">
+            <p class="small" style="color:red" v-if='!streetIsEntered'>'Street' is a mandatory field.</p>
+            <p class="small" style="color:red" v-if='!addressIsValid'>Invalid address data.</p>
           </div>
           <div class="row mb-3">
             <p class="h6 ps-0 pb-0"><i>Number:</i></p>
             <input class="ps-1 h5" type="number" id="number" v-model="boat.address.number" placeholder="House Number">
+            <p class="small" style="color:red" v-if='!numberIsEntered'>'Number' is a mandatory field.</p>
+            <p class="small" style="color:red" v-if='!addressIsValid'>Invalid address data.</p>
           </div>
           <div class="row mb-3">
             <p class="h6 ps-0 pb-0"><i>Price:</i></p>
             <input class="ps-1 h5" type="number" v-model="boat.price" placeholder="Input price...">
+            <p class="small" style="color:red" v-if='!priceIsEntered'>'Price' is a mandatory field.</p>
           </div>
           <div class="row mb-3">
             <p class="h6 ps-0 pb-0"><i>Cancellation fee:</i></p>
@@ -156,7 +173,7 @@
                 <div class="modal-body">
                   <div class="row mb-1" v-for="(navigationEquipment, k) in boat.navigationEquipments" :key="k">
                     <div class="col">
-                      <input type="number" id="navigationEquipment" v-model="navigationEquipment.navigationName" placeholder="Enter navigation equipment...">
+                      <input type="text" id="navigationEquipment" v-model="navigationEquipment.navigationName" placeholder="Enter navigation equipment...">
                     </div>
                     <div class="col">
                     <span>
@@ -171,7 +188,7 @@
             </div>
           </div>
           <div class="row mb-3">
-            <button type="button" class="btn btn-default" data-bs-toggle="modal" data-bs-target="#staticBackdrop3">Fishing equipment</button>
+            <button type="button" class="btn btn-default" data-bs-toggle="modal" data-bs-target="#staticBackdrop4">Fishing equipment</button>
           </div>
           <div class="modal fade" id="staticBackdrop4" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="Label" aria-hidden="true">
             <div class="modal-dialog">
@@ -183,7 +200,7 @@
                 <div class="modal-body">
                   <div class="row mb-1" v-for="(fishingEquipment, k) in boat.fishingEquipments" :key="k">
                     <div class="col">
-                      <input type="number" id="fishingEquipment" v-model="fishingEquipment.fishingEquipmentName" placeholder="Enter navigation equipment...">
+                      <input type="text" id="fishingEquipment" v-model="fishingEquipment.fishingEquipmentName" placeholder="Enter navigation equipment...">
                     </div>
                     <div class="col">
                     <span>
@@ -200,7 +217,7 @@
           <div class="row main pt-3">
             <div class="col-3"></div>
             <div class="col-9">
-              <button type="button" @click="validateInputs" class="btn btn-lg">Add new boat</button>
+              <button type="button" @click="submit" class="btn btn-lg">Add new boat</button>
             </div>
           </div>
         </div>
@@ -213,9 +230,8 @@
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faHouse, faMinusCircle, faPlusCircle } from "@fortawesome/free-solid-svg-icons";
-//import axios from "axios/index";
+import axios from "axios/index";
 import store from "@/store";
-import axios from "axios";
 
 library.add(faHouse, faMinusCircle, faPlusCircle);
 
@@ -274,65 +290,75 @@ export default {
             fishingEquipmentName: null
           }
         ]
-      }
+      },
+      nameIsEntered: true,
+      boatTypeIsEntered: true,
+      boatLengthIsEntered: true,
+      engineNumberIsEntered: true,
+      enginePowerIsEntered: true,
+      maxSpeedIsEntered: true,
+      descriptionIsEntered: true,
+      priceIsEntered: true,
+      capacityIsEntered: true,
+      countryIsEntered: true,
+      cityIsEntered: true,
+      streetIsEntered: true,
+      numberIsEntered: true,
+      addressIsValid: true
     }
   },
   mounted() {
     this.boat.boatOwnerEmail = store.state.email
   },
+  computed: {
+    accessToken() {
+      return store.state.access_token;
+    },
+    isNameEntered() {
+      return Boolean(this.boat.name);
+    },
+    isBoatTypeEntered() {
+      return Boolean(this.boat.boatType);
+    },
+    isBoatLengthEntered() {
+      return Boolean(this.boat.boatLength);
+    },
+    isEngineNumberEntered() {
+      return Boolean(this.boat.engineNumber);
+    },
+    isEnginePowerEntered() {
+      return Boolean(this.boat.enginePower);
+    },
+    isMaxSpeedEntered() {
+      return Boolean(this.boat.maxSpeed);
+    },
+    isDescriptionEntered() {
+      return Boolean(this.boat.description);
+    },
+    isCountryEntered() {
+      return Boolean(this.boat.address.country);
+    },
+    isCityEntered() {
+      return Boolean(this.boat.address.city);
+    },
+    isStreetEntered() {
+      return Boolean(this.boat.address.street);
+    },
+    isNumberEntered() {
+      return Boolean(this.boat.address.number);
+    }
+  },
   methods: {
-    addVacationRental() {
-      axios.post("/RentalObjects/addBoat", null, {
+    submit() {
+      if (this.isDataEntered() && this.isDataCorrect()) {
+        this.addBoat();
+      }
+    },
+    addBoat() {
+      axios.post("/RentalObjects/addBoat", this.boat, {
         headers: {
           Authorization: "Bearer " + this.accessToken
         },
-        params: {
-          name: this.name,
-          boatType: this.boatType,
-          boatLength: this.boatLength,
-          engineNumber: this.engineNumber,
-          enginePower: this.enginePower,
-          maxSpeed: this.maxSpeed,
-          ownerEmail: this.ownerEmail,
-          description: this.description,
-          photos: this.photos,
-          capacity: this.capacity,
-          price: this.price,
-          additionalServices: [
-            {
-              serviceName: this.serviceName,
-              servicePrice: this.servicePrice
-            }
-          ],
-          conductRules: [
-            {
-              rule: this.rule,
-              conductType: this.conductType
-            }
-          ],
-          cancellationFee: {
-            feeType: this.feeType,
-            value: this.value
-          },
-          address: {
-            country: this.country,
-            city: this.city,
-            street: this.street,
-            number: this.number,
-            latitude: this.latitude,
-            longitude: this.longitude
-          },
-          navigationEquipments: [
-            {
-              navigationName: this.navigationName
-            }
-          ],
-          fishingEquipment: [
-            {
-              fishingEquipmentName: this.fishingEquipmentName
-            }
-          ]
-        }
       })
           .then(() => {
             this.$notify({
@@ -388,15 +414,59 @@ export default {
     removeFishingEquipment(index) {
       this.boat.fishingEquipments.splice(index, 1);
     },
-    validateInputs() {
-      this.validateAddress();
-      this.isInputPresent();
-      if(this.allInputsPresent && this.isAddressValid) this.addVacationRental();
+    isDataEntered() {
+      if (!this.isNameEntered) {
+        this.nameIsEntered = false;
+        return false;
+      }
+      if (!this.isBoatTypeEntered) {
+        this.boatTypeIsEntered = false;
+        return false;
+      }
+      if (!this.isBoatLengthEntered) {
+        this.boatLengthIsEntered = false;
+        return false;
+      }
+      if (!this.isEngineNumberEntered) {
+        this.engineNumberIsEntered = false;
+        return false;
+      }
+      if (!this.isEnginePowerEntered) {
+        this.enginePowerIsEntered = false;
+        return false;
+      }
+      if (!this.isMaxSpeedEntered) {
+        this.maxSpeedIsEntered - false;
+        return false;
+      }
+      if (!this.isDescriptionEntered) {
+        this.descriptionIsEntered = false;
+        return false;
+      }
+      if (!this.isCountryEntered) {
+        this.countryIsEntered = false;
+        return false;
+      }
+      if (!this.isCityEntered) {
+        this.cityIsEntered = false;
+        return false;
+      }
+      if (!this.isStreetEntered) {
+        this.streetIsEntered = false;
+        return false;
+      }
+      if (!this.isNumberEntered) {
+        this.numberIsEntered = false;
+        return false;
+      }
+      return true;
     },
-    isInputPresent() {
-      this.isNamePresent = this.boat.name;
-      this.isDescriptionPresent = this.boat.description;
-      this.allInputsPresent = !!(this.isNamePresent && this.isDescriptionPresent);
+    isDataCorrect() {
+      this.validateAddress();
+      if (!this.addressIsValid) {
+        return false;
+      }
+      return true;
     },
     validateAddress() {
       const apiKey = 'VrDrl5BjEA0Whvb-chHbFz96HV4qlCXB-yoiTRRLKno';
@@ -411,29 +481,29 @@ export default {
           .then(data => {
             const responseView = data.Response.View;
             if (responseView.length === 0) {
-              console.log("NEMA ADRESE!")
-              this.isAddressValid = false;
+              this.addressIsValid = false;
             } else {
               const location = responseView[0].Result[0].Location.DisplayPosition;
               const address = responseView[0].Result[0].Location.Address;
-              this.boat.address.city = address.City;
-              this.boat.address.country = address.AdditionalData[0].value;
-              this.boat.address.street = address.Street;
+              this.boat.address.city = this.transliterate(address.City);
+              this.boat.address.country = this.transliterate(address.AdditionalData[0].value);
+              this.boat.address.street = this.transliterate(address.Street);
               this.boat.address.longitude = location.Longitude;
               this.boat.address.latitude = location.Latitude;
-              console.log(this.boat.address);
-              this.isAddressValid = true;
+              this.addressIsValid = true;
             }
           })
-          .catch(error => {
-            console.log(error);
-            this.isAddressValid = false;
+          .catch(() => {
+            this.addressIsValid = false;
           });
-    }
-  },
-  computed: {
-    accessToken(){
-      return store.state.access_token;
+    },
+    transliterate(word) {
+      let letters = {"Б":"B", "В":"V", "Г":"G", "Д":"D", "Ђ":"Đ", "Ж":"Ž", "З":"Z", "И":"I", "К":"K", "Л":"L", "Љ":"Lj", "М":"M", "Н":"N", "Њ":"Nj", "П":"P",
+        "Р":"R", "С":"S", "Ћ":"Ć", "У":"U", "Ф":"F", "Х":"H", "Ц":"C", "Ч":"Č", "Џ":"Dž", "Ш":"Š", "б":"b", "в":"v", "г":"g", "д":"d", "ђ":"đ", "ж":"ž", "з":"z", "и":"i", "к":"k", "л":"l", "љ":"lj", "м":"m", "н":"n", "њ":"nj", "п":"p",
+        "р":"r", "с":"s", "т":"t", "ћ":"ć", "у":"u", "ф":"f", "х":"h", "ц":"c", "ч":"č", "џ":"dž", "ш":"š"};
+      return word.split('').map(function (char) {
+        return letters[char] || char;
+      }).join("");
     }
   }
 }
@@ -445,9 +515,16 @@ export default {
   margin: 10px;
   color: #3f5b25;
 }
+
 input[type='text'], input[type='number'] {
   width: 100%;
   font-weight: 100;
+}
+
+.btn {
+  margin-top: 15px;
+  background-color: #378220;
+  color: #f7f7f2;
 }
 
 input::placeholder {

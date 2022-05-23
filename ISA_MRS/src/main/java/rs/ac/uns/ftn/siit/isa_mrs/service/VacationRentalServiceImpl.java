@@ -77,7 +77,7 @@ public class VacationRentalServiceImpl implements VacationRentalService{
 
     @Override
     public ResponseEntity<VacationRentalDto> addNewVacationRental(AddVacationRentalDto vrd) {
-        log.info("Uslo u kontroler");
+        log.info("Uslo u servis");
         log.info(vrd.getName());
         log.info(vrd.getOwnerEmail());
         Optional<RentalObjectOwner> owner = ownerRepo.findByEmail(vrd.getOwnerEmail());

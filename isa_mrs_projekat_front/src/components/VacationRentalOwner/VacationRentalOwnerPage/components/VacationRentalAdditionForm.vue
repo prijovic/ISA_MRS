@@ -4,32 +4,42 @@
     <div class="row">
       <div class="col-1 main"></div>
       <div class="col-4 main">
-        <div class="row mb-3" v-bind:style="{color: isNamePresent ? '#3f5b25':'red'}">
+        <div class="row mb-3">
           <p class="h6 ps-0 pb-0"><i>Name:</i></p>
           <input class="ps-1 h5" type="text" id="name" v-model="vacationRental.name" placeholder="Input name...">
+          <p class="small" style="color:red" v-if='!nameIsEntered'>'Name' is a mandatory field.</p>
         </div>
-        <div class="row"  v-bind:style="{color:!(isAddressValid || isAddressValid===null)?'red':'#3f5b25'}">
+        <div class="row">
           <p class="h4 p-0"><font-awesome-icon icon="house"></font-awesome-icon> Address</p>
         </div>
         <div class="row mb-3">
           <p class="h6 ps-0 pb-0"><i>Country:</i></p>
           <input class="ps-1 h5" type="text" id="country" v-model="vacationRental.address.country" placeholder="Country">
+          <p class="small" style="color:red" v-if='!countryIsEntered'>'Country' is a mandatory field.</p>
+          <p class="small" style="color:red" v-if='!addressIsValid'>Invalid address data.</p>
         </div>
         <div class="row mb-3">
           <p class="h6 ps-0 pb-0"><i>City:</i></p>
           <input class="ps-1 h5" type="text" id="city" v-model="vacationRental.address.city" placeholder="City">
+          <p class="small" style="color:red" v-if='!cityIsEntered'>'City' is a mandatory field.</p>
+          <p class="small" style="color:red" v-if='!addressIsValid'>Invalid address data.</p>
         </div>
         <div class="row mb-3">
           <p class="h6 ps-0 pb-0"><i>Street:</i></p>
           <input class="ps-1 h5" type="text" id="street" v-model="vacationRental.address.street" placeholder="Street">
+          <p class="small" style="color:red" v-if='!streetIsEntered'>'Street' is a mandatory field.</p>
+          <p class="small" style="color:red" v-if='!addressIsValid'>Invalid address data.</p>
         </div>
         <div class="row mb-3">
           <p class="h6 ps-0 pb-0"><i>Number:</i></p>
           <input class="ps-1 h5" type="number" id="number" v-model="vacationRental.address.number" placeholder="House Number">
+          <p class="small" style="color:red" v-if='!numberIsEntered'>'Number' is a mandatory field.</p>
+          <p class="small" style="color:red" v-if='!addressIsValid'>Invalid address data.</p>
         </div>
-        <div class="row mb-3" v-bind:style="{color: isDescriptionPresent ? '#3f5b25':'red'}">
+        <div class="row mb-3">
           <p class="h6 ps-0 pb-0"><i>Description:</i></p>
           <textarea class="ps-1 h5" maxlength="255" rows="3" v-model="vacationRental.description" placeholder="Input description..." style="resize: none"></textarea>
+          <p class="small" style="color:red" v-if='!descriptionIsEntered'>'Description' is a mandatory field.</p>
         </div>
         <div class="row mb-3">
           <p class="h6 ps-0 pb-0"><i>Photos:</i></p>
@@ -42,10 +52,12 @@
         <div class="row mb-3">
           <p class="h6 ps-0 pb-0"><i>Capacity:</i></p>
           <input class="ps-1 h5" type="number" v-model="vacationRental.capacity" placeholder="Input capacity...">
+          <p class="small" style="color:red" v-if='!capacityIsEntered'>'Capacity' is a mandatory field.</p>
         </div>
         <div class="row mb-3">
           <p class="h6 ps-0 pb-0"><i>Price:</i></p>
           <input class="ps-1 h5" type="number" v-model="vacationRental.price" placeholder="Input price...">
+          <p class="small" style="color:red" v-if='!priceIsEntered'>'Price' is a mandatory field.</p>
         </div>
         <div class="row mb-3">
           <p class="h6 ps-0 pb-0"><i>Cancellation fee:</i></p>
@@ -153,7 +165,7 @@
         <div class="row main pt-3">
           <div class="col-3"></div>
           <div class="col-8">
-            <button type="button" @click="validateInputs" class="btn btn-lg">Add vacation rental</button>
+            <button type="button" class="btn btn-lg" @click="submit">Add vacation rental</button>
           </div>
         </div>
       </div>
@@ -217,62 +229,60 @@ export default {
           }
         ]
       },
-      isAddressValid: null,
-      isNamePresent: null,
-      isDescriptionPresent: null,
-      allInputsPresent:null
+      nameIsEntered: true,
+      descriptionIsEntered: true,
+      priceIsEntered: true,
+      capacityIsEntered: true,
+      countryIsEntered: true,
+      cityIsEntered: true,
+      streetIsEntered: true,
+      numberIsEntered: true,
+      addressIsValid: true
     }
   },
   mounted() {
     this.vacationRental.ownerEmail = store.state.email
   },
+  computed: {
+    accessToken() {
+      return store.state.access_token;
+    },
+    isNameEntered() {
+      return Boolean(this.vacationRental.name);
+    },
+    isDescriptionEntered() {
+      return Boolean(this.vacationRental.description);
+    },
+    isPriceEntered() {
+      return Boolean(this.vacationRental.price);
+    },
+    isCapacityEntered() {
+      return Boolean(this.vacationRental.capacity);
+    },
+    isCountryEntered() {
+      return Boolean(this.vacationRental.address.country);
+    },
+    isCityEntered() {
+      return Boolean(this.vacationRental.address.city);
+    },
+    isStreetEntered() {
+      return Boolean(this.vacationRental.address.street);
+    },
+    isNumberEntered() {
+      return Boolean(this.vacationRental.address.number);
+    }
+  },
   methods: {
+    submit() {
+      if (this.isDataEntered() && this.isDataCorrect()) {
+        this.addVacationRental();
+      }
+    },
     addVacationRental(){
-      console.log(this.vacationRental.ownerEmail);
-      console.log(this.vacationRental.name);
-      console.log(this.vacationRental.additionalServices.serviceName);
-      console.log(this.vacationRental.cancellationFee.feeType);
-      axios.post("/RentalObjects/addVacationRental", null, {
+      axios.post("/RentalObjects/addVacationRental", this.vacationRental, {
         headers: {
           Authorization: "Bearer " + this.accessToken
         },
-        params: {
-          name: this.name,
-          ownerEmail: this.ownerEmail,
-          description: this.description,
-          photos: this.photos,
-          capacity: this.capacity,
-          price: this.price,
-          additionalServices: [
-            {
-              serviceName: this.serviceName,
-              servicePrice:this.servicePrice
-            }
-          ],
-          conductRules: [
-            {
-              rule: this.rule,
-              conductType: this.conductType
-            }
-          ],
-          cancellationFee: {
-            feeType: this.feeType,
-            value: this.value
-          },
-          address: {
-            country: this.country,
-            city: this.city,
-            street: this.street,
-            number: this.number,
-            latitude: this.latitude,
-            longitude: this.longitude
-          },
-          rooms: [
-            {
-              beds: this.beds
-            }
-          ]
-        }
       })
       .then(() => {
         this.$notify({
@@ -322,15 +332,47 @@ export default {
     removeRooms(index) {
       this.vacationRental.rooms.splice(index, 1);
     },
-    validateInputs() {
-      this.validateAddress();
-      this.isInputPresent();
-      if(this.allInputsPresent && this.isAddressValid) this.addVacationRental();
+    isDataEntered() {
+      if (!this.isNameEntered) {
+        this.nameIsEntered = false;
+        return false;
+      }
+      if (!this.isDescriptionEntered) {
+        this.descriptionIsEntered = false;
+        return false;
+      }
+      if (!this.isPriceEntered) {
+        this.priceIsEntered = false;
+        return false;
+      }
+      if (!this.isCapacityEntered) {
+        this.capacityIsEntered = false;
+        return false;
+      }
+      if (!this.isCountryEntered) {
+        this.countryIsEntered = false;
+        return false;
+      }
+      if (!this.isCityEntered) {
+        this.cityIsEntered = false;
+        return false;
+      }
+      if (!this.isStreetEntered) {
+        this.streetIsEntered = false;
+        return false;
+      }
+      if (!this.isNumberEntered) {
+        this.numberIsEntered = false;
+        return false;
+      }
+      return true;
     },
-    isInputPresent() {
-      this.isNamePresent = this.vacationRental.name;
-      this.isDescriptionPresent = this.vacationRental.description;
-      this.allInputsPresent = !!(this.isNamePresent && this.isDescriptionPresent);
+    isDataCorrect() {
+      this.validateAddress();
+      if (!this.addressIsValid) {
+        return false;
+      }
+      return true;
     },
     validateAddress() {
       const apiKey = 'VrDrl5BjEA0Whvb-chHbFz96HV4qlCXB-yoiTRRLKno';
@@ -345,27 +387,32 @@ export default {
           .then(data => {
             const responseView = data.Response.View;
             if (responseView.length === 0) {
-              console.log("NEMA ADRESE!")
-              this.isAddressValid = false;
+              this.addressIsValid = false;
             }
             else {
               const location = responseView[0].Result[0].Location.DisplayPosition;
               const address = responseView[0].Result[0].Location.Address;
-              this.vacationRental.address.city = address.City;
-              this.vacationRental.address.country = address.AdditionalData[0].value;
-              this.vacationRental.address.street = address.Street;
+              this.vacationRental.address.city = this.transliterate(address.City);
+              this.vacationRental.address.country = this.transliterate(address.AdditionalData[0].value);
+              this.vacationRental.address.street = this.transliterate(address.Street);
               this.vacationRental.address.longitude = location.Longitude;
               this.vacationRental.address.latitude = location.Latitude;
-              console.log(this.vacationRental.address);
-              this.isAddressValid = true;
+              this.addressIsValid = true;
             }
           })
-          .catch(error => {
-            console.log(error);
-            this.isAddressValid = false;
+          .catch(() => {
+            this.addressIsValid = false;
           });
+    },
+    transliterate(word) {
+      let letters = {"Б":"B", "В":"V", "Г":"G", "Д":"D", "Ђ":"Đ", "Ж":"Ž", "З":"Z", "И":"I", "К":"K", "Л":"L", "Љ":"Lj", "М":"M", "Н":"N", "Њ":"Nj", "П":"P",
+        "Р":"R", "С":"S", "Ћ":"Ć", "У":"U", "Ф":"F", "Х":"H", "Ц":"C", "Ч":"Č", "Џ":"Dž", "Ш":"Š", "б":"b", "в":"v", "г":"g", "д":"d", "ђ":"đ", "ж":"ž", "з":"z", "и":"i", "к":"k", "л":"l", "љ":"lj", "м":"m", "н":"n", "њ":"nj", "п":"p",
+        "р":"r", "с":"s", "т":"t", "ћ":"ć", "у":"u", "ф":"f", "х":"h", "ц":"c", "ч":"č", "џ":"dž", "ш":"š"};
+      return word.split('').map(function (char) {
+        return letters[char] || char;
+      }).join("");
     }
-  },
+  }
 }
 </script>
 
@@ -375,6 +422,7 @@ export default {
   margin: 10px;
   color: #3f5b25;
 }
+
 input[type='text'], input[type='number'] {
   width: 100%;
   font-weight: 100;
@@ -383,5 +431,17 @@ input[type='text'], input[type='number'] {
 input::placeholder {
   color: grey;
   font-weight: 100;
+}
+
+.btn {
+  margin-top: 15px;
+  background-color: #378220;
+  color: #f7f7f2;
+}
+
+.btn:active, .btn:hover, .btn:focus {
+  background-color: #f7f7f2;
+  color: #378220;
+  border: 1px solid #3F9725;
 }
 </style>
