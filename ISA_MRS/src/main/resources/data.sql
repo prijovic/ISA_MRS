@@ -14,7 +14,7 @@ INSERT INTO users (id, email, is_active, name, password, phone, surname, address
 INSERT INTO sale_participant (points, id) VALUES (0, 5);
 INSERT INTO rental_object_owner (id) VALUES (5);
  INSERT INTO fee (id, fee_type, value) VALUES (1, 0, 0);
- INSERT INTO cancellation_fee (id) VALUES (1);
+ INSERT INTO cancellation_fee (nextval(id)) VALUES (1);
  INSERT INTO rental_object (id, capacity, description, name, price, rental_object_type, address_id, cancellation_fee_id, rental_object_owner_id)
  VALUES (1, 10, '2 bedrooms, a living room with open-plan kitchen and 2 bathrooms. The air-conditioned, mechanized, fully furnished, alarm protected. A balcony which opens from the living room and the first bedroom, a storage and a parking space in the garage.', 'Abstract', 200, 2, 1, 1, 4);
  INSERT INTO photo (id, photo, rental_object_id) VALUES (1, 'ren1pic1', 1);
@@ -25,14 +25,14 @@ INSERT INTO rental_object_owner (id) VALUES (5);
  INSERT INTO photo (id, photo, rental_object_id) VALUES (6, 'ren1pic6', 1);
  INSERT INTO photo (id, photo, rental_object_id) VALUES (7, 'ren1pic7', 1);
  INSERT INTO photo (id, photo, rental_object_id) VALUES (8, 'ren1pic8', 1);
- INSERT INTO conduct_rule (id, rule, type, rental_object_id) VALUES (1, 'Pets', 1, 1);
- INSERT INTO conduct_rule (id, rule, type, rental_object_id) VALUES (2, 'Noise after 10pm', 1, 1);
- INSERT INTO conduct_rule (id, rule, type, rental_object_id) VALUES (3, 'Partying', 1, 1);
- INSERT INTO conduct_rule (id, rule, type, rental_object_id) VALUES (4, 'Smoking', 1, 1);
- INSERT INTO conduct_rule (id, rule, type, rental_object_id) VALUES (5, 'Using the pool', 0, 1);
- INSERT INTO conduct_rule (id, rule, type, rental_object_id) VALUES (6, 'Using the sauna', 0, 1);
- INSERT INTO room (id, beds, vacation_rental_id) VALUES (1, 5, 1);
- INSERT INTO room (id, beds, vacation_rental_id) VALUES (2, 2, 1);
+ INSERT INTO conduct_rule (nextval(id), rule, type, rental_object_id) VALUES (1, 'Pets', 1, 1);
+ INSERT INTO conduct_rule (nextval(id), rule, type, rental_object_id) VALUES (2, 'Noise after 10pm', 1, 1);
+ INSERT INTO conduct_rule (nextval(id), rule, type, rental_object_id) VALUES (3, 'Partying', 1, 1);
+ INSERT INTO conduct_rule (nextval(id), rule, type, rental_object_id) VALUES (4, 'Smoking', 1, 1);
+ INSERT INTO conduct_rule (nextval(id), rule, type, rental_object_id) VALUES (5, 'Using the pool', 0, 1);
+ INSERT INTO conduct_rule (nextval(id), rule, type, rental_object_id) VALUES (6, 'Using the sauna', 0, 1);
+ INSERT INTO room (nextval(id), beds, vacation_rental_id) VALUES (1, 5, 1);
+ INSERT INTO room (nextval(id), beds, vacation_rental_id) VALUES (2, 2, 1);
  INSERT INTO vacation_rental (id, check_in, check_out) VALUES (1, '14:00', '12:00');
  INSERT INTO rental_object (id, capacity, description, name, price, rental_object_type, address_id, cancellation_fee_id, rental_object_owner_id)
  VALUES (2, 20, 'Yacht that includes high-end finishes and features and the latest in modern performance technology. Geared towards fishing, water sports, or cruising with a sleeker design and more powerful motor for faster cruising speeds.', 'Exotic', 450, 0, 1, 1, 5);

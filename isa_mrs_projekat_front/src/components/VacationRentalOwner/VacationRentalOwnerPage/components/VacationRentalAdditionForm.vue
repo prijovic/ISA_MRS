@@ -432,16 +432,4 @@ input::placeholder {
   color: grey;
   font-weight: 100;
 }
-
-.btn {
-  margin-top: 15px;
-  background-color: #378220;
-  color: #f7f7f2;
-}
-
-.btn:active, .btn:hover, .btn:focus {
-  background-color: #f7f7f2;
-  color: #378220;
-  border: 1px solid #3F9725;
-}
 </style>

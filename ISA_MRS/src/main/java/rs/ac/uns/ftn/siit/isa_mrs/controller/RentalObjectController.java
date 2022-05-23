@@ -93,7 +93,7 @@ public class RentalObjectController {
         log.info("Kontroler");
         return vacationRentalService.addNewVacationRental(avrd);
     }
-    
+
     @PostMapping(ADD_BOAT)
     public ResponseEntity<BoatDto> addBoat(@RequestBody AddBoatDto abd){
         log.info("Kontroler");
