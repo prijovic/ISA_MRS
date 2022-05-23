@@ -8,8 +8,8 @@ import java.time.LocalDateTime;
 
 @Data
 public class RequestGetDto implements Serializable {
-    private final Long id;
-    private final RequestType type;
-    private final LocalDateTime timeStamp;
-    private final BasicUserInfoDto user;
+    private Long id;
+    private RequestType type;
+    private LocalDateTime timeStamp;
+    private BasicUserInfoDto user;
 }

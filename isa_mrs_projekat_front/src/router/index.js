@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 import ProfileView from "@/components/GeneralComponents/UserAccountForms/ProfileView";
-import TheAdminSidebar from "@/components/Administrator/AdminPage/components/TheAdminSidebar/TheAdminSidebar";
+import TheAdminSidebar from "@/components/Administrator/AdminPage/TheAdminSidebar/TheAdminSidebar";
 import AdminDashboard from "@/components/Administrator/AdminPage/components/AdminMainViews/AdminDashboard";
 import PasswordChangeForm from "@/components/GeneralComponents/UserAccountForms/PasswordChangeForm";
 import FishingInstructorPage from "@/components/FishingInstructor/FishingInstructorPage/FishingInstructorPage";
@@ -12,12 +12,24 @@ import OwnerContentPage from "@/components/VacationRentalOwner/VacationRentalOwn
 import TheOwnerSidebar from "@/components/VacationRentalOwner/VacationRentalOwnerPage/components/TheOwnerSidebar/TheOwnerSidebar";
 import BoatOwnerContentPage from "@/components/BoatOwner/BoatOwnerPage/components/BoatOwnerMainView/BoatOwnerContentPage";
 import TheBoatOwnerSidebar from "@/components/BoatOwner/BoatOwnerPage/components/TheBoatOwnerSidebar/TheBoatOwnerSidebar";
-
 import AdminRequestsView from "@/components/Administrator/AdminPage/components/AdminMainViews/AdminRequestsView/AdminRequestsView";
 import InitView from "@/components/UnregisteredUser/InitView";
-import CardView from "@/components/UnregisteredUser/components/CardView";
 import CottagesView
     from "@/components/VacationRentalOwner/VacationRentalOwnerPage/components/CottagesView/CottagesView";
+import RegistrationPage from "@/components/UnregisteredUser/components/RegistrationPage";
+import IncomeRateChangeForm
+    from "@/components/Administrator/AdminPage/components/AdminMainViews/AdminIncomeIncomeRateComponents/IncomeRateChangeForm";
+import FishingInstructorAdventuresView
+    from "@/components/FishingInstructor/FishingInstructorPage/components/InstructorMainViews/InstructorAllAdventuresView/InstructorAllAdventuresView";
+import FishingInstructorAdventureProfileView
+    from "@/components/FishingInstructor/FishingInstructorPage/components/InstructorMainViews/InstructorAllAdventuresView/InstructorAdventureProfile/InstructorAdventureProfile";
+import CardMenu from "@/components/UnregisteredUser/components/CardMenu";
+import ClientMainView from "@/components/Client/ClientPage/components/ClientMainView";
+import ClientSidebar from "@/components/Client/ClientPage/components/ClientSidebar/ClientSidebar";
+import RentalProfile from "@/components/UnregisteredUser/components/RentalProfile";
+import VerificationPage from "@/components/UnregisteredUser/components/VerificationPage";
+import AdminUsersView
+    from "@/components/Administrator/AdminPage/components/AdminMainViews/AdminUsersView/AdminUsersView";
 
 
 const routes = [
@@ -26,6 +38,30 @@ const routes = [
         name: "InitHome",
         components: {
             default: InitView,
+            sidebar: TheUnregisteredUserSidebar,
+        },
+        meta: {
+            disableIfLoggedIn: true,
+            public: true
+        }
+    },
+    {
+        path: "/token:token/refresh:refresh",
+        name: "Verification",
+        components: {
+            default: VerificationPage,
+            sidebar: TheUnregisteredUserSidebar,
+        },
+        meta: {
+            disableIfLoggedIn: true,
+            public: true
+        }
+    },
+    {
+        path: "/registration",
+        name: "Registration",
+        components: {
+            default: RegistrationPage,
             sidebar: TheUnregisteredUserSidebar,
         },
         meta: {
@@ -45,10 +81,42 @@ const routes = [
         }
     },
     {
+        path: "/admin/users",
+        name: "AdminUsers",
+        components: {
+            default: AdminUsersView,
+            sidebar: TheAdminSidebar,
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
+        path: "/admin/newUser",
+        name: "AdminAdding",
+        components: {
+            default: RegistrationPage,
+            sidebar: TheAdminSidebar,
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
+        path: "/admin/user/:id",
+        name: "AdminUserView",
+        components: {
+            sidebar: TheAdminSidebar,
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
         path: "/vacationRentals",
         name: "VacationRentals",
         components: {
-            default: CardView,
+            default: CardMenu,
             sidebar: TheUnregisteredUserSidebar,
         },
         meta: {
@@ -101,10 +169,76 @@ const routes = [
         }
     },
     {
+        path: "/admin/incomeRates",
+        name: "AdminIncomeRates",
+        components: {
+            default: IncomeRateChangeForm,
+            sidebar: TheAdminSidebar,
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
         path: "/fishingInstructor",
         name: "FishingInstructorHome",
         components: {
             default: FishingInstructorPage,
+            sidebar: TheFishingInstructorSidebar
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
+        path: "/fishingInstructor/changePass",
+        name: "FishingInstructorPassword",
+        components: {
+            default: PasswordChangeForm,
+            sidebar: TheFishingInstructorSidebar,
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
+        path: "/fishingInstructor/delAcc",
+        name: "FishingInstructorDeletion",
+        components: {
+            default: AccountDeletionForm,
+            sidebar: TheFishingInstructorSidebar,
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
+        path: "/fishingInstructor/profile",
+        name: "FishingInstructorView",
+        components: {
+            default: ProfileView,
+            sidebar: TheFishingInstructorSidebar,
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
+        path: "/fishingInstructor/adventures",
+        name: "FishingInstructorAdventures",
+        components: {
+            default: FishingInstructorAdventuresView,
+            sidebar: TheFishingInstructorSidebar
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
+        path: "/fishingInstructor/adventure",
+        name: "FishingInstructorAdventure",
+        components: {
+            default: FishingInstructorAdventureProfileView,
             sidebar: TheFishingInstructorSidebar
         },
         meta: {
@@ -152,7 +286,7 @@ const routes = [
             sidebar: TheBoatOwnerSidebar,
         },
         meta: {
-            public: false
+            public: true
         }
     },
     {
@@ -187,9 +321,74 @@ const routes = [
         meta: {
             public: false
         }
+    },
+    {
+        path: "/client",
+        name: "Client",
+        components: {
+            default: ClientMainView,
+            sidebar: ClientSidebar,
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
+        path: "/client/changePass",
+        name: "ClientChangePassword",
+        components: {
+            default: PasswordChangeForm,
+            sidebar: ClientSidebar,
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
+        path: "/client/vacationRentals",
+        name: "ClientVacationRentals",
+        components: {
+            default: CardMenu,
+            sidebar: ClientSidebar,
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
+        path: "/client/boats",
+        name: "ClientBoats",
+        components: {
+            default: CardMenu,
+            sidebar: ClientSidebar,
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
+        path: "/client/adventures",
+        name: "ClientAdventures",
+        components: {
+            default: CardMenu,
+            sidebar: ClientSidebar,
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
+        path: "/client/RentalProfile",
+        name: "RentalProfile",
+        components: {
+            default: RentalProfile,
+            sidebar: ClientSidebar,
+        },
+        meta: {
+            public: false
+        },
     }
 ];
-
 
 const router = createRouter({
     history: createWebHistory(process.env.BASE_URL),
@@ -199,7 +398,14 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
    if (!to.meta.public) {
        if (store.getters.isAuthenticated) {
-           next();
+           let redirect_path = "/" + store.getters.user + "/changePass";
+           if (from.path !== redirect_path && store.getters.first_login && from.path !== "/") {
+               next({path:redirect_path});
+           } else if (from.path === redirect_path && store.getters.first_login) {
+               /* pass */
+           } else {
+               next();
+           }
        } else {
            next({path: "/"})
        }
@@ -207,5 +413,6 @@ router.beforeEach((to, from, next) => {
        next();
    }
 });
+
 
 export default router;

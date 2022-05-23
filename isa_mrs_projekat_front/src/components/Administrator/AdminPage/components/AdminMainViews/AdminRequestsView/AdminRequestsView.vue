@@ -1,7 +1,7 @@
 <template>
   <div class="row">
     <div class="col-2"></div>
-    <div class="col-8 pt-5">
+    <div class="col-8 pt-5 mb-5">
       <div class="container-fluid">
         <div class="align-items-center">
           <div class="row  main-col align-items-end">
@@ -23,12 +23,9 @@
                 </label>
               </div>
             </div>
-            <div class="col-md-3 main-col">
-              <button class="btn btn-default"><font-awesome-icon class="icon" icon="paper-plane"/>My Responses</button>
-            </div>
           </div>
           <!-- Reviews listing -->
-          <AdminRequestPreview v-for="(request, index) in this.requests" v-on:requestManaged="filterRequests()" :key="index" :request="request"/>
+          <AdminRequestPreview v-for="(request, index) in this.requests" @requestManaged="filterRequests" :key="index" :request="request"/>
           <!-- Pagination -->
           <ul class="pagination justify-content-center">
             <li class="page-item" v-if="numberOfPages>2 && currentPage>1">
@@ -67,13 +64,13 @@
 <script>
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import { library } from "@fortawesome/fontawesome-svg-core";
-import { faPaperPlane, faAngleRight, faAngleDoubleRight, faAngleLeft, faAngleDoubleLeft, faFrown } from "@fortawesome/free-solid-svg-icons";
+import { faAngleRight, faAngleDoubleRight, faAngleLeft, faAngleDoubleLeft, faFrown } from "@fortawesome/free-solid-svg-icons";
 import AdminRequestPreview
   from "@/components/Administrator/AdminPage/components/AdminMainViews/AdminRequestsView/AdminRequestPreview/AdminRequestPreview";
 import axios from "axios/index";
 import { useStore } from "vuex"
 
-library.add(faPaperPlane, faAngleRight, faAngleLeft, faFrown, faAngleDoubleRight, faAngleDoubleLeft);
+library.add(faAngleRight, faAngleLeft, faFrown, faAngleDoubleRight, faAngleDoubleLeft);
 
 export default {
   name: "AdminRequestsView",
@@ -207,43 +204,9 @@ export default {
     margin-left:0;
   }
 
-  .btn-default {
-     display: flex;
-     align-items: center;
-
-     cursor: pointer;
-     position: relative;
-     font-weight: 400;
-     user-select: none;
-
-     margin: 0.1em 0;
-     padding: 0.2em;
-     border-radius: 0.25em;
-     height: 2em;
-
-     color: #f7f7f2;
-    background-color: #3F9725;
-     text-decoration: none;
-   }
-
-  .btn-default:hover, .btn-default:active {
-    color: #378220;
-    background-color: #f7f7f2;
-  }
-
-  .btn-default .icon {
-    flex-shrink: 0;
-    margin-right: 10px;
-  }
-
   .page-link {
     color: #378220;
   }
-
-  /*.disabled {*/
-  /*  background-color: #378220;*/
-  /*  color: #f7f7f2;*/
-  /*}*/
 
   h4.no-result {
     color: red;

@@ -1,17 +1,18 @@
 package rs.ac.uns.ftn.siit.isa_mrs.model;
 
 import lombok.*;
+import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.RequestStatus;
 
 import javax.persistence.Entity;
 import javax.persistence.OneToOne;
-import javax.persistence.Table;
 
 @Entity
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "report_response")
 public class ReportResponse extends Response {
+    private RequestStatus penalty;
     @OneToOne
     private Report report;
 }

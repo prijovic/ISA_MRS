@@ -2,25 +2,29 @@ package rs.ac.uns.ftn.siit.isa_mrs.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.NewUserBasicInfoDto;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.PageDto;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.UserByTypeDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.UserDto;
-import rs.ac.uns.ftn.siit.isa_mrs.model.User;
-import rs.ac.uns.ftn.siit.isa_mrs.repository.UserRepo;
+import rs.ac.uns.ftn.siit.isa_mrs.model.*;
+import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.UserType;
+import rs.ac.uns.ftn.siit.isa_mrs.repository.*;
+import rs.ac.uns.ftn.siit.isa_mrs.security.JwtDecoder;
+import rs.ac.uns.ftn.siit.isa_mrs.util.ObjectConverter;
 
 import javax.persistence.EntityNotFoundException;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -29,6 +33,26 @@ public class UserServiceImpl implements UserService {
     private final UserRepo userRepo;
     private final PasswordEncoder passwordEncoder;
     private final ModelMapper modelMapper;
+    private final JwtDecoder jwtDecoder;
+    private final EmailSenderService emailSenderService;
+    private final ObjectConverter objectConverter;
+    private final RentalObjectOwnerRepo rentalObjectOwnerRepo;
+    private final ClientRepo clientRepo;
+    private final AdminRepo adminRepo;
+    private final AddressRepo addressRepo;
+
+    @Override
+    public ResponseEntity<Collection<UserDto>> getUsers() {
+        try {
+            Collection<User> users = userRepo.findAll();
+            Collection<UserDto> userDtos = new ArrayList<>();
+            users.forEach(user -> userDtos.add(modelMapper.map(user, UserDto.class)));
+            return new ResponseEntity<>(userDtos, HttpStatus.OK);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
     @Override
     public ResponseEntity<UserDto> updateUserPassword(String email, String oldPassword, String newPassword) {
@@ -36,86 +60,197 @@ public class UserServiceImpl implements UserService {
             Optional<User> userOptional = userRepo.findByEmail(email);
             if (userOptional.isPresent()) {
                 User user = userOptional.get();
-                if (passwordEncoder.matches(oldPassword, user.getPassword())){
+                if (passwordEncoder.matches(oldPassword, user.getPassword())) {
                     String encodedPassword = passwordEncoder.encode(newPassword);
                     user.setPassword(encodedPassword);
+                    user.setFirstLogin(false);
                     userRepo.save(user);
                     UserDto userDto = modelMapper.map(user, UserDto.class);
                     return new ResponseEntity<>(userDto, HttpStatus.OK);
+                } else {
+                    return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
                 }
-                else {
-                    return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
-                }
-            }
-            else {
-                return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+            } else {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
         } catch (Exception e) {
             log.error(e.getMessage());
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        User user = userResult.get();
-        Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority(user.getUserType().name()));
-        return new org.springframework.security.core.userdetails.User(user.getEmail(), user.getPassword(), authorities);
-    }
-
-    @Override
-    public User saveUser(User user) {
-        log.info("Adding new user with id {}.", user.getId());
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        return userRepo.save(user);
-    }
-
-    @Override
-    public Optional<User> getUser(Long id) {
-        log.info("Getting user by id {}.", id);
-        return userRepo.findById(id);
-    }
-
-    @Override
-    public Optional<User> getUser(String email) {
-        log.info("Getting user by email {}.", email);
-        return userRepo.findByEmail(email);
-    }
-
-    @Override
-    public ResponseEntity<User> getUser(String email, String password) {
-        try{
-            Optional<User> user = userRepo.findByEmailAndPassword(email, password);
-            return user.map(value -> new ResponseEntity<>(value, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(null, HttpStatus.NOT_FOUND));
-        } catch(Exception e){
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @Override
-    public void deleteUser(Long id) {
-        log.info("Deleting user with id {}", id);
-        userRepo.deleteById(id);
+    public ResponseEntity<UserDto> createUser(NewUserBasicInfoDto newUserInfo) {
+        try {
+            if (userRepo.findByEmail(newUserInfo.getEmail()).isPresent()) {
+                return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
+            }
+            Address address = modelMapper.map(newUserInfo.getAddress(), Address.class);
+            addressRepo.save(address);
+            User user = objectConverter.getUserFromNewUserData(newUserInfo, address);
+            String password = generatePassayPassword();
+            user.setPassword(passwordEncoder.encode(password));
+            user.setFirstLogin(true);
+            if (newUserInfo.getUserType().equals(UserType.Client)) {
+                clientRepo.save((Client) user);
+            }
+            else if (newUserInfo.getUserType().equals(UserType.Admin)) {
+                adminRepo.save((Admin) user);
+            }
+            else {
+                rentalObjectOwnerRepo.save((RentalObjectOwner) user);
+            }
+            UserDto userDto = modelMapper.map(user, UserDto.class);
+            emailSenderService.sendActivationNotificationEmail(user, password);
+            return new ResponseEntity<>(userDto, HttpStatus.OK);
+        }
+        catch (Exception e) {
+            log.error(e.getMessage());
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @Override
-    public void updateUserPassword(Long id, String password) {
-        log.info("Changing user's password with id {} to {}.", id, password);
-        Optional<User> user = userRepo.findById(id);
-        user.ifPresent(value -> value.setPassword(passwordEncoder.encode(password)));
+    public void encryptUsersPasswords() {
+        Collection<User> users = userRepo.findAll();
+        users.forEach((user) -> {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+            userRepo.save(user);
+        });
     }
 
     @Override
     public ResponseEntity<UserDto> changeUserStatus(Long id) {
         try {
             User searchResult = userRepo.getById(id);
-            searchResult.setActive(!searchResult.isActive());
+            searchResult.setIsActive(!searchResult.getIsActive());
             userRepo.save(searchResult);
             UserDto userDto = modelMapper.map(searchResult, UserDto.class);
             return new ResponseEntity<>(userDto, HttpStatus.OK);
         }
         catch (EntityNotFoundException e){
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         catch (Exception e) {
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @Override
+    public ResponseEntity<Collection<UserDto>> changeUsersStatus(Collection<Long> ids) {
+        Collection<Long> changedStatuses = new ArrayList<>();
+        try {
+            Collection<UserDto> result = new ArrayList<>();
+            ids.forEach(id -> {
+                User user = userRepo.getById(id);
+                user.setIsActive(!user.getIsActive());
+                userRepo.save(user);
+                changedStatuses.add(id);
+                result.add(modelMapper.map(user, UserDto.class));
+            });
+            return new ResponseEntity<>(result, HttpStatus.OK);
+        } catch (Exception e) {
+            changeUsersStatus(changedStatuses);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    public ResponseEntity<String> activateUser(String token) {
+        JwtDecoder.DecodedToken decodedToken;
+        try {
+            decodedToken = jwtDecoder.decodeToken(token);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        try {
+            String email = decodedToken.getEmail();
+            Optional<User> userResult = userRepo.findByEmail(email);
+            if (userResult.isPresent()) {
+                User user = userResult.get();
+                if (user.getIsActive()) {
+                    return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+                }
+                user.setIsActive(true);
+                userRepo.save(user);
+                return new ResponseEntity<>(email, HttpStatus.OK);
+            }
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    public ResponseEntity<String> resendVerificationMail(String refresh_token) {
+        JwtDecoder.DecodedToken decodedToken;
+        try {
+            decodedToken = jwtDecoder.decodeToken(refresh_token);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        try {
+            String email = decodedToken.getEmail();
+            Optional<User> userResult = userRepo.findByEmail(email);
+            if (userResult.isPresent()) {
+                User user = userResult.get();
+                emailSenderService.sendActivationEmail(user);
+                return new ResponseEntity<>(email, HttpStatus.OK);
+            }
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    public ResponseEntity<PageDto<UserByTypeDto>> findUsersByTypeWithPaginationSortedByField(int offset,
+                                                                         int pageSize, String field, UserType type) {
+        PageDto<UserByTypeDto> result = new PageDto<>();
+        try{
+            Pageable pageable = PageRequest.of(offset, pageSize).withSort(Sort.by(field));
+            log.info("Trazimo ownere");
+            Page<User> usersPage = userRepo.findAllByUserType(type, pageable);
+            log.info("Pronasli smo ownere: {}", usersPage.getNumberOfElements());
+            Collection<UserByTypeDto> userDtos = new ArrayList<>();
+            usersPage.getContent().forEach(user -> {
+                userDtos.add(modelMapper.map(user, UserByTypeDto.class));
+                log.info("Nasli smo ownera: {}", user.getId());
+            });
+            result.setContent(userDtos);
+            result.setPages(usersPage.getTotalPages());
+            result.setCurrentPage(usersPage.getNumber() + 1);
+            result.setPageSize(usersPage.getSize());
+            if (usersPage.getContent().isEmpty()) {
+                log.info("Status: no content");
+                return new ResponseEntity<>(result, HttpStatus.NO_CONTENT);
+            }
+            else {
+                log.info("Status: ok");
+                return new ResponseEntity<>(result, HttpStatus.OK);
+            }
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    public String generatePassayPassword() {
+        String upperCaseLetters = RandomStringUtils.random(2, 65, 90, true, true);
+        String lowerCaseLetters = RandomStringUtils.random(2, 97, 122, true, true);
+        String numbers = RandomStringUtils.randomNumeric(2);
+        String specialChar = RandomStringUtils.random(2, 33, 47, false, false);
+        String totalChars = RandomStringUtils.randomAlphanumeric(2);
+        String combinedChars = upperCaseLetters.concat(lowerCaseLetters)
+                .concat(numbers)
+                .concat(specialChar)
+                .concat(totalChars);
+        List<Character> pwdChars = combinedChars.chars()
+                .mapToObj(c -> (char) c)
+                .collect(Collectors.toList());
+        Collections.shuffle(pwdChars);
+        return pwdChars.stream()
+                .collect(StringBuilder::new, StringBuilder::append, StringBuilder::append)
+                .toString();
     }
 }

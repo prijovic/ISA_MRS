@@ -6,18 +6,19 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "loyalty_category")
 public class LoyaltyCategory {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
     private String name;
-    private int requiredPoints;
-    private double clientDiscount;
-    private double ownerBenefit;
+    private Integer requiredPoints;
+    private Double clientDiscount;
+    private Double ownerBenefit;
     private LocalDateTime lastEdited;
+    private String icon;
 }

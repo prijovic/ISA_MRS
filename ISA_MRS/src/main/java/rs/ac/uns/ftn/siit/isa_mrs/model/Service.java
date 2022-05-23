@@ -5,17 +5,16 @@ import lombok.*;
 import javax.persistence.*;
 
 @Entity
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "service")
 public class Service {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
-    private String service;
+    private String name;
     @ManyToOne
-    @JoinColumn(name = "special_offer_id")
     private SpecialOffer specialOffer;
 }

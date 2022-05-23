@@ -6,8 +6,8 @@ import java.util.Collection;
 
 @Data
 public class PageDto<T> {
-    Collection<T> content;
-    Integer pages;
-    Integer currentPage;
-    Integer pageSize;
+    private Collection<T> content;
+    private Integer pages;
+    private Integer currentPage;
+    private Integer pageSize;
 }

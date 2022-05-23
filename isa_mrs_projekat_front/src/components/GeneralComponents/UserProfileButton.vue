@@ -1,13 +1,13 @@
 <template>
-  <div class="dropdown d-flex justify-content-start">
+  <div class="dropdown d-flex justify-content-start my-auto">
     <button class="btn rounded-circle dropdown" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
       <font-awesome-icon icon="user"/>
     </button>
-    <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
+    <div class="dropdown-menu dropdown-menu-end p-2" aria-labelledby="dropdownMenuButton">
       <MenuLink class="dropdown-item" icon="address-card" :to="profile">View Profile</MenuLink>
       <MenuLink class="dropdown-item" icon="key" :to="password">Change Password</MenuLink>
       <MenuLink class="dropdown-item" icon="remove" :to="delAcc">Delete Account</MenuLink>
-      <div class="dropdown-item dropdown-divider"></div>
+      <hr>
       <MenuLink class="dropdown-item" icon="sign-out" @click.prevent="handleSignOut" to="#">Sign Out</MenuLink>
     </div>
   </div>
@@ -29,9 +29,7 @@ export default {
   },
   methods: {
     handleSignOut() {
-      this.$store.dispatch("user", null);
-      this.$store.dispatch("email", null);
-      this.$store.dispatch("access_token", null);
+      this.$store.dispatch("reset_state");
       this.$router.push("/");
     }
   },
@@ -50,28 +48,14 @@ export default {
 </script>
 
 <style>
-  .btn:hover, .btn:focus, .btn:active {
-    border: none;
-    outline: none;
-    color: #378220;
-    background-color: #f7f7f2;
-  }
+ .dropdown-menu {
+   color: #99EEDF;
+   background-color: #008970;
+ }
 
-  .btn {
-    background-color: #378220;
-    color: #f7f7f2;
-  }
-
-  .dropdown-menu {
-    background-color: #378220;
-    color: #f7f7f2;
-    padding: 0.5em;
-    width: 100px;
-  }
-
-  .dropdown-item {
-    background-color: #378220;
-  }
+ hr {
+   border: 1px solid #99EEDF;
+ }
 
   font-awesome-icon {
     height: 2em;

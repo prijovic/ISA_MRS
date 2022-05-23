@@ -5,24 +5,24 @@ import lombok.*;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.LinkedHashSet;
 
 @Entity
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "special_offer")
 public class SpecialOffer {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
     private LocalDateTime initDate;
     private LocalDateTime termDate;
-    private int capacity;
-    private double discount;
+    private Integer capacity;
+    private Double discount;
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "specialOffer")
-    private Collection<Service> includedServices = new java.util.LinkedHashSet<>();
+    private Collection<Service> includedServices = new LinkedHashSet<>();
     @ManyToOne
-    @JoinColumn(name = "rental_object_id")
     private RentalObject rentalObject;
 }

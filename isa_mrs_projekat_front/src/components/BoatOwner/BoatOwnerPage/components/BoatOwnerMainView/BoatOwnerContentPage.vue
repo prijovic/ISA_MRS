@@ -2,6 +2,7 @@
   <div>
     <font-awesome-icon class="d-inline-block" icon="spinner" style="color: gray; height: 30px"></font-awesome-icon>
     <h2 class="d-inline-block">Building...</h2>
+    <BoatAdditionForm></BoatAdditionForm>
   </div>
 </template>
 
@@ -9,11 +10,13 @@
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import {library} from "@fortawesome/fontawesome-svg-core";
 import {faSpinner} from "@fortawesome/free-solid-svg-icons";
+import BoatAdditionForm from "@/components/BoatOwner/BoatOwnerPage/components/BoatAdditionForm";
 
 library.add(faSpinner);
 export default {
   name: "BoatOwnerContentPage",
   components: {
+    BoatAdditionForm,
     FontAwesomeIcon
   }
 }

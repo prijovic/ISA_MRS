@@ -59,7 +59,7 @@ export default {
     submitRequest () {
       axios.post("/Requests/delAcc", {
         email: this.email,
-        passwordConfirmation: this.passwordConfirmation,
+        password: this.passwordConfirmation,
         enteredRequest: this.enteredRequest,
         requestType: 'AccountDeletion'
       }, {
@@ -87,6 +87,12 @@ export default {
             title: "Authorization Failed",
             text: "Password is not valid!",
             type: "error"
+          })
+        } else if(error.response.status===400) {
+          this.$notify({
+            title: "Invalid Request Status",
+            text: "Request status does not have the right form!",
+            type: "warn"
           })
         } else if(error.response.status===500){
           this.$notify({

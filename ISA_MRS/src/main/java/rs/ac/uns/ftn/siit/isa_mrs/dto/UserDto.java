@@ -13,7 +13,8 @@ public class UserDto implements Serializable {
     private String name;
     private String surname;
     private String phone;
-    private boolean isActive;
+    private Boolean isActive;
     private UserType userType;
+    private Boolean firstLogin;
     private AddressDto address;
 }

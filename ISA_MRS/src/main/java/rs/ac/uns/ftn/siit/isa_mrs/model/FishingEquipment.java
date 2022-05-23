@@ -5,11 +5,11 @@ import lombok.*;
 import javax.persistence.*;
 
 @Entity
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class FishingEquipment extends Equipment{
     @ManyToOne
-    @JoinColumn(name = "boat_id")
     private Boat boat;
 }
