@@ -37,6 +37,12 @@ public class UserController {
         return userService.getUsers();
     }
 
+    @GetMapping("/getUsersPage")
+    public ResponseEntity<PageDto<UserDto>> getUsersWithPaginationAndSort(
+            @RequestParam Integer page, @RequestParam Integer pageSize) {
+        return userService.getUsersPagination(page, pageSize);
+    }
+
     @PostMapping("/addUser")
     public ResponseEntity<UserDto> addUser(@RequestBody NewUserBasicInfoDto newUserBasicInfoDto) {
         return userService.createUser(newUserBasicInfoDto);

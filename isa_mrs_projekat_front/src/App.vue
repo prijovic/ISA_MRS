@@ -124,4 +124,26 @@ thead {
   transform: rotate(180deg);
   transition: 0.2s linear;
 }
+
+.page-link {
+  color: #008970;
+}
+
+.page-link:hover, .page-link:active, .page-link:focus {
+  color: #008970;
+}
+
+.page-item {
+  color: #008970;
+}
+
+.button:disabled, button[disabled] {
+  background-color: #b0b8b4ff;
+  color: rgb(0, 137, 112, 0.4);
+}
+
+.button:disabled:hover, button[disabled]:hover, .button:disabled:active, button[disabled]:active, .button:disabled:focus, button[disabled]:focus {
+  background-color: #b0b8b4ff;
+  color: rgb(0, 137, 112, 0.4);
+}
 </style>
