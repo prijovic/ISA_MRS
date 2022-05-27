@@ -28,6 +28,8 @@ import RentalProfile from "@/components/UnregisteredUser/components/RentalProfil
 import VerificationPage from "@/components/UnregisteredUser/components/VerificationPage";
 import AdminUsersView
     from "@/components/Administrator/AdminPage/components/AdminMainViews/AdminUsersView/AdminUsersView";
+import AdminRentalsView
+    from "@/components/Administrator/AdminPage/components/AdminMainViews/AdminRentalsView/AdminRentalsView";
 
 
 const routes = [
@@ -83,6 +85,17 @@ const routes = [
         name: "AdminUsers",
         components: {
             default: AdminUsersView,
+            sidebar: TheAdminSidebar,
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
+        path: "/admin/rentals",
+        name: "AdminRentals",
+        components: {
+            default: AdminRentalsView,
             sidebar: TheAdminSidebar,
         },
         meta: {

@@ -3,21 +3,25 @@ package rs.ac.uns.ftn.siit.isa_mrs.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.PageDto;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.RentalObjectDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.RentalObjectPeriodsDto;
 import rs.ac.uns.ftn.siit.isa_mrs.model.RentalObject;
 import rs.ac.uns.ftn.siit.isa_mrs.model.TimePeriod;
+import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.RentalObjectType;
 import rs.ac.uns.ftn.siit.isa_mrs.repository.RentalObjectRepo;
 import rs.ac.uns.ftn.siit.isa_mrs.repository.TimePeriodRepo;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -47,6 +51,41 @@ public class RentalObjectServiceImpl implements RentalObjectService {
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @Override
+    public ResponseEntity<PageDto<RentalObjectDto>> getRentalObjects(int page, int pageSize) {
+        try{
+            Pageable pageable = PageRequest.of(page, pageSize).withSort(Sort.by(Sort.Order.asc("name")));
+            Page<RentalObject> rentalsPage = rentalObjectRepo.findAll(pageable);
+            return new ResponseEntity<>(packRentals(rentalsPage), HttpStatus.OK);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    public ResponseEntity<PageDto<RentalObjectDto>> getRentalObjects(int page, int pageSize, String filter) {
+        try{
+            Pageable pageable = PageRequest.of(page, pageSize).withSort(Sort.by(Sort.Order.asc("name")));
+            Page<RentalObject> rentalsPage = rentalObjectRepo.findAllByRentalObjectType(RentalObjectType.valueOf(filter), pageable);
+            return new ResponseEntity<>(packRentals(rentalsPage), HttpStatus.OK);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    private PageDto<RentalObjectDto> packRentals(Page<RentalObject> rentalObjectPage) {
+        PageDto<RentalObjectDto> result = new PageDto<>();
+        Collection<RentalObjectDto> rentalsDtos = new ArrayList<>();
+        rentalObjectPage.getContent().forEach(rentalObject -> rentalsDtos.add(modelMapper.map(rentalObject, RentalObjectDto.class)));
+        result.setContent(rentalsDtos);
+        result.setPages(rentalObjectPage.getTotalPages());
+        result.setCurrentPage(rentalObjectPage.getNumber());
+        result.setPageSize(rentalObjectPage.getSize());
+        return result;
     }
 
     private List<TimePeriod> makePeriods(List<LocalDate> dates){
