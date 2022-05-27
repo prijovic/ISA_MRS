@@ -44,15 +44,20 @@
             <table>
               <thead>
               <tr>
+                <th></th>
                 <th>Name</th>
                 <th>Owner</th>
                 <th>Rental Object Type</th>
                 <th></th>
-                <th></th>
+                <th>Active</th>
               </tr>
               </thead>
               <tbody>
-              <tr v-for="(rentalObject, index) in this.rentalObjects" :key="index" :class="index%2!==0?'odd':'even'">
+              <tr class="p-1" v-for="(rentalObject, index) in this.rentalObjects" :key="index" :class="index%2!==0?'odd':'even'">
+                <td class="col-1">
+                  <img v-if="rentalObject.photos.length !== 0" :src="imageUrls[index]" class="img-fluid rounded border-1" alt="">
+                  <font-awesome-icon v-else icon="user" class="img-fluid rounded border-1" style="height: 3vh"></font-awesome-icon>
+                </td>
                 <td>
                   <router-link class="profile-link" to="#">{{rentalObject.name}}</router-link>
                 </td>
@@ -66,52 +71,50 @@
                   <button :id="index" class="eye-btn border-0 text-decoration-none" type="button" data-bs-toggle="modal" :data-bs-target="'#profileModal' + index">
                     <font-awesome-icon class="text-decoration-underline" icon="eye"></font-awesome-icon>
                   </button>
-<!--                  <div class="modal fade" :id="'profileModal' + index" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">-->
-<!--                    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">-->
-<!--                      <div class="modal-content">-->
-<!--                        <div class="modal-header">-->
-<!--                          <h5 class="modal-title">User Profile</h5>-->
-<!--                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>-->
-<!--                        </div>-->
-<!--                        <div class="modal-body">-->
-<!--                          <div class="row justify-content-center">-->
-<!--                            <div class="row">-->
-<!--                              <div class="col me-lg-3 me-md-2">-->
-<!--                                <div class="row text-center">-->
-<!--                                  <img v-if="user.photo !== null" src="" class="img-fluid rounded p-0" alt="">-->
-<!--                                  <font-awesome-icon icon="user" class="img-fluid rounded p-0" style="background-color: #B0B8B4FF; color: white"></font-awesome-icon>-->
-<!--                                </div>-->
-<!--                              </div>-->
-<!--                              <div class="col">-->
-<!--                                <div class="row text-center">-->
-<!--                                  <div class="container-fluid rounded" style="border: 1px solid #008970; color: #008970" >-->
-<!--                                    <h5>{{user.name + " " + user.surname}}</h5>-->
-<!--                                    <hr>-->
-<!--                                    <div class="row pb-5">-->
-<!--                                      <div class="col text-start">-->
-<!--                                        <h6>User Type: <span style="color: black">{{userRole(user)}}</span></h6>-->
-<!--                                        <h6>Activity:-->
-<!--                                          <input v-if="(user.isActive && !userIsChanged(user.id)) || (!user.isActive && userIsChanged(user.id))" class="form-check-input" type="checkbox" checked disabled>-->
-<!--                                          <input v-else class="form-check-input" type="checkbox" disabled></h6>-->
-<!--                                        <h6>Email: <span style="color: black">{{user.email}}</span></h6>-->
-<!--                                        <h6>Phone: <span style="color: black">{{user.phone}}</span></h6>-->
-<!--                                        <h6>Address: <span style="color: black">{{user.address.street + " " + user.address.number + ", " + user.address.city + ", " + user.address.country}}</span></h6>-->
-<!--                                      </div>-->
-<!--                                    </div>-->
-<!--                                  </div>-->
-<!--                                </div>-->
-<!--                              </div>-->
-<!--                            </div>-->
-<!--                          </div>-->
-<!--                        </div>-->
-<!--                      </div>-->
-<!--                    </div>-->
-<!--                  </div>-->
+                  <div class="modal fade" :id="'profileModal' + index" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title">{{rentalObjectType(rentalObject)}} Profile</h5>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                          <div class="row justify-content-center">
+                            <div class="row">
+                              <div class="col me-lg-3 me-md-2">
+                                <div class="row text-center">
+                                  <img v-if="rentalObject.photos.length !== 0" :src="imageUrls[index]" class="img-fluid rounded p-0" alt="">
+                                  <font-awesome-icon v-else icon="user" class="img-fluid rounded p-0" style="background-color: #B0B8B4FF; color: white"></font-awesome-icon>
+                                </div>
+                              </div>
+                              <div class="col">
+                                <div class="row text-center">
+                                  <div class="container-fluid rounded" style="border: 1px solid #008970; color: #008970" >
+                                    <h5>{{rentalObject.name}}</h5>
+                                    <hr>
+                                    <div class="row pb-5">
+                                      <div class="col text-start">
+                                        <h6>Price: <span style="color: black">{{rentalObject.price}}$</span></h6>
+                                        <h6>Description: <span style="color: black">{{rentalObject.description}}</span></h6>
+                                        <h6>Address: <span style="color: black">{{rentalObject.address.street + " " + rentalObject.address.number + ", " + rentalObject.address.city + ", " + rentalObject.address.country}}</span></h6>
+                                        <h6>Owner: <span style="color: black">{{rentalObject.rentalObjectOwner.name + " " + rentalObject.rentalObjectOwner.surname + "(" + rentalObject.rentalObjectOwner.phone + ")"}}</span></h6>
+                                        <h6>Activity:
+                                          <input v-if="rentalObject.isActive" class="form-check-input" type="checkbox" checked disabled>
+                                          <input v-else class="form-check-input" type="checkbox" disabled></h6>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </td>
                 <td>
-                  <button class="btn btn-red">
-                    <font-awesome-icon icon="trash" style="width: 3vh; height: 3vh"></font-awesome-icon>
-                  </button>
+                  <input class="form-check-input" type="checkbox" :value="!rentalObject.isActive" v-model="rentalObject.isActive">
                 </td>
               </tr>
               </tbody>
@@ -154,7 +157,8 @@ export default {
       totalPages: null,
       pageSize: 10,
       filterType: null,
-      filterActive: false
+      filterActive: false,
+      imageUrls: []
     }
   },
   mounted() {
@@ -171,6 +175,12 @@ export default {
           this.rentalObjects = response.data.content;
           this.currentPage = response.data.currentPage;
           this.totalPages = response.data.pages;
+          this.rentalObjects.forEach(rentalObject => {
+            if (rentalObject.photos.length > 0) {
+              const index = this.rentalObjects.indexOf(rentalObject);
+              this.loadImage(rentalObject.photos[0].photo, index);
+            }
+          })
         })
         .catch(() =>{
           this.$notify({
@@ -181,6 +191,22 @@ export default {
         });
   },
   methods: {
+    loadImage(name, index) {
+      axios.get("/Photos/", {headers: {
+          Authorization: "Bearer " + this.$store.getters.access_token,
+        },
+        params: {
+          path: name,
+        },
+        responseType: "blob"
+      })
+          .then(response => {
+            this.imageUrls[index] = URL.createObjectURL(response.data);
+          })
+          .catch((error) =>{
+            console.log(error);
+          });
+    },
     filterButtonClicked() {
       if (this.filterActive) {
         this.filterType = null;
@@ -240,6 +266,12 @@ export default {
             this.rentalObjects = response.data.content;
             this.currentPage = response.data.currentPage;
             this.totalPages = response.data.pages;
+            this.rentalObjects.forEach(rentalObject => {
+              if (rentalObject.photos.length > 0) {
+                const index = this.rentalObjects.indexOf(rentalObject);
+                this.loadImage(rentalObject.photos[0].photo, index);
+              }
+            })
           })
           .catch(() =>{
             this.$notify({

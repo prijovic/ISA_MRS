@@ -67,8 +67,8 @@ INSERT INTO users (id, email, is_active, name, password, phone, surname, address
 INSERT INTO admin (id) VALUES (31);
 INSERT INTO fee (id, fee_type, value) VALUES (1, 0, 0);
 INSERT INTO cancellation_fee (id) VALUES (1);
-INSERT INTO rental_object (id, capacity, description, name, price, rental_object_type, address_id, cancellation_fee_id, rental_object_owner_id)
-VALUES (1, 10, '2 bedrooms, a living room with open-plan kitchen and 2 bathrooms. The air-conditioned, mechanized, fully furnished, alarm protected. A balcony which opens from the living room and the first bedroom, a storage and a parking space in the garage.', 'Abstract', 200, 2, 1, 1, 4);
+INSERT INTO rental_object (is_active, id, capacity, description, name, price, rental_object_type, address_id, cancellation_fee_id, rental_object_owner_id)
+VALUES (true, 1, 10, '2 bedrooms, a living room with open-plan kitchen and 2 bathrooms. The air-conditioned, mechanized, fully furnished, alarm protected. A balcony which opens from the living room and the first bedroom, a storage and a parking space in the garage.', 'Abstract', 200, 2, 1, 1, 4);
 INSERT INTO photo (id, photo, rental_object_id) VALUES (1, 'ren1pic1', 1);
 INSERT INTO photo (id, photo, rental_object_id) VALUES (2, 'ren1pic2', 1);
 INSERT INTO photo (id, photo, rental_object_id) VALUES (3, 'ren1pic3', 1);
@@ -86,8 +86,8 @@ INSERT INTO conduct_rule (id, rule, type, rental_object_id) VALUES (6, 'Using th
 INSERT INTO room (id, beds, vacation_rental_id) VALUES (1, 5, 1);
 INSERT INTO room (id, beds, vacation_rental_id) VALUES (2, 2, 1);
 INSERT INTO vacation_rental (id, check_in, check_out) VALUES (1, '14:00', '12:00');
-INSERT INTO rental_object (id, capacity, description, name, price, rental_object_type, address_id, cancellation_fee_id, rental_object_owner_id)
-VALUES (2, 20, 'Yacht that includes high-end finishes and features and the latest in modern performance technology. Geared towards fishing, water sports, or cruising with a sleeker design and more powerful motor for faster cruising speeds.', 'Exotic', 450, 0, 1, 1, 5);
+INSERT INTO rental_object (is_active, id, capacity, description, name, price, rental_object_type, address_id, cancellation_fee_id, rental_object_owner_id)
+VALUES (true, 2, 20, 'Yacht that includes high-end finishes and features and the latest in modern performance technology. Geared towards fishing, water sports, or cruising with a sleeker design and more powerful motor for faster cruising speeds.', 'Exotic', 450, 0, 1, 1, 5);
 INSERT INTO photo (id, photo, rental_object_id) VALUES (9, 'boat1pic1', 2);
 INSERT INTO photo (id, photo, rental_object_id) VALUES (10, 'boat1pic2', 2);
 INSERT INTO photo (id, photo, rental_object_id) VALUES (11, 'boat1pic3', 2);
@@ -139,8 +139,8 @@ INSERT INTO fishing_equipment (id, boat_id) VALUES (15, 2);
 INSERT INTO fishing_equipment (id, boat_id) VALUES (16, 2);
 INSERT INTO fishing_equipment (id, boat_id) VALUES (17, 2);
 INSERT INTO fishing_equipment (id, boat_id) VALUES (18, 2);
-INSERT INTO rental_object (id, capacity, description, name, price, rental_object_type, address_id, cancellation_fee_id, rental_object_owner_id)
-VALUES (3, 20, 'Mystic fishing adventure is very much on the arcade front of the fishing game spectrum. The grind is far too real though and whilst the quests are a nice touch. We''re promising to take you to exciting and exotic locations.', 'Mystic', 50, 1, 1, 1, 2);
+INSERT INTO rental_object (is_active, id, capacity, description, name, price, rental_object_type, address_id, cancellation_fee_id, rental_object_owner_id)
+VALUES (true, 3, 20, 'Mystic fishing adventure is very much on the arcade front of the fishing game spectrum. The grind is far too real though and whilst the quests are a nice touch. We''re promising to take you to exciting and exotic locations.', 'Mystic', 50, 1, 1, 1, 2);
 INSERT INTO equipment (id, name) VALUES (19, 'Tent');
 INSERT INTO equipment (id, name) VALUES (20, 'Jerrycans');
 INSERT INTO equipment (id, name) VALUES (21, 'Heaters');
