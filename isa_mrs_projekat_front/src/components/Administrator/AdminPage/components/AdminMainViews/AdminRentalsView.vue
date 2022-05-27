@@ -6,38 +6,40 @@
         <div class="align-items-center">
           <div class="row main-col">
             <div class="col d-flex justify-content-start ps-0 ms-0 me-0 pe-0">
-              <div class="col-sm-10 col-md-5 col-lg-3 col-xl-3 me-1 mb-1">
-                <select class="form-control" v-model="filterType" id="userType">
-                  <option value="VacationRental">Rental House</option>
-                  <option value="Boat">Boat</option>
-                  <option value="Adventure">Adventure</option>
-                </select>
+              <div class="col-sm-10 col-md-5 col-lg-3 col-xl-3 mb-1">
+                <div class="d-flex flex-row">
+                  <select class="form-control me-1" v-model="filterType" id="Type">
+                    <option value="VacationRental">Rental House</option>
+                    <option value="Boat">Boat</option>
+                    <option value="Adventure">Adventure</option>
+                  </select>
+                  <button @click="filterButtonClicked" class="btn rounded" :class="filterActive?'btn-red':''" :disabled="filterType===null"><font-awesome-icon :icon="filterActive?'x':'filter'"></font-awesome-icon></button>
+                </div>
               </div>
-              <div class="col-1 pe-0">
-                <button @click="filterButtonClicked" class="btn rounded" :class="filterActive?'btn-red':''" :disabled="filterType===null"><font-awesome-icon :icon="filterActive?'x':'filter'"></font-awesome-icon></button>
+              <div class="col mb-1">
+                <div class="d-flex flex-row justify-content-end">
+                  <button v-if="hasChanged" class="btn btn-red mb-1 me-1" data-bs-toggle="modal" data-bs-target="#confirmationDialog">
+                    Save Changes
+                  </button>
+                </div>
+                <div class="modal fade" id="confirmationDialog" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Rental Objects' Status Change</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <div class="modal-body">
+                        {{modalMessage}}
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-red" style="margin-right: 2vh;" data-bs-dismiss="modal">No</button>
+                        <button type="button" class="btn" @click="saveChanges" data-bs-dismiss="modal">Yes</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
-<!-- Save changes button -->
-<!--              <button v-if="hasChanged" class="btn btn-red my-auto mb-1 me-1" data-bs-toggle="modal" data-bs-target="#confirmationDialog">-->
-<!--                Save Changes-->
-<!--              </button>-->
-<!--  Modal for submitting changes -->
-<!--              <div class="modal fade" id="confirmationDialog" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">-->
-<!--                <div class="modal-dialog">-->
-<!--                  <div class="modal-content">-->
-<!--                    <div class="modal-header">-->
-<!--                      <h5 class="modal-title" id="exampleModalLabel">Users' Status Change</h5>-->
-<!--                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>-->
-<!--                    </div>-->
-<!--                    <div class="modal-body">-->
-<!--                      {{modalMessage}}-->
-<!--                    </div>-->
-<!--                    <div class="modal-footer">-->
-<!--                      <button type="button" class="btn btn-red" style="margin-right: 2vh;" data-bs-dismiss="modal">No</button>-->
-<!--                      <button type="button" class="btn" @click="saveChanges" data-bs-dismiss="modal">Yes</button>-->
-<!--                    </div>-->
-<!--                  </div>-->
-<!--                </div>-->
-<!--              </div>-->
             </div>
           </div>
           <div class="row main-col text-center header rounded mb-3">
@@ -55,7 +57,7 @@
               <tbody>
               <tr class="p-1" v-for="(rentalObject, index) in this.rentalObjects" :key="index" :class="index%2!==0?'odd':'even'">
                 <td class="col-1">
-                  <img v-if="rentalObject.photos.length !== 0" :src="imageUrls[index]" class="img-fluid rounded border-1" alt="">
+                  <img v-if="rentalObject.photos.length !== 0" :src="imageUrls[index]" style="height: 6vh;width: 6vh" class="img-fluid rounded border-1" alt="">
                   <font-awesome-icon v-else icon="user" class="img-fluid rounded border-1" style="height: 3vh"></font-awesome-icon>
                 </td>
                 <td>
@@ -114,7 +116,7 @@
                   </div>
                 </td>
                 <td>
-                  <input class="form-check-input" type="checkbox" :value="!rentalObject.isActive" v-model="rentalObject.isActive">
+                  <input class="form-check-input" type="checkbox" :value="!rentalObject.isActive" v-model="rentalObject.isActive" @change="changeStatus(rentalObject)" :disabled="!rentalObject.isDeletable">
                 </td>
               </tr>
               </tbody>
@@ -144,6 +146,7 @@ import { library } from "@fortawesome/fontawesome-svg-core";
 import {faEye, faTrash, faFilter, faX} from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
 import {useStore} from "vuex";
+import store from "@/store";
 
 library.add(faEye, faTrash, faFilter, faX);
 
@@ -158,7 +161,8 @@ export default {
       pageSize: 10,
       filterType: null,
       filterActive: false,
-      imageUrls: []
+      imageUrls: [],
+      changedRentals: []
     }
   },
   mounted() {
@@ -191,6 +195,43 @@ export default {
         });
   },
   methods: {
+    saveChanges() {
+      let ids = this.changedRentalsIds;
+      let lwc = {list: ids};
+      axios.put("/RentalObjects/multipleRentalsStatusChange",
+          lwc,
+          {headers: {
+              Authorization: "Bearer " + store.state.access_token,
+            }
+          })
+          .then((response) => {
+            let message = "You have successfully changed status for rental objects:";
+            response.data.forEach((rentalObject) => {message += " " + rentalObject.name + ","});
+            message = message.slice(0, -1);
+            message += ".";
+            this.$notify({
+              title: "Status Change Successful",
+              text: message,
+              type: "success"
+            });
+            this.changedRentals = [];
+          })
+          .catch(() =>{
+            this.$notify({
+              title: "Server error",
+              text: "Something went wrong. Please try again later...",
+              type: "error"
+            });
+          })
+    },
+    changeStatus(rentalObject) {
+      let index = this.changedRentals.findIndex(element => element.id === rentalObject.id);
+      if (index > -1) {
+        this.changedRentals.splice(index, 1);
+      } else {
+        this.changedRentals.push(rentalObject);
+      }
+    },
     loadImage(name, index) {
       axios.get("/Photos/", {headers: {
           Authorization: "Bearer " + this.$store.getters.access_token,
@@ -200,12 +241,12 @@ export default {
         },
         responseType: "blob"
       })
-          .then(response => {
-            this.imageUrls[index] = URL.createObjectURL(response.data);
-          })
-          .catch((error) =>{
-            console.log(error);
-          });
+      .then(response => {
+        this.imageUrls[index] = URL.createObjectURL(response.data);
+      })
+      .catch((error) =>{
+        console.log(error);
+      });
     },
     filterButtonClicked() {
       if (this.filterActive) {
@@ -264,6 +305,12 @@ export default {
       })
           .then(response => {
             this.rentalObjects = response.data.content;
+            this.changedRentals.forEach(rentalObject =>
+              { this.rentalObjects.forEach( rentalObject1 =>
+                { if (rentalObject.id === rentalObject1.id && rentalObject.isActive !== rentalObject1.isActive)
+                  rentalObject1.isActive = rentalObject.isActive;
+                });
+              });
             this.currentPage = response.data.currentPage;
             this.totalPages = response.data.pages;
             this.rentalObjects.forEach(rentalObject => {
@@ -283,6 +330,14 @@ export default {
     }
   },
   computed: {
+    changedRentalsIds() {
+      let ids = [];
+      this.changedRentals.forEach(rentalObject => {ids.push(rentalObject.id)});
+      return ids;
+    },
+    hasChanged() {
+      return this.changedRentals.length > 0;
+    },
     button1Content() {
       return this.currentPage === 0 ? this.currentPage+1: this.totalPages - this.currentPage === 1 ? this.currentPage - 1 : this.currentPage;
     },
@@ -292,7 +347,56 @@ export default {
     button3Content() {
       return this.currentPage === 0 ? this.currentPage+3: this.totalPages - this.currentPage === 1 ? this.currentPage + 1 : this.currentPage+2;
     },
-
+    modalMessage() {
+      let numberOfDeletedRentals = this.numberOfDeletedRentals;
+      let numberOfActivatedRentals = this.numberOfActivatedRentals;
+      let deleteMessage = "";
+      let activateMessage = "";
+      if (numberOfDeletedRentals > 1) {
+        deleteMessage = "Do you want to delete rental objects:";
+      } else if (numberOfDeletedRentals === 1) {
+        deleteMessage = "Do you want to delete rental object:";
+      }
+      if (numberOfActivatedRentals > 1) {
+        activateMessage = "Do you want to activate rental objects:";
+      } else if (numberOfActivatedRentals === 1) {
+        activateMessage = "Do you want to activate rental object:";
+      }
+      this.changedRentals.forEach(rentalObject => {
+        if (!rentalObject.isActive) {
+          deleteMessage += " " + rentalObject.name + ",\n";
+        } else {
+          activateMessage += " " + rentalObject.name + ",\n";
+        }
+      });
+      if (numberOfDeletedRentals > 0) {
+        deleteMessage = deleteMessage.slice(0, -2);
+        deleteMessage += "?";
+      }
+      if (numberOfActivatedRentals > 0) {
+        activateMessage = activateMessage.slice(0, -2);
+        activateMessage += "?";
+      }
+      return deleteMessage + "\n" + activateMessage;
+    },
+    numberOfDeletedRentals() {
+      let counter = 0;
+      this.changedRentals.forEach(rentalObject => {
+        if (!rentalObject.isActive) {
+          counter += 1;
+        }
+      });
+      return counter;
+    },
+    numberOfActivatedRentals() {
+      let counter = 0;
+      this.changedRentals.forEach(rentalObject => {
+        if (rentalObject.isActive) {
+          counter += 1;
+        }
+      });
+      return counter;
+    }
   }
 }
 </script>

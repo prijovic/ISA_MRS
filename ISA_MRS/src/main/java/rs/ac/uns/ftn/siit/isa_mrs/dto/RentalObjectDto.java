@@ -17,5 +17,6 @@ public class RentalObjectDto implements Serializable {
     private AddressDto address;
     private String description;
     private Double price;
+    private Boolean isDeletable;
     private RentalObjectOwnerDto rentalObjectOwner;
 }

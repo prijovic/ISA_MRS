@@ -27,9 +27,9 @@ import ClientSidebar from "@/components/Client/ClientPage/components/ClientSideb
 import RentalProfile from "@/components/UnregisteredUser/components/RentalProfile";
 import VerificationPage from "@/components/UnregisteredUser/components/VerificationPage";
 import AdminUsersView
-    from "@/components/Administrator/AdminPage/components/AdminMainViews/AdminUsersView/AdminUsersView";
+    from "@/components/Administrator/AdminPage/components/AdminMainViews/AdminUsersView";
 import AdminRentalsView
-    from "@/components/Administrator/AdminPage/components/AdminMainViews/AdminRentalsView/AdminRentalsView";
+    from "@/components/Administrator/AdminPage/components/AdminMainViews/AdminRentalsView";
 
 
 const routes = [

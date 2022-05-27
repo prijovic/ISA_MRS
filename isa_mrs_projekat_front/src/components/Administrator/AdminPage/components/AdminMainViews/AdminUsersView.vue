@@ -102,7 +102,7 @@
                     </div>
                   </td>
                   <td>
-                    <input class="form-check-input" type="checkbox" :value="!user.isActive" v-model="user.isActive" @change="changedStatus(user)">
+                    <input class="form-check-input" type="checkbox" :value="!user.isActive" v-model="user.isActive" :disabled="!user.isDeletable" @change="changedStatus(user)">
                   </td>
                 </tr>
               </tbody>
@@ -238,9 +238,9 @@ export default {
               { this.users.forEach( user1 =>
                 { if (user.id === user1.id && user.isActive !== user1.isActive) {
                   user1.isActive = user.isActive;
-                }
-                })
-              })
+                  }
+                });
+              });
             this.currentPage = response.data.currentPage;
             this.totalPages = response.data.pages;
           })

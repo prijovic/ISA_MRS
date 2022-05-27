@@ -17,4 +17,5 @@ public class UserDto implements Serializable {
     private UserType userType;
     private Boolean firstLogin;
     private AddressDto address;
+    private Boolean isDeletable;
 }

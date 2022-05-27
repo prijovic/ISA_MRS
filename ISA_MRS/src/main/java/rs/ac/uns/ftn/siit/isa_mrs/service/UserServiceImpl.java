@@ -23,6 +23,8 @@ import rs.ac.uns.ftn.siit.isa_mrs.security.JwtDecoder;
 import rs.ac.uns.ftn.siit.isa_mrs.util.ObjectConverter;
 
 import javax.persistence.EntityNotFoundException;
+import java.time.LocalDateTime;
+import java.time.chrono.ChronoLocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -40,6 +42,7 @@ public class UserServiceImpl implements UserService {
     private final ClientRepo clientRepo;
     private final AdminRepo adminRepo;
     private final AddressRepo addressRepo;
+    private final RentalObjectRepo rentalObjectRepo;
 
     @Override
     public ResponseEntity<Collection<UserDto>> getUsers() {
@@ -55,15 +58,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResponseEntity<PageDto<UserDto>> getUsersPagination(int page, int pageSize) {
+    public ResponseEntity<PageDto<UserDto>> getUsersPagination(int page, int pageSize, String token) {
         PageDto<UserDto> result = new PageDto<>();
         try{
+            JwtDecoder.DecodedToken decodedToken;
+            try {
+                decodedToken = jwtDecoder.decodeToken(token);
+            } catch (Exception e) {
+                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            }
             Pageable pageable = PageRequest.of(page, pageSize).withSort(Sort.by(Sort.Order.asc("name"), Sort.Order.asc("surname")));
             Page<User> usersPage = userRepo.findAll(pageable);
             Collection<UserDto> userDtos = new ArrayList<>();
-            usersPage.getContent().forEach(user -> {
-                userDtos.add(modelMapper.map(user, UserDto.class));
-            });
+            usersPage.getContent().forEach(user -> userDtos.add(mapUserToDto(user, decodedToken.getEmail())));
             result.setContent(userDtos);
             result.setPages(usersPage.getTotalPages());
             result.setCurrentPage(usersPage.getNumber());
@@ -273,5 +280,52 @@ public class UserServiceImpl implements UserService {
         return pwdChars.stream()
                 .collect(StringBuilder::new, StringBuilder::append, StringBuilder::append)
                 .toString();
+    }
+
+    private UserDto mapUserToDto(User user, String email) {
+        UserDto userDto = modelMapper.map(user, UserDto.class);
+        if (user.getEmail().equals(email) || user.getUserType().equals(UserType.SuperAdmin)) {
+            userDto.setIsDeletable(false);
+        } else if (user.getUserType().equals(UserType.Client)) {
+            Client client = clientRepo.getById(user.getId());
+            userDto.setIsDeletable(isClientDeletable(client));
+        } else if (user.getUserType().equals(UserType.VacationRentalOwner) ||
+                user.getUserType().equals(UserType.BoatOwner) ||
+                user.getUserType().equals(UserType.Instructor)) {
+            RentalObjectOwner owner = rentalObjectOwnerRepo.getById(user.getId());
+            userDto.setIsDeletable(isRentalOwnerDeletable(owner));
+        }
+        return userDto;
+    }
+
+    private boolean isRentalOwnerDeletable(RentalObjectOwner owner) {
+        boolean rentalObjectOwnerIsDeletable = true;
+        Collection<RentalObject> rentalObjects = rentalObjectRepo.findAllByRentalObjectOwner(owner);
+        for (RentalObject rentalObject : rentalObjects) {
+            for (Reservation reservation : rentalObject.getReservations()) {
+                if (reservation.getReservationTime().getInitDate().isAfter(ChronoLocalDate.from(LocalDateTime.now()))) {
+                    rentalObjectOwnerIsDeletable = false;
+                    break;
+                }
+                if (!rentalObjectOwnerIsDeletable) {
+                    break;
+                }
+            }
+        }
+        return rentalObjectOwnerIsDeletable;
+    }
+
+    private boolean isClientDeletable(Client client) {
+        boolean clientIsDeletable = true;
+        for (Reservation reservation : client.getReservations()) {
+            if (reservation.getReservationTime().getInitDate().isAfter(ChronoLocalDate.from(LocalDateTime.now()))) {
+                clientIsDeletable = false;
+                break;
+            }
+            if (!clientIsDeletable) {
+                break;
+            }
+        }
+        return clientIsDeletable;
     }
 }

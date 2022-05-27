@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.*;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.AddVacationRentalDto;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.IdListWrapperClass;
 import rs.ac.uns.ftn.siit.isa_mrs.exception.RentalNotFound;
 import rs.ac.uns.ftn.siit.isa_mrs.model.Boat;
 import rs.ac.uns.ftn.siit.isa_mrs.service.AdventureService;
@@ -16,6 +17,7 @@ import rs.ac.uns.ftn.siit.isa_mrs.service.RentalObjectService;
 import rs.ac.uns.ftn.siit.isa_mrs.service.VacationRentalService;
 
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,6 +41,11 @@ public class RentalObjectController {
     @GetMapping("/getRentalObjectsFilterPage")
     public ResponseEntity<PageDto<RentalObjectDto>> getRentalObjects(@RequestParam Integer page, @RequestParam Integer pageSize, @RequestParam String filter) {
         return rentalObjectService.getRentalObjects(page, pageSize, filter);
+    }
+
+    @PutMapping("/multipleRentalsStatusChange")
+    public ResponseEntity<Collection<RentalObjectDto>> changeRentalObjectsStatus(@RequestBody IdListWrapperClass lwc) {
+        return rentalObjectService.changeRentalObjectsStatus(lwc.getList());
     }
 
     @GetMapping(GET_VACATION_RENTAL)

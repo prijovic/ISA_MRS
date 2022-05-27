@@ -13,8 +13,10 @@ import org.springframework.stereotype.Service;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.PageDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.RentalObjectDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.RentalObjectPeriodsDto;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.UserDto;
 import rs.ac.uns.ftn.siit.isa_mrs.model.RentalObject;
 import rs.ac.uns.ftn.siit.isa_mrs.model.TimePeriod;
+import rs.ac.uns.ftn.siit.isa_mrs.model.User;
 import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.RentalObjectType;
 import rs.ac.uns.ftn.siit.isa_mrs.repository.RentalObjectRepo;
 import rs.ac.uns.ftn.siit.isa_mrs.repository.TimePeriodRepo;
@@ -66,6 +68,25 @@ public class RentalObjectServiceImpl implements RentalObjectService {
     }
 
     @Override
+    public ResponseEntity<Collection<RentalObjectDto>> changeRentalObjectsStatus(Collection<Long> ids) {
+        Collection<Long> changedStatuses = new ArrayList<>();
+        try {
+            Collection<RentalObjectDto> result = new ArrayList<>();
+            ids.forEach(id -> {
+                RentalObject rentalObject = rentalObjectRepo.getById(id);
+                rentalObject.setIsActive(!rentalObject.getIsActive());
+                rentalObjectRepo.save(rentalObject);
+                changedStatuses.add(id);
+                result.add(mapRentalObjectToDto(rentalObject));
+            });
+            return new ResponseEntity<>(result, HttpStatus.OK);
+        } catch (Exception e) {
+            changeRentalObjectsStatus(changedStatuses);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
     public ResponseEntity<PageDto<RentalObjectDto>> getRentalObjects(int page, int pageSize, String filter) {
         try{
             Pageable pageable = PageRequest.of(page, pageSize).withSort(Sort.by(Sort.Order.asc("name")));
@@ -80,12 +101,18 @@ public class RentalObjectServiceImpl implements RentalObjectService {
     private PageDto<RentalObjectDto> packRentals(Page<RentalObject> rentalObjectPage) {
         PageDto<RentalObjectDto> result = new PageDto<>();
         Collection<RentalObjectDto> rentalsDtos = new ArrayList<>();
-        rentalObjectPage.getContent().forEach(rentalObject -> rentalsDtos.add(modelMapper.map(rentalObject, RentalObjectDto.class)));
+        rentalObjectPage.getContent().forEach(rentalObject -> rentalsDtos.add(mapRentalObjectToDto(rentalObject)));
         result.setContent(rentalsDtos);
         result.setPages(rentalObjectPage.getTotalPages());
         result.setCurrentPage(rentalObjectPage.getNumber());
         result.setPageSize(rentalObjectPage.getSize());
         return result;
+    }
+
+    private RentalObjectDto mapRentalObjectToDto(RentalObject rentalObject) {
+        RentalObjectDto rentalObjectDto = modelMapper.map(rentalObject, RentalObjectDto.class);
+        rentalObjectDto.setIsDeletable(rentalObject.getReservations().size() == 0);
+        return rentalObjectDto;
     }
 
     private List<TimePeriod> makePeriods(List<LocalDate> dates){
