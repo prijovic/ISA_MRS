@@ -9,5 +9,6 @@ public interface AdventureService {
     ResponseEntity<PageDto<AdventureDto>> findAdventuresWithPaginationSortedByField(int offset, int pageSize,
                                                                                     String field);
     ResponseEntity<PageDto<AdventureDto>> findAdventuresWithPaginationSortedByFieldAndFilteredByOwner(int offset, int pageSize,
-                                                                                    String field, String ownerEmail);
+                                                                                    String field, String token);
+    ResponseEntity<AdventureDto> findAdventure(Long id);
 }

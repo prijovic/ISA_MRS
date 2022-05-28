@@ -19,8 +19,6 @@ import IncomeRateChangeForm
     from "@/components/Administrator/AdminPage/components/AdminMainViews/AdminIncomeIncomeRateComponents/IncomeRateChangeForm";
 import FishingInstructorAdventuresView
     from "@/components/FishingInstructor/FishingInstructorPage/components/InstructorMainViews/InstructorAllAdventuresView/InstructorAllAdventuresView";
-import FishingInstructorAdventureProfileView
-    from "@/components/FishingInstructor/FishingInstructorPage/components/InstructorMainViews/InstructorAllAdventuresView/InstructorAdventureProfile/InstructorAdventureProfile";
 import CardMenu from "@/components/UnregisteredUser/components/CardMenu";
 import ClientMainView from "@/components/Client/ClientPage/components/ClientMainView";
 import ClientSidebar from "@/components/Client/ClientPage/components/ClientSidebar/ClientSidebar";
@@ -31,6 +29,7 @@ import AdminUsersView
 import AdminRentalsView
     from "@/components/Administrator/AdminPage/components/AdminMainViews/AdminRentalsView";
 import ReservationsCalendarView from "@/components/RentalObjectOwner/ReservationsCalendarView";
+import AdventureProfile from "@/components/GeneralComponents/AdventureProfile";
 
 
 const routes = [
@@ -247,10 +246,10 @@ const routes = [
         }
     },
     {
-        path: "/fishingInstructor/adventure",
+        path: "/fishingInstructor/adventure/:id",
         name: "FishingInstructorAdventure",
         components: {
-            default: FishingInstructorAdventureProfileView,
+            default: AdventureProfile,
             sidebar: TheFishingInstructorSidebar
         },
         meta: {
