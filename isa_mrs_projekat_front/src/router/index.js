@@ -30,6 +30,7 @@ import AdminUsersView
     from "@/components/Administrator/AdminPage/components/AdminMainViews/AdminUsersView";
 import AdminRentalsView
     from "@/components/Administrator/AdminPage/components/AdminMainViews/AdminRentalsView";
+import ReservationsCalendarView from "@/components/RentalObjectOwner/ReservationsCalendarView";
 
 
 const routes = [
@@ -272,6 +273,17 @@ const routes = [
         name: "VacationRentalOwnerChangePassword",
         components: {
             default: PasswordChangeForm,
+            sidebar: TheOwnerSidebar,
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
+        path: "/vacationRentalOwner/calendar",
+        name: "VacationRentalOwnerReservations",
+        components: {
+            default: ReservationsCalendarView,
             sidebar: TheOwnerSidebar,
         },
         meta: {

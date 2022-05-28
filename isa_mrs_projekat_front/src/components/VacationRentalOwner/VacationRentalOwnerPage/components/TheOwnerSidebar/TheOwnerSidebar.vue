@@ -4,7 +4,7 @@
     <MenuLink to="/#" icon="house-chimney-window">Rental Houses</MenuLink>
     <MenuLink to="/#" icon="circle-check">Reservations</MenuLink>
     <MenuLink to="/#" icon="comments">Reviews</MenuLink>
-    <MenuLink to="/#" icon="calendar-days">Calendar</MenuLink>
+    <MenuLink to="/vacationRentalOwner/calendar" icon="calendar-days">Calendar</MenuLink>
     <span class="collapse-icon" :class="{'rotate-180': collapsed}" @click="toggleSidebar">
       <font-awesome-icon icon="angle-double-left"></font-awesome-icon>
     </span>
