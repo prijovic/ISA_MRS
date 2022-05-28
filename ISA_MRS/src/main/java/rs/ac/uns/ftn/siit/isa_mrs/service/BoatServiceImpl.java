@@ -13,7 +13,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BoatDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.PageDto;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.VacationRentalDto;
 import rs.ac.uns.ftn.siit.isa_mrs.model.Boat;
+import rs.ac.uns.ftn.siit.isa_mrs.model.VacationRental;
 import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.RentalObjectType;
 import rs.ac.uns.ftn.siit.isa_mrs.repository.BoatRepo;
 
@@ -31,9 +33,24 @@ public class BoatServiceImpl implements BoatService{
     private final ModelMapper modelMapper;
 
     @Override
-    public Optional<Boat> getBoat(Long id) {
-        log.info("Getting boat by id {}.", id);
-        return boatRepo.findById(id);
+    public ResponseEntity<BoatDto> getBoat(Long id) {
+        try{
+            log.info("Usli smo u servis, id je " + id);
+            Optional<Boat> boat = boatRepo.findById(id);
+            if (boat.isEmpty()){
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+            log.info("Prosli nabavku");
+            log.info(""+boat);
+
+            BoatDto boatDto = modelMapper.map(boat, BoatDto.class);
+            log.info(""+boatDto);
+            return new ResponseEntity<>(boatDto, HttpStatus.OK);
+        }
+        catch (Exception e) {
+            log.error(e.getMessage());
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @Override

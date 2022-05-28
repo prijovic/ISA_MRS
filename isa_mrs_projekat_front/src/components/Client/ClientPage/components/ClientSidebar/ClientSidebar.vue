@@ -1,5 +1,7 @@
 <template>
   <div class="sidebar rounded-right" :style="{width:sidebarWidth}">
+    <MenuLink to="/client/profile" icon="id-card">Profile</MenuLink>
+    <hr>
     <MenuLink to="/client/adventures" icon="mountain-sun">Adventures</MenuLink>
     <MenuLink to="/client/boats" icon="ship">Boats</MenuLink>
     <MenuLink to="/client/vacationRentals" icon="house">Rental Houses</MenuLink>
@@ -13,9 +15,9 @@
 import {collapsed, toggleSidebar, sidebarWidth} from "@/components/state";
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import { library } from "@fortawesome/fontawesome-svg-core";
-import { faAngleDoubleLeft, faHouse, faShip, faMountainSun} from "@fortawesome/free-solid-svg-icons";
+import { faAngleDoubleLeft, faHouse, faShip, faMountainSun, faIdCard} from "@fortawesome/free-solid-svg-icons";
 import MenuLink from "@/components/GeneralComponents/MenuLink";
-library.add(faAngleDoubleLeft, faHouse, faShip, faMountainSun);
+library.add(faAngleDoubleLeft, faHouse, faShip, faMountainSun, faIdCard);
 export default {
   name: "ClientSidebar",
   components: {

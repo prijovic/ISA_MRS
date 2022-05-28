@@ -37,7 +37,7 @@ export default {
 <style scoped>
   .navbar {
     background-color: #3F9725;
-    z-index: 1;
+    z-index: 100;
     display: flex;
     position: sticky;
     top: 0;

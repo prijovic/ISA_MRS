@@ -13,13 +13,18 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.AdventureDto;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.BoatDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.PageDto;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.VacationRentalDto;
 import rs.ac.uns.ftn.siit.isa_mrs.model.Adventure;
+import rs.ac.uns.ftn.siit.isa_mrs.model.Boat;
+import rs.ac.uns.ftn.siit.isa_mrs.model.VacationRental;
 import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.RentalObjectType;
 import rs.ac.uns.ftn.siit.isa_mrs.repository.AdventureRepo;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -28,6 +33,27 @@ import java.util.Collection;
 public class AdventureServiceImpl implements AdventureService{
     private final AdventureRepo adventureRepo;
     private final ModelMapper modelMapper;
+
+    @Override
+    public ResponseEntity<AdventureDto> getAdventure(Long id) {
+        try{
+            log.info("Usli smo u servis, id je " + id);
+            Optional<Adventure> adventure = adventureRepo.findById(id);
+            if (adventure.isEmpty()){
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+            log.info("Prosli nabavku");
+            log.info(""+adventure);
+
+            AdventureDto adventureDto = modelMapper.map(adventure, AdventureDto.class);
+            log.info(""+adventureDto);
+            return new ResponseEntity<>(adventureDto, HttpStatus.OK);
+        }
+        catch (Exception e) {
+            log.error(e.getMessage());
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
     @Override
     public ResponseEntity<PageDto<AdventureDto>> findAdventuresWithPaginationSortedByField(int offset, int pageSize,

@@ -1,6 +1,7 @@
 package rs.ac.uns.ftn.siit.isa_mrs.model;
 
 import lombok.*;
+import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.ReviewType;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -17,6 +18,7 @@ public class Review {
     private Long id;
     private String comment;
     private Integer grade;
+    private ReviewType reviewType;
     private LocalDateTime timeStamp;
     @ManyToOne
     private Reservation reservation;

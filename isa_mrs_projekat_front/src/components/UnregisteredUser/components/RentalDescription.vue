@@ -1,10 +1,10 @@
 <template>
     <div class="row description">
         <div class="lineTitle">
-            <p class="h4">Description</p>
+            <p class="h3"><strong>Description</strong></p>
             <hr class="ms-1">
         </div>
-        <p class="ps-3" style="color: grey;">{{description}}</p>
+        <p class="ps-3" style="color: grey;">{{ description }}</p>
     </div>
 </template>
 

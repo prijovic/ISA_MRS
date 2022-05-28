@@ -1,7 +1,7 @@
 package rs.ac.uns.ftn.siit.isa_mrs.service;
 
 import org.springframework.http.ResponseEntity;
-import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.SignUpDto;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.SignUpDtos.SignUpDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.RequestDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.PageDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.RespondedRequestDto;
