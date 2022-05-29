@@ -4,12 +4,11 @@
       <div class="row col-12" style="max-width: 100%">
         <div class="col-12 d-flex" style="justify-content: space-between">
           <div class="navbar-brand">
-            <img class="d-inline-block rounded-circle align-top" src="@/assets/leaf_app_logo.svg" width="40" height="40" alt="">
-            <h2 class="d-inline-block align-bottom">Rental Service</h2>
+            <img class="d-inline-block rounded-circle align-top" src="@/assets/leaf_app_logo_light.svg" width="40" height="40" alt="">
+            <h2 class="d-inline-block align-bottom ps-2">Rental Service</h2>
           </div>
           <div class="align-items-center">
             <user-profile-button v-if="userIsLoggedIn"></user-profile-button>
-            <!--    DODATI LOGIN MENI DUGME -->
           </div>
         </div>
       </div>
@@ -28,7 +27,7 @@ export default {
   },
   computed: {
     userIsLoggedIn() {
-      return this.$store.getters.user !== null
+      return this.$store.getters.user !== null;
     }
   }
 }
@@ -36,23 +35,22 @@ export default {
 
 <style scoped>
   .navbar {
-    background-color: #3F9725;
+    background-color: #008970;
     z-index: 100;
     display: flex;
     position: sticky;
     top: 0;
-    border-bottom: solid 5px #3f5b25;
+    border-bottom: solid 5px #99EEDF;
   }
 
   img {
     margin: 0;
     padding: 0;
-    border: solid 2px #3f5b25;
+    border: solid 2px #99EEDF;
   }
 
   h2 {
-    background-color: #3F9725;
-    color: #3f5b25;
+    color: #99EEDF;
     font-weight: 400;
   }
 </style>

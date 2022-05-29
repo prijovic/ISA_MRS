@@ -11,4 +11,5 @@ import java.util.Map;
 public interface EmailSenderService {
     void sendRequestHandledEmail(Request request, Map<String, Object> model) throws MessagingException, IOException, TemplateException;
     void sendActivationEmail(User user) throws MessagingException, IOException, TemplateException;
+    void sendActivationNotificationEmail(User user, String password) throws MessagingException, IOException, TemplateException;
 }

@@ -18,7 +18,7 @@ import java.util.LinkedHashSet;
 @Inheritance(strategy = InheritanceType.JOINED)
 public class RentalObject {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
     private String name;

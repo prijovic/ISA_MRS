@@ -1,37 +1,43 @@
 <template>
-  <div class="row justify-content-center">
-    <div v-if="isSuccessful" class="square rounded-2 shadow" style="color: green;">
-      <div class="row text-center">
-        <h1>Successful Verification!</h1>
-      </div>
-      <div class="row text-center">
-        <div class="container text-center">
-          <font-awesome-icon icon="check" style="height: 20vh; width: 20vh"></font-awesome-icon>
+  <div class="row">
+    <div class="col-2"></div>
+    <div class="col-8 pt-5 mb-5">
+      <div class="row justify-content-center">
+        <div v-if="isSuccessful" class="square rounded-2 shadow" style="color: green;">
+          <div class="row text-center">
+            <h1>Successful Verification!</h1>
+          </div>
+          <div class="row text-center">
+            <div class="container text-center">
+              <font-awesome-icon icon="check" style="height: 20vh; width: 20vh"></font-awesome-icon>
+            </div>
+          </div>
+          <div class="row text-center">
+            <h6>Your account is activated. You may login now!</h6>
+          </div>
+        </div>
+        <div v-if="!isSuccessful && isSuccessful!==null" class="square rounded-2 shadow" style="color: red;">
+          <div class="row text-center">
+            <h1>Failed Verification!</h1>
+          </div>
+          <div class="row text-center">
+            <div class="container text-center">
+              <font-awesome-icon icon="exclamation-triangle" style="height: 20vh; width: 20vh"></font-awesome-icon>
+            </div>
+          </div>
+          <div class="row text-center">
+            <h6>Your verification token has expired. To resend the token to your email address press the button:</h6>
+          </div>
+          <div class="d-flex row justify-content-center">
+            <button type="button" class="btn btn-default" @click="resendEmail">Resend</button>
+          </div>
+        </div>
+        <div v-if="isSuccessful === null">
+          Loading...
         </div>
       </div>
-      <div class="row text-center">
-        <h6>Your account is activated. You may login now!</h6>
-      </div>
     </div>
-    <div v-if="!isSuccessful && isSuccessful!==null" class="square rounded-2 shadow" style="color: red;">
-      <div class="row text-center">
-        <h1>Failed Verification!</h1>
-      </div>
-      <div class="row text-center">
-        <div class="container text-center">
-          <font-awesome-icon icon="exclamation-triangle" style="height: 20vh; width: 20vh"></font-awesome-icon>
-        </div>
-      </div>
-      <div class="row text-center">
-        <h6>Your verification token has expired. To resend the token to your email address press the button:</h6>
-      </div>
-      <div class="d-flex row justify-content-center">
-        <button type="button" class="btn btn-default" @click="resendEmail">Resend</button>
-      </div>
-    </div>
-    <div v-else>
-      Loading...
-    </div>
+    <div class="col-2"></div>
   </div>
 </template>
 

@@ -4,21 +4,6 @@
     <div class="col-8 pt-5">
       <div class="container-fluid">
         <div class="align-items-center">
-          <div class="row main-col align-items-end mb-1">
-            <div class="col-sm-4">
-              <input class="form-control" type="search" v-bind="searchInput"/>
-            </div>
-            <div class="col-sm-7">
-              <button class="btn" @click.prevent="">
-                <FontAwesomeIcon icon="filter"></FontAwesomeIcon>
-              </button>
-            </div>
-            <div class="col-sm-1 ms-auto me-0">
-              <button class="btn" @click.prevent="">
-                <FontAwesomeIcon icon="plus"></FontAwesomeIcon>
-              </button>
-            </div>
-          </div>
           <div class="row main-col align-items-end header rounded mb-3">
             <div class="col-sm-4 main-col">
               <h3>Name</h3>
@@ -78,11 +63,11 @@ import {
   faAngleDoubleRight,
   faAngleLeft,
   faAngleRight,
-  faFrown, faFilter, faPlus
+  faFrown
 } from "@fortawesome/free-solid-svg-icons";
 import {useStore} from "vuex";
 
-library.add(faPlus, faFilter, faAngleRight, faAngleLeft, faFrown, faAngleDoubleRight, faAngleDoubleLeft);
+library.add(faAngleRight, faAngleLeft, faFrown, faAngleDoubleRight, faAngleDoubleLeft);
 
 
 export default {
@@ -184,8 +169,4 @@ export default {
     color: #378220;
   }
 
-  .btn {
-    color: white;
-    background-color: #378220;
-  }
 </style>

@@ -20,6 +20,7 @@ import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.RequestStatus;
 import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.RequestType;
 import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.UserType;
 import rs.ac.uns.ftn.siit.isa_mrs.repository.*;
+import rs.ac.uns.ftn.siit.isa_mrs.util.ObjectConverter;
 
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
@@ -41,14 +42,13 @@ public class RequestServiceImpl implements RequestService {
     private final AddressRepo addressRepo;
     private final RentalObjectOwnerRepo rentalOwnerRepo;
     private final ClientRepo clientRepo;
-
+    private final ObjectConverter objectConverter;
 
     @Override
     public ResponseEntity<PageDto<RequestDto>> findRequestsWithPaginationSortedByField(int offset, int pageSize, String types, String field) {
         PageDto<RequestDto> result = new PageDto<>();
         try{
             Pageable pageable = PageRequest.of(offset, pageSize).withSort(Sort.by(field));
-            log.info(requestRepo.findAll().toString());
             Page<Request> requestPage;
             if (types.equals("all")) {
                 requestPage = requestRepo.findALLByStatus(RequestStatus.Pending, pageable);
@@ -70,7 +70,7 @@ public class RequestServiceImpl implements RequestService {
             }
         } catch (Exception e) {
             log.error(e.getMessage());
-            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -92,7 +92,7 @@ public class RequestServiceImpl implements RequestService {
             User user = request.getUser();
             RespondedRequestDto requestDto = modelMapper.map(requestRepo.getById(id), RespondedRequestDto.class);
             if (request.getType().equals(RequestType.AccountDeletion)) {
-                user.setActive(false);
+                user.setIsActive(false);
             }
             else if (request.getType().equals(RequestType.SignUp)){
                 emailSenderService.sendActivationEmail(user);
@@ -104,15 +104,15 @@ public class RequestServiceImpl implements RequestService {
         }
         catch (EntityNotFoundException e){
             log.error(e.getMessage());
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         catch (IllegalArgumentException e) {
             log.error(e.getMessage());
-            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         catch (Exception e) {
             log.error(e.getMessage());
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -120,11 +120,11 @@ public class RequestServiceImpl implements RequestService {
     public ResponseEntity<RequestDto> createRequest(String email, String password, String reason, String requestType){
         Optional<User> user = userRepo.findByEmail(email);
         if (user.isEmpty()){
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         else if (!passwordEncoder.matches(password, user.get().getPassword())) {
             log.info(user.get().getPassword());
-            return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
         else {
             try {
@@ -142,10 +142,10 @@ public class RequestServiceImpl implements RequestService {
                 return new ResponseEntity<>(requestDto, HttpStatus.OK);
             } catch (IllegalArgumentException e) {
                 log.error(e.getMessage());
-                return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             } catch (Exception e) {
                 log.error(e.getMessage());
-                return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
     }
@@ -163,73 +163,29 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
-    public ResponseEntity<RequestDto> createSignUpRequest(SignUpDto sud) {
-        Optional<User> user = userRepo.findByEmail(sud.getEmail());
+    public ResponseEntity<RequestDto> createSignUpRequest(SignUpDto signUpRequestData) {
+        Optional<User> user = userRepo.findByEmail(signUpRequestData.getEmail());
         if (user.isPresent()){
             return new ResponseEntity<>(HttpStatus.UNPROCESSABLE_ENTITY);
         }
         else {
             try {
-                Address address = new Address();
-                address.setCountry(sud.getAddress().getCountry());
-                address.setCity(sud.getAddress().getCity());
-                address.setStreet(sud.getAddress().getStreet());
-                address.setNumber(sud.getAddress().getNumber());
-                address.setLatitude(sud.getAddress().getLatitude());
-                address.setLongitude(sud.getAddress().getLongitude());
+                Address address = modelMapper.map(signUpRequestData.getAddress(), Address.class);
                 addressRepo.save(address);
-                if(sud.getUserType() == UserType.Client) {
-                    Client client = new Client();
-                    client.setUserType(sud.getUserType());
-                    client.setName(sud.getName());
-                    client.setSurname(sud.getSurname());
-                    client.setPassword(passwordEncoder.encode(sud.getPassword()));
-                    client.setEmail(sud.getEmail());
-                    client.setPhone(sud.getPhoneNumber());
-                    client.setAddress(address);
-                    client.setActive(false);
-                    client.setPoints(0);
+                if(signUpRequestData.getUserType().equals(UserType.Client)) {
+                    Client client = (Client) objectConverter.getUserFromSignUpRequestData(signUpRequestData, address);
                     clientRepo.save(client);
                     emailSenderService.sendActivationEmail(client);
                     return new ResponseEntity<>(HttpStatus.OK);
                 }
-                Request request = new Request();
-                request.setStatus(RequestStatus.Pending);
-                request.setReason(sud.getReason());
-                request.setType(RequestType.SignUp);
-                request.setTimeStamp(LocalDateTime.now());
-                if(sud.getUserType() == UserType.Admin) {
-                    Admin admin = new Admin();
-                    admin.setUserType(sud.getUserType());
-                    admin.setName(sud.getName());
-                    admin.setSurname(sud.getSurname());
-                    admin.setEmail(sud.getEmail());
-                    admin.setPassword(passwordEncoder.encode(sud.getPassword()));
-                    admin.setPhone(sud.getPhoneNumber());
-                    admin.setActive(false);
-                    admin.setAddress(address);
-                    adminRepo.save(admin);
-                    request.setUser(admin);
-                    requestRepo.save(request);
-                    // send email
-                }
                 else {
-                    RentalObjectOwner owner = new RentalObjectOwner();
-                    owner.setUserType(sud.getUserType());
-                    owner.setName(sud.getName());
-                    owner.setSurname(sud.getSurname());
-                    owner.setEmail(sud.getEmail());
-                    owner.setPassword(passwordEncoder.encode(sud.getPassword()));
-                    owner.setPhone(sud.getPhoneNumber());
-                    owner.setActive(false);
-                    owner.setAddress(address);
-                    owner.setPoints(0);
+                    RentalObjectOwner owner = (RentalObjectOwner) objectConverter.getUserFromSignUpRequestData(signUpRequestData, address);
                     rentalOwnerRepo.save(owner);
-                    request.setUser(owner);
+                    Request request = objectConverter.getRequestFromSignUpRequestData(signUpRequestData, owner);
                     requestRepo.save(request);
+                    RequestDto requestDto = modelMapper.map(request, RequestDto.class);
+                    return new ResponseEntity<>(requestDto, HttpStatus.OK);
                 }
-                RequestDto requestDto = modelMapper.map(request, RequestDto.class);
-                return new ResponseEntity<>(requestDto, HttpStatus.OK);
             } catch (IllegalArgumentException e) {
                 log.error(e.getMessage());
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

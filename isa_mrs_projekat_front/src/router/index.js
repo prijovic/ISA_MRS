@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 import ProfileView from "@/components/GeneralComponents/UserAccountForms/ProfileView";
-import TheAdminSidebar from "@/components/Administrator/AdminPage/components/TheAdminSidebar/TheAdminSidebar";
+import TheAdminSidebar from "@/components/Administrator/AdminPage/TheAdminSidebar/TheAdminSidebar";
 import AdminDashboard from "@/components/Administrator/AdminPage/components/AdminMainViews/AdminDashboard";
 import PasswordChangeForm from "@/components/GeneralComponents/UserAccountForms/PasswordChangeForm";
 import FishingInstructorPage from "@/components/FishingInstructor/FishingInstructorPage/FishingInstructorPage";
@@ -27,6 +27,8 @@ import ClientSidebar from "@/components/Client/ClientPage/components/ClientSideb
 import RentalProfile from "@/components/UnregisteredUser/components/RentalProfile";
 import VerificationPage from "@/components/UnregisteredUser/components/VerificationPage";
 import ClientProfile from "@/components/Client/ClientPage/components/ClientProfile/ClientProfile";
+import AdminUsersView
+    from "@/components/Administrator/AdminPage/components/AdminMainViews/AdminUsersView/AdminUsersView";
 
 
 const routes = [
@@ -43,7 +45,7 @@ const routes = [
         }
     },
     {
-        path: "/:token/:refresh",
+        path: "/token:token/refresh:refresh",
         name: "Verification",
         components: {
             default: VerificationPage,
@@ -75,6 +77,50 @@ const routes = [
         },
         meta: {
             public: false
+        }
+    },
+    {
+        path: "/admin/users",
+        name: "AdminUsers",
+        components: {
+            default: AdminUsersView,
+            sidebar: TheAdminSidebar,
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
+        path: "/admin/newUser",
+        name: "AdminAdding",
+        components: {
+            default: RegistrationPage,
+            sidebar: TheAdminSidebar,
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
+        path: "/admin/user/:id",
+        name: "AdminUserView",
+        components: {
+            sidebar: TheAdminSidebar,
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
+        path: "/vacationRentals",
+        name: "VacationRentals",
+        components: {
+            default: CardMenu,
+            sidebar: TheUnregisteredUserSidebar,
+        },
+        meta: {
+            disableIfLoggedIn: true,
+            public: true
         }
     },
     {
@@ -276,6 +322,17 @@ const routes = [
         }
     },
     {
+        path: "/client/changePass",
+        name: "ClientChangePassword",
+        components: {
+            default: PasswordChangeForm,
+            sidebar: ClientSidebar,
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
         path: "/client/vacationRentals",
         name: "ClientVacationRentals",
         components: {
@@ -389,7 +446,14 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
    if (!to.meta.public) {
        if (store.getters.isAuthenticated) {
-           next();
+           let redirect_path = "/" + store.getters.user + "/changePass";
+           if (from.path !== redirect_path && store.getters.first_login && from.path !== "/") {
+               next({path:redirect_path});
+           } else if (from.path === redirect_path && store.getters.first_login) {
+               /* pass */
+           } else {
+               next();
+           }
        } else {
            next({path: "/"})
        }
@@ -397,5 +461,6 @@ router.beforeEach((to, from, next) => {
        next();
    }
 });
+
 
 export default router;

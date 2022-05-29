@@ -11,7 +11,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 public class AdditionalService {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
     private String name;

@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.AdventureDto;
@@ -19,6 +20,8 @@ import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.SubscribingDtos.addSubscrib
 import rs.ac.uns.ftn.siit.isa_mrs.dto.PageDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.VacationRentalDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.RentalObjectPeriodsDto;
+import rs.ac.uns.ftn.siit.isa_mrs.exception.RentalNotFound;
+import rs.ac.uns.ftn.siit.isa_mrs.model.Boat;
 import rs.ac.uns.ftn.siit.isa_mrs.service.AdventureService;
 import rs.ac.uns.ftn.siit.isa_mrs.service.BoatService;
 import rs.ac.uns.ftn.siit.isa_mrs.service.RentalObjectService;
@@ -38,7 +41,6 @@ public class RentalObjectController {
     private final VacationRentalService vacationRentalService;
     private final BoatService boatService;
     private final AdventureService adventureService;
-    private final ModelMapper modelMapper;
 
     @GetMapping(GET_VACATION_RENTAL)
     public ResponseEntity<VacationRentalProfileDto> getVacationRental(@RequestParam Long id, @RequestParam String email) {
