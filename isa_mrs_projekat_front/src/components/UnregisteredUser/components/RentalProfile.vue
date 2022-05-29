@@ -78,7 +78,7 @@
     </div>
 <!--------------------------------------------------------------------------------------------------------------------->
 
-    <div class="row align-items-start">
+    <div class="row align-items-start mb-5">
       <div class="col-md-7 ps-3">
         <div class="row">
           <div class="" style="">
@@ -147,7 +147,7 @@
     </div>
 
 
-    <div v-if="showSubscriptionArea" class="row align-items-center mt-5 mb-0 main align-items-start"
+    <div v-if="showSubscriptionArea" class="row align-items-center mb-0 main align-items-start"
          style="background-color: lightgray; height: 10vh;">
       <div class="d-flex justify-content-center">
         <p class="h6" style="font-weight: 100;">
@@ -212,23 +212,19 @@ export default {
       rentalObject: null,
       btnText: "Subscribe",
       btnDisabled: false,
-      id: null,
-      objectType: null,
-      email: null,
+      email: null
     }
   },
   mounted() {
     const store = useStore();
-    this.id = store.state.rentalId;
-    this.objectType = store.state.rentalType;
     this.email = store.state.email;
-    if(this.objectType === "Boat") {
+    if(this.$route.params.type === "Boat") {
       axios.get("/RentalObjects/getBoat", {
         headers: {
           Authorization: "Bearer " + store.state.access_token
         },
         params: {
-          id: this.id,
+          id: this.$route.params.id,
           email: this.email,
         }
       })
@@ -236,13 +232,13 @@ export default {
         this.rentalObject = response.data;
       });
     }
-    else if(this.objectType === "Adventure") {
+    else if(this.$route.params.type === "Adventure") {
       axios.get("/RentalObjects/getAdventure", {
         headers: {
           Authorization: "Bearer " + store.state.access_token
         },
         params: {
-          id: this.id,
+          id: this.$route.params.id,
           email: this.email,
         }
       })
@@ -256,7 +252,7 @@ export default {
           Authorization: "Bearer " + store.state.access_token
         },
         params: {
-          id: this.id,
+          id: this.$route.params.id,
           email: this.email,
         }
       })
@@ -282,16 +278,16 @@ export default {
       return this.rentalObject.isUserSubscribed;
     },
     showSubscriptionArea() {
-      return this.email;
+      return this.user === "Client";
     },
     isVacationRental() {
-      return this.objectType === "VacationRental";
+      return this.rentalObject.rentalObjectType === "VacationRental";
     },
     isBoat() {
-      return this.objectType === "Boat";
+      return this.rentalObject.rentalObjectType === "Boat";
     },
     isAdventure() {
-      return this.objectType === "Adventure";
+      return this.rentalObject.rentalObjectType === "Adventure";
     },
     getOwnerFullName() {
       return this.rentalObject.rentalObjectOwner.name + " " + this.rentalObject.rentalObjectOwner.surname;

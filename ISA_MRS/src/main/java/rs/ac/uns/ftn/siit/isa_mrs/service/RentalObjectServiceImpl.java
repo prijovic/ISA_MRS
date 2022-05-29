@@ -88,6 +88,7 @@ public class RentalObjectServiceImpl implements RentalObjectService {
             return new ResponseEntity<>(result, HttpStatus.OK);
         } catch (Exception e) {
             changeRentalObjectsStatus(changedStatuses);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

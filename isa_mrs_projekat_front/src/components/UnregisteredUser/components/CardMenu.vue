@@ -18,16 +18,12 @@ export default {
   data() {
     return {
       rentalObjects: null,
-      objectType: null,
     }
   },
   mounted() {
     const store = useStore();
-    let rentalType = this.$route.fullPath.split("/");
-    if(store.state.email) rentalType = rentalType[2];
-    else rentalType = rentalType[1];
-    this.objectType = rentalType.charAt(0).toUpperCase() + rentalType.slice(1, -1);
-    if(this.objectType === "Boat") {
+    let type = this.$route.params.type;
+    if(type === "Boat") {
       console.log("Trazimo brodove od servera")
       axios.get("/RentalObjects/getBoats", {
         headers: {
@@ -42,7 +38,7 @@ export default {
         this.rentalObjects = response.data.content;
       });
     }
-    else if(this.objectType === "Adventure") {
+    else if(type === "Adventure") {
       console.log("Trazimo avanture od servera")
       axios.get("/RentalObjects/getAdventures", {
         headers: {
@@ -57,7 +53,7 @@ export default {
         this.rentalObjects = response.data.content;
       });
     }
-    else if(this.objectType === "VacationRental"){
+    else if(type === "VacationRental"){
       console.log("Trazimo rentale od servera")
       axios.get("/RentalObjects/getVacationRentals", {
         headers: {

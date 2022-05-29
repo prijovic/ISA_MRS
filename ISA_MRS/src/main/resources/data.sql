@@ -96,7 +96,6 @@ INSERT INTO photo (id, photo, rental_object_id) VALUES (12, 'boat1pic4', 2);
 INSERT INTO photo (id, photo, rental_object_id) VALUES (13, 'boat1pic5', 2);
 INSERT INTO photo (id, photo, rental_object_id) VALUES (14, 'boat1pic6', 2);
 INSERT INTO photo (id, photo, rental_object_id) VALUES (15, 'boat1pic7', 2);
-INSERT INTO photo (id, photo, rental_object_id) VALUES (16, 'boat1pic8', 2);
 INSERT INTO conduct_rule (id, rule, type, rental_object_id) VALUES (7, 'Pets', 1, 2);
 INSERT INTO conduct_rule (id, rule, type, rental_object_id) VALUES (8, 'Drugs', 1, 2);
 INSERT INTO conduct_rule (id, rule, type, rental_object_id) VALUES (9, 'Damaging property', 1, 2);

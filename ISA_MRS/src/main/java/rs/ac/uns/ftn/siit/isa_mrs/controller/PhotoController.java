@@ -2,14 +2,11 @@ package rs.ac.uns.ftn.siit.isa_mrs.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import rs.ac.uns.ftn.siit.isa_mrs.service.PhotoService;
-
-import javax.websocket.server.PathParam;
 
 import static rs.ac.uns.ftn.siit.isa_mrs.util.Paths.PHOTO_CONTROLLER;
 
@@ -24,14 +21,4 @@ public class PhotoController {
     public ResponseEntity<InputStreamResource> getPhoto(@RequestParam String path) {
         return photoService.getPhoto(path);
     }
-
-    @GetMapping(value = "/get-image-with-media-type", produces = MediaType.IMAGE_JPEG_VALUE)
-    public @ResponseBody Collection<byte[]> getPhotos(Collection<String> photos) throws IOException {
-        InputStream in = getClass()
-                .getResourceAsStream("/src/resources/static/photos/image.jpg" );
-
-        //return IOUtils.toByteArray(in);
-        return null;
-    }
-
 }

@@ -3,7 +3,7 @@
   <router-view name="sidebar"/>
 
   <div class="container-fluid" :style="{'padding-left': sidebarWidth}">
-    <router-view/>
+    <router-view :key="$route.path"/>
     <notifications position="bottom right" :max=maxNotif style="font-size: 200px"/>
   </div>
 </template>

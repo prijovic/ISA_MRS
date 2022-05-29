@@ -193,6 +193,17 @@ const routes = [
         }
     },
     {
+        path: "/admin/:type-:id",
+        name: "AdminRentalProfile",
+        components: {
+            default: RentalProfile,
+            sidebar: TheAdminSidebar,
+        },
+        meta: {
+            public: false
+        },
+    },
+    {
         path: "/fishingInstructor",
         name: "FishingInstructorHome",
         components: {
@@ -358,8 +369,8 @@ const routes = [
         }
     },
     {
-        path: "/client/vacationRentals",
-        name: "ClientVacationRentals",
+        path: "/client/:type/all",
+        name: "ClientRentals",
         components: {
             default: CardMenu,
             sidebar: ClientSidebar,
@@ -369,29 +380,7 @@ const routes = [
         }
     },
     {
-        path: "/client/boats",
-        name: "ClientBoats",
-        components: {
-            default: CardMenu,
-            sidebar: ClientSidebar,
-        },
-        meta: {
-            public: false
-        }
-    },
-    {
-        path: "/client/adventures",
-        name: "ClientAdventures",
-        components: {
-            default: CardMenu,
-            sidebar: ClientSidebar,
-        },
-        meta: {
-            public: false
-        }
-    },
-    {
-        path: "/client/RentalProfile",
+        path: "/client/RentalProfile/:type-:id",
         name: "ClientRentalProfile",
         components: {
             default: RentalProfile,
