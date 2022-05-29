@@ -139,11 +139,11 @@ thead {
 
 .button:disabled, button[disabled] {
   background-color: #b0b8b4ff;
-  color: rgb(0, 137, 112, 0.4);
+  color: #99EEDF;
 }
 
 .button:disabled:hover, button[disabled]:hover, .button:disabled:active, button[disabled]:active, .button:disabled:focus, button[disabled]:focus {
   background-color: #b0b8b4ff;
-  color: rgb(0, 137, 112, 0.4);
+  color: #99EEDF;
 }
 </style>

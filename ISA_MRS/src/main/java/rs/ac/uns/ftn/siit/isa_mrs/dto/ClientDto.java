@@ -11,5 +11,6 @@ public class ClientDto implements Serializable {
     private String photo;
     private String name;
     private String surname;
+    private String email;
     private UserType userType;
 }

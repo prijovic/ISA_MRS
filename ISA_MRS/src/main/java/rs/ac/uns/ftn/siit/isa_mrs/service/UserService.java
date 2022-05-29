@@ -13,7 +13,7 @@ import java.util.Collection;
 
 public interface UserService {
     ResponseEntity<Collection<UserDto>> getUsers();
-    ResponseEntity<PageDto<UserDto>> getUsersPagination(int page, int pageSize);
+    ResponseEntity<PageDto<UserDto>> getUsersPagination(int page, int pageSize, String token);
     ResponseEntity<UserDto> updateUserPassword(String email, String oldPassword, String newPassword);
     ResponseEntity<UserDto> createUser(NewUserBasicInfoDto newUserInfo);
     void encryptUsersPasswords();

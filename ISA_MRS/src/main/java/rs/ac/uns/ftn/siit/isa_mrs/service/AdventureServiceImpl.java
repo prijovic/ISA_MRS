@@ -20,6 +20,14 @@ import rs.ac.uns.ftn.siit.isa_mrs.model.*;
 import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.RentalObjectType;
 import rs.ac.uns.ftn.siit.isa_mrs.repository.AdventureRepo;
 import rs.ac.uns.ftn.siit.isa_mrs.repository.ClientRepo;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.AdventureDto;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.PageDto;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.RentalObjectDto;
+import rs.ac.uns.ftn.siit.isa_mrs.model.Adventure;
+import rs.ac.uns.ftn.siit.isa_mrs.model.RentalObject;
+import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.RentalObjectType;
+import rs.ac.uns.ftn.siit.isa_mrs.repository.AdventureRepo;
+import rs.ac.uns.ftn.siit.isa_mrs.security.JwtDecoder;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -33,33 +41,13 @@ public class AdventureServiceImpl implements AdventureService{
 
     private final AdventureRepo adventureRepo;
     private final ModelMapper modelMapper;
+    private final JwtDecoder jwtDecoder;
     private final RentalObjectServiceImpl rentalService;
     private final ClientRepo clientRepo;
 
     @Override
-    public ResponseEntity<AdventureProfileDto> getAdventure(Long id, String email) {
-        try{
-            Optional<Adventure> rental = adventureRepo.findById(id);
-            if (rental.isEmpty()) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            AdventureProfileDto adventureDto = modelMapper.map(rental, AdventureProfileDto.class);
-            Adventure adventure = rental.get();
-            adventureDto.setReviews(rentalService.getRentalReviews(adventure));
-            Optional<Client> optionalClient = clientRepo.findByEmail(email);
-            if(optionalClient.isPresent()){
-                Client client = optionalClient.get();
-                if(adventure.getSubscribers().contains(client)) adventureDto.setIsUserSubscribed(true);
-            }
-            return new ResponseEntity<>(adventureDto, HttpStatus.OK);
-        }
-        catch (Exception e) {
-            log.error(e.getMessage());
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    @Override
     public ResponseEntity<PageDto<AdventuresForMenuDto>> findAdventuresWithPaginationSortedByField(int offset, int pageSize,
-                                                                                           String field) {
+                                                                                                   String field) {
         PageDto<AdventuresForMenuDto> result = new PageDto<>();
         try{
             Pageable pageable = PageRequest.of(offset, pageSize).withSort(Sort.by(field));
@@ -82,15 +70,70 @@ public class AdventureServiceImpl implements AdventureService{
         }
     }
 
+
     @Override
-    public ResponseEntity<PageDto<AdventureDto>> findAdventuresWithPaginationSortedByFieldAndFilteredByOwner(int offset, int pageSize, String field, String ownerEmail) {
-        PageDto<AdventureDto> result = new PageDto<>();
+    public ResponseEntity<PageDto<AdventureDto>> findAdventuresWithPaginationSortedByFieldAndFilteredByOwner(int offset, int pageSize, String field, String token) {
+        JwtDecoder.DecodedToken decodedToken;
+        try {
+            decodedToken = jwtDecoder.decodeToken(token);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
         try{
             Pageable pageable = PageRequest.of(offset, pageSize).withSort(Sort.by(field));
-            Page<Adventure> adventuresPage = adventureRepo.findAllByRentalObjectTypeAndRentalObjectOwnerEmail(RentalObjectType.Adventure, ownerEmail, pageable);
-            return getPageDtoResponseEntity(result, adventuresPage);
+            Page<Adventure> adventuresPage = adventureRepo.findAllByRentalObjectTypeAndRentalObjectOwnerEmail(RentalObjectType.Adventure, decodedToken.getEmail(), pageable);
+            return new ResponseEntity<>(packAdventures(adventuresPage), HttpStatus.OK);
         } catch (Exception e) {
             log.info(e.getMessage());
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    public ResponseEntity<AdventureDto> findAdventure(Long id) {
+        try {
+            Adventure adventure = adventureRepo.getById(id);
+            return new ResponseEntity<>(mapAdventuresToDto(adventure), HttpStatus.OK);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    private PageDto<AdventureDto> packAdventures(Page<Adventure> adventuresPage) {
+        PageDto<AdventureDto> result = new PageDto<>();
+        Collection<AdventureDto> adventureDtos = new ArrayList<>();
+        adventuresPage.getContent().forEach(rentalObject -> adventureDtos.add(mapAdventuresToDto(rentalObject)));
+        result.setContent(adventureDtos);
+        result.setPages(adventuresPage.getTotalPages());
+        result.setCurrentPage(adventuresPage.getNumber());
+        result.setPageSize(adventuresPage.getSize());
+        return result;
+    }
+
+    private AdventureDto mapAdventuresToDto(Adventure adventure) {
+        AdventureDto adventureDto = modelMapper.map(adventure, AdventureDto.class);
+        adventureDto.setIsDeletable(adventure.getReservations().size() == 0);
+        return adventureDto;
+    }
+
+    @Override
+    public ResponseEntity<AdventureProfileDto> getAdventure(Long id, String email) {
+        try{
+            Optional<Adventure> rental = adventureRepo.findById(id);
+            if (rental.isEmpty()) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            AdventureProfileDto adventureDto = modelMapper.map(rental, AdventureProfileDto.class);
+            Adventure adventure = rental.get();
+            adventureDto.setReviews(rentalService.getRentalReviews(adventure));
+            Optional<Client> optionalClient = clientRepo.findByEmail(email);
+            if(optionalClient.isPresent()){
+                Client client = optionalClient.get();
+                if(adventure.getSubscribers().contains(client)) adventureDto.setIsUserSubscribed(true);
+            }
+            return new ResponseEntity<>(adventureDto, HttpStatus.OK);
+        }
+        catch (Exception e) {
+            log.error(e.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -121,5 +164,4 @@ public class AdventureServiceImpl implements AdventureService{
         }
         return adventureDto;
     }
-
 }

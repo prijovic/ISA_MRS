@@ -3,10 +3,9 @@ package rs.ac.uns.ftn.siit.isa_mrs.controller;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.configurationprocessor.json.JSONArray;
-import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.IdListWrapperClass;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.NewUserBasicInfoDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.PageDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.UserByTypeDto;
@@ -16,11 +15,7 @@ import rs.ac.uns.ftn.siit.isa_mrs.service.UserService;
 
 import javax.servlet.http.HttpServletRequest;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static rs.ac.uns.ftn.siit.isa_mrs.util.Paths.*;
@@ -39,8 +34,8 @@ public class UserController {
 
     @GetMapping("/getUsersPage")
     public ResponseEntity<PageDto<UserDto>> getUsersWithPaginationAndSort(
-            @RequestParam Integer page, @RequestParam Integer pageSize) {
-        return userService.getUsersPagination(page, pageSize);
+            @RequestParam Integer page, @RequestParam Integer pageSize, HttpServletRequest request) {
+        return userService.getUsersPagination(page, pageSize, request.getHeader(AUTHORIZATION));
     }
 
     @PostMapping("/addUser")
@@ -71,7 +66,7 @@ public class UserController {
     }
 
     @PutMapping("/multipleUserStatusChange")
-    public ResponseEntity<Collection<UserDto>> changeUsersStatus(@RequestBody ListWrapperClass lwc){
+    public ResponseEntity<Collection<UserDto>> changeUsersStatus(@RequestBody IdListWrapperClass lwc){
         return userService.changeUsersStatus(lwc.getList());
     }
 
@@ -90,8 +85,4 @@ public class UserController {
         private String newPassword;
     }
 
-    @Data
-    static class ListWrapperClass {
-        private Collection<Long> list = new ArrayList<>();
-    }
 }

@@ -21,6 +21,9 @@ import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.SubscribingDtos.addSubscrib
 import rs.ac.uns.ftn.siit.isa_mrs.dto.PageDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.VacationRentalDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.RentalObjectPeriodsDto;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.*;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.AddVacationRentalDto;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.IdListWrapperClass;
 import rs.ac.uns.ftn.siit.isa_mrs.exception.RentalNotFound;
 import rs.ac.uns.ftn.siit.isa_mrs.model.Boat;
 import rs.ac.uns.ftn.siit.isa_mrs.service.AdventureService;
@@ -30,6 +33,7 @@ import rs.ac.uns.ftn.siit.isa_mrs.service.VacationRentalService;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.List;
 
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
@@ -44,7 +48,22 @@ public class RentalObjectController {
     private final VacationRentalService vacationRentalService;
     private final BoatService boatService;
     private final AdventureService adventureService;
-    
+
+    @GetMapping("/getRentalObjectsPage")
+    public ResponseEntity<PageDto<RentalObjectDto>> getRentalObjects(@RequestParam Integer page, @RequestParam Integer pageSize) {
+        return rentalObjectService.getRentalObjects(page, pageSize);
+    }
+
+    @GetMapping("/getRentalObjectsFilterPage")
+    public ResponseEntity<PageDto<RentalObjectDto>> getRentalObjects(@RequestParam Integer page, @RequestParam Integer pageSize, @RequestParam String filter) {
+        return rentalObjectService.getRentalObjects(page, pageSize, filter);
+    }
+
+    @PutMapping("/multipleRentalsStatusChange")
+    public ResponseEntity<Collection<RentalObjectDto>> changeRentalObjectsStatus(@RequestBody IdListWrapperClass lwc) {
+        return rentalObjectService.changeRentalObjectsStatus(lwc.getList());
+    }
+
     @GetMapping(GET_VACATION_RENTAL)
     public ResponseEntity<VacationRentalProfileDto> getVacationRental(@RequestParam Long id, @RequestParam String email) {
         return vacationRentalService.getVacationRental(id, email);
@@ -87,8 +106,13 @@ public class RentalObjectController {
     @GetMapping(GET_ADVENTURES + "Instructor")
     public ResponseEntity<PageDto<AdventureDto>> getAdventuresForInstructor(
             @RequestParam Integer page, @RequestParam Integer pageSize,
-            @RequestParam String field, @RequestParam String email) {
-        return adventureService.findAdventuresWithPaginationSortedByFieldAndFilteredByOwner(page, pageSize, field, email);
+            @RequestParam String field, HttpServletRequest request) {
+        return adventureService.findAdventuresWithPaginationSortedByFieldAndFilteredByOwner(page, pageSize, field, request.getHeader(AUTHORIZATION));
+    }
+
+    @GetMapping("/getAdventure")
+    public ResponseEntity<AdventureDto> getAdventure(@RequestParam Long id) {
+        return adventureService.findAdventure(id);
     }
 
     @PostMapping(AVAILABILITY_PERIOD)

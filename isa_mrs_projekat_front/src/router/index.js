@@ -14,23 +14,22 @@ import BoatOwnerContentPage from "@/components/BoatOwner/BoatOwnerPage/component
 import TheBoatOwnerSidebar from "@/components/BoatOwner/BoatOwnerPage/components/TheBoatOwnerSidebar/TheBoatOwnerSidebar";
 import AdminRequestsView from "@/components/Administrator/AdminPage/components/AdminMainViews/AdminRequestsView/AdminRequestsView";
 import InitView from "@/components/UnregisteredUser/InitView";
-import AllCottagesView
-    from "@/components/VacationRentalOwner/VacationRentalOwnerPage/components/AllCottagesView/AllCottagesView";
 import RegistrationPage from "@/components/UnregisteredUser/components/RegistrationPage";
 import IncomeRateChangeForm
     from "@/components/Administrator/AdminPage/components/AdminMainViews/AdminIncomeIncomeRateComponents/IncomeRateChangeForm";
 import FishingInstructorAdventuresView
     from "@/components/FishingInstructor/FishingInstructorPage/components/InstructorMainViews/InstructorAllAdventuresView/InstructorAllAdventuresView";
-import FishingInstructorAdventureProfileView
-    from "@/components/FishingInstructor/FishingInstructorPage/components/InstructorMainViews/InstructorAllAdventuresView/InstructorAdventureProfile/InstructorAdventureProfile";
 import CardMenu from "@/components/UnregisteredUser/components/CardMenu";
 import ClientMainView from "@/components/Client/ClientPage/components/ClientMainView";
 import ClientSidebar from "@/components/Client/ClientPage/components/ClientSidebar/ClientSidebar";
 import RentalProfile from "@/components/UnregisteredUser/components/RentalProfile";
 import VerificationPage from "@/components/UnregisteredUser/components/VerificationPage";
-import ClientProfile from "@/components/Client/ClientPage/components/ClientProfile/ClientProfile";
 import AdminUsersView
-    from "@/components/Administrator/AdminPage/components/AdminMainViews/AdminUsersView/AdminUsersView";
+    from "@/components/Administrator/AdminPage/components/AdminMainViews/AdminUsersView";
+import AdminRentalsView
+    from "@/components/Administrator/AdminPage/components/AdminMainViews/AdminRentalsView";
+import ReservationsCalendarView from "@/components/RentalObjectOwner/ReservationsCalendarView";
+import AdventureProfile from "@/components/GeneralComponents/AdventureProfile";
 
 
 const routes = [
@@ -86,6 +85,17 @@ const routes = [
         name: "AdminUsers",
         components: {
             default: AdminUsersView,
+            sidebar: TheAdminSidebar,
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
+        path: "/admin/rentals",
+        name: "AdminRentals",
+        components: {
+            default: AdminRentalsView,
             sidebar: TheAdminSidebar,
         },
         meta: {
@@ -236,10 +246,10 @@ const routes = [
         }
     },
     {
-        path: "/fishingInstructor/adventure",
+        path: "/fishingInstructor/adventure/:id",
         name: "FishingInstructorAdventure",
         components: {
-            default: FishingInstructorAdventureProfileView,
+            default: AdventureProfile,
             sidebar: TheFishingInstructorSidebar
         },
         meta: {
@@ -254,7 +264,7 @@ const routes = [
             sidebar: TheOwnerSidebar,
         },
         meta: {
-            public: true
+            public: false
         }
     },
     {
@@ -269,14 +279,14 @@ const routes = [
         }
     },
     {
-        path: "/vacationRentalOwner/cottages",
-        name: "ViewCottages",
+        path: "/vacationRentalOwner/calendar",
+        name: "VacationRentalOwnerReservations",
         components: {
-            default: AllCottagesView,
+            default: ReservationsCalendarView,
             sidebar: TheOwnerSidebar,
         },
         meta: {
-            public: true
+            public: false
         }
     },
     {
@@ -380,75 +390,15 @@ const routes = [
     },
     {
         path: "/client/RentalProfile",
-        name: "ClientRentalProfile",
-        components: {
-            default: RentalProfile,
-            sidebar: ClientSidebar,
-        },
-        meta: {
-            public: false
-        },
-    },
-    {
-        path: "/client/Profile",
-        name: "ClientProfile",
-        components: {
-            default: ClientProfile,
-            sidebar: ClientSidebar,
-        },
-        meta: {
-            public: false
-        },
-    },
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    {
-        path: "/vacationRentals",
-        name: "VacationRentals",
-        components: {
-            default: CardMenu,
-            sidebar: TheUnregisteredUserSidebar,
-        },
-        meta: {
-            disableIfLoggedIn: true,
-            public: true
-        }
-    },
-    {
-        path: "/boats",
-        name: "Boats",
-        components: {
-            default: CardMenu,
-            sidebar: TheUnregisteredUserSidebar,
-        },
-        meta: {
-            disableIfLoggedIn: true,
-            public: true
-        }
-    },
-    {
-        path: "/adventures",
-        name: "Adventures",
-        components: {
-            default: CardMenu,
-            sidebar: TheUnregisteredUserSidebar,
-        },
-        meta: {
-            disableIfLoggedIn: true,
-            public: true
-        }
-    },
-    {
-        path: "/RentalProfile",
         name: "RentalProfile",
         components: {
             default: RentalProfile,
-            sidebar: TheUnregisteredUserSidebar,
+            sidebar: ClientSidebar,
         },
         meta: {
-            disableIfLoggedIn: true,
-            public: true
+            public: false
         },
-    },
+    }
 ];
 
 const router = createRouter({
