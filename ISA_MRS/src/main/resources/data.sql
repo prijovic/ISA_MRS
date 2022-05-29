@@ -67,8 +67,9 @@ INSERT INTO users (id, email, is_active, name, password, phone, surname, address
 INSERT INTO admin (id) VALUES (31);
 INSERT INTO fee (id, fee_type, value) VALUES (1, 0, 0);
 INSERT INTO cancellation_fee (id) VALUES (1);
-INSERT INTO rental_object (id, capacity, description, name, price, rental_object_type, address_id, cancellation_fee_id, rental_object_owner_id)
-VALUES (1, 10, '2 bedrooms, a living room with open-plan kitchen and 2 bathrooms. The air-conditioned, mechanized, fully furnished, alarm protected. A balcony which opens from the living room and the first bedroom, a storage and a parking space in the garage.', 'Abstract', 200, 2, 1, 1, 4);
+INSERT INTO rental_object (is_active, id, capacity, description, name, price, rental_object_type, address_id, cancellation_fee_id, rental_object_owner_id)
+VALUES (true, 1, 10, '2 bedrooms, a living room with open-plan kitchen and 2 bathrooms. The air-conditioned, mechanized, fully furnished, alarm protected. A balcony which opens from the living room and the first bedroom, a storage and a parking space in the garage.', 'Abstract', 200, 2, 1, 1, 4);
+INSERT INTO time_period(id, init_date, term_date, rental_object_id) VALUES (1, '2022-05-01 00:00:00', '2023-05-01 00:00:00', 1);
 INSERT INTO photo (id, photo, rental_object_id) VALUES (1, 'ren1pic1', 1);
 INSERT INTO photo (id, photo, rental_object_id) VALUES (2, 'ren1pic2', 1);
 INSERT INTO photo (id, photo, rental_object_id) VALUES (3, 'ren1pic3', 1);
@@ -86,8 +87,8 @@ INSERT INTO conduct_rule (id, rule, type, rental_object_id) VALUES (6, 'Using th
 INSERT INTO room (id, beds, vacation_rental_id) VALUES (1, 5, 1);
 INSERT INTO room (id, beds, vacation_rental_id) VALUES (2, 2, 1);
 INSERT INTO vacation_rental (id, check_in, check_out) VALUES (1, '14:00', '12:00');
-INSERT INTO rental_object (id, capacity, description, name, price, rental_object_type, address_id, cancellation_fee_id, rental_object_owner_id)
-VALUES (2, 20, 'Yacht that includes high-end finishes and features and the latest in modern performance technology. Geared towards fishing, water sports, or cruising with a sleeker design and more powerful motor for faster cruising speeds.', 'Exotic', 450, 0, 1, 1, 5);
+INSERT INTO rental_object (is_active, id, capacity, description, name, price, rental_object_type, address_id, cancellation_fee_id, rental_object_owner_id)
+VALUES (true, 2, 20, 'Yacht that includes high-end finishes and features and the latest in modern performance technology. Geared towards fishing, water sports, or cruising with a sleeker design and more powerful motor for faster cruising speeds.', 'Exotic', 450, 0, 1, 1, 5);
 INSERT INTO photo (id, photo, rental_object_id) VALUES (9, 'boat1pic1', 2);
 INSERT INTO photo (id, photo, rental_object_id) VALUES (10, 'boat1pic2', 2);
 INSERT INTO photo (id, photo, rental_object_id) VALUES (11, 'boat1pic3', 2);
@@ -95,7 +96,6 @@ INSERT INTO photo (id, photo, rental_object_id) VALUES (12, 'boat1pic4', 2);
 INSERT INTO photo (id, photo, rental_object_id) VALUES (13, 'boat1pic5', 2);
 INSERT INTO photo (id, photo, rental_object_id) VALUES (14, 'boat1pic6', 2);
 INSERT INTO photo (id, photo, rental_object_id) VALUES (15, 'boat1pic7', 2);
-INSERT INTO photo (id, photo, rental_object_id) VALUES (16, 'boat1pic8', 2);
 INSERT INTO conduct_rule (id, rule, type, rental_object_id) VALUES (7, 'Pets', 1, 2);
 INSERT INTO conduct_rule (id, rule, type, rental_object_id) VALUES (8, 'Drugs', 1, 2);
 INSERT INTO conduct_rule (id, rule, type, rental_object_id) VALUES (9, 'Damaging property', 1, 2);
@@ -139,8 +139,8 @@ INSERT INTO fishing_equipment (id, boat_id) VALUES (15, 2);
 INSERT INTO fishing_equipment (id, boat_id) VALUES (16, 2);
 INSERT INTO fishing_equipment (id, boat_id) VALUES (17, 2);
 INSERT INTO fishing_equipment (id, boat_id) VALUES (18, 2);
-INSERT INTO rental_object (id, capacity, description, name, price, rental_object_type, address_id, cancellation_fee_id, rental_object_owner_id)
-VALUES (3, 20, 'Mystic fishing adventure is very much on the arcade front of the fishing game spectrum. The grind is far too real though and whilst the quests are a nice touch. We''re promising to take you to exciting and exotic locations.', 'Mystic', 50, 1, 1, 1, 2);
+INSERT INTO rental_object (is_active, id, capacity, description, name, price, rental_object_type, address_id, cancellation_fee_id, rental_object_owner_id)
+VALUES (true, 3, 20, 'Mystic fishing adventure is very much on the arcade front of the fishing game spectrum. The grind is far too real though and whilst the quests are a nice touch. We''re promising to take you to exciting and exotic locations.', 'Mystic', 50, 1, 1, 1, 2);
 INSERT INTO equipment (id, name) VALUES (19, 'Tent');
 INSERT INTO equipment (id, name) VALUES (20, 'Jerrycans');
 INSERT INTO equipment (id, name) VALUES (21, 'Heaters');
@@ -161,3 +161,43 @@ INSERT INTO conduct_rule (id, rule, type, rental_object_id) VALUES (15, 'Damagin
 INSERT INTO conduct_rule (id, rule, type, rental_object_id) VALUES (16, 'Pets', 0, 3);
 INSERT INTO conduct_rule (id, rule, type, rental_object_id) VALUES (17, 'Collecting flora', 0, 3);
 INSERT INTO adventure (id, duration) VALUES (3, 2.5);
+INSERT INTO users (id, email, is_active, name, password, phone, surname, address_id, user_type, first_login) VALUES
+(32, 'volastamara@gmail.com+1', 1, 'Tamara', '123', '06312345687', 'Volan', 1, 3, false);
+INSERT INTO sale_participant (points, id) VALUES (0, 32);
+INSERT INTO client (id) VALUES (32);
+INSERT INTO users (id, email, is_active, name, password, phone, surname, address_id, user_type, first_login) VALUES
+(33, 'volastamara@gmail.com+2', 1, 'Tamara', '123', '0631234665', 'Volan', 1, 3, false);
+INSERT INTO sale_participant (points, id) VALUES (0, 33);
+INSERT INTO client (id) VALUES (33);
+INSERT INTO users (id, email, is_active, name, password, phone, surname, address_id, user_type, first_login) VALUES
+(34, 'volastamara@gmail.com+3', 1, 'Tamara', '123', '06315457', 'Volan', 1, 3, false);
+INSERT INTO sale_participant (points, id) VALUES (0, 34);
+INSERT INTO client (id) VALUES (34);
+INSERT INTO users (id, email, is_active, name, password, phone, surname, address_id, user_type, first_login) VALUES
+(35, 'volastamara@gmail.com+4', 1, 'Tamara', '123', '069696969', 'Volan', 1, 3, false);
+INSERT INTO sale_participant (points, id) VALUES (0, 35);
+INSERT INTO client (id) VALUES (35);
+INSERT INTO users (id, email, is_active, name, password, phone, surname, address_id, user_type, first_login) VALUES
+(36, 'volastamara@gmail.com+5', 1, 'Tamara', '123', '069766969', 'Volan', 1, 3, false);
+INSERT INTO sale_participant (points, id) VALUES (0, 36);
+INSERT INTO client (id) VALUES (36);
+INSERT INTO users (id, email, is_active, name, password, phone, surname, address_id, user_type, first_login) VALUES
+(37, 'volastamara@gmail.com+6', 1, 'Tamara', '123', '069696969', 'Volan', 1, 3, false);
+INSERT INTO sale_participant (points, id) VALUES (0, 37);
+INSERT INTO client (id) VALUES (37);
+INSERT INTO reservation (id, equipment_required, people, time_stamp, client_id, rental_object_id) VALUES
+(1, true, 2, '2022-05-25 12:34:05', 32, 1);
+INSERT INTO time_period (id, init_date, term_date, reservation_id) VALUES
+(2, '2022-05-28 12:00:00', '2022-05-30 12:00:00', 1);
+INSERT INTO reservation (id, equipment_required, people, time_stamp, client_id, rental_object_id) VALUES
+(2, true, 2, '2022-05-25 12:34:05', 33, 1);
+INSERT INTO time_period (id, init_date, term_date, reservation_id) VALUES
+(3, '2022-06-28 12:00:00', '2022-06-30 12:00:00', 2);
+INSERT INTO reservation (id, equipment_required, people, time_stamp, client_id, rental_object_id) VALUES
+(3, true, 2, '2022-05-25 12:34:05', 34, 1);
+INSERT INTO time_period (id, init_date, term_date, reservation_id) VALUES
+(4, '2022-08-28 12:00:00', '2022-08-30 12:00:00', 3);
+INSERT INTO reservation (id, equipment_required, people, time_stamp, client_id, rental_object_id) VALUES
+(4, true, 2, '2022-05-25 12:34:05', 35, 1);
+INSERT INTO time_period (id, init_date, term_date, reservation_id) VALUES
+(5, '2022-12-28 12:00:00', '2022-12-30 12:00:00', 4);

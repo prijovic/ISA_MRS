@@ -11,4 +11,5 @@ public class RentalObjectOwnerDto implements Serializable {
     private String surname;
     private String email;
     private PhotoDto photo;
+    private String phone;
 }

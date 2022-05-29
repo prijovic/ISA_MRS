@@ -4,9 +4,18 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.PageDto;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.RentalObjectDto;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.RentalObjectPeriodsDto;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.UserDto;
+import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.RentalObjectType;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.RentalProfileDtos.ReviewDtos.ReviewDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.RentalObjectPeriodsDto;
 import rs.ac.uns.ftn.siit.isa_mrs.model.*;
@@ -53,6 +62,36 @@ public class RentalObjectServiceImpl implements RentalObjectService {
     }
 
     @Override
+    public ResponseEntity<PageDto<RentalObjectDto>> getRentalObjects(int page, int pageSize) {
+        try{
+            Pageable pageable = PageRequest.of(page, pageSize).withSort(Sort.by(Sort.Order.asc("name")));
+            Page<RentalObject> rentalsPage = rentalObjectRepo.findAll(pageable);
+            return new ResponseEntity<>(packRentals(rentalsPage), HttpStatus.OK);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    public ResponseEntity<Collection<RentalObjectDto>> changeRentalObjectsStatus(Collection<Long> ids) {
+        Collection<Long> changedStatuses = new ArrayList<>();
+        try {
+            Collection<RentalObjectDto> result = new ArrayList<>();
+            ids.forEach(id -> {
+                RentalObject rentalObject = rentalObjectRepo.getById(id);
+                rentalObject.setIsActive(!rentalObject.getIsActive());
+                rentalObjectRepo.save(rentalObject);
+                changedStatuses.add(id);
+                result.add(mapRentalObjectToDto(rentalObject));
+            });
+            return new ResponseEntity<>(result, HttpStatus.OK);
+        } catch (Exception e) {
+            changeRentalObjectsStatus(changedStatuses);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     public ResponseEntity<Void> addSubscriber(Long rentalId, String clientEmail) {
         try {
             log.info("Dodajemo subskrajbera");
@@ -74,6 +113,34 @@ public class RentalObjectServiceImpl implements RentalObjectService {
     }
 
     @Override
+    public ResponseEntity<PageDto<RentalObjectDto>> getRentalObjects(int page, int pageSize, String filter) {
+        try{
+            Pageable pageable = PageRequest.of(page, pageSize).withSort(Sort.by(Sort.Order.asc("name")));
+            Page<RentalObject> rentalsPage = rentalObjectRepo.findAllByRentalObjectType(RentalObjectType.valueOf(filter), pageable);
+            return new ResponseEntity<>(packRentals(rentalsPage), HttpStatus.OK);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    private PageDto<RentalObjectDto> packRentals(Page<RentalObject> rentalObjectPage) {
+        PageDto<RentalObjectDto> result = new PageDto<>();
+        Collection<RentalObjectDto> rentalsDtos = new ArrayList<>();
+        rentalObjectPage.getContent().forEach(rentalObject -> rentalsDtos.add(mapRentalObjectToDto(rentalObject)));
+        result.setContent(rentalsDtos);
+        result.setPages(rentalObjectPage.getTotalPages());
+        result.setCurrentPage(rentalObjectPage.getNumber());
+        result.setPageSize(rentalObjectPage.getSize());
+        return result;
+    }
+
+    private RentalObjectDto mapRentalObjectToDto(RentalObject rentalObject) {
+        RentalObjectDto rentalObjectDto = modelMapper.map(rentalObject, RentalObjectDto.class);
+        rentalObjectDto.setIsDeletable(rentalObject.getReservations().size() == 0);
+        return rentalObjectDto;
+    }
+
     public Collection<ReviewDto> getRentalReviews(@NotNull RentalObject rental) {
         Collection<ReviewDto> reviews = new ArrayList<>();
         for(var reservation : rental.getReservations()) {

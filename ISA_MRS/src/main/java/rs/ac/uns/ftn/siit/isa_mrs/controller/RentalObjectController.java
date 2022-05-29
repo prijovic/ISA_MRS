@@ -7,6 +7,9 @@ import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.*;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.AddVacationRentalDto;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.IdListWrapperClass;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.AdventureDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.RentalProfileDtos.AdventureDtos.AdventureProfileDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.RentalProfileDtos.AdventureDtos.AdventuresForMenuDto;
@@ -28,6 +31,7 @@ import rs.ac.uns.ftn.siit.isa_mrs.service.RentalObjectService;
 import rs.ac.uns.ftn.siit.isa_mrs.service.VacationRentalService;
 
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.List;
 
 import static rs.ac.uns.ftn.siit.isa_mrs.util.Paths.*;
@@ -41,6 +45,21 @@ public class RentalObjectController {
     private final VacationRentalService vacationRentalService;
     private final BoatService boatService;
     private final AdventureService adventureService;
+
+    @GetMapping("/getRentalObjectsPage")
+    public ResponseEntity<PageDto<RentalObjectDto>> getRentalObjects(@RequestParam Integer page, @RequestParam Integer pageSize) {
+        return rentalObjectService.getRentalObjects(page, pageSize);
+    }
+
+    @GetMapping("/getRentalObjectsFilterPage")
+    public ResponseEntity<PageDto<RentalObjectDto>> getRentalObjects(@RequestParam Integer page, @RequestParam Integer pageSize, @RequestParam String filter) {
+        return rentalObjectService.getRentalObjects(page, pageSize, filter);
+    }
+
+    @PutMapping("/multipleRentalsStatusChange")
+    public ResponseEntity<Collection<RentalObjectDto>> changeRentalObjectsStatus(@RequestBody IdListWrapperClass lwc) {
+        return rentalObjectService.changeRentalObjectsStatus(lwc.getList());
+    }
 
     @GetMapping(GET_VACATION_RENTAL)
     public ResponseEntity<VacationRentalProfileDto> getVacationRental(@RequestParam Long id, @RequestParam String email) {

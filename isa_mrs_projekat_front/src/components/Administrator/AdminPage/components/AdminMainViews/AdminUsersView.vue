@@ -102,13 +102,13 @@
                     </div>
                   </td>
                   <td>
-                    <input class="form-check-input" type="checkbox" :value="!user.isActive" v-model="user.isActive" @change="changedStatus(user)">
+                    <input class="form-check-input" type="checkbox" :value="!user.isActive" v-model="user.isActive" :disabled="!user.isDeletable" @change="changedStatus(user)">
                   </td>
                 </tr>
               </tbody>
             </table>
             <nav aria-label="Page navigation">
-              <ul class="pagination justify-content-center">
+              <ul class="pagination justify-content-center mt-3">
                 <li class="page-item" v-if="totalPages > 1"><button class="page-link" :disabled="currentPage===0" @click="previousPage">Previous</button></li>
                 <li class="page-item mt-auto me-1 ms-1" v-if="currentPage > 1 && totalPages > 3">...</li>
                 <li class="page-item"><button class="page-link" :disabled="currentPage === 0" @click="numberedPage(1)">{{button1Content}}</button></li>
@@ -238,9 +238,9 @@ export default {
               { this.users.forEach( user1 =>
                 { if (user.id === user1.id && user.isActive !== user1.isActive) {
                   user1.isActive = user.isActive;
-                }
-                })
-              })
+                  }
+                });
+              });
             this.currentPage = response.data.currentPage;
             this.totalPages = response.data.pages;
           })

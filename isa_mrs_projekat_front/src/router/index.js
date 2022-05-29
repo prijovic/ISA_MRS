@@ -28,7 +28,10 @@ import RentalProfile from "@/components/UnregisteredUser/components/RentalProfil
 import VerificationPage from "@/components/UnregisteredUser/components/VerificationPage";
 import ClientProfile from "@/components/Client/ClientPage/components/ClientProfile/ClientProfile";
 import AdminUsersView
-    from "@/components/Administrator/AdminPage/components/AdminMainViews/AdminUsersView/AdminUsersView";
+    from "@/components/Administrator/AdminPage/components/AdminMainViews/AdminUsersView";
+import AdminRentalsView
+    from "@/components/Administrator/AdminPage/components/AdminMainViews/AdminRentalsView";
+import ReservationsCalendarView from "@/components/RentalObjectOwner/ReservationsCalendarView";
 
 
 const routes = [
@@ -84,6 +87,17 @@ const routes = [
         name: "AdminUsers",
         components: {
             default: AdminUsersView,
+            sidebar: TheAdminSidebar,
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
+        path: "/admin/rentals",
+        name: "AdminRentals",
+        components: {
+            default: AdminRentalsView,
             sidebar: TheAdminSidebar,
         },
         meta: {
@@ -179,6 +193,17 @@ const routes = [
         }
     },
     {
+        path: "/admin/:type-:id",
+        name: "AdminRentalProfile",
+        components: {
+            default: RentalProfile,
+            sidebar: TheAdminSidebar,
+        },
+        meta: {
+            public: false
+        },
+    },
+    {
         path: "/fishingInstructor",
         name: "FishingInstructorHome",
         components: {
@@ -267,6 +292,17 @@ const routes = [
         }
     },
     {
+        path: "/vacationRentalOwner/calendar",
+        name: "VacationRentalOwnerReservations",
+        components: {
+            default: ReservationsCalendarView,
+            sidebar: TheOwnerSidebar,
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
         path: "/boatOwner",
         name: "BoatOwnerHome",
         components: {
@@ -333,8 +369,8 @@ const routes = [
         }
     },
     {
-        path: "/client/vacationRentals",
-        name: "ClientVacationRentals",
+        path: "/client/:type/all",
+        name: "ClientRentals",
         components: {
             default: CardMenu,
             sidebar: ClientSidebar,
@@ -344,29 +380,7 @@ const routes = [
         }
     },
     {
-        path: "/client/boats",
-        name: "ClientBoats",
-        components: {
-            default: CardMenu,
-            sidebar: ClientSidebar,
-        },
-        meta: {
-            public: false
-        }
-    },
-    {
-        path: "/client/adventures",
-        name: "ClientAdventures",
-        components: {
-            default: CardMenu,
-            sidebar: ClientSidebar,
-        },
-        meta: {
-            public: false
-        }
-    },
-    {
-        path: "/client/RentalProfile",
+        path: "/client/RentalProfile/:type-:id",
         name: "ClientRentalProfile",
         components: {
             default: RentalProfile,

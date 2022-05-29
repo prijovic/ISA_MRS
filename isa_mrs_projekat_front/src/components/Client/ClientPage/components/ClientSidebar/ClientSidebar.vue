@@ -2,9 +2,9 @@
   <div class="sidebar rounded-right" :style="{width:sidebarWidth}">
     <MenuLink to="/client/profile" icon="id-card">Profile</MenuLink>
     <hr>
-    <MenuLink to="/client/adventures" icon="mountain-sun">Adventures</MenuLink>
-    <MenuLink to="/client/boats" icon="ship">Boats</MenuLink>
-    <MenuLink to="/client/vacationRentals" icon="house">Rental Houses</MenuLink>
+    <MenuLink to="/client/Adventure/all" icon="mountain-sun">Adventures</MenuLink>
+    <MenuLink to="/client/Boat/all" icon="ship">Boats</MenuLink>
+    <MenuLink to="/client/VacationRental/all" icon="house">Rental Houses</MenuLink>
     <span class="collapse-icon" :class="{'rotate-180': collapsed}" @click="toggleSidebar">
       <font-awesome-icon icon="angle-double-left"></font-awesome-icon>
     </span>

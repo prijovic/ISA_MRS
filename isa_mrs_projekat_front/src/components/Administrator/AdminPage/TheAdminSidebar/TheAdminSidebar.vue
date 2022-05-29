@@ -3,9 +3,7 @@
     <MenuLink to="/admin" icon="dashboard">Dashboard</MenuLink>
     <MenuLink to="/admin/requests" icon="envelope">Requests</MenuLink>
     <MenuLink to="/admin/users" icon="users">Users</MenuLink>
-    <MenuLink to="/#" icon="mountain-sun">Adventures</MenuLink>
-    <MenuLink to="/#" icon="ship">Boats</MenuLink>
-    <MenuLink to="/#" icon="house">Rental Houses</MenuLink>
+    <MenuLink to="/admin/rentals" icon="boxes-packing">Rental Objects</MenuLink>
     <MenuLink to="/#" icon="comments">Reviews</MenuLink>
     <MenuLink to="/#" icon="bullhorn">Reports</MenuLink>
     <MenuLink to="/#" icon="coins">Finances</MenuLink>
@@ -20,10 +18,10 @@
 import {collapsed, toggleSidebar, sidebarWidth} from "@/components/state";
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import { library } from "@fortawesome/fontawesome-svg-core";
-import { faAngleDoubleLeft, faAward, faEnvelope, faBullhorn, faHouse, faUsers, faShip, faMountainSun, faCoins, faComments, faDashboard} from "@fortawesome/free-solid-svg-icons";
+import { faAngleDoubleLeft, faAward, faEnvelope, faBullhorn, faUsers, faCoins, faComments, faDashboard, faBoxesPacking} from "@fortawesome/free-solid-svg-icons";
 import MenuLink from "@/components/GeneralComponents/MenuLink";
 
-library.add(faAngleDoubleLeft, faAward, faEnvelope, faBullhorn, faHouse, faUsers, faShip, faMountainSun, faCoins, faComments, faDashboard);
+library.add(faAngleDoubleLeft, faAward, faEnvelope, faBullhorn, faUsers, faCoins, faComments, faDashboard, faBoxesPacking);
 
 export default {
   name: "TheAdminSidebar",

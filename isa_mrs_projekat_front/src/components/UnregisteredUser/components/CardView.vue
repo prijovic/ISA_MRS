@@ -2,7 +2,7 @@
   <router-link :to="getPath" class="link" @click="setRentalIdAndType">
     <div class="card col-xl-3 col-lg-4 col-md-6 col-sm-10 col-xs-12 px-3 mb-3">
 <!--      <ThePhoto v-if="rental.displayPhoto" class="card-img-top" :photo="rental.displayPhoto" alt=""/>-->
-      <img v-if="rental.displayPhoto" class="card-img-top" alt="" :src="getPhotoPath"/>
+      <img v-if="rental.displayPhoto" class="card-img-top" alt="" :src="photo"/>
       <div class="card-body pt-1 pb-0">
         <div class="align-items-center" style="display: flex;">
             <h1 class="card-title">{{ rental.name }}</h1>
@@ -46,13 +46,13 @@
 </template>
 
 <script>
-// import ThePhoto from "@/components/GeneralComponents/ThePhoto";
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
 import { faDoorOpen } from "@fortawesome/free-solid-svg-icons";
 import { faBed } from "@fortawesome/free-solid-svg-icons";
 import {useStore} from "vuex";
+import axios from "axios";
 
 library.add(faUser);
 library.add(faDoorOpen);
@@ -61,23 +61,21 @@ library.add(faBed);
 export default {
   name: "CardView",
   components: {
-    // ThePhoto,
     FontAwesomeIcon,
   },
   props: ["rental"],
   data() {
     return {
-      path: "/client/RentalProfile"
+      path: "/client/RentalProfile",
+      photo: null
     }
   },
   computed: {
-    getPhotoPath() {
-      return "data:image/jpg;base64," + this.rental.displayPhoto;
-    },
     getPath() {
       const store = useStore();
-      if(store.state.email) return "/client/RentalProfile";
-      return "/RentalProfile";
+      let path = "/RentalProfile/" + this.rental.rentalObjectType + "-" + this.rental.id;
+      if (store.state.email) return "/client" + path;
+      return "/RentalProfile" + path;
     },
     isVacationRental() {
       console.log(this.rental);
@@ -88,14 +86,33 @@ export default {
     },
     getNumberOfBeds() {
       let beds = 0;
-      this.rental.rooms.forEach(room => { beds += room.beds; });
+      this.rental.rooms.forEach(room => {
+        beds += room.beds;
+      });
       return beds;
     },
     getRentalGrade() {
       console.log(this.rental.grade)
-      if(this.rental.grade !== null) return this.rental.grade + "★";
+      if (this.rental.grade !== null) return this.rental.grade + "★";
       return "/";
     },
+  },
+  mounted() {
+    axios.get("/Photos/", {
+      headers: {
+        Authorization: "Bearer " + this.$store.getters.access_token,
+      },
+      params: {
+        path: this.rental.displayPhoto.photo,
+      },
+      responseType: "blob"
+    })
+        .then(response => {
+          this.photo = URL.createObjectURL(response.data);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
   },
   methods: {
     setRentalIdAndType() {

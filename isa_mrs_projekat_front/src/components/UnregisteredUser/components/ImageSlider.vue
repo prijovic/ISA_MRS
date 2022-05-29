@@ -8,7 +8,7 @@
       <div class="carousel-inner">
         <div v-for="(image, i) in photos" :key="i" :class="i === 0 ? 'carousel-item active' : 'carousel-item'">
 <!--          <ThePhoto class="d-block w-100" :photo="image.photo" alt=""/>-->
-          <img class="d-block w-100" :src="image.photo" alt=""/>
+          <img class="d-block w-100" :src="imageUrls[i]" alt=""/>
         </div>
       </div>
       <button class="carousel-control-prev" type="button" data-bs-target="#slides" data-bs-slide="prev">
@@ -24,9 +24,36 @@
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
   name: "ImageSlider",
-  props: ["photos"]
+  props: ["photos"],
+  data() {
+    return {
+      imageUrls: []
+    }
+  },
+  mounted() {
+    for (let i=0; i < this.photos.length; i++) {
+      axios.get("/Photos/", {
+        headers: {
+          Authorization: "Bearer " + this.$store.getters.access_token,
+        },
+        params: {
+          path: this.photos[i].photo,
+        },
+        responseType: "blob"
+      })
+      .then(response => {
+        this.imageUrls[i] = URL.createObjectURL(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    }
+  }
+
 }
 </script>
 
@@ -56,7 +83,7 @@ export default {
   }
 
   .carousel-indicators .active{
-    background-color: darkblue;
+    background-color: #008970;
   }
 
   .carousel-control-prev-icon {
