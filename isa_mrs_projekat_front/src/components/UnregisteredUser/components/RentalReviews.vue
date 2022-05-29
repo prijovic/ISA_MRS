@@ -91,6 +91,11 @@ div.accordion-body {
   border-bottom: 1px solid lightgrey;
 }
 
+.accordion-button:not(.collapsed) {
+  color: #008970;
+  background-color: #f7f7f2;
+}
+
 div.review {
   background-color: white
 }

@@ -18,7 +18,7 @@
               </div>
               <div class="col mb-1">
                 <div class="d-flex flex-row justify-content-end">
-                  <button v-if="hasChanged" class="btn btn-red mb-1 me-1" data-bs-toggle="modal" data-bs-target="#confirmationDialog">
+                  <button v-if="hasChanged" class="btn btn-red me-1" data-bs-toggle="modal" data-bs-target="#confirmationDialog">
                     Save Changes
                   </button>
                 </div>

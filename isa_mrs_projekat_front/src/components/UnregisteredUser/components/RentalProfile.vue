@@ -278,7 +278,7 @@ export default {
       return this.rentalObject.isUserSubscribed;
     },
     showSubscriptionArea() {
-      return this.user === "Client";
+      return this.$store.getters.user === "client";
     },
     isVacationRental() {
       return this.rentalObject.rentalObjectType === "VacationRental";
