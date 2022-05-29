@@ -28,12 +28,13 @@ export default {
     else rentalType = rentalType[1];
     this.objectType = rentalType.charAt(0).toUpperCase() + rentalType.slice(1, -1);
     if(this.objectType === "Boat") {
+      console.log("Trazimo brodove od servera")
       axios.get("/RentalObjects/getBoats", {
         headers: {
           Authorization: "Bearer " + store.state.access_token,
         },
         params: {
-          offset: 0,
+          page: 0,
           pageSize: 10,
           field: "name"
         }
@@ -42,12 +43,13 @@ export default {
       });
     }
     else if(this.objectType === "Adventure") {
+      console.log("Trazimo avanture od servera")
       axios.get("/RentalObjects/getAdventures", {
         headers: {
           Authorization: "Bearer " + store.state.access_token,
         },
         params: {
-          offset: 0,
+          page: 0,
           pageSize: 10,
           field: "name"
         }
@@ -70,6 +72,8 @@ export default {
         this.rentalObjects = response.data.content;
       });
     }
+    console.log(this.rentalObject === "Boat")
+    console.log("Jel valja:" + this.rentalObject === "Boat");
   }
 }
 </script>

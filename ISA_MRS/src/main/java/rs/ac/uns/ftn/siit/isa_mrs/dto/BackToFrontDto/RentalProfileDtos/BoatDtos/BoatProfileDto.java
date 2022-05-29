@@ -1,20 +1,16 @@
-package rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.RentalProfileDtos.VacationRentalDtos;
+package rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.RentalProfileDtos.BoatDtos;
 
 import lombok.Data;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.*;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.RentalProfileDtos.ReviewDtos.ReviewDto;
-import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.AdditionalServiceDto;
-import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.AddressDto;
-import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.ConductRuleDto;
-import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.PhotoDto;
+import rs.ac.uns.ftn.siit.isa_mrs.model.AdditionalService;
 import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.RentalObjectType;
 
 import java.io.Serializable;
-import java.time.LocalTime;
 import java.util.Collection;
 
 @Data
-public class VacationRentalProfileDto implements Serializable {
+public class BoatProfileDto implements Serializable {
     private Long id;
     private String name;
     private RentalObjectType rentalObjectType;
@@ -22,14 +18,18 @@ public class VacationRentalProfileDto implements Serializable {
     private Collection<PhotoDto> photos;
     private Integer capacity;
     private Double price;
-    private Collection<AdditionalServiceDto> additionalServices;
+    private Collection<AdditionalService> additionalServices;
     private Collection<ConductRuleDto> conductRules;
     private Collection<SpecialOfferDto> specialOffers;
     private RentalObjectOwnerDto rentalObjectOwner;
     private AddressDto address;
-    private Collection<RoomDto> rooms;
-    private LocalTime checkIn;
-    private LocalTime checkOut;
+    private String type;
+    private Double length;
+    private String engineNumber;
+    private Double enginePower;
+    private Double maxSpeed;
+    private Collection<NavigationEquipmentDto> navigationEquipment;
+    private Collection<FishingEquipmentDto> fishingEquipment;
     private Boolean isUserSubscribed = false;
     private Collection<ReviewDto> reviews;
 }

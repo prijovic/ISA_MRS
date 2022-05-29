@@ -34,7 +34,7 @@
 
         <div class="row mt-1">
           <div class="col d-flex justify-content-center">
-            <p class="h4"><strong>{{ "Grade: " + rental.grade + "★" }}</strong></p>
+            <p class="h4"><strong>{{ "Grade: " + getRentalGrade }}</strong></p>
           </div>
           <div class="col d-flex justify-content-center">
             <p class="h4"><strong>{{ "Price: $" + rental.price }}</strong></p>
@@ -80,10 +80,8 @@ export default {
       return "/RentalProfile";
     },
     isVacationRental() {
-      console.log(this.rental.name);
-      console.log(this.rental.rentalObjectType);
-      console.log(this.rental.rentalObjectType=== "VacationRental");
-      return this.rentalObjectType !== "VacationRental";
+      console.log(this.rental);
+      return this.rental.rentalObjectType === "VacationRental";
     },
     getNumberOfRooms() {
       return (this.rental.rooms).length;
@@ -93,13 +91,16 @@ export default {
       this.rental.rooms.forEach(room => { beds += room.beds; });
       return beds;
     },
+    getRentalGrade() {
+      if(this.rental.grade === null || this.rental.grade === 0) return "/"
+      return this.rental.grade + "★"
+    },
   },
   methods: {
     setRentalIdAndType() {
       this.$store.dispatch("rentalId", this.rental.id);
       this.$store.dispatch("rentalType", this.rental.rentalObjectType);
       this.$store.dispatch("grade", this.rental.grade);
-      console.log(this.$store.state.grade);
     }
   }
 }

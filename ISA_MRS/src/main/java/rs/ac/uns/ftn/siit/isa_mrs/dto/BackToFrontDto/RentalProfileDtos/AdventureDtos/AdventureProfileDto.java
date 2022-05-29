@@ -1,20 +1,15 @@
-package rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.RentalProfileDtos.VacationRentalDtos;
+package rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.RentalProfileDtos.AdventureDtos;
 
 import lombok.Data;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.*;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.RentalProfileDtos.ReviewDtos.ReviewDto;
-import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.AdditionalServiceDto;
-import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.AddressDto;
-import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.ConductRuleDto;
-import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.PhotoDto;
 import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.RentalObjectType;
 
 import java.io.Serializable;
-import java.time.LocalTime;
 import java.util.Collection;
 
 @Data
-public class VacationRentalProfileDto implements Serializable {
+public class AdventureProfileDto implements Serializable {
     private Long id;
     private String name;
     private RentalObjectType rentalObjectType;
@@ -27,9 +22,8 @@ public class VacationRentalProfileDto implements Serializable {
     private Collection<SpecialOfferDto> specialOffers;
     private RentalObjectOwnerDto rentalObjectOwner;
     private AddressDto address;
-    private Collection<RoomDto> rooms;
-    private LocalTime checkIn;
-    private LocalTime checkOut;
+    private Double duration;
+    private Collection<AdventureEquipmentDto> adventureEquipment;
     private Boolean isUserSubscribed = false;
     private Collection<ReviewDto> reviews;
 }

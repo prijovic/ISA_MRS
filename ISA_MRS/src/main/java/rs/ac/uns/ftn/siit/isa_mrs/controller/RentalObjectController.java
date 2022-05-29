@@ -7,6 +7,10 @@ import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.AdventureDto;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.RentalProfileDtos.AdventureDtos.AdventureProfileDto;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.RentalProfileDtos.AdventureDtos.AdventuresForMenuDto;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.RentalProfileDtos.BoatDtos.BoatProfileDto;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.RentalProfileDtos.BoatDtos.BoatsForMenuDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.RentalProfileDtos.VacationRentalDtos.VacationRentalProfileDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.RentalProfileDtos.VacationRentalDtos.VacationRentalsForMenuDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BoatDto;
@@ -48,23 +52,23 @@ public class RentalObjectController {
     }
 
     @GetMapping(GET_BOAT)
-    public ResponseEntity<BoatDto> getBoat(@RequestParam Long id) {
-        return boatService.getBoat(id);
+    public ResponseEntity<BoatProfileDto> getBoat(@RequestParam Long id, @RequestParam String email) {
+        return boatService.getBoat(id, email);
     }
 
     @GetMapping(GET_BOATS)
-    public ResponseEntity<PageDto<BoatDto>> getBoatsWithPaginationAndSort(
+    public ResponseEntity<PageDto<BoatsForMenuDto>> getBoatsWithPaginationAndSort(
             @RequestParam Integer page, @RequestParam Integer pageSize, @RequestParam String field) {
         return boatService.findBoatsWithPaginationSortedByField(page, pageSize, field);
     }
 
     @GetMapping(GET_ADVENTURE)
-    public ResponseEntity<AdventureDto> getAdventure(@RequestParam Long id) {
-        return adventureService.getAdventure(id);
+    public ResponseEntity<AdventureProfileDto> getAdventure(@RequestParam Long id, @RequestParam String email) {
+        return adventureService.getAdventure(id, email);
     }
 
     @GetMapping(GET_ADVENTURES)
-    public ResponseEntity<PageDto<AdventureDto>> getAdventuresWithPaginationAndSort(
+    public ResponseEntity<PageDto<AdventuresForMenuDto>> getAdventuresWithPaginationAndSort(
             @RequestParam Integer page, @RequestParam Integer pageSize, @RequestParam String field) {
         return adventureService.findAdventuresWithPaginationSortedByField(page, pageSize, field);
     }

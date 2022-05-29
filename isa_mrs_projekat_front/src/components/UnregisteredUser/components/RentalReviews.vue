@@ -10,7 +10,7 @@
         </h2>
         <div id="flush-collapseTwo" class="accordion-collapse collapse show" aria-labelledby="flush-headingTwo">
           <div class="accordion-body p-2 pb-1">
-            <div v-if="reviews" class="reviews">
+            <div v-if="rentalHasReviews" class="reviews">
 
 
 
@@ -33,7 +33,6 @@
               </div>
 
             </div>
-
             <div v-else class="text-center">
               <label><i>No reviews available.</i></label>
             </div>
@@ -51,7 +50,9 @@ export default {
   name: "RentalReviews",
   props: ["reviews"],
   computed: {
-
+    rentalHasReviews() {
+      return this.reviews.length > 0;
+    }
   },
   methods: {
     getAuthorFullName(review) {

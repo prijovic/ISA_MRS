@@ -2,6 +2,7 @@ package rs.ac.uns.ftn.siit.isa_mrs.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -43,25 +44,16 @@ public class VacationRentalServiceImpl implements VacationRentalService{
     @Override
     public ResponseEntity<VacationRentalProfileDto> getVacationRental(Long id, String email) {
         try{
-            log.info("Usli smo u servis, id je " + id);
             Optional<VacationRental> rental = vacationRentalRepo.findById(id);
-            if(rental.isEmpty()){
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            }
-            log.info("Prosli nabavku");
-            log.info(""+rental);
+            if(rental.isEmpty()) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             VacationRentalProfileDto rentalDto = modelMapper.map(rental, VacationRentalProfileDto.class);
             VacationRental vacationRental = rental.get();
             rentalDto.setReviews(rentalService.getRentalReviews(vacationRental));
-            log.info(""+vacationRental);
-            log.info(""+rentalDto);
             Optional<Client> optionalClient = clientRepo.findByEmail(email);
             if(optionalClient.isPresent()){
                 Client client = optionalClient.get();
-                if(vacationRental.getSubscribers().contains(client))
-                    rentalDto.setIsUserSubscribed(true);
+                if(vacationRental.getSubscribers().contains(client)) rentalDto.setIsUserSubscribed(true);
             }
-            log.info("" + rentalDto);
             return new ResponseEntity<>(rentalDto, HttpStatus.OK);
         }
         catch (Exception e) {
@@ -185,7 +177,7 @@ public class VacationRentalServiceImpl implements VacationRentalService{
         }
     }
 
-    public VacationRentalsForMenuDto setUpMenuDto(VacationRental rental) {
+    private @NotNull VacationRentalsForMenuDto setUpMenuDto(VacationRental rental) {
         VacationRentalsForMenuDto rentalDto = modelMapper.map(rental, VacationRentalsForMenuDto.class);
         rentalDto.setGrade(rentalService.calculateRentalRating(rental));
         if(rental.getPhotos().size() != 0) {

@@ -50,8 +50,8 @@
           </div>
 
           <div v-if="!isVacationRental" class="p-1" style="text-align: center;">
-            <p class="h3">
-              <font-awesome-icon class="me-1" icon="user"></font-awesome-icon>{{"Capacity: " + this.rentalObject.capacity}}
+            <p class="display-5">
+              <font-awesome-icon class="me-1" icon="user"></font-awesome-icon><strong>{{ this.rentalObject.capacity }}</strong>
             </p>
           </div>
 
@@ -91,9 +91,9 @@
       </div>
 
       <div class="col-md-5">
-        <div v-if="isBoat" class="row main mb-3">
+        <div v-if="isBoat" class="row main mb-4">
           <div class="lineTitle">
-            <p class="h4">Boat info</p>
+            <p class="h3"><strong>Boat info</strong></p>
             <hr class="ms-1">
           </div>
           <div class="row-fluid main px-5" style="font-weight: 700;">
@@ -111,9 +111,9 @@
           </div>
         </div>
 
-        <div v-if="isBoat" class="row main">
+        <div v-if="isBoat" class="row main mb-3">
           <div class="lineTitle">
-            <p class="h4">Navigation equipment</p>
+            <p class="h3"><strong>Navigation equipment</strong></p>
             <hr class="ms-1">
           </div>
           <p class="" style="color: grey;">
@@ -121,9 +121,9 @@
           </p>
         </div>
 
-        <div v-if="isBoat" class="row main">
+        <div v-if="isBoat" class="row main mb-5">
           <div class="lineTitle">
-            <p class="h4">Fishing equipment</p>
+            <p class="h3"><strong>Fishing equipment</strong></p>
             <hr class="ms-1">
           </div>
           <p class="" style="color: grey;">
@@ -131,9 +131,9 @@
           </p>
         </div>
 
-        <div v-if="isAdventure" class="row main">
+        <div v-if="isAdventure" class="row main mb-5">
           <div class="lineTitle">
-            <p class="h4">Adventure equipment</p>
+            <p class="h3"><strong>Adventure equipment</strong></p>
             <hr class="ms-1">
           </div>
           <p class="" style="color: grey;">
@@ -192,6 +192,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios/index";
 import {useStore} from "vuex";
+import store from "@/store";
 
 
 library.add(faUser);
@@ -221,9 +222,6 @@ export default {
     this.id = store.state.rentalId;
     this.objectType = store.state.rentalType;
     this.email = store.state.email;
-
-    console.log(store.state.access_token);
-
     if(this.objectType === "Boat") {
       axios.get("/RentalObjects/getBoat", {
         headers: {
@@ -265,7 +263,6 @@ export default {
       .then((response) => {
         console.log("Usli smo na profil")
         this.rentalObject = response.data;
-        console.log(this.rentalObject);
       });
     }
   },
@@ -299,12 +296,15 @@ export default {
     getOwnerFullName() {
       return this.rentalObject.rentalObjectOwner.name + " " + this.rentalObject.rentalObjectOwner.surname;
     },
+    getAccessToken() {
+      return store.state.access_token;
+    },
   },
   methods: {
     subscribe() {
       axios.post("/RentalObjects/subscribe", { rentalId: this.rentalObject.id, clientEmail: this.email }, {
         headers: {
-          Authorization: "Bearer " + this.accessToken,
+          Authorization: "Bearer " + this.getAccessToken,
         },
       })
       .then(() => {
@@ -350,6 +350,9 @@ export default {
 
 <style scoped>
 div.rentalObjectName {
+  display: flex;
+}
+div.lineTitle {
   display: flex;
 }
 
