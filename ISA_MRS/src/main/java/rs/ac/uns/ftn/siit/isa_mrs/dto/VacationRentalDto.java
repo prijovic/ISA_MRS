@@ -11,10 +11,15 @@ public class VacationRentalDto implements Serializable {
     private Long id;
     private String name;
     private RentalObjectType rentalObjectType;
+    private String description;
     private Collection<PhotoDto> photos;
     private AddressDto address;
     private Integer capacity;
     private Double price;
-    private Collection<ReservationDto> reservation;
+    private Boolean isActive;
+    private Boolean isDeletable;
+    private RentalObjectOwnerDto rentalObjectOwner;
+    private Collection<ConductRuleDto> conductRules;
+    private Collection<AdditionalServiceDto> additionalServices;
     private Collection<RoomDto> rooms;
 }

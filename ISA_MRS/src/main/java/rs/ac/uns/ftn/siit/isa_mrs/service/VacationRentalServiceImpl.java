@@ -20,6 +20,7 @@ import rs.ac.uns.ftn.siit.isa_mrs.dto.VacationRentalDto;
 import rs.ac.uns.ftn.siit.isa_mrs.model.*;
 import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.RentalObjectType;
 import rs.ac.uns.ftn.siit.isa_mrs.repository.*;
+import rs.ac.uns.ftn.siit.isa_mrs.security.JwtDecoder;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -40,6 +41,7 @@ public class VacationRentalServiceImpl implements VacationRentalService{
     private final RoomRepo roomRepo;
     private final ClientRepo clientRepo;
     private final RentalObjectServiceImpl rentalService;
+    private final JwtDecoder jwtDecoder;
 
     @Override
     public ResponseEntity<VacationRentalProfileDto> getVacationRental(Long id, String email) {
@@ -63,6 +65,63 @@ public class VacationRentalServiceImpl implements VacationRentalService{
     }
 
     @Override
+    public ResponseEntity<PageDto<VacationRentalDto>> findVacationRentalWithPaginationSortedByField(int offset, int pageSize, String field) {
+        try{
+            Pageable pageable = PageRequest.of(offset, pageSize).withSort(Sort.by(field));
+            Page<VacationRental> vacationRentalsPage = vacationRentalRepo.findAllByRentalObjectType(RentalObjectType.VacationRental, pageable);
+            return new ResponseEntity<>(packVacationRentals(vacationRentalsPage), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    private PageDto<VacationRentalDto> packVacationRentals(Page<VacationRental> vacationRentalsPage) {
+        PageDto<VacationRentalDto> result = new PageDto<>();
+        Collection<VacationRentalDto> vacationRentalDtos = new ArrayList<>();
+        vacationRentalsPage.getContent().forEach(rentalObject -> vacationRentalDtos.add(mapVacationRentalsToDto(rentalObject)));
+        result.setContent(vacationRentalDtos);
+        result.setPages(vacationRentalsPage.getTotalPages());
+        result.setCurrentPage(vacationRentalsPage.getNumber());
+        result.setPageSize(vacationRentalsPage.getSize());
+        return result;
+    }
+
+    @Override
+    public ResponseEntity<PageDto<VacationRentalDto>> findVacationRentalsWithPaginationSortedByFieldAndFilteredByOwner(int offset, int pageSize, String field, String token) {
+        JwtDecoder.DecodedToken decodedToken;
+        try {
+            decodedToken = jwtDecoder.decodeToken(token);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        try{
+            Pageable pageable = PageRequest.of(offset, pageSize).withSort(Sort.by(field));
+            Page<VacationRental> vacationRentalsPage = vacationRentalRepo.findAllByRentalObjectTypeAndRentalObjectOwnerEmail(RentalObjectType.Adventure, decodedToken.getEmail(), pageable);
+            return new ResponseEntity<>(packVacationRentals(vacationRentalsPage), HttpStatus.OK);
+        } catch (Exception e) {
+            log.info(e.getMessage());
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    public ResponseEntity<VacationRentalDto> findVacationRental(Long id) {
+        try {
+            VacationRental vacationRental = vacationRentalRepo.getById(id);
+            return new ResponseEntity<>(mapVacationRentalsToDto(vacationRental), HttpStatus.OK);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    private VacationRentalDto mapVacationRentalsToDto(VacationRental vacationRental) {
+        VacationRentalDto vacationRentalDto = modelMapper.map(vacationRental, VacationRentalDto.class);
+        vacationRentalDto.setIsDeletable(vacationRental.getReservations().size() == 0);
+        return vacationRentalDto;
+    }
+
+    @Override
     public ResponseEntity<PageDto<VacationRentalsForMenuDto>> findVacationRentalsWithPaginationSortedByField(
             int offset, int pageSize, String field) {
         PageDto<VacationRentalsForMenuDto> result = new PageDto<>();
@@ -74,34 +133,6 @@ public class VacationRentalServiceImpl implements VacationRentalService{
             vacationRentalsPage.getContent().forEach(vacationRental ->
                     vacationRentalDtos.add(setUpMenuDto(vacationRental)));
             result.setContent(vacationRentalDtos);
-            result.setPages(vacationRentalsPage.getTotalPages());
-            result.setCurrentPage(vacationRentalsPage.getNumber() + 1);
-            result.setPageSize(vacationRentalsPage.getSize());
-            if (vacationRentalsPage.getContent().isEmpty()) {
-                return new ResponseEntity<>(result, HttpStatus.NO_CONTENT);
-            }
-            else {
-                return new ResponseEntity<>(result, HttpStatus.OK);
-            }
-        } catch (Exception e) {
-            return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
-        }
-    }
-
-    @Override
-    public ResponseEntity<PageDto<VacationRentalDto>> findVacationRentalsWithPaginationSortedByFieldAndFilteredByOwner(int offset, int pageSize, String field, String ownerEmail) {
-        log.info("Uslo u servis");
-        PageDto<VacationRentalDto> result = new PageDto<>();
-        try{
-            Pageable pageable = PageRequest.of(offset, pageSize).withSort(Sort.by(field));
-            Page<VacationRental> vacationRentalsPage = vacationRentalRepo
-                    .findAllByRentalObjectTypeAndRentalObjectOwnerEmail(RentalObjectType.VacationRental, ownerEmail, pageable);
-            Collection<VacationRentalDto> vacationRentalDtos = new ArrayList<>();
-            vacationRentalsPage.getContent().forEach(vacationRental -> {
-                vacationRentalDtos.add(modelMapper.map(vacationRental, VacationRentalDto.class));
-            });
-            result.setContent(vacationRentalDtos);
-            log.info("result");
             result.setPages(vacationRentalsPage.getTotalPages());
             result.setCurrentPage(vacationRentalsPage.getNumber() + 1);
             result.setPageSize(vacationRentalsPage.getSize());

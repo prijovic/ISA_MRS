@@ -28,9 +28,11 @@ import rs.ac.uns.ftn.siit.isa_mrs.service.BoatService;
 import rs.ac.uns.ftn.siit.isa_mrs.service.RentalObjectService;
 import rs.ac.uns.ftn.siit.isa_mrs.service.VacationRentalService;
 
+import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
 import java.util.List;
 
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static rs.ac.uns.ftn.siit.isa_mrs.util.Paths.*;
 
 @RestController
@@ -42,7 +44,7 @@ public class RentalObjectController {
     private final VacationRentalService vacationRentalService;
     private final BoatService boatService;
     private final AdventureService adventureService;
-
+    
     @GetMapping(GET_VACATION_RENTAL)
     public ResponseEntity<VacationRentalProfileDto> getVacationRental(@RequestParam Long id, @RequestParam String email) {
         return vacationRentalService.getVacationRental(id, email);
@@ -52,6 +54,12 @@ public class RentalObjectController {
     public ResponseEntity<PageDto<VacationRentalsForMenuDto>> getVacationRentalsWithPaginationAndSort(
             @RequestParam Integer page, @RequestParam Integer pageSize, @RequestParam String field) {
         return vacationRentalService.findVacationRentalsWithPaginationSortedByField(page, pageSize, field);
+    }
+
+    @GetMapping(GET_VACATION_RENTALS + "Owner")
+    public ResponseEntity<PageDto<VacationRentalDto>> getVacationRentalsForOwner(
+            @RequestParam Integer page, @RequestParam Integer pageSize, @RequestParam String field, HttpServletRequest request) {
+        return vacationRentalService.findVacationRentalsWithPaginationSortedByFieldAndFilteredByOwner(page, pageSize, field, request.getHeader(AUTHORIZATION));
     }
 
     @GetMapping(GET_BOAT)
@@ -109,13 +117,5 @@ public class RentalObjectController {
     public ResponseEntity<BoatDto> addBoat(@RequestBody AddBoatDto abd){
         log.info("Kontroler");
         return boatService.addNewBoat(abd);
-    }
-
-    @GetMapping(GET_VACATION_RENTALS + "Owner")
-    public ResponseEntity<PageDto<VacationRentalDto>> getVacationRentalsForOwner(
-            @RequestParam Integer page, @RequestParam Integer pageSize,
-            @RequestParam String field, @RequestParam String email) {
-        log.info("kontroler");
-        return vacationRentalService.findVacationRentalsWithPaginationSortedByFieldAndFilteredByOwner(page, pageSize, field, email);
     }
 }
