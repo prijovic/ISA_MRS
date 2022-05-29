@@ -1,167 +1,198 @@
 <template>
-  <div class="container-fluid mt-2">
+  <div v-if="rentalObject" class="container-fluid mt-2 pe-0">
     <div class="row align-items-start">
       <div class="col-md-7 p-3">
-        <div class="carousel-background">
-          <div id="slides" class="carousel slide justify-content-center" data-bs-ride="carousel">
-            <ul class="carousel-indicators">
-              <li data-bs-target="#slides" data-bs-slide-to="0" class="active"></li>
-            </ul>
-            <div class="carousel-inner">
-              <div class="carousel-item active">
-                <img class="d-block w-100" src="">
-              </div>
-            </div>
-            <button class="carousel-control-prev" type="button" data-bs-target="#slides" data-bs-slide="prev">
-              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-              <span class="visually-hidden">Previous</span>
-            </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#slides" data-bs-slide="next">
-              <span class="carousel-control-next-icon" aria-hidden="true"></span>
-              <span class="visually-hidden">Next</span>
-            </button>
-          </div>
-        </div>
+        <ImageSlider :photos="this.rentalObject.photos"/>
 
       </div>
-      <div class="col-md-5 p-3">
-        <div class="row">
-          <div class="rentalObjectName align-items-center">
-            <hr><h1 class="display-3 mb-2">Abstract</h1><hr>
-          </div>
-        </div>
 
-        <div class="row main">
-          <div class="col main d-flex justify-content-center" title="Capacity">
-            <p class="display-5">
-              <font-awesome-icon class="me-1" icon="user"></font-awesome-icon><strong>10</strong>
-            </p>
-          </div>
-          <div class="col main d-flex justify-content-center" title="Number of rooms">
-            <p class="display-5">
-              <font-awesome-icon class="me-1" icon="door-open"></font-awesome-icon><strong>2</strong>
-            </p>
-          </div>
-          <div class="col main d-flex justify-content-center" title="">
-            <p class="display-5">
-              <font-awesome-icon class="me-1" icon="bed"></font-awesome-icon><strong>7</strong>
-            </p>
-          </div>
-        </div>
+<!--------------------------------------------------------------------------------------------------------------------->
 
-        <div class="row mb-3 mt-2">
-          <div class="col d-flex justify-content-center">
-            <p class="h4">
-              <font-awesome-icon class="me-1" icon="clock"></font-awesome-icon>14:00
+      <div class="col-md-5 p-3 d-flex flex-grow-1 justify-content-center align-items-center rentalBasicInfo">
+        <div style="width: 100%;">
+          <div class="row mb-3">
+            <div class="rentalObjectName align-items-center">
+              <hr><h1 class="display-3">{{ this.rentalObject.name }}</h1><hr>
+            </div>
+          </div>
+
+          <div v-if="isVacationRental" class="row main mb-3">
+            <div class="col main d-flex justify-content-center" title="Capacity">
+              <p class="display-5">
+                <font-awesome-icon class="me-1" icon="user"></font-awesome-icon><strong>{{ this.rentalObject.capacity }}</strong>
+              </p>
+            </div>
+            <div class="col main d-flex justify-content-center" title="Number of rooms">
+              <p class="display-5">
+                <font-awesome-icon class="me-1" icon="door-open"></font-awesome-icon><strong>{{ getNumberOfRooms }}</strong>
+              </p>
+            </div>
+            <div class="col main d-flex justify-content-center" title="">
+              <p class="display-5">
+                <font-awesome-icon class="me-1" icon="bed"></font-awesome-icon><strong>{{ getNumberOfBeds }}</strong>
+              </p>
+            </div>
+          </div>
+
+          <div v-if="isVacationRental" class="row mb-3 ">
+            <div class="col d-flex justify-content-center">
+              <p class="h3">
+                <font-awesome-icon class="me-1" icon="clock"></font-awesome-icon>{{ "Check in:  " +
+                                      formatTimeStamp(this.rentalObject.checkIn) + "h" }}
+              </p>
+            </div>
+            <div class="col d-flex justify-content-center">
+              <p class="h3">
+                <font-awesome-icon class="me-1" icon="clock"></font-awesome-icon>{{ "Check out:  " +
+                                      formatTimeStamp(this.rentalObject.checkOut) + "h" }}
+              </p>
+            </div>
+          </div>
+
+          <div v-if="!isVacationRental" class="p-1" style="text-align: center;">
+            <p class="display-5">
+              <font-awesome-icon class="me-1" icon="user"></font-awesome-icon><strong>{{ this.rentalObject.capacity }}</strong>
             </p>
           </div>
-          <div class="col d-flex justify-content-center">
-            <p class="h4">
-              <font-awesome-icon class="me-1" icon="clock"></font-awesome-icon>12:00
+
+  <!--        <div class="row">-->
+  <!--          <div class="d-flex justify-content-center align-items-center">-->
+  <!--            <div class="Stars" style="&#45;&#45;rating: 0;"></div>-->
+  <!--            (0.0)-->
+  <!--          </div>-->
+  <!--        </div>-->
+
+          <div class="row mt-3 ps-1 text-center">
+            <p class="h3">
+              <font-awesome-icon class="me-2" icon="user-tie"></font-awesome-icon><i>{{ getOwnerFullName }}</i>
             </p>
           </div>
-        </div>
-        <div class="row">
-          <div class="d-flex justify-content-center align-items-center">
-            <div class="Stars" style="--rating: 0;"></div>
+
+          <div class="row mt-3 ps-1" style="text-align: center;">
+            <p class="h3">
+              <i><strong>{{ "Price: $" + this.rentalObject.price }}</strong></i>
+            </p>
           </div>
-        </div>
-        <div class="row mt-3 ps-1">
-          <p class="h5">Owner: <i>Saska Topalovic</i></p>
-        </div>
-        <div class="row mt-3 ps-1" style="text-align: center;">
-          <p class="h3">
-            <i><strong>Price: 200$</strong></i>
-          </p>
         </div>
       </div>
-      <div class="row align-items-start">
-        <div class="col-md-7 ps-3">
-          <div class="row description">
-            <div class="lineTitle">
-              <p class="h4">Description</p>
-              <hr class="ms-1">
-            </div>
-            <p class="ps-3" style="color: grey;">2 bedrooms, a living room with open-plan kitchen and 2 bathrooms.
-              The air-conditioned, mechanized, fully furnished, alarm protected. A balcony which opens from the
-              living room and the first bedroom, a storage and a parking space in the garage.</p>
+    </div>
+<!--------------------------------------------------------------------------------------------------------------------->
+
+    <div class="row align-items-start">
+      <div class="col-md-7 ps-3">
+        <div class="row">
+          <div class="" style="">
+            <RentalDescription :description="this.rentalObject.description"/>
+            <RentalTags :additional-services="this.rentalObject.additionalServices"/>
+            <RentalRules :conduct-rules="this.rentalObject.conductRules"/>
+            <RentalReviews :reviews="this.rentalObject.reviews"/>
           </div>
-          <div class="tags row main ps-3 pe-1">
-            <div class="tagDiv chip chip-outline btn-outline-primary me-2 px-3 my-1" data-ripple-color="dark">
-              Wifi
-            </div>
-            <div class="tagDiv chip chip-outline btn-outline-primary me-2 px-3 my-1" data-ripple-color="dark">
-              Parking
-            </div>
-            <div class="tagDiv chip chip-outline btn-outline-primary me-2 px-3 my-1" data-ripple-color="dark">
-              King sized bed
-            </div>
-          </div>
+        </div>
+      </div>
+
+      <div class="col-md-5">
+        <div v-if="isBoat" class="row main mb-4">
           <div class="lineTitle">
-            <p class="h4">Rules</p>
+            <p class="h3"><strong>Boat info</strong></p>
             <hr class="ms-1">
           </div>
-          <div class="doOrDont d-flex justify-content-center">
-            <div class="col-md-4 pe-3">
-              <div class="center-block text-center">
-                <p class="h5">Do's</p>
-              </div>
-              <p class="h6"><font-awesome-icon class="me-1" icon="circle-check" style="color:darkblue"></font-awesome-icon>Using the pool</p>
-              <p class="h6"><font-awesome-icon class="me-1" icon="circle-check" style="color:darkblue"></font-awesome-icon>Using the sauna</p>
+          <div class="row-fluid main px-5" style="font-weight: 700;">
+            <div class="row mt-3 main">
+              <div class="col main border">{{"Type: " + this.rentalObject.type }}</div>
+              <div class="col main border">{{"Length: " + this.rentalObject.length }}</div>
             </div>
-            <div class="col-md-4 ps-3">
-              <div class="center-block text-center">
-                <p class="h5">Don'ts</p>
-              </div>
-              <p  class="h6"><font-awesome-icon class="me-1" icon="circle-xmark" style="color:darkblue"></font-awesome-icon>Smoking</p>
-              <p  class="h6"><font-awesome-icon class="me-1" icon="circle-xmark" style="color:darkblue"></font-awesome-icon>Pets</p>
-              <p  class="h6"><font-awesome-icon class="me-1" icon="circle-xmark" style="color:darkblue"></font-awesome-icon>Noise after 10pm</p>
+            <div class="row main">
+              <div class="col main border">{{"Engine number: " + this.rentalObject.engineNumber }}</div>
+              <div class="col main border">{{"Engine power: " + this.rentalObject.enginePower  }}</div>
+            </div>
+            <div class="row main text-center">
+              <div class="col main border">{{"Maximum speed: " + this.rentalObject.maxSpeed }}</div>
             </div>
           </div>
         </div>
 
-        <div class="col-md-5">
-          <p class="h4">
-            <font-awesome-icon class="me-1" icon="location-dot"></font-awesome-icon><small>Ulica Miše Dimitrijevića 41, Novi Sad, Srbija</small>
+        <div v-if="isBoat" class="row main mb-3">
+          <div class="lineTitle">
+            <p class="h3"><strong>Navigation equipment</strong></p>
+            <hr class="ms-1">
+          </div>
+          <p class="" style="color: grey;">
+            {{ getEquipment(this.rentalObject.navigationEquipment) }}
           </p>
-
         </div>
+
+        <div v-if="isBoat" class="row main mb-5">
+          <div class="lineTitle">
+            <p class="h3"><strong>Fishing equipment</strong></p>
+            <hr class="ms-1">
+          </div>
+          <p class="" style="color: grey;">
+            {{ getEquipment(this.rentalObject.fishingEquipment) }}
+          </p>
+        </div>
+
+        <div v-if="isAdventure" class="row main mb-5">
+          <div class="lineTitle">
+            <p class="h3"><strong>Adventure equipment</strong></p>
+            <hr class="ms-1">
+          </div>
+          <p class="" style="color: grey;">
+            {{ getEquipment(this.rentalObject.adventureEquipment) }}
+          </p>
+        </div>
+
+        <RentalAddress :address="this.rentalObject.address"/>
 
       </div>
     </div>
-    <div class="row  align-items-center mt-5 mb-0 main align-items-start" style="background-color: lightgray; height: 15vh;">
+
+
+    <div v-if="showSubscriptionArea" class="row align-items-center mt-5 mb-0 main align-items-start"
+         style="background-color: lightgray; height: 10vh;">
       <div class="d-flex justify-content-center">
         <p class="h6" style="font-weight: 100;">
           Want to receive an email whenever there is a new special offer available?
-          <button v-bind:disabled="this.btnDisabled" id="subscribe" @click="subscribe" type="button" class="ms-2 rounded" >
+          <button v-if="!isUserSubscribed" v-bind:disabled="this.btnDisabled" @click="subscribe"
+                  type="button" class="subscribe ms-2 rounded" >
             {{ this.btnText }}
           </button>
+          <button v-else disabled type="button" class="subscribe ms-2 rounded" >Subscribed!</button>
         </p>
       </div>
     </div>
-
+    <!--
     <div class="row align-items-start mt-4">
-      <div class="col-md-7">
-
-      </div>
+        <div class="col-md-7">
+        </div>
     </div>
+    -->
+
   </div>
+
 </template>
 
 <script>
-
-
-import { library } from "@fortawesome/fontawesome-svg-core";
-import { faCircleCheck } from "@fortawesome/free-solid-svg-icons";
-import { faCircleXmark } from "@fortawesome/free-solid-svg-icons";
-import { faUser } from "@fortawesome/free-solid-svg-icons";
-import { faDoorOpen } from "@fortawesome/free-solid-svg-icons";
-import { faBed } from "@fortawesome/free-solid-svg-icons";
-import { faClock } from "@fortawesome/free-solid-svg-icons";
-import { faLocationDot } from "@fortawesome/free-solid-svg-icons";
+import ImageSlider from "@/components/UnregisteredUser/components/ImageSlider";
+import RentalDescription from "@/components/UnregisteredUser/components/RentalDescription";
+import RentalTags from "@/components/UnregisteredUser/components/RentalTags";
+import RentalAddress from "@/components/UnregisteredUser/components/RentalAddress";
+import RentalRules from "@/components/UnregisteredUser/components/RentalRules";
+import RentalReviews from "@/components/UnregisteredUser/components/RentalReviews";
+import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
+import {library} from "@fortawesome/fontawesome-svg-core";
+import {
+  faBed,
+  faCircleCheck,
+  faCircleXmark,
+  faClock,
+  faDoorOpen,
+  faLocationDot,
+  faUser,
+  faUserTie,
+} from "@fortawesome/free-solid-svg-icons";
 import axios from "axios/index";
 import {useStore} from "vuex";
-
+import store from "@/store";
 
 
 library.add(faUser);
@@ -171,10 +202,11 @@ library.add(faClock);
 library.add(faLocationDot);
 library.add(faCircleCheck);
 library.add(faCircleXmark);
+library.add(faUserTie);
 
 export default {
   name: "RentalProfile",
-  components: {},
+  components: {RentalRules, RentalAddress, RentalTags, RentalDescription, ImageSlider, RentalReviews, FontAwesomeIcon},
   data() {
     return {
       rentalObject: null,
@@ -182,12 +214,14 @@ export default {
       btnDisabled: false,
       id: null,
       objectType: null,
+      email: null,
     }
   },
   mounted() {
     const store = useStore();
     this.id = store.state.rentalId;
     this.objectType = store.state.rentalType;
+    this.email = store.state.email;
     if(this.objectType === "Boat") {
       axios.get("/RentalObjects/getBoat", {
         headers: {
@@ -195,11 +229,12 @@ export default {
         },
         params: {
           id: this.id,
+          email: this.email,
         }
       })
-          .then((response) => {
-            this.rentalObject = response.data;
-          });
+      .then((response) => {
+        this.rentalObject = response.data;
+      });
     }
     else if(this.objectType === "Adventure") {
       axios.get("/RentalObjects/getAdventure", {
@@ -208,11 +243,12 @@ export default {
         },
         params: {
           id: this.id,
+          email: this.email,
         }
       })
-          .then((response) => {
-            this.rentalObject = response.data;
-          });
+      .then((response) => {
+        this.rentalObject = response.data;
+      });
     }
     else {
       axios.get("/RentalObjects/getVacationRental", {
@@ -221,18 +257,18 @@ export default {
         },
         params: {
           id: this.id,
+          email: this.email,
         }
       })
-          .then((response) => {
-            console.log("Usli smo na profil")
-            this.rentalObject = response.data;
-            console.log(this.rentalObject);
-          });
+      .then((response) => {
+        console.log("Usli smo na profil")
+        this.rentalObject = response.data;
+      });
     }
   },
   computed: {
     getNumberOfRooms() {
-      return (this.rentalObject.rooms).length;
+      return this.rentalObject.rooms.length;
     },
     getNumberOfBeds() {
       let beds = 0;
@@ -241,13 +277,73 @@ export default {
     },
     doesRentalHavePhotos() {
       return this.rentalObject.photos.length > 0;
-    }
+    },
+    isUserSubscribed() {
+      return this.rentalObject.isUserSubscribed;
+    },
+    showSubscriptionArea() {
+      return this.email;
+    },
+    isVacationRental() {
+      return this.objectType === "VacationRental";
+    },
+    isBoat() {
+      return this.objectType === "Boat";
+    },
+    isAdventure() {
+      return this.objectType === "Adventure";
+    },
+    getOwnerFullName() {
+      return this.rentalObject.rentalObjectOwner.name + " " + this.rentalObject.rentalObjectOwner.surname;
+    },
+    getAccessToken() {
+      return store.state.access_token;
+    },
   },
   methods: {
     subscribe() {
-      this.btnText = "Subscribed!";
-      this.btnDisabled = true;
-    }
+      axios.post("/RentalObjects/subscribe", { rentalId: this.rentalObject.id, clientEmail: this.email }, {
+        headers: {
+          Authorization: "Bearer " + this.getAccessToken,
+        },
+      })
+      .then(() => {
+        this.btnText = "Subscribed!";
+        this.btnDisabled = true;
+      })
+      .catch(error => {
+        if (error.response.status === 404) {
+          this.$notify({
+            title: "Invalid Request Status",
+            text: "Something went wrong. Try again later.",
+            position: "bottom right",
+            type: "warn"
+          })
+        } else if (error.response.status === 500) {
+          this.$notify({
+            title: "Internal Server Error",
+            text: "Something went wrong on the server! Please try again later...",
+            position: "bottom right",
+            type: "error"
+          })
+        }
+      })
+    },
+    getEquipment(equipment) {
+      let printEquipment = "";
+      const collectionSize = equipment.length;
+      for(let i=0; i<collectionSize; i++) {
+        printEquipment += equipment[i].name;
+        if(i === collectionSize-1) break;
+        printEquipment += ", "
+      }
+      if(printEquipment === "") return "No equipment included.";
+      return printEquipment;
+    },
+    formatTimeStamp(time) {
+      return time.slice(0, -3);
+    },
+
   },
 }
 </script>
@@ -256,63 +352,14 @@ export default {
 div.rentalObjectName {
   display: flex;
 }
-div.carousel-background {
-  /*
-  background-color: black;
-  border: 1px solid black;
-  */
-  background-color: lightgray;
-}
-
-div.carousel {
-  height: 60vh !important;
-}
-
-div.carousel-item {
-  transition: -webkit-transform 0.5s ease;
-  -webkit-backface-visibility: visible;
-  backface-visibility: visible;
-}
-
-div.carousel-inner img {
-  height: 60vh;
-  object-fit: contain;
-}
-
-.carousel-indicators .active{
-  background-color: darkblue;
-}
-div.description {
-  text-align: justify;
-}
-
 div.lineTitle {
   display: flex;
 }
-div.doOrDont {
-  text-align: justify;
-}
-.tagDiv {
-  width: fit-content;
-  border-radius: 30px;
-  border: 1px solid darkblue;
-  cursor: pointer;
-}
-div.lineTitle {
-  display: flex;
-}
+
 hr {
   flex-grow: 1;
 }
-.carousel-control-prev-icon {
-  background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23fff' \
-    viewBox='0 0 8 8'%3E%3Cpath d='M5.25 0l-4 4 4 4 1.5-1.5-2.5-2.5 2.5-2.5-1.5-1.5z'/%3E%3C/svg%3E");
-}
 
-.carousel-control-next-icon {
-  background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23fff' \
-    viewBox='0 0 8 8'%3E%3Cpath d='M2.75 0l-1.5 1.5 2.5 2.5-2.5 2.5 1.5 1.5 4-4-4-4z'/%3E%3C/svg%3E");
-}
 :root {
   --star-size: 60px;
   --star-color: black;
@@ -334,16 +381,20 @@ hr {
   line-height: 1;
 }
 
-button#subscribe:hover {
+button.subscribe:hover {
   color: white;
   background-color: black;
 }
 
-button#subscribe {
+button.subscribe {
   height: fit-content;
   width:fit-content;
   background-color:lightgray;
   border: 2px solid darkgray;
   color: darkgray;
+}
+
+div.rentalBasicInfo {
+  height: 60vh;
 }
 </style>

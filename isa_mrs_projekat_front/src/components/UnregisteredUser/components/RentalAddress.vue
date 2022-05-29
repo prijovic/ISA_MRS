@@ -1,7 +1,8 @@
 <template>
   <p class="h4">
-    <font-awesome-icon class="me-1" icon="location-dot"></font-awesome-icon><small>{{ address }}</small>
+    <font-awesome-icon class="me-1" icon="location-dot"></font-awesome-icon><small>{{ getAddress }}</small>
   </p>
+  <i class="ps-3">Map in progress...</i>
   <img src="" alt="">
 </template>
 
@@ -15,7 +16,12 @@ library.add(faLocationDot);
 export default {
   name: "RentalAddress",
   components: {FontAwesomeIcon},
-  props: ["address"]
+  props: ["address"],
+  computed: {
+    getAddress() {
+      return this.address.street + ' ' + this.address.number + ', ' + this.address. city + ', ' + this.address.country
+    }
+  }
 }
 </script>
 

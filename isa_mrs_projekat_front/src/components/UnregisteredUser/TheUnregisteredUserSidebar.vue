@@ -5,7 +5,7 @@
     <hr>
     <MenuLink to="/#" icon="mountain-sun">Adventures</MenuLink>
     <MenuLink to="/#" icon="ship">Boats</MenuLink>
-    <MenuLink to="/#" icon="house">Rental Houses</MenuLink>
+    <MenuLink to="/vacationRentals" icon="house">Rental Houses</MenuLink>
     <span class="collapse-icon" :class="{'rotate-180': collapsed}" @click="toggleSidebar">
       <font-awesome-icon icon="angle-double-left"></font-awesome-icon>
     </span>

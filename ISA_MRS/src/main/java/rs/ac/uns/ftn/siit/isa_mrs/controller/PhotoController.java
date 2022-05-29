@@ -24,4 +24,14 @@ public class PhotoController {
     public ResponseEntity<InputStreamResource> getPhoto(@RequestParam String path) {
         return photoService.getPhoto(path);
     }
+
+    @GetMapping(value = "/get-image-with-media-type", produces = MediaType.IMAGE_JPEG_VALUE)
+    public @ResponseBody Collection<byte[]> getPhotos(Collection<String> photos) throws IOException {
+        InputStream in = getClass()
+                .getResourceAsStream("/src/resources/static/photos/image.jpg" );
+
+        //return IOUtils.toByteArray(in);
+        return null;
+    }
+
 }

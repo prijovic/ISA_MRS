@@ -47,7 +47,7 @@ public class RentalObject {
     private Address address;
     @ManyToMany
     @JoinTable(name = "subscribed_client",
-            joinColumns = @JoinColumn(name = "subscriber_id"),
-            inverseJoinColumns = @JoinColumn(name = "rental_id"))
+            joinColumns = @JoinColumn(name = "rental_id"),
+            inverseJoinColumns = @JoinColumn(name = "subscriber_id"))
     private Collection<Client> subscribers = new LinkedHashSet<>();
 }

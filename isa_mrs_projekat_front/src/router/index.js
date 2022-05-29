@@ -26,6 +26,7 @@ import ClientMainView from "@/components/Client/ClientPage/components/ClientMain
 import ClientSidebar from "@/components/Client/ClientPage/components/ClientSidebar/ClientSidebar";
 import RentalProfile from "@/components/UnregisteredUser/components/RentalProfile";
 import VerificationPage from "@/components/UnregisteredUser/components/VerificationPage";
+import ClientProfile from "@/components/Client/ClientPage/components/ClientProfile/ClientProfile";
 import AdminUsersView
     from "@/components/Administrator/AdminPage/components/AdminMainViews/AdminUsersView";
 import AdminRentalsView
@@ -391,7 +392,7 @@ const routes = [
     },
     {
         path: "/client/RentalProfile",
-        name: "RentalProfile",
+        name: "ClientRentalProfile",
         components: {
             default: RentalProfile,
             sidebar: ClientSidebar,
@@ -399,7 +400,67 @@ const routes = [
         meta: {
             public: false
         },
-    }
+    },
+    {
+        path: "/client/Profile",
+        name: "ClientProfile",
+        components: {
+            default: ClientProfile,
+            sidebar: ClientSidebar,
+        },
+        meta: {
+            public: false
+        },
+    },
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    {
+        path: "/vacationRentals",
+        name: "VacationRentals",
+        components: {
+            default: CardMenu,
+            sidebar: TheUnregisteredUserSidebar,
+        },
+        meta: {
+            disableIfLoggedIn: true,
+            public: true
+        }
+    },
+    {
+        path: "/boats",
+        name: "Boats",
+        components: {
+            default: CardMenu,
+            sidebar: TheUnregisteredUserSidebar,
+        },
+        meta: {
+            disableIfLoggedIn: true,
+            public: true
+        }
+    },
+    {
+        path: "/adventures",
+        name: "Adventures",
+        components: {
+            default: CardMenu,
+            sidebar: TheUnregisteredUserSidebar,
+        },
+        meta: {
+            disableIfLoggedIn: true,
+            public: true
+        }
+    },
+    {
+        path: "/RentalProfile",
+        name: "RentalProfile",
+        components: {
+            default: RentalProfile,
+            sidebar: TheUnregisteredUserSidebar,
+        },
+        meta: {
+            disableIfLoggedIn: true,
+            public: true
+        },
+    },
 ];
 
 const router = createRouter({
