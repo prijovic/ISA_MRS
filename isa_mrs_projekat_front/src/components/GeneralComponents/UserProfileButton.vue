@@ -3,7 +3,8 @@
     <button class="btn rounded-circle dropdown" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
       <font-awesome-icon icon="user"/>
     </button>
-    <div class="dropdown-menu dropdown-menu-end p-2" aria-labelledby="dropdownMenuButton">
+    <div class="dropdown-menu dropdown-menu-end p-2" aria-labelledby="dropdownMenuButton"
+    style="background-color: #99EEDF; color: #008970;">
       <MenuLink class="dropdown-item" icon="address-card" :to="profile">View Profile</MenuLink>
       <MenuLink class="dropdown-item" icon="key" :to="password">Change Password</MenuLink>
       <MenuLink class="dropdown-item" icon="remove" :to="delAcc">Delete Account</MenuLink>
@@ -49,8 +50,12 @@ export default {
 
 <style>
  .dropdown-menu {
-   color: #99EEDF;
-   background-color: #008970;
+   color: #008970;
+   background-color: #99EEDF;
+ }
+
+ MenuLink {
+   color: #008970;
  }
 
  hr {
