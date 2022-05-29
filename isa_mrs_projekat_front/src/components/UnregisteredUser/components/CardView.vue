@@ -1,6 +1,6 @@
 <template>
   <router-link :to="getPath" class="link" @click="setRentalIdAndType">
-    <div class="card col-xl-4 col-lg-6 col-md-6 col-sm-10 col-xs-12 px-3 mb-3">
+    <div class="card col-xl-3 col-lg-4 col-md-6 col-sm-10 col-xs-12 px-3 mb-3">
 <!--      <ThePhoto v-if="rental.displayPhoto" class="card-img-top" :photo="rental.displayPhoto" alt=""/>-->
       <img v-if="rental.displayPhoto" class="card-img-top" alt="" :src="getPhotoPath"/>
       <div class="card-body pt-1 pb-0">
@@ -92,8 +92,9 @@ export default {
       return beds;
     },
     getRentalGrade() {
-      if(this.rental.grade === null || this.rental.grade === 0) return "/"
-      return this.rental.grade + "★"
+      console.log(this.rental.grade)
+      if(this.rental.grade !== null) return this.rental.grade + "★";
+      return "/";
     },
   },
   methods: {
@@ -108,7 +109,7 @@ export default {
 
 <style scoped>
 div.card img {
-  height: 35vh;
+  height: 25vh;
   object-fit: cover;
   object-position: center;
   border-top-left-radius: 40px;

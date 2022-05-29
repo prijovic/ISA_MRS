@@ -78,7 +78,7 @@ public class RentalObjectServiceImpl implements RentalObjectService {
         Collection<ReviewDto> reviews = new ArrayList<>();
         for(var reservation : rental.getReservations()) {
             for(var review : reservation.getReviews()) {
-                if (review.getReviewType() == ReviewType.RentalReview && review.getAuthor().isActive())
+                if (review.getReviewType() == ReviewType.RentalReview && review.getAuthor().getIsActive())
                     reviews.add(modelMapper.map(review, ReviewDto.class));
             }
         }
@@ -130,7 +130,7 @@ public class RentalObjectServiceImpl implements RentalObjectService {
         double sumOfGrades = 0, amountOfGrades = 0;
         for(var reservation : reservations) {
             for(var review : reservation.getReviews())
-                if(review.getReviewType() == ReviewType.RentalReview && review.getAuthor().isActive())
+                if(review.getReviewType() == ReviewType.RentalReview && review.getAuthor().getIsActive())
                 { sumOfGrades += review.getGrade(); amountOfGrades++; }
         }
         if(amountOfGrades == 0) return 0;
