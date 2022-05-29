@@ -1,11 +1,10 @@
 package rs.ac.uns.ftn.siit.isa_mrs.util;
 
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.NewUserBasicInfoDto;
-import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.SignUpDto;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.SignUpDtos.SignUpDto;
 import rs.ac.uns.ftn.siit.isa_mrs.model.*;
 import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.RequestStatus;
 import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.RequestType;

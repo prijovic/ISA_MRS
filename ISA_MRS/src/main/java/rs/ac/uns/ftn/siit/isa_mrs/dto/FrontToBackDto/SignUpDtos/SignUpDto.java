@@ -1,4 +1,4 @@
-package rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto;
+package rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.SignUpDtos;
 
 import lombok.Data;
 import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.UserType;

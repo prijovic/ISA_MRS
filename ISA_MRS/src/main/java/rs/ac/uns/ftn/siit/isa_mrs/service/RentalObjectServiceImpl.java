@@ -2,22 +2,24 @@ package rs.ac.uns.ftn.siit.isa_mrs.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.RentalProfileDtos.ReviewDtos.ReviewDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.RentalObjectPeriodsDto;
-import rs.ac.uns.ftn.siit.isa_mrs.model.RentalObject;
-import rs.ac.uns.ftn.siit.isa_mrs.model.TimePeriod;
+import rs.ac.uns.ftn.siit.isa_mrs.model.*;
+import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.ReviewType;
+import rs.ac.uns.ftn.siit.isa_mrs.repository.ClientRepo;
 import rs.ac.uns.ftn.siit.isa_mrs.repository.RentalObjectRepo;
 import rs.ac.uns.ftn.siit.isa_mrs.repository.TimePeriodRepo;
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -25,6 +27,7 @@ import java.util.Optional;
 public class RentalObjectServiceImpl implements RentalObjectService {
     private final RentalObjectRepo rentalObjectRepo;
     private final TimePeriodRepo timePeriodRepo;
+    private final ClientRepo clientRepo;
     private final ModelMapper modelMapper;
 
     @Override
@@ -47,6 +50,47 @@ public class RentalObjectServiceImpl implements RentalObjectService {
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @Override
+    public ResponseEntity<Void> addSubscriber(Long rentalId, String clientEmail) {
+        try {
+            log.info("Dodajemo subskrajbera");
+            Optional<RentalObject> optionalRental = rentalObjectRepo.findById(rentalId);
+            Optional<Client> optionalClient = clientRepo.findByEmail(clientEmail);
+            if(optionalRental.isEmpty() || optionalClient.isEmpty()) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            RentalObject rental = optionalRental.get();
+            Client client = optionalClient.get();
+            rental.getSubscribers().add(client);
+            log.info("" + rental.getSubscribers());
+            client.getSubscriptions().add(rental);
+            log.info("" + client.getSubscriptions());
+            rentalObjectRepo.save(rental);
+            clientRepo.save(client);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    public Collection<ReviewDto> getRentalReviews(@NotNull RentalObject rental) {
+        Collection<ReviewDto> reviews = new ArrayList<>();
+        for(var reservation : rental.getReservations()) {
+            for(var review : reservation.getReviews()) {
+                if (review.getReviewType() == ReviewType.RentalReview && review.getAuthor().getIsActive())
+                    reviews.add(modelMapper.map(review, ReviewDto.class));
+            }
+        }
+        return reviews;
+    }
+
+    @Override
+    public String calculateRentalRating(@NotNull RentalObject rental) {
+        Collection<Reservation> reservations = rental.getReservations();
+        if(reservations.isEmpty()) return null;
+        double grade = getRentalGrade(reservations);
+        return gradeFormatting(grade);
     }
 
     private List<TimePeriod> makePeriods(List<LocalDate> dates){
@@ -75,4 +119,22 @@ public class RentalObjectServiceImpl implements RentalObjectService {
         }
         return timePeriods;
     }
+
+    private String gradeFormatting(double grade) {
+        DecimalFormat df = new DecimalFormat("#.##");
+        df.setRoundingMode(RoundingMode.CEILING);
+        return df.format(grade);
+    }
+
+    private double getRentalGrade(Collection<Reservation> reservations) {
+        double sumOfGrades = 0, amountOfGrades = 0;
+        for(var reservation : reservations) {
+            for(var review : reservation.getReviews())
+                if(review.getReviewType() == ReviewType.RentalReview && review.getAuthor().getIsActive())
+                { sumOfGrades += review.getGrade(); amountOfGrades++; }
+        }
+        if(amountOfGrades == 0) return 0;
+        return sumOfGrades/amountOfGrades;
+    }
+
 }

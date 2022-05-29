@@ -107,11 +107,22 @@
                 </tr>
               </tbody>
             </table>
+            <nav aria-label="Page navigation">
+              <ul class="pagination justify-content-center">
+                <li class="page-item" v-if="totalPages > 1"><button class="page-link" :disabled="currentPage===0" @click="previousPage">Previous</button></li>
+                <li class="page-item mt-auto me-1 ms-1" v-if="currentPage > 1 && totalPages > 3">...</li>
+                <li class="page-item"><button class="page-link" :disabled="currentPage === 0" @click="numberedPage(1)">{{button1Content}}</button></li>
+                <li class="page-item" v-if="totalPages > 1"><button class="page-link" :disabled="currentPage !== 0 && totalPages - currentPage > 1" @click="numberedPage(2)">{{button2Content}}</button></li>
+                <li class="page-item" v-if="totalPages > 2"><button class="page-link" :disabled="totalPages - currentPage === 1" @click="numberedPage(3)">{{button3Content}}</button></li>
+                <li class="page-item mt-auto me-1 ms-1" v-if="totalPages - currentPage > 1 && totalPages > 3 && button3Content !== totalPages">...</li>
+                <li class="page-item" v-if="totalPages > 1"><button class="page-link" :disabled="totalPages - currentPage === 1" @click="nextPage">Next</button></li>
+              </ul>
+            </nav>
+          </div>
         </div>
       </div>
-    </div>
     <div class="col-1"></div>
-  </div>
+    </div>
   </div>
 </template>
 
@@ -133,17 +144,13 @@ export default {
       users: [],
       selectedUser: null,
       selectedUsersRole: null,
-      changedUsers: []
+      changedUsers: [],
+      currentPage: 0,
+      totalPages: null,
+      pageSize: 10
     }
   },
   methods: {
-    showProfile(user, userRole) {
-      this.selectedUser = user;
-      this.selectedUsersRole = userRole;
-      this.isOpen = true;
-
-      console.log(this.selectedUser);
-    },
     saveChanges() {
       let ids = this.changedUsersIds;
       let lwc = {list: ids};
@@ -197,16 +204,69 @@ export default {
     userIsChanged(userId) {
       let index = this.changedUsers.findIndex(element => element.id === userId);
       return index > -1;
+    },
+    nextPage() {
+      this.currentPage += 1;
+      this.refreshPage();
+    },
+    previousPage() {
+      this.currentPage -= 1;
+      this.refreshPage();
+    },
+    numberedPage(buttonNumber) {
+      if (buttonNumber === 1) {
+        this.currentPage = this.button1Content - 1;
+      } else if (buttonNumber === 2) {
+        this.currentPage = this.button2Content - 1;
+      } else if (buttonNumber === 3) {
+        this.currentPage = this.button3Content - 1;
+      }
+      this.refreshPage();
+    },
+    refreshPage() {
+      axios.get("/Users/getUsersPage", {headers: {
+          Authorization: "Bearer " + this.$store.getters.access_token,
+        },
+        params: {
+          page: this.currentPage,
+          pageSize: this.pageSize
+        }
+      })
+          .then(response => {
+            this.users = response.data.content;
+            this.changedUsers.forEach(user =>
+              { this.users.forEach( user1 =>
+                { if (user.id === user1.id && user.isActive !== user1.isActive) {
+                  user1.isActive = user.isActive;
+                }
+                })
+              })
+            this.currentPage = response.data.currentPage;
+            this.totalPages = response.data.pages;
+          })
+          .catch(() =>{
+            this.$notify({
+              title: "Server error",
+              text: "Server is currently off. Please try again later...",
+              type: "error"
+            });
+          });
     }
   },
   mounted() {
     const store = useStore();
-    axios.get("/Users/getUsers", {headers: {
+    axios.get("/Users/getUsersPage", {headers: {
         Authorization: "Bearer " + store.state.access_token,
+        },
+        params: {
+          page: this.currentPage,
+          pageSize: this.pageSize
         }
       })
     .then(response => {
-      this.users = response.data;
+      this.users = response.data.content;
+      this.currentPage = response.data.currentPage;
+      this.totalPages = response.data.pages;
     })
     .catch(() =>{
       this.$notify({
@@ -217,6 +277,15 @@ export default {
     });
   },
   computed: {
+    button1Content() {
+      return this.currentPage === 0 ? this.currentPage+1: this.totalPages - this.currentPage === 1 ? this.currentPage - 1 : this.currentPage;
+    },
+    button2Content() {
+      return this.currentPage === 0 ? this.currentPage+2: this.totalPages - this.currentPage === 1 ? this.currentPage : this.currentPage+1;
+    },
+    button3Content() {
+      return this.currentPage === 0 ? this.currentPage+3: this.totalPages - this.currentPage === 1 ? this.currentPage + 1 : this.currentPage+2;
+    },
     isSuperAdmin() {
       return store.state.isSuperAdmin;
     },

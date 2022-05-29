@@ -24,4 +24,5 @@ public class Paths {
     public static final String DELETE_ACCOUNT = "/delAcc";
     public static final String SIGN_UP = "/signUp";
     public static final String OWNER_CONTROLLER = "/RentalOwners";
+    public static final String ADD_SUBSCRIBER = "/subscribe";
 }

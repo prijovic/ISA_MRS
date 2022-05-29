@@ -2,6 +2,7 @@ package rs.ac.uns.ftn.siit.isa_mrs.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -10,9 +11,11 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.RentalProfileDtos.VacationRentalDtos.VacationRentalProfileDto;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.RentalProfileDtos.VacationRentalDtos.VacationRentalsForMenuDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.AddVacationRentalDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.PageDto;
-import rs.ac.uns.ftn.siit.isa_mrs.dto.RequestDto;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.PhotoDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.VacationRentalDto;
 import rs.ac.uns.ftn.siit.isa_mrs.model.*;
 import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.RentalObjectType;
@@ -35,12 +38,23 @@ public class VacationRentalServiceImpl implements VacationRentalService{
     private final AdditionalServiceRepo additionalServiceRepo;
     private final ConductRuleRepo conductRuleRepo;
     private final RoomRepo roomRepo;
+    private final ClientRepo clientRepo;
+    private final RentalObjectServiceImpl rentalService;
 
     @Override
-    public ResponseEntity<VacationRentalDto> getVacationRental(Long id) {
+    public ResponseEntity<VacationRentalProfileDto> getVacationRental(Long id, String email) {
         try{
             Optional<VacationRental> rental = vacationRentalRepo.findById(id);
-            return rental.map(vacationRental -> new ResponseEntity<>(modelMapper.map(vacationRental, VacationRentalDto.class), HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+            if(rental.isEmpty()) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            VacationRentalProfileDto rentalDto = modelMapper.map(rental, VacationRentalProfileDto.class);
+            VacationRental vacationRental = rental.get();
+            rentalDto.setReviews(rentalService.getRentalReviews(vacationRental));
+            Optional<Client> optionalClient = clientRepo.findByEmail(email);
+            if(optionalClient.isPresent()){
+                Client client = optionalClient.get();
+                if(vacationRental.getSubscribers().contains(client)) rentalDto.setIsUserSubscribed(true);
+            }
+            return new ResponseEntity<>(rentalDto, HttpStatus.OK);
         }
         catch (Exception e) {
             log.error(e.getMessage());
@@ -49,17 +63,16 @@ public class VacationRentalServiceImpl implements VacationRentalService{
     }
 
     @Override
-    public ResponseEntity<PageDto<VacationRentalDto>> findVacationRentalsWithPaginationSortedByField(
+    public ResponseEntity<PageDto<VacationRentalsForMenuDto>> findVacationRentalsWithPaginationSortedByField(
             int offset, int pageSize, String field) {
-        PageDto<VacationRentalDto> result = new PageDto<>();
+        PageDto<VacationRentalsForMenuDto> result = new PageDto<>();
         try{
             Pageable pageable = PageRequest.of(offset, pageSize).withSort(Sort.by(field));
             Page<VacationRental> vacationRentalsPage = vacationRentalRepo
                     .findAllByRentalObjectType(RentalObjectType.VacationRental, pageable);
-            Collection<VacationRentalDto> vacationRentalDtos = new ArrayList<>();
-            vacationRentalsPage.getContent().forEach(vacationRental -> {
-                vacationRentalDtos.add(modelMapper.map(vacationRental, VacationRentalDto.class));
-            });
+            Collection<VacationRentalsForMenuDto> vacationRentalDtos = new ArrayList<>();
+            vacationRentalsPage.getContent().forEach(vacationRental ->
+                    vacationRentalDtos.add(setUpMenuDto(vacationRental)));
             result.setContent(vacationRentalDtos);
             result.setPages(vacationRentalsPage.getTotalPages());
             result.setCurrentPage(vacationRentalsPage.getNumber() + 1);
@@ -190,5 +203,15 @@ public class VacationRentalServiceImpl implements VacationRentalService{
                 return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
+    }
+
+    private @NotNull VacationRentalsForMenuDto setUpMenuDto(VacationRental rental) {
+        VacationRentalsForMenuDto rentalDto = modelMapper.map(rental, VacationRentalsForMenuDto.class);
+        rentalDto.setGrade(rentalService.calculateRentalRating(rental));
+        if(rental.getPhotos().size() != 0) {
+            Optional<Photo> photo = rental.getPhotos().stream().findFirst();
+            photo.ifPresent(value -> rentalDto.setDisplayPhoto(modelMapper.map(value, PhotoDto.class)));
+        }
+        return rentalDto;
     }
 }

@@ -10,7 +10,6 @@ import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.UserType;
 import java.util.Optional;
 
 public interface UserRepo extends JpaRepository<User, Long> {
-    Optional<User> findById(Long id);
     Optional<User> findByEmail(String email);
     Optional<User> findByEmailAndPassword(String email, String password);
     Page<User> findAllByUserType(UserType type, Pageable pageable);

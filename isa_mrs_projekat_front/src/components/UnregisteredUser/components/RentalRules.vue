@@ -1,23 +1,26 @@
 <template>
     <div class="lineTitle">
-        <p class="h4">Rules</p>
+        <p class="h3"><strong>Rules</strong></p>
         <hr class="ms-1">
     </div>
     <div class="doOrDont d-flex justify-content-center">
         <div class="col-md-4 pe-3">
             <div class="center-block text-center">
-                <p class="h5">Do's</p>
+                <p class="h4"><strong>Do's</strong></p>
             </div>
-            <p v-for="(r, i) in dos" :key="i" class="h6"><font-awesome-icon class="me-1" icon="circle-check" style="color:darkblue"></font-awesome-icon>
+            <p v-for="(r, i) in dos" :key="i" class="h5"><font-awesome-icon class="me-1" icon="circle-check" style="color:darkblue"></font-awesome-icon>
                 {{r.rule}}</p>
         </div>
         <div class="col-md-4 ps-3">
             <div class="center-block text-center">
-                <p class="h5">Don'ts</p>
+                <p class="h4"><strong>Don'ts</strong></p>
             </div>
-            <p v-for="(r, i) in donts" :key="i" class="h6"><font-awesome-icon class="me-1" icon="circle-xmark" style="color:darkblue"></font-awesome-icon>
+            <p v-for="(r, i) in donts" :key="i" class="h5"><font-awesome-icon class="me-1" icon="circle-xmark" style="color:darkred"></font-awesome-icon>
                 {{r.rule}}</p>
         </div>
+    </div>
+    <div>
+      <hr class="mt-3 ">
     </div>
 </template>
 
@@ -56,5 +59,9 @@ export default {
 
   div.lineTitle {
     display: flex;
+  }
+
+  hr {
+    flex-grow: 1;
   }
 </style>

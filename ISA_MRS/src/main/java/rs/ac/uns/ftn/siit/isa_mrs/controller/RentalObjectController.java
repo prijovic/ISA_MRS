@@ -3,13 +3,21 @@ package rs.ac.uns.ftn.siit.isa_mrs.controller;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.AdventureDto;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.RentalProfileDtos.AdventureDtos.AdventureProfileDto;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.RentalProfileDtos.AdventureDtos.AdventuresForMenuDto;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.RentalProfileDtos.BoatDtos.BoatProfileDto;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.RentalProfileDtos.BoatDtos.BoatsForMenuDto;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.RentalProfileDtos.VacationRentalDtos.VacationRentalProfileDto;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.RentalProfileDtos.VacationRentalDtos.VacationRentalsForMenuDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BoatDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.AddBoatDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.AddVacationRentalDto;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.SubscribingDtos.addSubscriberDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.PageDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.VacationRentalDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.RentalObjectPeriodsDto;
@@ -22,7 +30,6 @@ import rs.ac.uns.ftn.siit.isa_mrs.service.VacationRentalService;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 import static rs.ac.uns.ftn.siit.isa_mrs.util.Paths.*;
 
@@ -37,35 +44,34 @@ public class RentalObjectController {
     private final AdventureService adventureService;
 
     @GetMapping(GET_VACATION_RENTAL)
-    public ResponseEntity<VacationRentalDto> getVacationRental(@RequestParam Long id) {
-        return vacationRentalService.getVacationRental(id);
+    public ResponseEntity<VacationRentalProfileDto> getVacationRental(@RequestParam Long id, @RequestParam String email) {
+        return vacationRentalService.getVacationRental(id, email);
     }
 
     @GetMapping(GET_VACATION_RENTALS)
-    public ResponseEntity<PageDto<VacationRentalDto>> getVacationRentalsWithPaginationAndSort(
+    public ResponseEntity<PageDto<VacationRentalsForMenuDto>> getVacationRentalsWithPaginationAndSort(
             @RequestParam Integer page, @RequestParam Integer pageSize, @RequestParam String field) {
         return vacationRentalService.findVacationRentalsWithPaginationSortedByField(page, pageSize, field);
     }
 
     @GetMapping(GET_BOAT)
-    public Boat getBoat(@RequestParam Long id) {
-        Optional<Boat> boat = boatService.getBoat(id);
-        if (boat.isPresent()) {
-            return boat.get();
-        }
-        else {
-            throw new RentalNotFound(HttpStatus.NOT_FOUND, "id: " + id);
-        }
+    public ResponseEntity<BoatProfileDto> getBoat(@RequestParam Long id, @RequestParam String email) {
+        return boatService.getBoat(id, email);
     }
 
     @GetMapping(GET_BOATS)
-    public ResponseEntity<PageDto<BoatDto>> getBoatsWithPaginationAndSort(
+    public ResponseEntity<PageDto<BoatsForMenuDto>> getBoatsWithPaginationAndSort(
             @RequestParam Integer page, @RequestParam Integer pageSize, @RequestParam String field) {
         return boatService.findBoatsWithPaginationSortedByField(page, pageSize, field);
     }
 
+    @GetMapping(GET_ADVENTURE)
+    public ResponseEntity<AdventureProfileDto> getAdventure(@RequestParam Long id, @RequestParam String email) {
+        return adventureService.getAdventure(id, email);
+    }
+
     @GetMapping(GET_ADVENTURES)
-    public ResponseEntity<PageDto<AdventureDto>> getAdventuresWithPaginationAndSort(
+    public ResponseEntity<PageDto<AdventuresForMenuDto>> getAdventuresWithPaginationAndSort(
             @RequestParam Integer page, @RequestParam Integer pageSize, @RequestParam String field) {
         return adventureService.findAdventuresWithPaginationSortedByField(page, pageSize, field);
     }
@@ -80,6 +86,11 @@ public class RentalObjectController {
     @PostMapping(AVAILABILITY_PERIOD)
     public ResponseEntity<RentalObjectPeriodsDto> setPeriods(@RequestBody PeriodsSettingForm periodsSettingForm) {
         return rentalObjectService.setAvailabilityPeriods(periodsSettingForm.getId(), periodsSettingForm.getDates());
+    }
+
+    @PostMapping(ADD_SUBSCRIBER)
+    public ResponseEntity<Void> addSubscriber(@RequestBody addSubscriberDto asd) {
+        return rentalObjectService.addSubscriber(asd.getRentalId(), asd.getClientEmail());
     }
 
     @Data

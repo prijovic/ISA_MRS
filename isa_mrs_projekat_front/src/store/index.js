@@ -35,6 +35,9 @@ const store = createStore({
         rentalType: (state) => {
             return state.rentalType;
         },
+        grade: (state) => {
+            return state.grade;
+        },
         isSuperAdmin: (state) => {
             return state.isSuperAdmin;
         },
@@ -61,6 +64,9 @@ const store = createStore({
         rentalType(context, rentalType) {
             context.commit("rentalType", rentalType);
         },
+        grade(context, grade) {
+            context.commit("grade", grade);
+        },
         isSuperAdmin(context, isSuperAdmin) {
             context.commit("isSuperAdmin", isSuperAdmin);
         },
@@ -86,6 +92,9 @@ const store = createStore({
         },
         rentalType(state, rentalType) {
             state.rentalType = rentalType;
+        },
+        grade(state, grade) {
+            state.grade = grade;
         },
         isSuperAdmin(state, isSuperAdmin) {
             state.isSuperAdmin = isSuperAdmin;

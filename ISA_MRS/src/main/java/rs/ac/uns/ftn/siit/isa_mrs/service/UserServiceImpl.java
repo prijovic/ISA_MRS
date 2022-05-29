@@ -55,6 +55,27 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public ResponseEntity<PageDto<UserDto>> getUsersPagination(int page, int pageSize) {
+        PageDto<UserDto> result = new PageDto<>();
+        try{
+            Pageable pageable = PageRequest.of(page, pageSize).withSort(Sort.by(Sort.Order.asc("name"), Sort.Order.asc("surname")));
+            Page<User> usersPage = userRepo.findAll(pageable);
+            Collection<UserDto> userDtos = new ArrayList<>();
+            usersPage.getContent().forEach(user -> {
+                userDtos.add(modelMapper.map(user, UserDto.class));
+            });
+            result.setContent(userDtos);
+            result.setPages(usersPage.getTotalPages());
+            result.setCurrentPage(usersPage.getNumber());
+            result.setPageSize(usersPage.getSize());
+            return new ResponseEntity<>(result, HttpStatus.OK);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
     public ResponseEntity<UserDto> updateUserPassword(String email, String oldPassword, String newPassword) {
         try {
             Optional<User> userOptional = userRepo.findByEmail(email);
