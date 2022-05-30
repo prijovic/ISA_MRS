@@ -75,17 +75,6 @@ public class VacationRentalServiceImpl implements VacationRentalService{
         }
     }
 
-    private PageDto<VacationRentalDto> packVacationRentals(Page<VacationRental> vacationRentalsPage) {
-        PageDto<VacationRentalDto> result = new PageDto<>();
-        Collection<VacationRentalDto> vacationRentalDtos = new ArrayList<>();
-        vacationRentalsPage.getContent().forEach(rentalObject -> vacationRentalDtos.add(mapVacationRentalsToDto(rentalObject)));
-        result.setContent(vacationRentalDtos);
-        result.setPages(vacationRentalsPage.getTotalPages());
-        result.setCurrentPage(vacationRentalsPage.getNumber());
-        result.setPageSize(vacationRentalsPage.getSize());
-        return result;
-    }
-
     @Override
     public ResponseEntity<PageDto<VacationRentalDto>> findVacationRentalsWithPaginationSortedByFieldAndFilteredByOwner(int offset, int pageSize, String field, String token) {
         JwtDecoder.DecodedToken decodedToken;
@@ -96,7 +85,7 @@ public class VacationRentalServiceImpl implements VacationRentalService{
         }
         try{
             Pageable pageable = PageRequest.of(offset, pageSize).withSort(Sort.by(field));
-            Page<VacationRental> vacationRentalsPage = vacationRentalRepo.findAllByRentalObjectTypeAndRentalObjectOwnerEmail(RentalObjectType.Adventure, decodedToken.getEmail(), pageable);
+            Page<VacationRental> vacationRentalsPage = vacationRentalRepo.findAllByRentalObjectTypeAndRentalObjectOwnerEmail(RentalObjectType.VacationRental, decodedToken.getEmail(), pageable);
             return new ResponseEntity<>(packVacationRentals(vacationRentalsPage), HttpStatus.OK);
         } catch (Exception e) {
             log.info(e.getMessage());
@@ -113,6 +102,17 @@ public class VacationRentalServiceImpl implements VacationRentalService{
             log.error(e.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    private PageDto<VacationRentalDto> packVacationRentals(Page<VacationRental> vacationRentalsPage) {
+        PageDto<VacationRentalDto> result = new PageDto<>();
+        Collection<VacationRentalDto> vacationRentalDtos = new ArrayList<>();
+        vacationRentalsPage.getContent().forEach(rentalObject -> vacationRentalDtos.add(mapVacationRentalsToDto(rentalObject)));
+        result.setContent(vacationRentalDtos);
+        result.setPages(vacationRentalsPage.getTotalPages());
+        result.setCurrentPage(vacationRentalsPage.getNumber());
+        result.setPageSize(vacationRentalsPage.getSize());
+        return result;
     }
 
     private VacationRentalDto mapVacationRentalsToDto(VacationRental vacationRental) {

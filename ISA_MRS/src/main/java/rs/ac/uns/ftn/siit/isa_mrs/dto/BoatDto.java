@@ -15,6 +15,9 @@ public class BoatDto implements Serializable {
     private Collection<PhotoDto> photos;
     private Integer capacity;
     private Double price;
+    private AddressDto address;
+    private Boolean isActive;
+    private Boolean isDeletable;
     private Collection<ConductRuleDto> conductRules;
     private RentalObjectOwnerDto rentalObjectOwner;
     private String type;

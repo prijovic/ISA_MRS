@@ -30,7 +30,7 @@
                   </div>
                 </div>
               </div>
-              <router-link to="/vacationRentalOwner/newCottage" class="btn btn-default mb-1 d-flex my-auto">
+              <router-link to="/boatOwner/newBoat" class="btn btn-default mb-1 d-flex my-auto">
                 <font-awesome-icon class="my-auto pe-2" icon="plus"></font-awesome-icon>
                 Create new
               </router-link>
@@ -49,7 +49,7 @@
               </tr>
               </thead>
               <tbody>
-              <tr class="p-1" v-for="(rentalObject, index) in this.cottages" :key="index" :class="index%2!==0?'odd':'even'">
+              <tr class="p-1" v-for="(rentalObject, index) in this.boats" :key="index" :class="index%2!==0?'odd':'even'">
                 <td class="col-1">
                   <img v-if="rentalObject.photos.length !== 0" :src="imageUrls[index]" style="height: 6vh;width: 6vh" class="img-fluid rounded border-1" alt="">
                   <font-awesome-icon v-else icon="user" class="img-fluid rounded border-1" style="height: 3vh"></font-awesome-icon>
@@ -68,7 +68,7 @@
                     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
                       <div class="modal-content">
                         <div class="modal-header">
-                          <h5 class="modal-title">Vacation Rental Profile</h5>
+                          <h5 class="modal-title">Boat Profile</h5>
                           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
@@ -94,6 +94,13 @@
                                           <input v-if="rentalObject.isActive" class="form-check-input" type="checkbox" checked disabled>
                                           <input v-else class="form-check-input" type="checkbox" disabled></h6>
                                         <h6>Capacity: <span style="color: black">{{rentalObject.capacity}}</span></h6>
+                                        <h6>Type: <span style="color: black">{{rentalObject.type}}</span></h6>
+                                        <h6>Length: <span style="color: black">{{rentalObject.length}}</span></h6>
+                                        <h6>Engine number: <span style="color: black">{{rentalObject.engineNumber}}</span></h6>
+                                        <h6>Engine power: <span style="color: black">{{rentalObject.enginePower}}</span></h6>
+                                        <h6>Max speed: <span style="color: black">{{rentalObject.maxSpeed}}</span></h6>
+                                        <h6>Fishing equipment: <span style="color: black">{{equipment(rentalObject.fishingEquipment)}}</span></h6>
+                                        <h6>Navigation equipment: <span style="color: black">{{equipment(rentalObject.navigationEquipment)}}</span></h6>
                                         <h6>Rules of Conduct:</h6>
                                         <table class="rounded">
                                           <thead style="background-color: transparent">
@@ -161,13 +168,13 @@ import {useStore} from "vuex";
 library.add(faAngleRight, faAngleLeft, faFrown, faAngleDoubleRight, faAngleDoubleLeft, faPlus);
 
 export default {
-  name: "AllCottagesView",
+  name: "AllBoatsView",
   components: {
     FontAwesomeIcon
   },
   data() {
     return {
-      cottages: [],
+      boats: [],
       totalPages: null,
       currentPage: 0,
       pageSize: 10,
@@ -177,7 +184,7 @@ export default {
   },
   mounted() {
     const store = useStore();
-    axios.get("/RentalObjects/getVacationRentalsOwner", {headers: {
+    axios.get("/RentalObjects/getBoatsOwner", {headers: {
         Authorization: "Bearer " + store.state.access_token,
       },
       params: {
@@ -186,13 +193,12 @@ export default {
         field: "name",
       }},
     ).then(response => {
-      this.cottages = response.data.content;
+      this.boats = response.data.content;
       this.currentPage = response.data.currentPage;
       this.totalPages = response.data.pages;
-      this.cottages.forEach(rentalObject => {
-        console.log(rentalObject.name);
+      this.boats.forEach(rentalObject => {
         if(rentalObject.photos.length > 0){
-          const index = this.cottages.indexOf(rentalObject);
+          const index = this.boats.indexOf(rentalObject);
           this.loadImage(rentalObject.photos[0].photo, index);
         }
       })
@@ -255,7 +261,7 @@ export default {
       this.refreshPage();
     },
     refreshPage() {
-      axios.get("/RentalObjects/getVacationRentalsOwner", {headers: {
+      axios.get("/RentalObjects/getBoatsOwner", {headers: {
           Authorization: "Bearer " + this.$store.getters.access_token,
         },
         params: {
@@ -265,12 +271,12 @@ export default {
         }
       })
           .then(response => {
-            this.cottages = response.data.content;
+            this.boats = response.data.content;
             this.currentPage = response.data.currentPage;
             this.totalPages = response.data.pages;
-            this.cottages.forEach(rentalObject => {
+            this.boats.forEach(rentalObject => {
               if (rentalObject.photos.length > 0) {
-                const index = this.cottages.indexOf(rentalObject);
+                const index = this.boats.indexOf(rentalObject);
                 this.loadImage(rentalObject.photos[0].photo, index);
               }
             })
@@ -329,6 +335,14 @@ export default {
         }
       });
       return negativeRules;
+    },
+    equipment(equipment) {
+      let result = "";
+      equipment.forEach(element => {
+        result += " " + element.name + ",";
+      })
+      result = result.slice(0, -1);
+      return result;
     }
   },
   computed: {
@@ -355,14 +369,14 @@ export default {
       let deleteMessage = "";
       let activateMessage = "";
       if (numberOfDeletedRentals > 1) {
-        deleteMessage = "Do you want to delete vacation rentals:";
+        deleteMessage = "Do you want to delete boats:";
       } else if (numberOfDeletedRentals === 1) {
-        deleteMessage = "Do you want to delete vacation rental:";
+        deleteMessage = "Do you want to delete boat:";
       }
       if (numberOfActivatedRentals > 1) {
-        activateMessage = "Do you want to activate vacation rentals:";
+        activateMessage = "Do you want to activate boats:";
       } else if (numberOfActivatedRentals === 1) {
-        activateMessage = "Do you want to activate vacation rental:";
+        activateMessage = "Do you want to activate boat:";
       }
       this.changedRentals.forEach(rentalObject => {
         if (!rentalObject.isActive) {

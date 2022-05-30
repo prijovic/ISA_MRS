@@ -521,12 +521,6 @@ input[type='text'], input[type='number'] {
   font-weight: 100;
 }
 
-.btn {
-  margin-top: 15px;
-  background-color: #378220;
-  color: #f7f7f2;
-}
-
 input::placeholder {
   color: grey;
   font-weight: 100;

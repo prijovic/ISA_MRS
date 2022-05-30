@@ -1,7 +1,7 @@
 <template>
   <div class="sidebar rounded-right" :style="{width:sidebarWidth}">
     <MenuLink to="/#" icon="home">Home</MenuLink>
-    <MenuLink to="/#" icon="ship">Boats</MenuLink>
+    <MenuLink to="/boatOwner/boats" icon="ship">Boats</MenuLink>
     <MenuLink to="/#" icon="circle-check">Reservations</MenuLink>
     <MenuLink to="/#" icon="comments">Reviews</MenuLink>
     <MenuLink to="/#" icon="calendar-days">Calendar</MenuLink>

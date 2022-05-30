@@ -21,6 +21,7 @@ import rs.ac.uns.ftn.siit.isa_mrs.dto.PhotoDto;
 import rs.ac.uns.ftn.siit.isa_mrs.model.*;
 import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.RentalObjectType;
 import rs.ac.uns.ftn.siit.isa_mrs.repository.*;
+import rs.ac.uns.ftn.siit.isa_mrs.security.JwtDecoder;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -41,6 +42,7 @@ public class BoatServiceImpl implements BoatService{
     private final CancellationFeeRepo cancellationFeeRepo;
     private final AdditionalServiceRepo additionalServiceRepo;
     private final ConductRuleRepo conductRuleRepo;
+    private final JwtDecoder jwtDecoder;
 
     @Override
     public ResponseEntity<BoatProfileDto> getBoat(Long id, String email) {
@@ -85,6 +87,54 @@ public class BoatServiceImpl implements BoatService{
         } catch (Exception e) {
             return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
         }
+    }
+
+    @Override
+    public ResponseEntity<PageDto<BoatDto>> findBoatsWithPaginationSortedByFieldAndFilteredByOwner(int offset, int pageSize, String field, String token) {
+        log.info("Uslo u servis");
+        JwtDecoder.DecodedToken decodedToken;
+        try {
+            decodedToken = jwtDecoder.decodeToken(token);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        try{
+            Pageable pageable = PageRequest.of(offset, pageSize).withSort(Sort.by(field));
+            Page<Boat> boatsPage = boatRepo.findAllByRentalObjectTypeAndRentalObjectOwnerEmail(RentalObjectType.Boat, decodedToken.getEmail(), pageable);
+            return new ResponseEntity<>(packBoats(boatsPage), HttpStatus.OK);
+        } catch (Exception e) {
+            log.info(e.getMessage());
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    public ResponseEntity<BoatDto> findBoat(Long id) {
+        try {
+            Boat boat = boatRepo.getById(id);
+            return new ResponseEntity<>(mapBoatsToDto(boat), HttpStatus.OK);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    private PageDto<BoatDto> packBoats(Page<Boat> boatsPage) {
+        PageDto<BoatDto> result = new PageDto<>();
+        Collection<BoatDto> boatDtos = new ArrayList<>();
+        boatsPage.getContent().forEach(rentalObject -> boatDtos.add(mapBoatsToDto(rentalObject)));
+        result.setContent(boatDtos);
+        result.setPages(boatsPage.getTotalPages());
+        result.setCurrentPage(boatsPage.getNumber());
+        result.setPageSize(boatsPage.getSize());
+        log.info(String.valueOf(result));
+        return result;
+    }
+
+    private BoatDto mapBoatsToDto(Boat boat) {
+        BoatDto boatDto = modelMapper.map(boat, BoatDto.class);
+        boatDto.setIsDeletable(boat.getReservations().size() == 0);
+        return boatDto;
     }
 
     private @NotNull BoatsForMenuDto setUpMenuDto(Boat boat) {

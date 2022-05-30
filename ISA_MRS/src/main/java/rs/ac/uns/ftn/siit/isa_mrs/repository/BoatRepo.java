@@ -11,4 +11,5 @@ import java.util.Optional;
 public interface BoatRepo extends JpaRepository<Boat, Long> {
     Optional<Boat> findById(Long id);
     Page<Boat> findByRentalObjectType(RentalObjectType rentalObjectType, Pageable pageble);
+    Page<Boat> findAllByRentalObjectTypeAndRentalObjectOwnerEmail(RentalObjectType rentalObjectType, String rentalObjectOwnerEmail, Pageable pageable);
 }

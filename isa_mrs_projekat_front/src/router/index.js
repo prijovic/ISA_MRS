@@ -30,6 +30,12 @@ import AdminRentalsView
     from "@/components/Administrator/AdminPage/components/AdminMainViews/AdminRentalsView";
 import ReservationsCalendarView from "@/components/RentalObjectOwner/ReservationsCalendarView";
 import AdventureProfile from "@/components/GeneralComponents/AdventureProfile";
+import AllCottagesView
+    from "@/components/VacationRentalOwner/VacationRentalOwnerPage/components/AllCottagesView/AllCottagesView";
+import VacationRentalAdditionForm
+    from "@/components/VacationRentalOwner/VacationRentalOwnerPage/components/VacationRentalAdditionForm";
+import AllBoatsView from "@/components/BoatOwner/BoatOwnerPage/components/AllBoatsView/AllBoatsView";
+import BoatAdditionForm from "@/components/BoatOwner/BoatOwnerPage/components/BoatAdditionForm";
 
 
 const routes = [
@@ -279,6 +285,28 @@ const routes = [
         }
     },
     {
+        path: "/vacationRentalOwner/cottages",
+        name: "ViewCottages",
+        components: {
+            default: AllCottagesView,
+            sidebar: TheOwnerSidebar,
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
+        path: "/vacationRentalOwner/newCottage",
+        name: "NewVacationRental",
+        components: {
+            default: VacationRentalAdditionForm,
+            sidebar: TheOwnerSidebar,
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
         path: "/vacationRentalOwner/calendar",
         name: "VacationRentalOwnerReservations",
         components: {
@@ -305,6 +333,28 @@ const routes = [
         name: "BoatOwnerChangePassword",
         components: {
             default: PasswordChangeForm,
+            sidebar: TheBoatOwnerSidebar,
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
+        path: "/boatOwner/boats",
+        name: "ViewBoats",
+        components: {
+            default: AllBoatsView,
+            sidebar: TheBoatOwnerSidebar,
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
+        path: "/boatOwner/newBoat",
+        name: "NewBoat",
+        components: {
+            default: BoatAdditionForm,
             sidebar: TheBoatOwnerSidebar,
         },
         meta: {

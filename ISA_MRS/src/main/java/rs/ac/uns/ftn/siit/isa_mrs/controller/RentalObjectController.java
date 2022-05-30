@@ -3,8 +3,6 @@ package rs.ac.uns.ftn.siit.isa_mrs.controller;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.modelmapper.ModelMapper;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.AdventureDto;
@@ -22,10 +20,7 @@ import rs.ac.uns.ftn.siit.isa_mrs.dto.PageDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.VacationRentalDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.RentalObjectPeriodsDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.*;
-import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.AddVacationRentalDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.IdListWrapperClass;
-import rs.ac.uns.ftn.siit.isa_mrs.exception.RentalNotFound;
-import rs.ac.uns.ftn.siit.isa_mrs.model.Boat;
 import rs.ac.uns.ftn.siit.isa_mrs.service.AdventureService;
 import rs.ac.uns.ftn.siit.isa_mrs.service.BoatService;
 import rs.ac.uns.ftn.siit.isa_mrs.service.RentalObjectService;
@@ -92,9 +87,11 @@ public class RentalObjectController {
         return boatService.findBoatsWithPaginationSortedByField(page, pageSize, field);
     }
 
-    @GetMapping(GET_ADVENTURE)
-    public ResponseEntity<AdventureProfileDto> getAdventure(@RequestParam Long id, @RequestParam String email) {
-        return adventureService.getAdventure(id, email);
+    @GetMapping(GET_BOATS + "Owner")
+    public ResponseEntity<PageDto<BoatDto>> getBoatsForOwner(
+            @RequestParam Integer page, @RequestParam Integer pageSize, @RequestParam String field, HttpServletRequest request){
+        log.info("Uslo u kontroler");
+        return boatService.findBoatsWithPaginationSortedByFieldAndFilteredByOwner(page, pageSize, field, request.getHeader(AUTHORIZATION));
     }
 
     @GetMapping(GET_ADVENTURES)
