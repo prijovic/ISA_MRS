@@ -2,6 +2,7 @@ package rs.ac.uns.ftn.siit.isa_mrs.dto;
 
 import lombok.Data;
 import rs.ac.uns.ftn.siit.isa_mrs.model.AdditionalService;
+import rs.ac.uns.ftn.siit.isa_mrs.model.RentalObjectOwner;
 import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.RentalObjectType;
 
 import java.io.Serializable;
@@ -18,6 +19,9 @@ public class AdventureDto implements Serializable {
     private Integer capacity;
     private Double price;
     private AddressDto address;
+    private Boolean isActive;
+    private Boolean isDeletable;
+    private RentalObjectOwnerDto rentalObjectOwner;
     private Collection<ConductRuleDto> conductRules;
     private Collection<AdventureEquipmentDto> adventureEquipment;
     private Collection<AdditionalServiceDto> additionalServices;

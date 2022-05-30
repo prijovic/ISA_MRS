@@ -102,8 +102,13 @@ public class RentalObjectController {
     @GetMapping(GET_ADVENTURES + "Instructor")
     public ResponseEntity<PageDto<AdventureDto>> getAdventuresForInstructor(
             @RequestParam Integer page, @RequestParam Integer pageSize,
-            @RequestParam String field, @RequestParam String email) {
-        return adventureService.findAdventuresWithPaginationSortedByFieldAndFilteredByOwner(page, pageSize, field, email);
+            @RequestParam String field, HttpServletRequest request) {
+        return adventureService.findAdventuresWithPaginationSortedByFieldAndFilteredByOwner(page, pageSize, field, request.getHeader(AUTHORIZATION));
+    }
+
+    @GetMapping("/getAdventure")
+    public ResponseEntity<AdventureDto> getAdventure(@RequestParam Long id) {
+        return adventureService.findAdventure(id);
     }
 
     @PostMapping(AVAILABILITY_PERIOD)
