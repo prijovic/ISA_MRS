@@ -7,7 +7,7 @@ import FishingInstructorPage from "@/components/FishingInstructor/FishingInstruc
 import AccountDeletionForm from "@/components/GeneralComponents/UserAccountForms/AccountDeletionForm";
 import TheUnregisteredUserSidebar from "@/components/UnregisteredUser/TheUnregisteredUserSidebar";
 import store from "@/store";
-import TheFishingInstructorSidebar from "@/components/FishingInstructor/FishingInstructorPage/components/TheFishingInstructorSidebar/TheFishingInstructorSidebar";
+import TheFishingInstructorSidebar from "@/components/FishingInstructor/FishingInstructorPage/components/TheFishingInstructorSidebar";
 import OwnerContentPage from "@/components/VacationRentalOwner/VacationRentalOwnerPage/components/OwnerContentPage/OwnerContentPage";
 import TheOwnerSidebar from "@/components/VacationRentalOwner/VacationRentalOwnerPage/components/TheOwnerSidebar/TheOwnerSidebar";
 import BoatOwnerContentPage from "@/components/BoatOwner/BoatOwnerPage/components/BoatOwnerMainView/BoatOwnerContentPage";
@@ -261,11 +261,22 @@ const routes = [
         }
     },
     {
-        path: "/fishingInstructor/adventure",
+        path: "/fishingInstructor/:type-:id",
         name: "FishingInstructorAdventure",
         components: {
-            default: FishingInstructorAdventureProfileView,
+            default: RentalProfile,
             sidebar: TheFishingInstructorSidebar
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
+        path: "/fishingInstructor/calendar",
+        name: "FishingInstructorCalendar",
+        components: {
+            default: ReservationsCalendarView,
+            sidebar: TheOwnerSidebar,
         },
         meta: {
             public: false
