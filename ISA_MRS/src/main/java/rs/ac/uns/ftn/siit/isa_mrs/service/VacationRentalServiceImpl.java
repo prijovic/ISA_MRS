@@ -20,6 +20,7 @@ import rs.ac.uns.ftn.siit.isa_mrs.dto.VacationRentalDto;
 import rs.ac.uns.ftn.siit.isa_mrs.model.*;
 import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.RentalObjectType;
 import rs.ac.uns.ftn.siit.isa_mrs.repository.*;
+import rs.ac.uns.ftn.siit.isa_mrs.security.JwtDecoder;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -40,16 +41,24 @@ public class VacationRentalServiceImpl implements VacationRentalService{
     private final RoomRepo roomRepo;
     private final ClientRepo clientRepo;
     private final RentalObjectServiceImpl rentalService;
+    private final JwtDecoder jwtDecoder;
 
     @Override
-    public ResponseEntity<VacationRentalProfileDto> getVacationRental(Long id, String email) {
+    public ResponseEntity<VacationRentalProfileDto> getVacationRental(Long id, int page, int pageSize, String token) {
         try{
+            JwtDecoder.DecodedToken decodedToken;
+            try {
+                decodedToken = jwtDecoder.decodeToken(token);
+            } catch (Exception e) {
+                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            }
             Optional<VacationRental> rental = vacationRentalRepo.findById(id);
             if(rental.isEmpty()) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             VacationRentalProfileDto rentalDto = modelMapper.map(rental, VacationRentalProfileDto.class);
             VacationRental vacationRental = rental.get();
-            rentalDto.setReviews(rentalService.getRentalReviews(vacationRental));
-            Optional<Client> optionalClient = clientRepo.findByEmail(email);
+            rentalDto.setReviews(rentalService.getRentalReviews(vacationRental, page, pageSize));
+            rentalDto.setGrade(rentalService.calculateRentalRating(vacationRental));
+            Optional<Client> optionalClient = clientRepo.findByEmail(decodedToken.getEmail());
             if(optionalClient.isPresent()){
                 Client client = optionalClient.get();
                 if(vacationRental.getSubscribers().contains(client)) rentalDto.setIsUserSubscribed(true);

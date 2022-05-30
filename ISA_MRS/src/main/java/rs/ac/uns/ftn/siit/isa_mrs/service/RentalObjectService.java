@@ -20,6 +20,8 @@ public interface RentalObjectService {
     ResponseEntity<Collection<RentalObjectDto>> changeRentalObjectsStatus(Collection<Long> ids);
     ResponseEntity<PageDto<RentalObjectDto>> getRentalObjects(int page, int pageSize, String filter);
     ResponseEntity<Void> addSubscriber(Long rentalId, String email);
+
+    PageDto<ReviewDto> getRentalReviews(RentalObject rental, int page, int pageSize);
+
     String calculateRentalRating(RentalObject rental);
-    Collection<ReviewDto> getRentalReviews(RentalObject rental);
 }

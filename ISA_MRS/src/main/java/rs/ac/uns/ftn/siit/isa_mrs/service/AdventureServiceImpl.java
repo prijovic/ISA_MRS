@@ -20,6 +20,7 @@ import rs.ac.uns.ftn.siit.isa_mrs.model.*;
 import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.RentalObjectType;
 import rs.ac.uns.ftn.siit.isa_mrs.repository.AdventureRepo;
 import rs.ac.uns.ftn.siit.isa_mrs.repository.ClientRepo;
+import rs.ac.uns.ftn.siit.isa_mrs.security.JwtDecoder;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -35,16 +36,23 @@ public class AdventureServiceImpl implements AdventureService{
     private final ModelMapper modelMapper;
     private final RentalObjectServiceImpl rentalService;
     private final ClientRepo clientRepo;
+    private final JwtDecoder jwtDecoder;
 
     @Override
-    public ResponseEntity<AdventureProfileDto> getAdventure(Long id, String email) {
+    public ResponseEntity<AdventureProfileDto> getAdventure(Long id, int page, int pageSize, String token) {
         try{
+            JwtDecoder.DecodedToken decodedToken;
+            try {
+                decodedToken = jwtDecoder.decodeToken(token);
+            } catch (Exception e) {
+                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            }
             Optional<Adventure> rental = adventureRepo.findById(id);
             if (rental.isEmpty()) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             AdventureProfileDto adventureDto = modelMapper.map(rental, AdventureProfileDto.class);
             Adventure adventure = rental.get();
-            adventureDto.setReviews(rentalService.getRentalReviews(adventure));
-            Optional<Client> optionalClient = clientRepo.findByEmail(email);
+            adventureDto.setReviews(rentalService.getRentalReviews(adventure, page, pageSize));
+            Optional<Client> optionalClient = clientRepo.findByEmail(decodedToken.getEmail());
             if(optionalClient.isPresent()){
                 Client client = optionalClient.get();
                 if(adventure.getSubscribers().contains(client)) adventureDto.setIsUserSubscribed(true);

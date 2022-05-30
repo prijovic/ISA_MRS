@@ -7,5 +7,4 @@ import java.io.Serializable;
 @Data
 public class addSubscriberDto implements Serializable {
     private Long rentalId;
-    private String clientEmail;
 }

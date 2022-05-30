@@ -16,6 +16,12 @@
             </div>
           </div>
 
+          <div class="row mb-3">
+            <div class="col-12 d-flex justify-content-center align-items-center">
+              <star-rating v-model:rating="this.rentalObject.grade" text-class="h1 my-0 font-weight-normal" :read-only="true" :round-start-rating="false" :glow="5" glow-color="#ffd055"></star-rating>
+            </div>
+          </div>
+
           <div v-if="isVacationRental" class="row main mb-3">
             <div class="col main d-flex justify-content-center" title="Capacity">
               <p class="display-5">
@@ -85,7 +91,62 @@
             <RentalDescription :description="this.rentalObject.description"/>
             <RentalTags :additional-services="this.rentalObject.additionalServices"/>
             <RentalRules :conduct-rules="this.rentalObject.conductRules"/>
-            <RentalReviews :reviews="this.rentalObject.reviews"/>
+
+
+<!--            <RentalReviews :reviews-page="reviews" @reload="reloadReviews"/>-->
+
+            <div class="row main">
+              <div class="accordion accordion-flush" id="accordionFlushExample">
+                <div class="accordion-item">
+                  <h2 class="accordion-header" id="flush-headingTwo" style="border: 1px solid black;">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#flush-collapseTwo" aria-expanded="false" aria-controls="flush-collapseTwo">
+                      <p class="h3"><strong>Reviews</strong></p>
+                    </button>
+                  </h2>
+                  <div id="flush-collapseTwo" class="accordion-collapse collapse show" aria-labelledby="flush-headingTwo">
+                    <div class="accordion-body p-2 pb-1">
+                      <div v-if="rentalHasReviews" class="reviews">
+                        <div v-for="(review, i) in reviews" :key="i" class="review p-2 mb-1">
+                          <div class="review-header">
+                            <div class="align-items-center" style="display:flex; justify-content: space-between; ">
+                              <div style="display: flex;">
+                                <img class="profile-pic rounded-pill" :src="'https://bootdey.com/img/Content/avatar/avatar3.png'" alt=""/>
+                                <div class="ms-1">
+                                  <h6>{{ getAuthorFullName(review) }}</h6>
+                                  <p class="small" style="color: gray;">{{ formatReviewDate(review.timeStamp) }}</p>
+                                </div>
+                              </div>
+                              <p class="h3 pe-2">{{ review.grade + "★" }}</p>
+                            </div>
+                          </div>
+                          <div class="review-body" style="text-align: justify; color: black;">
+                            <p class="ps-1 pe-2">{{ review.comment }}</p>
+                          </div>
+                        </div>
+                        <nav aria-label="Page navigation">
+                          <ul class="pagination justify-content-center mt-3">
+                            <li class="page-item" v-if="totalPages > 1"><button class="page-link" :disabled="currentPage===0" @click="previousPage">Previous</button></li>
+                            <li class="page-item mt-auto me-1 ms-1" v-if="currentPage > 1 && totalPages > 3">...</li>
+                            <li class="page-item"><button class="page-link" :disabled="currentPage === 0" @click="numberedPage(1)">{{button1Content}}</button></li>
+                            <li class="page-item" v-if="totalPages > 1"><button class="page-link" :disabled="currentPage !== 0 && totalPages - currentPage > 1" @click="numberedPage(2)">{{button2Content}}</button></li>
+                            <li class="page-item" v-if="totalPages > 2"><button class="page-link" :disabled="totalPages - currentPage === 1" @click="numberedPage(3)">{{button3Content}}</button></li>
+                            <li class="page-item mt-auto me-1 ms-1" v-if="totalPages - currentPage > 1 && totalPages > 3 && button3Content !== totalPages">...</li>
+                            <li class="page-item" v-if="totalPages > 1"><button class="page-link" :disabled="totalPages - currentPage === 1" @click="nextPage">Next</button></li>
+                          </ul>
+                        </nav>
+
+                      </div>
+                      <div v-else class="text-center">
+                        <label><i>No reviews available.</i></label>
+                      </div>
+
+
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -152,11 +213,10 @@
       <div class="d-flex justify-content-center">
         <p class="h6" style="font-weight: 100;">
           Want to receive an email whenever there is a new special offer available?
-          <button v-if="!isUserSubscribed" v-bind:disabled="this.btnDisabled" @click="subscribe"
+          <button :disabled="isUserSubscribed" @click="subscribe"
                   type="button" class="subscribe ms-2 rounded" >
-            {{ this.btnText }}
+            {{ buttonText }}
           </button>
-          <button v-else disabled type="button" class="subscribe ms-2 rounded" >Subscribed!</button>
         </p>
       </div>
     </div>
@@ -177,7 +237,7 @@ import RentalDescription from "@/components/UnregisteredUser/components/RentalDe
 import RentalTags from "@/components/UnregisteredUser/components/RentalTags";
 import RentalAddress from "@/components/UnregisteredUser/components/RentalAddress";
 import RentalRules from "@/components/UnregisteredUser/components/RentalRules";
-import RentalReviews from "@/components/UnregisteredUser/components/RentalReviews";
+import StarRating from 'vue-star-rating';
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import {library} from "@fortawesome/fontawesome-svg-core";
 import {
@@ -206,18 +266,17 @@ library.add(faUserTie);
 
 export default {
   name: "RentalProfile",
-  components: {RentalRules, RentalAddress, RentalTags, RentalDescription, ImageSlider, RentalReviews, FontAwesomeIcon},
+  components: {RentalRules, RentalAddress, RentalTags, RentalDescription, ImageSlider, FontAwesomeIcon, StarRating},
   data() {
     return {
       rentalObject: null,
-      btnText: "Subscribe",
-      btnDisabled: false,
-      email: null
+      currentPage: 0,
+      totalPages: null,
+      pageSize: 2,
     }
   },
   mounted() {
     const store = useStore();
-    this.email = store.state.email;
     if(this.$route.params.type === "Boat") {
       axios.get("/RentalObjects/getBoat", {
         headers: {
@@ -225,11 +284,14 @@ export default {
         },
         params: {
           id: this.$route.params.id,
-          email: this.email,
+          page: this.currentPage,
+          pageSize: this.pageSize
         }
       })
       .then((response) => {
         this.rentalObject = response.data;
+        this.currentPage = this.rentalObject.reviews.currentPage;
+        this.totalPages = this.rentalObject.reviews.pages;
       });
     }
     else if(this.$route.params.type === "Adventure") {
@@ -239,11 +301,14 @@ export default {
         },
         params: {
           id: this.$route.params.id,
-          email: this.email,
+          page: this.currentPage,
+          pageSize: this.pageSize
         }
       })
       .then((response) => {
         this.rentalObject = response.data;
+        this.currentPage = this.rentalObject.reviews.currentPage;
+        this.totalPages = this.rentalObject.reviews.pages;
       });
     }
     else {
@@ -253,16 +318,24 @@ export default {
         },
         params: {
           id: this.$route.params.id,
-          email: this.email,
+          page: this.currentPage,
+          pageSize: this.pageSize
         }
       })
       .then((response) => {
-        console.log("Usli smo na profil")
         this.rentalObject = response.data;
+        this.currentPage = this.rentalObject.reviews.currentPage;
+        this.totalPages = this.rentalObject.reviews.pages;
       });
     }
   },
   computed: {
+    buttonText() {
+      return this.isUserSubscribed ? "Subscribed!" : "Subscribe";
+    },
+    reviews() {
+      return this.rentalObject.reviews.content;
+    },
     getNumberOfRooms() {
       return this.rentalObject.rooms.length;
     },
@@ -295,17 +368,81 @@ export default {
     getAccessToken() {
       return store.state.access_token;
     },
+    rentalHasReviews() {
+      return this.reviews.length > 0;
+    },
+    button1Content() {
+      return this.currentPage === 0 ? this.currentPage+1: this.totalPages - this.currentPage === 1 ? this.currentPage - 1 : this.currentPage;
+    },
+    button2Content() {
+      return this.currentPage === 0 ? this.currentPage+2: this.totalPages - this.currentPage === 1 ? this.currentPage : this.currentPage+1;
+    },
+    button3Content() {
+      return this.currentPage === 0 ? this.currentPage+3: this.totalPages - this.currentPage === 1 ? this.currentPage + 1 : this.currentPage+2;
+    }
   },
   methods: {
+    reloadReviews() {
+      if(this.$route.params.type === "Boat") {
+        axios.get("/RentalObjects/getBoat", {
+          headers: {
+            Authorization: "Bearer " + this.$store.getters.access_token
+          },
+          params: {
+            id: this.$route.params.id,
+            page: this.currentPage,
+            pageSize: this.pageSize
+          }
+        })
+            .then((response) => {
+              this.rentalObject = response.data;
+              this.currentPage = this.rentalObject.reviews.currentPage;
+              this.totalPages = this.rentalObject.reviews.pages;
+            });
+      }
+      else if(this.$route.params.type === "Adventure") {
+        axios.get("/RentalObjects/getAdventure", {
+          headers: {
+            Authorization: "Bearer " + this.$store.getters.access_token
+          },
+          params: {
+            id: this.$route.params.id,
+            page: this.currentPage,
+            pageSize: this.pageSize
+          }
+        })
+            .then((response) => {
+              this.rentalObject = response.data;
+              this.currentPage = this.rentalObject.reviews.currentPage;
+              this.totalPages = this.rentalObject.reviews.pages;
+            });
+      }
+      else {
+        axios.get("/RentalObjects/getVacationRental", {
+          headers: {
+            Authorization: "Bearer " + this.$store.getters.access_token
+          },
+          params: {
+            id: this.$route.params.id,
+            page: this.currentPage,
+            pageSize: this.pageSize
+          }
+        })
+            .then((response) => {
+              this.rentalObject = response.data;
+              this.currentPage = this.rentalObject.reviews.currentPage;
+              this.totalPages = this.rentalObject.reviews.pages;
+            });
+      }
+    },
     subscribe() {
-      axios.post("/RentalObjects/subscribe", { rentalId: this.rentalObject.id, clientEmail: this.email }, {
+      axios.post("/RentalObjects/subscribe", { rentalId: this.rentalObject.id }, {
         headers: {
           Authorization: "Bearer " + this.getAccessToken,
         },
       })
       .then(() => {
-        this.btnText = "Subscribed!";
-        this.btnDisabled = true;
+        this.rentalObject.isUserSubscribed = true;
       })
       .catch(error => {
         if (error.response.status === 404) {
@@ -339,7 +476,32 @@ export default {
     formatTimeStamp(time) {
       return time.slice(0, -3);
     },
-
+    getAuthorFullName(review) {
+      return review.author.name + " " + review.author.surname;
+    },
+    formatReviewDate(reviewTime) {
+      let date = new Date(reviewTime);
+      return date.getDate() + '.' + (date.getMonth() + 1) + '.' +  date.getFullYear() + '. at '
+          + date.getHours() + ':' + ( (date.getMinutes()<10?'0':'') + date.getMinutes() );
+    },
+    nextPage() {
+      this.currentPage += 1;
+      this.reloadReviews();
+    },
+    previousPage() {
+      this.currentPage -= 1;
+      this.reloadReviews();
+    },
+    numberedPage(buttonNumber) {
+      if (buttonNumber === 1) {
+        this.currentPage = this.button1Content - 1;
+      } else if (buttonNumber === 2) {
+        this.currentPage = this.button2Content - 1;
+      } else if (buttonNumber === 3) {
+        this.currentPage = this.button3Content - 1;
+      }
+      this.reloadReviews();
+    }
   },
 }
 </script>
@@ -390,7 +552,50 @@ button.subscribe {
   color: darkgray;
 }
 
+button.subscribe:disabled, button.subscribe[disabled] {
+  background-color:lightgray;
+  border: 2px solid darkgray;
+  color: darkgray;
+}
+
+button.subscribe:disabled:hover, button.subscribe[disabled]:hover, button.subscribe:disabled:active, button.subscribe[disabled]:active, button.subscribe:disabled:focus, button.subscribe[disabled]:focus {
+  background-color:lightgray;
+  border: 2px solid darkgray;
+  color: darkgray;
+}
+
 div.rentalBasicInfo {
   height: 60vh;
+}
+.review .profile-pic {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  object-position: center;
+}
+
+div.review {
+  border-radius: 25px;
+  border: 1px solid darkgray;
+}
+
+div.review:hover {
+  border: 3px solid black;
+}
+
+div.accordion-body {
+  max-height: 70vh;
+  overflow-y: auto;
+  background-color: lightgray;
+  border-bottom: 1px solid lightgrey;
+}
+
+.accordion-button:not(.collapsed) {
+  color: #008970;
+  background-color: #f7f7f2;
+}
+
+div.review {
+  background-color: white
 }
 </style>

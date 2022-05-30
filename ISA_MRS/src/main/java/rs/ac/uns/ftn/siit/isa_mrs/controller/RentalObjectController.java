@@ -30,10 +30,12 @@ import rs.ac.uns.ftn.siit.isa_mrs.service.BoatService;
 import rs.ac.uns.ftn.siit.isa_mrs.service.RentalObjectService;
 import rs.ac.uns.ftn.siit.isa_mrs.service.VacationRentalService;
 
+import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
 
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static rs.ac.uns.ftn.siit.isa_mrs.util.Paths.*;
 
 @RestController
@@ -62,8 +64,9 @@ public class RentalObjectController {
     }
 
     @GetMapping(GET_VACATION_RENTAL)
-    public ResponseEntity<VacationRentalProfileDto> getVacationRental(@RequestParam Long id, @RequestParam String email) {
-        return vacationRentalService.getVacationRental(id, email);
+    public ResponseEntity<VacationRentalProfileDto> getVacationRental(@RequestParam Long id, @RequestParam int page,
+                                                          @RequestParam int pageSize, HttpServletRequest request) {
+        return vacationRentalService.getVacationRental(id, page, pageSize, request.getHeader(AUTHORIZATION));
     }
 
     @GetMapping(GET_VACATION_RENTALS)
@@ -73,8 +76,9 @@ public class RentalObjectController {
     }
 
     @GetMapping(GET_BOAT)
-    public ResponseEntity<BoatProfileDto> getBoat(@RequestParam Long id, @RequestParam String email) {
-        return boatService.getBoat(id, email);
+    public ResponseEntity<BoatProfileDto> getBoat(@RequestParam Long id, @RequestParam int page,
+                                                  @RequestParam int pageSize, HttpServletRequest request) {
+        return boatService.getBoat(id, page, pageSize, request.getHeader(AUTHORIZATION));
     }
 
     @GetMapping(GET_BOATS)
@@ -84,8 +88,9 @@ public class RentalObjectController {
     }
 
     @GetMapping(GET_ADVENTURE)
-    public ResponseEntity<AdventureProfileDto> getAdventure(@RequestParam Long id, @RequestParam String email) {
-        return adventureService.getAdventure(id, email);
+    public ResponseEntity<AdventureProfileDto> getAdventure(@RequestParam Long id, @RequestParam int page,
+                                                            @RequestParam int pageSize, HttpServletRequest request) {
+        return adventureService.getAdventure(id, page, pageSize, request.getHeader(AUTHORIZATION));
     }
 
     @GetMapping(GET_ADVENTURES)
@@ -107,8 +112,8 @@ public class RentalObjectController {
     }
 
     @PostMapping(ADD_SUBSCRIBER)
-    public ResponseEntity<Void> addSubscriber(@RequestBody addSubscriberDto asd) {
-        return rentalObjectService.addSubscriber(asd.getRentalId(), asd.getClientEmail());
+    public ResponseEntity<Void> addSubscriber(@RequestBody addSubscriberDto asd, HttpServletRequest request) {
+        return rentalObjectService.addSubscriber(asd.getRentalId(), request.getHeader(AUTHORIZATION));
     }
 
     @Data

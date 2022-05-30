@@ -6,6 +6,6 @@ import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.RentalProfileDtos.BoatDtos.
 import rs.ac.uns.ftn.siit.isa_mrs.dto.PageDto;
 
 public interface BoatService {
-    ResponseEntity<BoatProfileDto> getBoat(Long id, String email);
+    ResponseEntity<BoatProfileDto> getBoat(Long id, int page, int pageSize, String token);
     ResponseEntity<PageDto<BoatsForMenuDto>> findBoatsWithPaginationSortedByField(int offset, int pageSize, String field);
 }

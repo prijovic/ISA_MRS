@@ -24,7 +24,6 @@ export default {
     const store = useStore();
     let type = this.$route.params.type;
     if(type === "Boat") {
-      console.log("Trazimo brodove od servera")
       axios.get("/RentalObjects/getBoats", {
         headers: {
           Authorization: "Bearer " + store.state.access_token,
@@ -39,7 +38,6 @@ export default {
       });
     }
     else if(type === "Adventure") {
-      console.log("Trazimo avanture od servera")
       axios.get("/RentalObjects/getAdventures", {
         headers: {
           Authorization: "Bearer " + store.state.access_token,
@@ -54,7 +52,6 @@ export default {
       });
     }
     else if(type === "VacationRental"){
-      console.log("Trazimo rentale od servera")
       axios.get("/RentalObjects/getVacationRentals", {
         headers: {
           Authorization: "Bearer " + store.state.access_token,
@@ -68,8 +65,6 @@ export default {
         this.rentalObjects = response.data.content;
       });
     }
-    console.log(this.rentalObject === "Boat")
-    console.log("Jel valja:" + this.rentalObject === "Boat");
   }
 }
 </script>

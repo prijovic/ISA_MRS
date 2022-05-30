@@ -25,7 +25,7 @@
 <script>
 
 import IncomeRateView
-  from "@/components/Administrator/AdminPage/components/AdminMainViews/AdminIncomeIncomeRateComponents/IncomeRateView";
+  from "@/components/Administrator/AdminPage/components/AdminMainViews/AdminIncomeRateComponents/IncomeRateView";
 export default {
   name: "AdminContentPage",
   components: {IncomeRateView},

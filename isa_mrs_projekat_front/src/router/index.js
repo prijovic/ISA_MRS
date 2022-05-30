@@ -16,7 +16,7 @@ import AdminRequestsView from "@/components/Administrator/AdminPage/components/A
 import InitView from "@/components/UnregisteredUser/InitView";
 import RegistrationPage from "@/components/UnregisteredUser/components/RegistrationPage";
 import IncomeRateChangeForm
-    from "@/components/Administrator/AdminPage/components/AdminMainViews/AdminIncomeIncomeRateComponents/IncomeRateChangeForm";
+    from "@/components/Administrator/AdminPage/components/AdminMainViews/AdminIncomeRateComponents/IncomeRateChangeForm";
 import FishingInstructorAdventuresView
     from "@/components/FishingInstructor/FishingInstructorPage/components/InstructorMainViews/InstructorAllAdventuresView/InstructorAllAdventuresView";
 import FishingInstructorAdventureProfileView
@@ -32,6 +32,8 @@ import AdminUsersView
 import AdminRentalsView
     from "@/components/Administrator/AdminPage/components/AdminMainViews/AdminRentalsView";
 import ReservationsCalendarView from "@/components/RentalObjectOwner/ReservationsCalendarView";
+import ClientReservationsHistory
+    from "@/components/Client/ClientPage/components/ClientProfile/ClientReservations/ClientReservationsHistory/ClientReservationsHistory";
 
 
 const routes = [
@@ -395,6 +397,17 @@ const routes = [
         name: "ClientProfile",
         components: {
             default: ClientProfile,
+            sidebar: ClientSidebar,
+        },
+        meta: {
+            public: false
+        },
+    },
+    {
+        path: "/client/ReservationsHistory",
+        name: "ClientReservationsHistory",
+        components: {
+            default: ClientReservationsHistory,
             sidebar: ClientSidebar,
         },
         meta: {

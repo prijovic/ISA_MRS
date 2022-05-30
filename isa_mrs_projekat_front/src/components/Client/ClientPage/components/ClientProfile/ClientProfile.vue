@@ -5,9 +5,15 @@
         <div class="row">
           <div class="col-lg-4" style="height: fit-content; display:block">
             <div class="card card-profile mb-4" >
-              <div class="card-header" style="background-image: url(https://i.pinimg.com/originals/a5/a8/e6/a5a8e6df82477b5064de60207cea6dd3.jpg);"> </div>
-              <div class="card-body text-center"><img class="card-profile-img" src="https://th.bing.com/th/id/R.aafb49c4c103a2cedaa573cfa520f396?rik=h%2frtPzBFQrLrEw&pid=ImgRaw&r=0" alt="Jassa Rich">
-                <p class="h3 mb-3">Tamara Volas</p>
+<!--              <div class="card-header"></div>-->
+              <div class="card-body text-center"><img class="card-profile-img"
+                  src="https://th.bing.com/th/id/R.aafb49c4c103a2cedaa573cfa520f396?rik=h%2frtPzBFQrLrEw&pid=ImgRaw&r=0" alt="Jassa Rich">
+                <div class="d-flex justify-content-center">
+                  <p class="h3">Tamara Volas</p>
+                  <router-link class="btn btn-default ms-2" to="">
+                    <font-awesome-icon class="h5" icon="pencil"></font-awesome-icon>
+                  </router-link>
+                </div>
                 <hr>
                 <div class="row text-start px-3">
                   <p class="h6">E-mail:&emsp;volastamara@gmail.com</p>
@@ -42,24 +48,24 @@
             <div class="row px-3 mb-2">
               <div class="card tabs pt-2 pb-1">
                 <ul class="nav justify-content-center">
-                  <li class="nav-item">
-                    <p class="h5">
-                      <button class="px-3" v-bind:style="{fontWeight:(vacationRentalsBtnClicked)?700:400}"
-                              @click="showVacationRentalsReservations()">Vacation rentals</button>
-                    </p>
-                  </li>
-                  <li class="nav-item">
-                    <p class="h5">
-                      <button class="px-3" v-bind:style="{fontWeight:(boatsBtnClicked)?700:400}"
-                              @click="showBoatsReservations">Boats</button>
-                    </p>
-                  </li>
-                  <li class="nav-item">
-                    <p class="h5">
-                      <button class="px-3" v-bind:style="{fontWeight:(adventuresBtnClicked)?700:400}"
-                              @click="showAdventuresReservations">Adventures</button>
-                    </p>
-                  </li>
+<!--                  <li class="nav-item">-->
+<!--                    <p class="h5">-->
+<!--                      <button class="px-3" v-bind:style="{fontWeight:(vacationRentalsBtnClicked)?700:400}"-->
+<!--                              @click="showVacationRentalsReservations()">Vacation rentals</button>-->
+<!--                    </p>-->
+<!--                  </li>-->
+<!--                  <li class="nav-item">-->
+<!--                    <p class="h5">-->
+<!--                      <button class="px-3" v-bind:style="{fontWeight:(boatsBtnClicked)?700:400}"-->
+<!--                              @click="showBoatsReservations">Boats</button>-->
+<!--                    </p>-->
+<!--                  </li>-->
+<!--                  <li class="nav-item">-->
+<!--                    <p class="h5">-->
+<!--                      <button class="px-3" v-bind:style="{fontWeight:(adventuresBtnClicked)?700:400}"-->
+<!--                              @click="showAdventuresReservations">Adventures</button>-->
+<!--                    </p>-->
+<!--                  </li>-->
                   <li class="nav-item">
                     <p class="h5">
                       <button class="px-3" v-bind:style="{fontWeight:(subscriptionsBtnClicked)?700:400}"
@@ -68,8 +74,8 @@
                   </li>
                   <li class="nav-item">
                     <p class="h5">
-                      <button class="px-3" v-bind:style="{fontWeight:(editProfileBtnClicked)?700:400}"
-                              @click="showEditingOptions">Edit profile</button>
+                      <button class="px-3" v-bind:style="{fontWeight:(upcomingBtnClicked)?700:400}"
+                              @click="showUpcomingReservations">Upcoming reservations</button>
                     </p>
                   </li>
                 </ul>
@@ -81,7 +87,7 @@
                 <ClientReservations></ClientReservations>
               </div>
               <div v-if="subscriptionsBtnClicked">Sub</div>
-              <div v-if="editProfileBtnClicked">Edit</div>
+              <div v-if="upcomingBtnClicked">Upcoming</div>
 <!--              <div class="card px-0 mb-2">-->
 <!--                <div class="card-header py-2">-->
 <!--                  <h4 class="card-heading">Upcoming</h4>-->
@@ -168,23 +174,26 @@
 </template>
 
 <script>
+import ClientReservations from "@/components/Client/ClientPage/components/ClientProfile/ClientReservations/ClientReservations";
+import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
+import {library} from "@fortawesome/fontawesome-svg-core";
+import {faPencil} from "@fortawesome/free-solid-svg-icons";
 
+library.add(faPencil);
 
-import ClientReservations
-  from "@/components/Client/ClientPage/components/ClientProfile/ClientReservations/ClientReservations";
 export default {
   name: "ClientProfile",
   data() {
     return {
-      rentalClicked: true,
-      vacationRentalsBtnClicked: true,
+      rentalClicked: false,
+      vacationRentalsBtnClicked: false,
       boatsBtnClicked: false,
       adventuresBtnClicked: false,
-      subscriptionsBtnClicked: false,
-      editProfileBtnClicked: false
+      subscriptionsBtnClicked: true,
+      upcomingBtnClicked: false
     }
   },
-  components: {ClientReservations},
+  components: {ClientReservations, FontAwesomeIcon},
   mounted() {
     // const store = useStore();
     // this.clientId = store.state.
@@ -197,7 +206,7 @@ export default {
       this.boatsBtnClicked = false;
       this.adventuresBtnClicked = false;
       this.subscriptionsBtnClicked = false;
-      this.editProfileBtnClicked = false;
+      this.upcomingBtnClicked = false;
     },
     showVacationRentalsReservations() {
       this.resetTabButtons();
@@ -218,15 +227,27 @@ export default {
       this.resetTabButtons();
       this.subscriptionsBtnClicked = true;
     },
-    showEditingOptions() {
+    showUpcomingReservations() {
       this.resetTabButtons();
-      this.editProfileBtnClicked = true;
+      this.upcomingBtnClicked = true;
     }
   }
 }
 </script>
 
 <style scoped>
+.btn-default {
+  cursor: pointer;
+  user-select: none;
+  color: #3f5b25;
+  text-decoration: none;
+  background-color: white;
+  border: none;
+}
+
+.btn-default:hover, .btn-default:active, .btn-default:focus {
+  border: 1px solid white;
+}
 div.tabs button {
   border: none;
   background-color: inherit;
@@ -296,15 +317,14 @@ a {
   cursor: pointer;
 }
 .card-profile-img {
-  position: relative;
-  margin-top: -12rem;
+  /*margin-top: -12rem;*/
   margin-bottom: 1rem;
   border: 3px solid #fff;
-  border-radius: 100%;
   box-shadow: 0 0.5rem 1rem rgb(0 0 0 / 15%);
   z-index: 2;
   width: 18rem;
   height: 18rem;
+  border-radius: 100%;
   object-fit: cover;
   object-position: center;
 }

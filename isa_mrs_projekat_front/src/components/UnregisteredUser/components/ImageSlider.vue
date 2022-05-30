@@ -7,7 +7,6 @@
       </ul>
       <div class="carousel-inner">
         <div v-for="(image, i) in photos" :key="i" :class="i === 0 ? 'carousel-item active' : 'carousel-item'">
-<!--          <ThePhoto class="d-block w-100" :photo="image.photo" alt=""/>-->
           <img class="d-block w-100" :src="imageUrls[i]" alt=""/>
         </div>
       </div>
