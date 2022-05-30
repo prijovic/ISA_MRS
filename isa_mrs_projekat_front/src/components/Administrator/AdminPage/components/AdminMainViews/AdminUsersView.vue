@@ -46,8 +46,8 @@
               <tbody>
                 <tr v-for="(user, index) in this.users" :key="index" :class="index%2!==0?'odd':'even'">
                   <td>
-                    <img v-if="user.photo !== null" src="" class="rounded-circle border-1" style="width: 3vh; height: 3vh" alt="">
-                    <font-awesome-icon v-else icon="user" class="rounded-circle border-1" style="width: 3vh; height: 3vh"></font-awesome-icon>
+                    <img v-if="user.photo !== null" :src="imageUrls[index]" style="height: calc(3vh + 10px);width: calc(3vh + 10px); object-fit: cover; object-position: center;" class="img-fluid rounded-circle p-0" alt="">
+                    <font-awesome-icon v-else icon="user" class="rounded-circle" style="width: 3vh; height: 3vh"></font-awesome-icon>
                   </td>
                   <td>
                     <router-link class="profile-link" :to="'/admin/user/' + user.id">{{user.name + " " + user.surname}}</router-link>
@@ -71,8 +71,8 @@
                               <div class="row">
                                 <div class="col me-lg-3 me-md-2">
                                   <div class="row text-center">
-                                    <img v-if="user.photo !== null" src="" class="img-fluid rounded p-0" alt="">
-                                    <font-awesome-icon icon="user" class="img-fluid rounded p-0" style="background-color: #B0B8B4FF; color: white"></font-awesome-icon>
+                                    <img v-if="user.photo !== null" :src="imageUrls[index]" class="img-fluid rounded p-0" alt="">
+                                    <font-awesome-icon v-else icon="user" class="img-fluid rounded p-0" style="background-color: #B0B8B4FF; color: white"></font-awesome-icon>
                                   </div>
                                 </div>
                                 <div class="col">
@@ -88,7 +88,7 @@
                                             <input v-else class="form-check-input" type="checkbox" disabled></h6>
                                           <h6>Email: <span style="color: black">{{user.email}}</span></h6>
                                           <h6>Phone: <span style="color: black">{{user.phone}}</span></h6>
-                                          <h6>Address: <span style="color: black">{{user.address.street + " " + user.address.number + ", " + user.address.city + ", " + user.address.country}}</span></h6>
+                                          <h6>Address: <span style="color: black">{{user.address.street + " " + (user.address.number?user.address.number:"") + ", " + user.address.city + ", " + user.address.country}}</span></h6>
                                         </div>
                                       </div>
                                     </div>
@@ -145,12 +145,29 @@ export default {
       selectedUser: null,
       selectedUsersRole: null,
       changedUsers: [],
+      imageUrls: [],
       currentPage: 0,
       totalPages: null,
       pageSize: 10
     }
   },
   methods: {
+    loadImage(name, index) {
+      axios.get("/Photos/", {headers: {
+          Authorization: "Bearer " + this.$store.getters.access_token,
+        },
+        params: {
+          path: name,
+        },
+        responseType: "blob"
+      })
+          .then(response => {
+            this.imageUrls[index] = URL.createObjectURL(response.data);
+          })
+          .catch((error) =>{
+            console.log(error);
+          });
+    },
     saveChanges() {
       let ids = this.changedUsersIds;
       let lwc = {list: ids};
@@ -235,12 +252,12 @@ export default {
           .then(response => {
             this.users = response.data.content;
             this.changedUsers.forEach(user =>
-              { this.users.forEach( user1 =>
-                { if (user.id === user1.id && user.isActive !== user1.isActive) {
-                  user1.isActive = user.isActive;
-                  }
-                });
+            { this.users.forEach( user1 =>
+              { if (user.id === user1.id && user.isActive !== user1.isActive) {
+                user1.isActive = user.isActive;
+                }
               });
+            });
             this.currentPage = response.data.currentPage;
             this.totalPages = response.data.pages;
           })
@@ -267,6 +284,15 @@ export default {
       this.users = response.data.content;
       this.currentPage = response.data.currentPage;
       this.totalPages = response.data.pages;
+      this.users.forEach(user => {
+        if (user.photo) {
+          console.log(user)
+          const index = this.users.indexOf(user);
+          console.log(index)
+          this.loadImage(user.photo, index);
+          console.log(this.imageUrls)
+        }
+      });
     })
     .catch(() =>{
       this.$notify({
