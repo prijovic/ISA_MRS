@@ -28,7 +28,7 @@
               </div>
               <router-link to="/admin/newUser" class="btn btn-default mb-1 d-flex my-auto">
                 <font-awesome-icon class="my-auto pe-2" icon="user-plus"></font-awesome-icon>
-                Create Admin
+                Create User
               </router-link>
             </div>
           </div>

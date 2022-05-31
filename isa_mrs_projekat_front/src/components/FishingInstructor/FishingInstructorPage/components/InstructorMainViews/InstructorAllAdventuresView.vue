@@ -5,31 +5,31 @@
       <div class="container-fluid pe-0 ps-0 me-0 ms-0">
         <div class="align-items-center">
           <div class="row main-col">
-            <div class="col d-flex justify-content-start ps-0 ms-0 me-0 pe-0">
-              <div class="col mb-1">
-                <div class="d-flex flex-row justify-content-end">
-                  <button v-if="hasChanged" class="btn btn-red mb-1 me-1" data-bs-toggle="modal" data-bs-target="#confirmationDialog">
-                    Save Changes
-                  </button>
-                </div>
-                <div class="modal fade" id="confirmationDialog" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                  <div class="modal-dialog">
-                    <div class="modal-content">
-                      <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">Rental Objects' Status Change</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                      </div>
-                      <div class="modal-body">
-                        {{modalMessage}}
-                      </div>
-                      <div class="modal-footer">
-                        <button type="button" class="btn btn-red" style="margin-right: 2vh;" data-bs-dismiss="modal">No</button>
-                        <button type="button" class="btn" @click="saveChanges" data-bs-dismiss="modal">Yes</button>
-                      </div>
+            <div class="col d-flex justify-content-end pe-0 me-0">
+              <button v-if="hasChanged" class="btn btn-red my-auto mb-1 me-1" data-bs-toggle="modal" data-bs-target="#confirmationDialog">
+                Save Changes
+              </button>
+              <div class="modal fade" id="confirmationDialog" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="exampleModalLabel">Users' Status Change</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                      {{modalMessage}}
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-red" style="margin-right: 2vh;" data-bs-dismiss="modal">No</button>
+                      <button type="button" class="btn" @click="saveChanges" data-bs-dismiss="modal">Yes</button>
                     </div>
                   </div>
                 </div>
               </div>
+              <router-link to="/fishingInstructor/newAdventure" class="btn btn-default mb-1 d-flex my-auto">
+                <font-awesome-icon class="my-auto pe-2" icon="plus"></font-awesome-icon>
+                Create Adventure
+              </router-link>
             </div>
           </div>
           <div class="row main-col text-center header rounded mb-3">
@@ -48,11 +48,11 @@
               <tbody>
               <tr class="p-1" v-for="(rentalObject, index) in this.adventures" :key="index" :class="index%2!==0?'odd':'even'">
                 <td class="col-1">
-                  <img v-if="rentalObject.photos.length !== 0" :src="imageUrls[index]" style="height: 6vh;width: 6vh" class="img-fluid rounded border-1" alt="">
-                  <font-awesome-icon v-else icon="user" class="img-fluid rounded border-1" style="height: 3vh"></font-awesome-icon>
+                  <img v-if="rentalObject.photos.length !== 0" :src="imageUrls[index]" style="height: 6vh;width: 6vh; object-fit: cover; object-position: center;" class="img-fluid rounded border-1" alt="">
+                  <font-awesome-icon v-else icon="mountain-sun" class="img-fluid rounded border-1" style="height: 3vh"></font-awesome-icon>
                 </td>
                 <td>
-                  <router-link class="profile-link" :to="'/fishingInstructor/adventure/' + rentalObject.id">{{rentalObject.name}}</router-link>
+                  <router-link class="profile-link" :to="'/fishingInstructor/Adventure/' + rentalObject.id">{{rentalObject.name}}</router-link>
                 </td>
                 <td>
                   {{rentalObject.address.city + ", " + rentalObject.address.country}}
@@ -89,7 +89,7 @@
                                       <div class="col text-start">
                                         <h6>Price: <span style="color: black">{{rentalObject.price}}$</span></h6>
                                         <h6>Description: <span style="color: black">{{rentalObject.description}}</span></h6>
-                                        <h6>Address: <span style="color: black">{{rentalObject.address.street + " " + rentalObject.address.number + ", " + rentalObject.address.city + ", " + rentalObject.address.country}}</span></h6>
+                                        <h6>Address: <span style="color: black">{{rentalObject.address.street +  (rentalObject.address.number ? " " + rentalObject.address.number:"") + ", " + rentalObject.address.city + ", " + rentalObject.address.country}}</span></h6>
                                         <h6>Activity:
                                           <input v-if="rentalObject.isActive" class="form-check-input" type="checkbox" checked disabled>
                                           <input v-else class="form-check-input" type="checkbox" disabled></h6>
@@ -154,11 +154,10 @@
 import axios from "axios";
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import {library} from "@fortawesome/fontawesome-svg-core";
-import {faAngleDoubleLeft, faAngleDoubleRight, faAngleLeft, faAngleRight, faFrown}
-  from "@fortawesome/free-solid-svg-icons";
+import {faPlus, faMountainSun} from "@fortawesome/free-solid-svg-icons";
 import {useStore} from "vuex";
 
-library.add(faAngleRight, faAngleLeft, faFrown, faAngleDoubleRight, faAngleDoubleLeft);
+library.add(faPlus, faMountainSun);
 
 export default {
   name: "AdventuresView",

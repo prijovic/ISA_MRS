@@ -15,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.*;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.RentalProfileDtos.AdventureDtos.AdventureProfileDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.RentalProfileDtos.AdventureDtos.AdventuresForMenuDto;
-import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.RentalProfileDtos.VacationRentalDtos.VacationRentalsForMenuDto;
 import rs.ac.uns.ftn.siit.isa_mrs.model.*;
 import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.RentalObjectType;
 import rs.ac.uns.ftn.siit.isa_mrs.repository.AdventureRepo;
@@ -31,17 +30,53 @@ import java.util.Optional;
 @Transactional
 @Slf4j
 public class AdventureServiceImpl implements AdventureService{
-
+    private final RentalObjectService rentalService;
     private final AdventureRepo adventureRepo;
     private final ModelMapper modelMapper;
+    private final ClientRepo clientRepo;
     private final JwtDecoder jwtDecoder;
 
     @Override
-    public ResponseEntity<PageDto<AdventureDto>> findAdventuresWithPaginationSortedByField(int offset, int pageSize, String field) {
+    public ResponseEntity<AdventureProfileDto> getAdventure(Long id, int page, int pageSize, String token) {
         try{
+            JwtDecoder.DecodedToken decodedToken;
+            try {
+                decodedToken = jwtDecoder.decodeToken(token);
+            } catch (Exception e) {
+                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            }
+            Optional<Adventure> rental = adventureRepo.findById(id);
+            if (rental.isEmpty()) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            AdventureProfileDto adventureDto = modelMapper.map(rental, AdventureProfileDto.class);
+            Adventure adventure = rental.get();
+            adventureDto.setReviews(rentalService.getRentalReviews(adventure, page, pageSize));
+            Optional<Client> optionalClient = clientRepo.findByEmail(decodedToken.getEmail());
+            if(optionalClient.isPresent()){
+                Client client = optionalClient.get();
+                if(adventure.getSubscribers().contains(client)) adventureDto.setIsUserSubscribed(true);
+            }
+            return new ResponseEntity<>(adventureDto, HttpStatus.OK);
+        }
+        catch (Exception e) {
+            log.error(e.getMessage());
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    public ResponseEntity<PageDto<AdventuresForMenuDto>> findAdventuresWithPaginationSortedByField(int offset, int pageSize, String field) {
+        try{
+            PageDto<AdventuresForMenuDto> result = new PageDto<>();
             Pageable pageable = PageRequest.of(offset, pageSize).withSort(Sort.by(field));
             Page<Adventure> adventuresPage = adventureRepo.findByRentalObjectType(RentalObjectType.Adventure, pageable);
-            return new ResponseEntity<>(packAdventures(adventuresPage), HttpStatus.OK);
+            Collection<AdventuresForMenuDto> adventureDtos = new ArrayList<>();
+            adventuresPage.getContent().forEach(adventure ->
+                    adventureDtos.add(setUpMenuDto(adventure)));
+            result.setContent(adventureDtos);
+            result.setPages(adventuresPage.getTotalPages());
+            result.setCurrentPage(adventuresPage.getNumber() + 1);
+            result.setPageSize(adventuresPage.getSize());
+            return new ResponseEntity<>(result, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
@@ -79,11 +114,12 @@ public class AdventureServiceImpl implements AdventureService{
     private @NotNull AdventuresForMenuDto setUpMenuDto(Adventure adventure) {
         AdventuresForMenuDto adventureDto = modelMapper.map(adventure, AdventuresForMenuDto.class);
         adventureDto.setGrade(rentalService.calculateRentalRating(adventure));
-        if(adventure.getPhotos().size() != 0) {
+        if (adventure.getPhotos().size() != 0) {
             Optional<Photo> photo = adventure.getPhotos().stream().findFirst();
             photo.ifPresent(value -> adventureDto.setDisplayPhoto(modelMapper.map(value, PhotoDto.class)));
         }
         return adventureDto;
+    }
 
     private PageDto<AdventureDto> packAdventures(Page<Adventure> adventuresPage) {
         PageDto<AdventureDto> result = new PageDto<>();

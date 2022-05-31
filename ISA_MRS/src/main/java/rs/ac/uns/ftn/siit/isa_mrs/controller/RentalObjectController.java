@@ -106,11 +106,6 @@ public class RentalObjectController {
         return adventureService.findAdventuresWithPaginationSortedByFieldAndFilteredByOwner(page, pageSize, field, request.getHeader(AUTHORIZATION));
     }
 
-    @GetMapping("/getAdventure")
-    public ResponseEntity<AdventureDto> getAdventure(@RequestParam Long id) {
-        return adventureService.findAdventure(id);
-    }
-
     @PostMapping(AVAILABILITY_PERIOD)
     public ResponseEntity<RentalObjectPeriodsDto> setPeriods(@RequestBody PeriodsSettingForm periodsSettingForm) {
         return rentalObjectService.setAvailabilityPeriods(periodsSettingForm.getId(), periodsSettingForm.getDates());
