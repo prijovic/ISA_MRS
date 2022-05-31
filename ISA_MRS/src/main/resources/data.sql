@@ -220,4 +220,89 @@ INSERT INTO test.review (id, comment, grade, review_type, time_stamp, author_id,
 VALUES (6, 'WOW', 1, 0, '2022-01-13 12:00:00', 3, 5);
 INSERT INTO test.review (id, comment, grade, review_type, time_stamp, author_id, reservation_id)
 VALUES (7, 'WOW', 1, 0, '2022-01-13 12:00:00', 3, 5);
-
+INSERT INTO rental_object (is_active, id, capacity, description, name, price, rental_object_type, address_id, cancellation_fee_id, rental_object_owner_id)
+VALUES (true, 4, 8, 'Each unit comes with a sofa, a seating area, a flat-screen TV with cable channels, a well-fitted kitchen, a safety deposit box and a private bathroom with a hairdryer. A dishwasher, a microwave and fridge are also featured.', 'Quartier Libre Saint Georges', 250, 2, 1, 1, 4);
+INSERT INTO photo (id, photo, rental_object_id) VALUES (19, 'ren2pic1', 4);
+INSERT INTO photo (id, photo, rental_object_id) VALUES (20, 'ren2pic2', 4);
+INSERT INTO conduct_rule (id, rule, type, rental_object_id) VALUES (18, 'Pets', 1, 4);
+INSERT INTO conduct_rule (id, rule, type, rental_object_id) VALUES (19, 'Noise after 10pm', 1, 4);
+INSERT INTO conduct_rule (id, rule, type, rental_object_id) VALUES (20, 'Smoking', 1, 4);
+INSERT INTO conduct_rule (id, rule, type, rental_object_id) VALUES (21, 'Using the pool', 0, 4);
+INSERT INTO conduct_rule (id, rule, type, rental_object_id) VALUES (22, 'Using the sauna', 0, 4);
+INSERT INTO room (id, beds, vacation_rental_id) VALUES (3, 3, 4);
+INSERT INTO room (id, beds, vacation_rental_id) VALUES (4, 2, 4);
+INSERT INTO room (id, beds, vacation_rental_id) VALUES (5, 2, 4);
+INSERT INTO vacation_rental (id, check_in, check_out) VALUES (2, '15:00', '12:00');
+INSERT INTO rental_object (is_active, id, capacity, description, name, price, rental_object_type, address_id, cancellation_fee_id, rental_object_owner_id)
+VALUES (true, 5, 11, '3 bedrooms, a seating area, a flat-screen TV with cable channels, a well-fitted kitchen, 2 bathrooms. A dishwasher, a microwave and fridge are also featured.', 'Darebell', 300, 2, 1, 1, 4);
+INSERT INTO photo (id, photo, rental_object_id) VALUES (21, 'ren3pic1', 5);
+INSERT INTO photo (id, photo, rental_object_id) VALUES (22, 'ren3pic2', 5);
+INSERT INTO photo (id, photo, rental_object_id) VALUES (23, 'ren3pic3', 5);
+INSERT INTO conduct_rule (id, rule, type, rental_object_id) VALUES (23, 'Pets', 0, 5);
+INSERT INTO conduct_rule (id, rule, type, rental_object_id) VALUES (24, 'Noise after 10pm', 1, 5);
+INSERT INTO conduct_rule (id, rule, type, rental_object_id) VALUES (25, 'Smoking', 1, 5);
+INSERT INTO room (id, beds, vacation_rental_id) VALUES (6, 3, 5);
+INSERT INTO room (id, beds, vacation_rental_id) VALUES (7, 2, 5);
+INSERT INTO room (id, beds, vacation_rental_id) VALUES (8, 2, 5);
+INSERT INTO vacation_rental (id, check_in, check_out) VALUES (3, '15:00', '12:00');
+INSERT INTO rental_object (is_active, id, capacity, description, name, price, rental_object_type, address_id, cancellation_fee_id, rental_object_owner_id)
+VALUES (true, 6, 8, 'The vacation rental has two bedrooms, one bathroom, bed linen, towels and satellite TV. It also features a dining area, a fully equipped kitchen and a patio with mountain views.', 'Royal', 230, 2, 1, 1, 4);
+INSERT INTO photo (id, photo, rental_object_id) VALUES (24, 'ren4pic1', 6);
+INSERT INTO photo (id, photo, rental_object_id) VALUES (25, 'ren4pic2', 6);
+INSERT INTO photo (id, photo, rental_object_id) VALUES (26, 'ren4pic3', 6);
+INSERT INTO conduct_rule (id, rule, type, rental_object_id) VALUES (26, 'Pets', 0, 6);
+INSERT INTO conduct_rule (id, rule, type, rental_object_id) VALUES (27, 'Noise after 11pm', 1, 6);
+INSERT INTO conduct_rule (id, rule, type, rental_object_id) VALUES (28, 'Smoking', 1, 6);
+INSERT INTO room (id, beds, vacation_rental_id) VALUES (9, 3, 6);
+INSERT INTO room (id, beds, vacation_rental_id) VALUES (10, 4, 6);
+INSERT INTO vacation_rental (id, check_in, check_out) VALUES (4, '16:00', '13:00');
+INSERT INTO rental_object (is_active, id, capacity, description, name, price, rental_object_type, address_id, cancellation_fee_id, rental_object_owner_id)
+VALUES (true, 7, 10, 'This apartment has 3 bedrooms, 1 bathroom, a flat-screen TV with satellite channels, a Blu-ray player and a DVD player. There is a seating area and a kitchen complete with a fridge and a toaster.', 'Star Hill', 250, 2, 1, 1, 4);
+INSERT INTO photo (id, photo, rental_object_id) VALUES (27, 'ren5pic1', 7);
+INSERT INTO photo (id, photo, rental_object_id) VALUES (28, 'ren5pic2', 7);
+INSERT INTO conduct_rule (id, rule, type, rental_object_id) VALUES (29, 'Pets', 0, 7);
+INSERT INTO conduct_rule (id, rule, type, rental_object_id) VALUES (30, 'Noise after 11pm', 1, 7);
+INSERT INTO conduct_rule (id, rule, type, rental_object_id) VALUES (31, 'Smoking', 1, 7);
+INSERT INTO conduct_rule (id, rule, type, rental_object_id) VALUES (32, 'Using the pool', 0, 7);
+INSERT INTO room (id, beds, vacation_rental_id) VALUES (11, 3, 7);
+INSERT INTO room (id, beds, vacation_rental_id) VALUES (12, 2, 7);
+INSERT INTO room (id, beds, vacation_rental_id) VALUES (13, 2, 7);
+INSERT INTO vacation_rental (id, check_in, check_out) VALUES (5, '14:00', '12:00');
+INSERT INTO rental_object (is_active, id, capacity, description, name, price, rental_object_type, address_id, cancellation_fee_id, rental_object_owner_id)
+VALUES (true, 8, 12, 'The apartment features 2 bedrooms, 2 bathrooms, a flat-screen TV with satellite channels, a dining area and a fully equipped kitchen. The apartment offers a childrens playground.', 'Millmary', 220, 2, 1, 1, 4);
+INSERT INTO photo (id, photo, rental_object_id) VALUES (29, 'ren6pic1', 8);
+INSERT INTO photo (id, photo, rental_object_id) VALUES (30, 'ren6pic2', 8);
+INSERT INTO photo (id, photo, rental_object_id) VALUES (31, 'ren6pic3', 8);
+INSERT INTO conduct_rule (id, rule, type, rental_object_id) VALUES (33, 'Pets', 1, 8);
+INSERT INTO conduct_rule (id, rule, type, rental_object_id) VALUES (34, 'Noise after 11pm', 1, 8);
+INSERT INTO conduct_rule (id, rule, type, rental_object_id) VALUES (35, 'Smoking', 1, 8);
+INSERT INTO conduct_rule (id, rule, type, rental_object_id) VALUES (36, 'Using the wellness-spa', 0, 8);
+INSERT INTO room (id, beds, vacation_rental_id) VALUES (14, 5, 8);
+INSERT INTO room (id, beds, vacation_rental_id) VALUES (15, 4, 8);
+INSERT INTO vacation_rental (id, check_in, check_out) VALUES (6, '15:00', '13:00');
+INSERT INTO rental_object (is_active, id, capacity, description, name, price, rental_object_type, address_id, cancellation_fee_id, rental_object_owner_id)
+VALUES (true, 9, 10, 'The vacation rental has three bedrooms, two bathrooms and satellite TV. It also features a dining area and a fully equipped kitchen. Guests of the vacation rental can use the sauna.', 'Holiday Home', 250, 2, 1, 1, 4);
+INSERT INTO photo (id, photo, rental_object_id) VALUES (32, 'ren7pic1', 9);
+INSERT INTO photo (id, photo, rental_object_id) VALUES (33, 'ren7pic2', 9);
+INSERT INTO photo (id, photo, rental_object_id) VALUES (34, 'ren7pic3', 9);
+INSERT INTO conduct_rule (id, rule, type, rental_object_id) VALUES (37, 'Pets', 0, 9);
+INSERT INTO conduct_rule (id, rule, type, rental_object_id) VALUES (38, 'Noise after 11pm', 1, 9);
+INSERT INTO conduct_rule (id, rule, type, rental_object_id) VALUES (39, 'Smoking', 1, 9);
+INSERT INTO conduct_rule (id, rule, type, rental_object_id) VALUES (40, 'Using the sauna', 0, 9);
+INSERT INTO room (id, beds, vacation_rental_id) VALUES (16, 3, 9);
+INSERT INTO room (id, beds, vacation_rental_id) VALUES (17, 4, 9);
+INSERT INTO room (id, beds, vacation_rental_id) VALUES (18, 2, 9);
+INSERT INTO vacation_rental (id, check_in, check_out) VALUES (7, '14:00', '12:00');
+INSERT INTO rental_object (is_active, id, capacity, description, name, price, rental_object_type, address_id, cancellation_fee_id, rental_object_owner_id)
+VALUES (true, 10, 10, 'The air-conditioned vacation rental features a balcony, 2 bathrooms, a seating area, a flat-screen TV with satellite channels and a dining area. There is a kitchen with a dishwasher, microwave and fridge.', 'Max Luxury', 250, 2, 1, 1, 4);
+INSERT INTO photo (id, photo, rental_object_id) VALUES (35, 'ren8pic1', 10);
+INSERT INTO photo (id, photo, rental_object_id) VALUES (36, 're8pic2', 10);
+INSERT INTO photo (id, photo, rental_object_id) VALUES (37, 'ren8pic3', 10);
+INSERT INTO conduct_rule (id, rule, type, rental_object_id) VALUES (41, 'Pets', 1, 10);
+INSERT INTO conduct_rule (id, rule, type, rental_object_id) VALUES (42, 'Noise after 11pm', 1, 10);
+INSERT INTO conduct_rule (id, rule, type, rental_object_id) VALUES (43, 'Smoking', 1, 10);
+INSERT INTO conduct_rule (id, rule, type, rental_object_id) VALUES (44, 'Using the pool', 0, 10);
+INSERT INTO room (id, beds, vacation_rental_id) VALUES (19, 3, 10);
+INSERT INTO room (id, beds, vacation_rental_id) VALUES (20, 2, 10);
+INSERT INTO room (id, beds, vacation_rental_id) VALUES (21, 2, 10);
+INSERT INTO vacation_rental (id, check_in, check_out) VALUES (8, '14:00', '12:00');
