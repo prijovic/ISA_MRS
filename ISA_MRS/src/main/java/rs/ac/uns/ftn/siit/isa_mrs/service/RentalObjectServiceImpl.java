@@ -11,21 +11,18 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.RentalProfileDtos.ReviewDtos.ReviewDto;
-import rs.ac.uns.ftn.siit.isa_mrs.dto.RentalObjectPeriodsDto;
-import rs.ac.uns.ftn.siit.isa_mrs.model.*;
-import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.ReviewType;
-import rs.ac.uns.ftn.siit.isa_mrs.repository.ClientRepo;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.PageDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.RentalObjectDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.RentalObjectPeriodsDto;
-import rs.ac.uns.ftn.siit.isa_mrs.dto.UserDto;
-import rs.ac.uns.ftn.siit.isa_mrs.model.RentalObject;
-import rs.ac.uns.ftn.siit.isa_mrs.model.TimePeriod;
-import rs.ac.uns.ftn.siit.isa_mrs.model.User;
 import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.RentalObjectType;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.RentalProfileDtos.ReviewDtos.ReviewDto;
+import rs.ac.uns.ftn.siit.isa_mrs.model.*;
+import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.ReviewType;
+import rs.ac.uns.ftn.siit.isa_mrs.repository.ClientRepo;
 import rs.ac.uns.ftn.siit.isa_mrs.repository.RentalObjectRepo;
+import rs.ac.uns.ftn.siit.isa_mrs.repository.ReviewRepo;
 import rs.ac.uns.ftn.siit.isa_mrs.repository.TimePeriodRepo;
+import rs.ac.uns.ftn.siit.isa_mrs.security.JwtDecoder;
 
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
@@ -41,6 +38,8 @@ public class RentalObjectServiceImpl implements RentalObjectService {
     private final TimePeriodRepo timePeriodRepo;
     private final ClientRepo clientRepo;
     private final ModelMapper modelMapper;
+    private final ReviewRepo reviewRepo;
+    private final JwtDecoder jwtDecoder;
 
     @Override
     public ResponseEntity<RentalObjectPeriodsDto> setAvailabilityPeriods(Long id, List<LocalDate> dates) {
@@ -95,6 +94,29 @@ public class RentalObjectServiceImpl implements RentalObjectService {
         }
     }
 
+    public ResponseEntity<Void> addSubscriber(Long rentalId, String token) {
+        try {
+            JwtDecoder.DecodedToken decodedToken;
+            try {
+                decodedToken = jwtDecoder.decodeToken(token);
+            } catch (Exception e) {
+                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            }
+            Optional<RentalObject> optionalRental = rentalObjectRepo.findById(rentalId);
+            Optional<Client> optionalClient = clientRepo.findByEmail(decodedToken.getEmail());
+            if(optionalRental.isEmpty() || optionalClient.isEmpty()) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            RentalObject rental = optionalRental.get();
+            Client client = optionalClient.get();
+            rental.getSubscribers().add(client);
+            client.getSubscriptions().add(rental);
+            rentalObjectRepo.save(rental);
+            clientRepo.save(client);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     @Override
     public ResponseEntity<PageDto<RentalObjectDto>> getRentalObjects(int page, int pageSize, String filter) {
         try{
@@ -124,6 +146,29 @@ public class RentalObjectServiceImpl implements RentalObjectService {
         return rentalObjectDto;
     }
 
+    @Override
+    public PageDto<ReviewDto> getRentalReviews(RentalObject rental, int page, int pageSize) {
+        PageDto<ReviewDto> result = new PageDto<>();
+        Collection<ReviewDto> reviewDtos = new ArrayList<>();
+        Pageable pageable = PageRequest.of(page, pageSize).withSort(Sort.by(Sort.Order.desc("timeStamp")));
+        Page<Review> reviewPage = reviewRepo.findAllByReservationRentalObjectAndAuthorIsActiveAndReviewType(rental, true,
+                ReviewType.RentalReview, pageable);
+        reviewPage.getContent().forEach(review -> reviewDtos.add(modelMapper.map(review, ReviewDto.class)));
+        result.setContent(reviewDtos);
+        result.setPages(reviewPage.getTotalPages());
+        result.setCurrentPage(reviewPage.getNumber());
+        result.setPageSize(reviewPage.getSize());
+        return result;
+    }
+
+    @Override
+    public String calculateRentalRating(@NotNull RentalObject rental) {
+        Collection<Reservation> reservations = rental.getReservations();
+        if(reservations.isEmpty()) return null;
+        double grade = getRentalGrade(reservations);
+        return gradeFormatting(grade);
+    }
+
     private List<TimePeriod> makePeriods(List<LocalDate> dates){
         List<TimePeriod> timePeriods = new ArrayList<>();
         dates.sort(Comparator.naturalOrder());
@@ -131,7 +176,7 @@ public class RentalObjectServiceImpl implements RentalObjectService {
             LocalDate start = dates.get(i);
             if (timePeriods.size()!=0 &&
                     (start.isBefore(timePeriods.get(timePeriods.size()-1).getTermDate()) ||
-                            start.isEqual(timePeriods.get(timePeriods.size()-1).getTermDate()))){
+                    start.isEqual(timePeriods.get(timePeriods.size()-1).getTermDate()))){
                 continue;
             }
             LocalDate end = dates.get(i);
@@ -151,47 +196,6 @@ public class RentalObjectServiceImpl implements RentalObjectService {
         return timePeriods;
     }
 
-    @Override
-    public ResponseEntity<Void> addSubscriber(Long rentalId, String clientEmail) {
-        try {
-            log.info("Dodajemo subskrajbera");
-            Optional<RentalObject> optionalRental = rentalObjectRepo.findById(rentalId);
-            Optional<Client> optionalClient = clientRepo.findByEmail(clientEmail);
-            if(optionalRental.isEmpty() || optionalClient.isEmpty()) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            RentalObject rental = optionalRental.get();
-            Client client = optionalClient.get();
-            rental.getSubscribers().add(client);
-            log.info("" + rental.getSubscribers());
-            client.getSubscriptions().add(rental);
-            log.info("" + client.getSubscriptions());
-            rentalObjectRepo.save(rental);
-            clientRepo.save(client);
-            return new ResponseEntity<>(HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    @Override
-    public Collection<ReviewDto> getRentalReviews(@NotNull RentalObject rental) {
-        Collection<ReviewDto> reviews = new ArrayList<>();
-        for(var reservation : rental.getReservations()) {
-            for(var review : reservation.getReviews()) {
-                if (review.getReviewType() == ReviewType.RentalReview && review.getAuthor().getIsActive())
-                    reviews.add(modelMapper.map(review, ReviewDto.class));
-            }
-        }
-        return reviews;
-    }
-
-    @Override
-    public String calculateRentalRating(@NotNull RentalObject rental) {
-        Collection<Reservation> reservations = rental.getReservations();
-        if(reservations.isEmpty()) return null;
-        double grade = getRentalGrade(reservations);
-        return gradeFormatting(grade);
-    }
-
     private String gradeFormatting(double grade) {
         DecimalFormat df = new DecimalFormat("#.##");
         df.setRoundingMode(RoundingMode.CEILING);
@@ -208,4 +212,5 @@ public class RentalObjectServiceImpl implements RentalObjectService {
         if(amountOfGrades == 0) return 0;
         return sumOfGrades/amountOfGrades;
     }
+
 }

@@ -31,5 +31,5 @@ public class BoatProfileDto implements Serializable {
     private Collection<NavigationEquipmentDto> navigationEquipment;
     private Collection<FishingEquipmentDto> fishingEquipment;
     private Boolean isUserSubscribed = false;
-    private Collection<ReviewDto> reviews;
+    private PageDto<ReviewDto> reviews;
 }

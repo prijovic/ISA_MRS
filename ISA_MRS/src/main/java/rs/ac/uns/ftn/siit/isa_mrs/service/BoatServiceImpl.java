@@ -22,6 +22,9 @@ import rs.ac.uns.ftn.siit.isa_mrs.model.*;
 import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.RentalObjectType;
 import rs.ac.uns.ftn.siit.isa_mrs.repository.*;
 import rs.ac.uns.ftn.siit.isa_mrs.security.JwtDecoder;
+import rs.ac.uns.ftn.siit.isa_mrs.repository.BoatRepo;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.RentalProfileDtos.BoatDtos.BoatProfileDto;
+import rs.ac.uns.ftn.siit.isa_mrs.repository.ClientRepo;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -45,14 +48,20 @@ public class BoatServiceImpl implements BoatService{
     private final JwtDecoder jwtDecoder;
 
     @Override
-    public ResponseEntity<BoatProfileDto> getBoat(Long id, String email) {
+    public ResponseEntity<BoatProfileDto> getBoat(Long id, int page, int pageSize, String token) {
         try{
+            JwtDecoder.DecodedToken decodedToken;
+            try {
+                decodedToken = jwtDecoder.decodeToken(token);
+            } catch (Exception e) {
+                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            }
             Optional<Boat> rental = boatRepo.findById(id);
             if (rental.isEmpty()) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             BoatProfileDto boatDto = modelMapper.map(rental, BoatProfileDto.class);
             Boat boat = rental.get();
-            boatDto.setReviews(rentalService.getRentalReviews(boat));
-            Optional<Client> optionalClient = clientRepo.findByEmail(email);
+            boatDto.setReviews(rentalService.getRentalReviews(boat, page, pageSize));
+            Optional<Client> optionalClient = clientRepo.findByEmail(decodedToken.getEmail());
             if(optionalClient.isPresent()){
                 Client client = optionalClient.get();
                 if(boat.getSubscribers().contains(client)) boatDto.setIsUserSubscribed(true);
@@ -147,7 +156,7 @@ public class BoatServiceImpl implements BoatService{
         return boatDto;
     }
 
-    @Override
+    /*@Override
     public ResponseEntity<BoatDto> addNewBoat(AddBoatDto boatDto) {
         log.info("Servis");
         Optional<RentalObjectOwner> owner = ownerRepo.findByEmail(boatDto.getBoatOwnerEmail());
@@ -241,6 +250,6 @@ public class BoatServiceImpl implements BoatService{
                 return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
-    }
+    }*/
 
 }

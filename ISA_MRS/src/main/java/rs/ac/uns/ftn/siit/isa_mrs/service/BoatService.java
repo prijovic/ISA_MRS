@@ -12,7 +12,7 @@ import rs.ac.uns.ftn.siit.isa_mrs.model.Boat;
 import java.util.Optional;
 
 public interface BoatService {
-    ResponseEntity<BoatProfileDto> getBoat(Long id, String email);
+    ResponseEntity<BoatProfileDto> getBoat(Long id, int page, int pageSize, String token);
     ResponseEntity<PageDto<BoatsForMenuDto>> findBoatsWithPaginationSortedByField(int offset, int pageSize, String field);
     ResponseEntity<PageDto<BoatDto>> findBoatsWithPaginationSortedByFieldAndFilteredByOwner(int offset, int pageSize,
                                                                                                       String field, String token);

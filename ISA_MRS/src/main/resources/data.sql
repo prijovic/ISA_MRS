@@ -1,10 +1,12 @@
 INSERT INTO address (id, country, city, street, number, latitude, longitude) VALUES (1, 'Srbija', 'Novi Sad', 'Ulica Miše Dimitrijevića', 41, 45.24398, 19.83099);
+INSERT INTO address (id, country, city, street, latitude, longitude) VALUES (2, 'Srbija', 'Novi Sad', 'Kamenjar', 45.226404014305615, 19.828552972620948);
+INSERT INTO address (id, country, city, street, latitude, longitude) VALUES (3, 'Srbija', 'Novi Sad', 'Ulica Karađorđeva', 45.16745243929628, 19.804060908894527);
 INSERT INTO users (id, email, is_active, name, password, phone, surname, address_id, user_type, first_login) VALUES (1, 'prijovic.uros13@gmail.com', true, 'Uros', 'Uros12345', '066430250', 'Prijovic', 1, 5, false);
 INSERT INTO admin (id) VALUES (1);
 INSERT INTO users (id, email, is_active, name, password, phone, surname, address_id, user_type, first_login) VALUES (2, 'prijovicu318@gmail.com', true, 'Uros', 'Uros12345', '066430250', 'Prijovic', 1, 0, false);
 INSERT INTO sale_participant (points, id) VALUES (0, 2);
 INSERT INTO rental_object_owner (id) VALUES (2);
-INSERT INTO users (id, email, is_active, name, password, phone, surname, address_id, user_type, first_login) VALUES (3, 'volastamara@gmail.com', 1, 'Tamara', 'kljucko', '6969696969', 'Volan', 1, 3, false);
+INSERT INTO users (id, email, is_active, name, password, phone, surname, address_id, user_type, first_login, photo) VALUES (3, 'volastamara@gmail.com', 1, 'Tamara', 'kljucko', '6969696969', 'Volan', 1, 3, false, 'kaoTamara');
 INSERT INTO sale_participant (points, id) VALUES (0, 3);
 INSERT INTO client (id) VALUES (3);
 INSERT INTO users (id, email, is_active, name, password, phone, surname, address_id, user_type, first_login) VALUES (4, 'saskat@gmail.com', true, 'Saska', 'Saska318', '066654398', 'Topalovic', 1, 1, false);
@@ -88,7 +90,7 @@ INSERT INTO room (id, beds, vacation_rental_id) VALUES (1, 5, 1);
 INSERT INTO room (id, beds, vacation_rental_id) VALUES (2, 2, 1);
 INSERT INTO vacation_rental (id, check_in, check_out) VALUES (1, '14:00', '12:00');
 INSERT INTO rental_object (is_active, id, capacity, description, name, price, rental_object_type, address_id, cancellation_fee_id, rental_object_owner_id)
-VALUES (true, 2, 20, 'Yacht that includes high-end finishes and features and the latest in modern performance technology. Geared towards fishing, water sports, or cruising with a sleeker design and more powerful motor for faster cruising speeds.', 'Exotic', 450, 0, 1, 1, 5);
+VALUES (true, 2, 20, 'Yacht that includes high-end finishes and features and the latest in modern performance technology. Geared towards fishing, water sports, or cruising with a sleeker design and more powerful motor for faster cruising speeds.', 'Exotic', 450, 0, 2, 1, 5);
 INSERT INTO photo (id, photo, rental_object_id) VALUES (9, 'boat1pic1', 2);
 INSERT INTO photo (id, photo, rental_object_id) VALUES (10, 'boat1pic2', 2);
 INSERT INTO photo (id, photo, rental_object_id) VALUES (11, 'boat1pic3', 2);
@@ -96,7 +98,6 @@ INSERT INTO photo (id, photo, rental_object_id) VALUES (12, 'boat1pic4', 2);
 INSERT INTO photo (id, photo, rental_object_id) VALUES (13, 'boat1pic5', 2);
 INSERT INTO photo (id, photo, rental_object_id) VALUES (14, 'boat1pic6', 2);
 INSERT INTO photo (id, photo, rental_object_id) VALUES (15, 'boat1pic7', 2);
-INSERT INTO photo (id, photo, rental_object_id) VALUES (16, 'boat1pic8', 2);
 INSERT INTO conduct_rule (id, rule, type, rental_object_id) VALUES (7, 'Pets', 1, 2);
 INSERT INTO conduct_rule (id, rule, type, rental_object_id) VALUES (8, 'Drugs', 1, 2);
 INSERT INTO conduct_rule (id, rule, type, rental_object_id) VALUES (9, 'Damaging property', 1, 2);
@@ -141,7 +142,7 @@ INSERT INTO fishing_equipment (id, boat_id) VALUES (16, 2);
 INSERT INTO fishing_equipment (id, boat_id) VALUES (17, 2);
 INSERT INTO fishing_equipment (id, boat_id) VALUES (18, 2);
 INSERT INTO rental_object (is_active, id, capacity, description, name, price, rental_object_type, address_id, cancellation_fee_id, rental_object_owner_id)
-VALUES (true, 3, 20, 'Mystic fishing adventure is very much on the arcade front of the fishing game spectrum. The grind is far too real though and whilst the quests are a nice touch. We''re promising to take you to exciting and exotic locations.', 'Mystic', 50, 1, 1, 1, 2);
+VALUES (true, 3, 20, 'Mystic fishing adventure is very much on the arcade front of the fishing game spectrum. The grind is far too real though and whilst the quests are a nice touch. We''re promising to take you to exciting and exotic locations.', 'Mystic', 50, 1, 3, 1, 2);
 INSERT INTO equipment (id, name) VALUES (19, 'Tent');
 INSERT INTO equipment (id, name) VALUES (20, 'Jerrycans');
 INSERT INTO equipment (id, name) VALUES (21, 'Heaters');
@@ -154,8 +155,8 @@ INSERT INTO adventure_equipment (id, adventure_id) VALUES (21, 3);
 INSERT INTO adventure_equipment (id, adventure_id) VALUES (22, 3);
 INSERT INTO adventure_equipment (id, adventure_id) VALUES (23, 3);
 INSERT INTO adventure_equipment (id, adventure_id) VALUES (24, 3);
-INSERT INTO photo (id, photo, rental_object_id) VALUES (17, 'adv1pic1', 3);
-INSERT INTO photo (id, photo, rental_object_id) VALUES (18, 'adv1pic2', 3);
+INSERT INTO photo (id, photo, rental_object_id) VALUES (16, 'adv1pic1', 3);
+INSERT INTO photo (id, photo, rental_object_id) VALUES (17, 'adv1pic2', 3);
 INSERT INTO conduct_rule (id, rule, type, rental_object_id) VALUES (13, 'Leaving the group', 1, 3);
 INSERT INTO conduct_rule (id, rule, type, rental_object_id) VALUES (14, 'Alcohol', 1, 2);
 INSERT INTO conduct_rule (id, rule, type, rental_object_id) VALUES (15, 'Damaging equipment', 1, 3);
@@ -202,3 +203,22 @@ INSERT INTO reservation (id, equipment_required, people, time_stamp, client_id, 
 (4, true, 2, '2022-05-25 12:34:05', 35, 1);
 INSERT INTO time_period (id, init_date, term_date, reservation_id) VALUES
 (5, '2022-12-28 12:00:00', '2022-12-30 12:00:00', 4);
+INSERT INTO test.reservation (id, equipment_required, people, time_stamp, client_id, rental_object_id)
+VALUES (5, true, 2, '2022-01-01 12:00:00', 3, 1);
+INSERT INTO time_period (id, init_date, term_date, reservation_id)
+VALUES (6, '2022-01-10 12:00:00', '2022-01-12 12:00:00', 5);
+INSERT INTO test.review (id, comment, grade, review_type, time_stamp, author_id, reservation_id)
+VALUES (1, 'WOW! This rental house is beautiful. All recommendations.', 5, 0, '2022-01-13 12:00:00', 3, 5);
+INSERT INTO test.review (id, comment, grade, review_type, time_stamp, author_id, reservation_id)
+VALUES (2, 'Everything is beautiful, but hygiene was not on an enviable level.', 2, 0, '2022-01-13 12:00:00', 3, 5);
+INSERT INTO test.review (id, comment, grade, review_type, time_stamp, author_id, reservation_id)
+VALUES (3, 'It\'s fine, nothing special.', 3, 0, '2022-01-13 12:00:00', 3, 5);
+INSERT INTO test.review (id, comment, grade, review_type, time_stamp, author_id, reservation_id)
+VALUES (4, 'Cool! Would come again.', 4, 0, '2022-01-13 12:00:00', 3, 5);
+INSERT INTO test.review (id, comment, grade, review_type, time_stamp, author_id, reservation_id)
+VALUES (5, 'Did\'t like combination of furniture because it was not like in photo.', 1, 0, '2022-01-13 12:00:00', 3, 5);
+INSERT INTO test.review (id, comment, grade, review_type, time_stamp, author_id, reservation_id)
+VALUES (6, 'Not satisfied...', 1, 0, '2022-01-13 12:00:00', 3, 5);
+INSERT INTO test.review (id, comment, grade, review_type, time_stamp, author_id, reservation_id)
+VALUES (7, 'Don\'t like the owner, so I give this for grade for the house.', 1, 0, '2022-01-13 12:00:00', 3, 5);
+

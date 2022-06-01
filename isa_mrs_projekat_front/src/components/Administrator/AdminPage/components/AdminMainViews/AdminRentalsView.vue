@@ -18,7 +18,7 @@
               </div>
               <div class="col mb-1">
                 <div class="d-flex flex-row justify-content-end">
-                  <button v-if="hasChanged" class="btn btn-red mb-1 me-1" data-bs-toggle="modal" data-bs-target="#confirmationDialog">
+                  <button v-if="hasChanged" class="btn btn-red me-1" data-bs-toggle="modal" data-bs-target="#confirmationDialog">
                     Save Changes
                   </button>
                 </div>
@@ -57,11 +57,11 @@
               <tbody>
               <tr class="p-1" v-for="(rentalObject, index) in this.rentalObjects" :key="index" :class="index%2!==0?'odd':'even'">
                 <td class="col-1">
-                  <img v-if="rentalObject.photos.length !== 0" :src="imageUrls[index]" style="height: 6vh;width: 6vh" class="img-fluid rounded border-1" alt="">
+                  <img v-if="rentalObject.photos.length !== 0" :src="imageUrls[index]" style="height: 6vh;width: 6vh; object-fit: cover; object-position: center;" class="img-fluid rounded border-1" alt="">
                   <font-awesome-icon v-else icon="user" class="img-fluid rounded border-1" style="height: 3vh"></font-awesome-icon>
                 </td>
                 <td>
-                  <router-link class="profile-link" to="#">{{rentalObject.name}}</router-link>
+                  <router-link class="profile-link" :to="'/admin/' + rentalObject.rentalObjectType + '-' + rentalObject.id">{{rentalObject.name}}</router-link>
                 </td>
                 <td>
                   <router-link class="profile-link" :to="'/admin/user/' + rentalObject.rentalObjectOwner.id">{{rentalObject.rentalObjectOwner.name + " " + rentalObject.rentalObjectOwner.surname}}</router-link>

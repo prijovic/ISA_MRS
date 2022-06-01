@@ -31,5 +31,6 @@ public class VacationRentalProfileDto implements Serializable {
     private LocalTime checkIn;
     private LocalTime checkOut;
     private Boolean isUserSubscribed = false;
-    private Collection<ReviewDto> reviews;
+    private PageDto<ReviewDto> reviews;
+    private String grade = null;
 }

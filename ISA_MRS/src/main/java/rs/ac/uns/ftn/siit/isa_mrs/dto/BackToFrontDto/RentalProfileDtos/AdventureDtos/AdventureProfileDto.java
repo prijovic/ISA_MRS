@@ -25,5 +25,5 @@ public class AdventureProfileDto implements Serializable {
     private Double duration;
     private Collection<AdventureEquipmentDto> adventureEquipment;
     private Boolean isUserSubscribed = false;
-    private Collection<ReviewDto> reviews;
+    private PageDto<ReviewDto> reviews;
 }
