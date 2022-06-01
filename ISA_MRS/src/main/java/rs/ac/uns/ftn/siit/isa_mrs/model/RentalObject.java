@@ -28,7 +28,7 @@ public class RentalObject {
     private Collection<Photo> photos = new LinkedHashSet<>();
     private Integer capacity;
     private Double price;
-    private Boolean isActive=true;
+    private Boolean isActive;
     @OneToMany(mappedBy = "rentalObject", cascade = CascadeType.ALL)
     private Collection<AdditionalService> additionalServices = new LinkedHashSet<>();
     @OneToMany(mappedBy = "rentalObject", cascade =  CascadeType.ALL)

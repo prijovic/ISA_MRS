@@ -19,7 +19,6 @@ import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.RentalProfileDtos.VacationR
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.RentalProfileDtos.VacationRentalDtos.VacationRentalsForMenuDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BoatDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.AddVacationRentalDto;
-import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.RentalPhotosDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.SubscribingDtos.addSubscriberDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.PageDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.VacationRentalDto;
@@ -103,18 +102,8 @@ public class RentalObjectController {
     @GetMapping(GET_ADVENTURES + "Instructor")
     public ResponseEntity<PageDto<AdventureDto>> getAdventuresForInstructor(
             @RequestParam Integer page, @RequestParam Integer pageSize,
-            @RequestParam String field, HttpServletRequest request) {
-        return adventureService.findAdventuresWithPaginationSortedByFieldAndFilteredByOwner(page, pageSize, field, request.getHeader(AUTHORIZATION));
-    }
-
-    @PostMapping("/addAdventure")
-    public ResponseEntity<AdventureDto> addAdventure(@RequestBody rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.AdventureDto adventure, HttpServletRequest request) {
-        return adventureService.addAdventure(adventure, request.getHeader(AUTHORIZATION));
-    }
-
-    @PostMapping("/connectPhotosToRental")
-    public ResponseEntity<AdventureDto> connectPhotosToRental(@RequestBody RentalPhotosDto dto) {
-        return adventureService.addAdventurePhotos(dto.getId(), dto.getPhotos());
+            @RequestParam String field, @RequestParam String email) {
+        return adventureService.findAdventuresWithPaginationSortedByFieldAndFilteredByOwner(page, pageSize, field, email);
     }
 
     @PostMapping(AVAILABILITY_PERIOD)
@@ -133,10 +122,10 @@ public class RentalObjectController {
         private List<LocalDate> dates;
     }
 
-//    @PostMapping(ADD_VACATION_RENTAL)
-//    public ResponseEntity<VacationRentalDto> addVacationRental(@RequestBody AddVacationRentalDto avrd){
-//        log.info("Kontroler");
-//        return vacationRentalService.addNewVacationRental(avrd);
-//    }
+    @PostMapping(ADD_VACATION_RENTAL)
+    public ResponseEntity<VacationRentalDto> addVacationRental(@RequestBody AddVacationRentalDto avrd){
+        log.info("Kontroler");
+        return vacationRentalService.addNewVacationRental(avrd);
+    }
 
 }

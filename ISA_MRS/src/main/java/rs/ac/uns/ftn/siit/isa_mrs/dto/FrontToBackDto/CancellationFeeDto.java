@@ -7,5 +7,6 @@ import java.io.Serializable;
 
 @Data
 public class CancellationFeeDto implements Serializable {
+    private FeeType feeType;
     private Double value;
 }

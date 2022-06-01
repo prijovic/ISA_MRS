@@ -51,7 +51,7 @@ export default {
   },
   computed: {
     getAddress() {
-      return this.address.street + (this.address.number? ' ' +this.address.number:"") + ', ' + this.address. city + ', ' + this.address.country
+      return this.address.street + ' ' + this.address.number + ', ' + this.address.city + ', ' + this.address.country;
     }
   }
 }

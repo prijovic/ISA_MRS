@@ -255,6 +255,7 @@ export default {
       }
     },
     makeRequest() {
+      console.log("SALJEM ZAHTEV");
       if (this.isAdmin) {
         axios.post("/Users/addUser", this.user, {
           headers: {
@@ -420,6 +421,7 @@ export default {
           .then(response => response.json())
           .then(data => {
             const responseView = data.Response.View;
+            console.log(responseView);
             if (responseView.length === 0) {
               this.addressIsValid = false;
             }

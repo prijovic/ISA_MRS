@@ -1,9 +1,9 @@
 <template>
   <div class="sidebar rounded-right" :style="{width:sidebarWidth}">
-    <MenuLink to="/fishingInstructor" icon="home">Home</MenuLink>
+    <MenuLink to="/#" icon="home">Home</MenuLink>
     <MenuLink to="/fishingInstructor/adventures" icon="mountain-sun">Adventures</MenuLink>
     <MenuLink to="/#" icon="book">Reservation History</MenuLink>
-    <MenuLink to="/fishingInstructor/calendar" icon="calendar">Calendar</MenuLink>
+    <MenuLink to="/#" icon="calendar">Calendar</MenuLink>
     <span class="collapse-icon" :class="{'rotate-180': collapsed}" @click="toggleSidebar">
       <font-awesome-icon icon="angle-double-left"></font-awesome-icon>
     </span>

@@ -3,11 +3,11 @@ import ProfileView from "@/components/GeneralComponents/UserAccountForms/Profile
 import TheAdminSidebar from "@/components/Administrator/AdminPage/TheAdminSidebar/TheAdminSidebar";
 import AdminDashboard from "@/components/Administrator/AdminPage/components/AdminMainViews/AdminDashboard";
 import PasswordChangeForm from "@/components/GeneralComponents/UserAccountForms/PasswordChangeForm";
-import FishingInstructorPage from "@/components/FishingInstructor/FishingInstructorPage/components/InstructorMainViews/FishingInstructorPage";
+import FishingInstructorPage from "@/components/FishingInstructor/FishingInstructorPage/FishingInstructorPage";
 import AccountDeletionForm from "@/components/GeneralComponents/UserAccountForms/AccountDeletionForm";
 import TheUnregisteredUserSidebar from "@/components/UnregisteredUser/TheUnregisteredUserSidebar";
 import store from "@/store";
-import TheFishingInstructorSidebar from "@/components/FishingInstructor/FishingInstructorPage/components/TheFishingInstructorSidebar";
+import TheFishingInstructorSidebar from "@/components/FishingInstructor/FishingInstructorPage/components/TheFishingInstructorSidebar/TheFishingInstructorSidebar";
 import OwnerContentPage from "@/components/VacationRentalOwner/VacationRentalOwnerPage/components/OwnerContentPage/OwnerContentPage";
 import TheOwnerSidebar from "@/components/VacationRentalOwner/VacationRentalOwnerPage/components/TheOwnerSidebar/TheOwnerSidebar";
 import BoatOwnerContentPage from "@/components/BoatOwner/BoatOwnerPage/components/BoatOwnerMainView/BoatOwnerContentPage";
@@ -18,7 +18,9 @@ import RegistrationPage from "@/components/UnregisteredUser/components/Registrat
 import IncomeRateChangeForm
     from "@/components/Administrator/AdminPage/components/AdminMainViews/AdminIncomeRateComponents/IncomeRateChangeForm";
 import FishingInstructorAdventuresView
-    from "@/components/FishingInstructor/FishingInstructorPage/components/InstructorMainViews/InstructorAllAdventuresView";
+    from "@/components/FishingInstructor/FishingInstructorPage/components/InstructorMainViews/InstructorAllAdventuresView/InstructorAllAdventuresView";
+import FishingInstructorAdventureProfileView
+    from "@/components/FishingInstructor/FishingInstructorPage/components/InstructorMainViews/InstructorAllAdventuresView/InstructorAdventureProfile/InstructorAdventureProfile";
 import CardMenu from "@/components/UnregisteredUser/components/CardMenu";
 // import ClientMainView from "@/components/Client/ClientPage/components/ClientMainView";
 import ClientSidebar from "@/components/Client/ClientPage/components/ClientSidebar/ClientSidebar";
@@ -32,9 +34,6 @@ import AdminRentalsView
 import ReservationsCalendarView from "@/components/RentalObjectOwner/ReservationsCalendarView";
 import ClientReservationsHistory
     from "@/components/Client/ClientPage/components/ClientProfile/ClientReservations/ClientReservationsHistory/ClientReservationsHistory";
-import AdventureCreationPage
-    from "@/components/FishingInstructor/FishingInstructorPage/components/InstructorMainViews/AdventureCreationPage";
-
 
 
 const routes = [
@@ -262,32 +261,10 @@ const routes = [
         }
     },
     {
-        path: "/fishingInstructor/:type/:id",
+        path: "/fishingInstructor/adventure",
         name: "FishingInstructorAdventure",
         components: {
-            default: RentalProfile,
-            sidebar: TheFishingInstructorSidebar
-        },
-        meta: {
-            public: false
-        }
-    },
-    {
-        path: "/fishingInstructor/calendar",
-        name: "FishingInstructorCalendar",
-        components: {
-            default: ReservationsCalendarView,
-            sidebar: TheFishingInstructorSidebar,
-        },
-        meta: {
-            public: false
-        }
-    },
-    {
-        path: "/fishingInstructor/newAdventure",
-        name: "AdventureAdding",
-        components: {
-            default: AdventureCreationPage,
+            default: FishingInstructorAdventureProfileView,
             sidebar: TheFishingInstructorSidebar
         },
         meta: {

@@ -48,7 +48,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         web.ignoring().antMatchers(HttpMethod.POST, REQUEST_CONTROLLER + SIGN_UP);
         web.ignoring().antMatchers(HttpMethod.PUT, USER_CONTROLLER + "/activate");
         web.ignoring().antMatchers(HttpMethod.POST, USER_CONTROLLER + "/resendVerification");
-        web.ignoring().antMatchers(HttpMethod.POST, PHOTO_CONTROLLER + "/upload");
         web.ignoring().antMatchers(HttpMethod.GET, "/", "/webjars/**", "/*.html", "/favicon.ico", "/**/*.html",
                 "/**/*.css", "/**/*.js");
     }

@@ -74,7 +74,7 @@
                     <font-awesome-icon class="text-decoration-underline" icon="eye"></font-awesome-icon>
                   </button>
                   <div class="modal fade" :id="'profileModal' + index" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+                    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
                       <div class="modal-content">
                         <div class="modal-header">
                           <h5 class="modal-title">{{rentalObjectType(rentalObject)}} Profile</h5>
@@ -146,6 +146,7 @@ import { library } from "@fortawesome/fontawesome-svg-core";
 import {faEye, faTrash, faFilter, faX} from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
 import {useStore} from "vuex";
+import store from "@/store";
 
 library.add(faEye, faTrash, faFilter, faX);
 
@@ -200,7 +201,7 @@ export default {
       axios.put("/RentalObjects/multipleRentalsStatusChange",
           lwc,
           {headers: {
-              Authorization: "Bearer " + this.$store.state.access_token,
+              Authorization: "Bearer " + store.state.access_token,
             }
           })
           .then((response) => {
@@ -268,10 +269,6 @@ export default {
     },
     previousPage() {
       this.currentPage -= 1;
-      this.refreshPage();
-    },
-    nextPage() {
-      this.currentPage += 1;
       this.refreshPage();
     },
     numberedPage(buttonNumber) {
