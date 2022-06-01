@@ -16,13 +16,16 @@ import rs.ac.uns.ftn.siit.isa_mrs.dto.*;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.RentalProfileDtos.AdventureDtos.AdventureProfileDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.RentalProfileDtos.AdventureDtos.AdventuresForMenuDto;
 import rs.ac.uns.ftn.siit.isa_mrs.model.*;
+import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.ConductType;
+import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.FeeType;
 import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.RentalObjectType;
-import rs.ac.uns.ftn.siit.isa_mrs.repository.AdventureRepo;
-import rs.ac.uns.ftn.siit.isa_mrs.repository.ClientRepo;
+import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.UserType;
+import rs.ac.uns.ftn.siit.isa_mrs.repository.*;
 import rs.ac.uns.ftn.siit.isa_mrs.security.JwtDecoder;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -30,11 +33,17 @@ import java.util.Optional;
 @Transactional
 @Slf4j
 public class AdventureServiceImpl implements AdventureService{
+    private final RentalObjectOwnerRepo rentalObjectOwnerRepo;
+    private final AdditionalServiceRepo additionalServiceRepo;
+    private final CancellationFeeRepo cancellationFeeRepo;
+    private final ConductRuleRepo conductRuleRepo;
     private final RentalObjectService rentalService;
     private final AdventureRepo adventureRepo;
+    private final AddressRepo addressRepo;
     private final ModelMapper modelMapper;
     private final ClientRepo clientRepo;
     private final JwtDecoder jwtDecoder;
+    private final PhotoRepo photoRepo;
 
     @Override
     public ResponseEntity<AdventureProfileDto> getAdventure(Long id, int page, int pageSize, String token) {
@@ -109,6 +118,95 @@ public class AdventureServiceImpl implements AdventureService{
             log.error(e.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @Override
+    public ResponseEntity<AdventureDto> addAdventure(rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.AdventureDto adventureDto, String token) {
+        try {
+            JwtDecoder.DecodedToken decodedToken;
+            try {
+                decodedToken = jwtDecoder.decodeToken(token);
+            } catch (Exception e) {
+                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            }
+            Optional<RentalObjectOwner> owner = rentalObjectOwnerRepo.findByEmail(decodedToken.getEmail());
+            if (owner.isEmpty() || !owner.get().getUserType().equals(UserType.Instructor)) {
+                return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+            }
+            Adventure newAdventure = adventureDtoToAdventure(adventureDto, owner.get());
+            AdventureDto result = modelMapper.map(newAdventure, AdventureDto.class);
+            return new ResponseEntity<>(result, HttpStatus.OK);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    public ResponseEntity<AdventureDto> addAdventurePhotos(Long id, List<String> photos) {
+        try {
+            Optional<Adventure> adventure = adventureRepo.findById(id);
+            if (adventure.isEmpty()) {
+                throw new Exception();
+            }
+            List<Photo> photoList = new ArrayList<>();
+            photos.forEach(photo -> {
+                Photo photo1 = new Photo();
+                photo1.setPhoto(photo);
+                photo1.setRentalObject(adventure.get());
+                photoRepo.save(photo1);
+                photoList.add(photo1);
+            });
+            Adventure adventure1 = adventure.get();
+            adventure1.setPhotos(photoList);
+            return new ResponseEntity<>(modelMapper.map(adventure1, AdventureDto.class), HttpStatus.OK);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    private Adventure adventureDtoToAdventure(rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.AdventureDto adventureDto, RentalObjectOwner owner) {
+        Adventure adventure = new Adventure();
+        List<AdditionalService> additionalServices = new ArrayList<>();
+        List<ConductRule> conductRules = new ArrayList<>();
+        adventureDto.getAdditionalServices().forEach(service -> {
+            AdditionalService additionalService = modelMapper.map(service, AdditionalService.class);
+            additionalServiceRepo.save(additionalService);
+            additionalServices.add(additionalService);
+        });
+        additionalServiceRepo.saveAll(additionalServices);
+        adventureDto.getConductRules().forEach(rule -> {
+            ConductRule conductRule = new ConductRule();
+            conductRule.setRule(rule.getRule());
+            conductRule.setType(ConductType.valueOf(rule.getType()));
+            conductRuleRepo.save(conductRule);
+            conductRules.add(conductRule);
+        });
+        CancellationFee cancellationFee = new CancellationFee();
+        cancellationFee.setValue(adventureDto.getCancellationFee().getValue());
+        if (cancellationFee.getValue() == 0 ) {
+            cancellationFee.setFeeType(FeeType.Free);
+        } else {
+            cancellationFee.setFeeType(FeeType.Percentile);
+        }
+        cancellationFeeRepo.save(cancellationFee);
+        Address address = modelMapper.map(adventureDto.getAddress(), Address.class);
+        addressRepo.save(address);
+        adventure.setName(adventureDto.getName());
+        adventure.setCancellationFee(cancellationFee);
+        adventure.setAddress(address);
+        adventure.setAdditionalServices(additionalServices);
+        adventure.setConductRules(conductRules);
+        adventure.setRentalObjectOwner(owner);
+        adventure.setRentalObjectType(RentalObjectType.Adventure);
+        adventure.setDescription(adventureDto.getDescription());
+        adventure.setCapacity(adventureDto.getCapacity());
+        adventure.setPrice(adventureDto.getPrice());
+        adventureRepo.save(adventure);
+        cancellationFee.setRentalObject(adventure);
+        cancellationFeeRepo.save(cancellationFee);
+        return adventure;
     }
 
     private @NotNull AdventuresForMenuDto setUpMenuDto(Adventure adventure) {

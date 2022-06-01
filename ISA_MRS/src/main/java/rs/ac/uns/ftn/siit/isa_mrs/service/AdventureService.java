@@ -8,6 +8,8 @@ import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.RentalProfileDtos.VacationR
 import rs.ac.uns.ftn.siit.isa_mrs.dto.PageDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.VacationRentalDto;
 
+import java.util.List;
+
 
 public interface AdventureService {
     ResponseEntity<AdventureProfileDto> getAdventure(Long id, int page, int pageSize, String token);
@@ -16,4 +18,7 @@ public interface AdventureService {
     ResponseEntity<PageDto<AdventureDto>> findAdventuresWithPaginationSortedByFieldAndFilteredByOwner(int offset, int pageSize,
                                                                                     String field, String token);
     ResponseEntity<AdventureDto> findAdventure(Long id);
+
+    ResponseEntity<AdventureDto> addAdventure(rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.AdventureDto adventureDto, String token);
+    ResponseEntity<AdventureDto> addAdventurePhotos(Long id, List<String> photos);
 }
