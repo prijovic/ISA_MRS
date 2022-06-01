@@ -17,5 +17,5 @@ public interface BoatService {
     ResponseEntity<PageDto<BoatDto>> findBoatsWithPaginationSortedByFieldAndFilteredByOwner(int offset, int pageSize,
                                                                                                       String field, String token);
     ResponseEntity<BoatDto> findBoat(Long id);
-    ResponseEntity<BoatDto> addNewBoat(AddBoatDto boat);
+//    ResponseEntity<BoatDto> addNewBoat(AddBoatDto boat);
 }

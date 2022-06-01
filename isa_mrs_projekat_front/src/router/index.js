@@ -34,6 +34,9 @@ import ClientReservationsHistory
     from "@/components/Client/ClientPage/components/ClientProfile/ClientReservations/ClientReservationsHistory/ClientReservationsHistory";
 import AdventureCreationPage
     from "@/components/FishingInstructor/FishingInstructorPage/components/InstructorMainViews/AdventureCreationPage";
+import AllCottagesView
+    from "@/components/VacationRentalOwner/VacationRentalOwnerPage/components/AllCottagesView/AllCottagesView";
+import AllBoatsView from "@/components/BoatOwner/BoatOwnerPage/components/AllBoatsView/AllBoatsView";
 
 
 
@@ -317,6 +320,17 @@ const routes = [
         }
     },
     {
+        path: "/vacationRentalOwner/cottages",
+        name: "ViewCottages",
+        components: {
+            default: AllCottagesView,
+            sidebar: TheOwnerSidebar,
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
         path: "/vacationRentalOwner/calendar",
         name: "VacationRentalOwnerReservations",
         components: {
@@ -343,6 +357,17 @@ const routes = [
         name: "BoatOwnerChangePassword",
         components: {
             default: PasswordChangeForm,
+            sidebar: TheBoatOwnerSidebar,
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
+        path: "/boatOwner/boats",
+        name: "ViewBoats",
+        components: {
+            default: AllBoatsView,
             sidebar: TheBoatOwnerSidebar,
         },
         meta: {
