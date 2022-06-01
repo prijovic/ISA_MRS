@@ -429,12 +429,119 @@ INSERT INTO boat (engine_number, engine_power, length, max_speed, type, id) VALU
 INSERT INTO rental_object (is_active, id, capacity, description, name, price, rental_object_type, address_id, cancellation_fee_id, rental_object_owner_id)
 VALUES (true, 18, 25, 'Sport of reaching high points in mountainous areas, mainly for the joy and thrill of the climb. The sport involves intense physical activity. It includes hiking, rock climbing, and traversing slopes covered with ice and snow.', 'Mountain climbing', 80, 1, 1, 1, 2);
 INSERT INTO photo (id, photo, rental_object_id) VALUES (61, 'adv2pic1', 18);
+INSERT INTO equipment (id, name) VALUES (57, 'Ropes');
+INSERT INTO equipment (id, name) VALUES (58, 'Helmet');
+INSERT INTO equipment (id, name) VALUES (59, 'Crampons');
+INSERT INTO equipment (id, name) VALUES (60, 'Pulley');
+INSERT INTO equipment (id, name) VALUES (61, 'Climbing pack');
+INSERT INTO adventure_equipment (id, adventure_id) VALUES (57, 18);
+INSERT INTO adventure_equipment (id, adventure_id) VALUES (58, 18);
+INSERT INTO adventure_equipment (id, adventure_id) VALUES (59, 18);
+INSERT INTO adventure_equipment (id, adventure_id) VALUES (60, 18);
+INSERT INTO adventure_equipment (id, adventure_id) VALUES (61, 18);
+INSERT INTO conduct_rule (id, rule, type, rental_object_id) VALUES (57, 'Leaving the group', 1, 18);
+INSERT INTO conduct_rule (id, rule, type, rental_object_id) VALUES (58, 'Damaging equipment', 1, 18);
+INSERT INTO conduct_rule (id, rule, type, rental_object_id) VALUES (59, 'Taking photos', 0, 18);
+INSERT INTO conduct_rule (id, rule, type, rental_object_id) VALUES (60, 'Collecting flora', 0, 18);
 INSERT INTO adventure (id, duration) VALUES (4, 6.5);
 INSERT INTO rental_object (is_active, id, capacity, description, name, price, rental_object_type, address_id, cancellation_fee_id, rental_object_owner_id)
 VALUES (true, 19, 8, 'Adventure in which participants fly in the air using paragliders. These paragliders are light weight and are launched with the feet. In the sailboat there is a belt on which sits a paraglider.', 'Paragliding', 40, 1, 1, 1, 2);
 INSERT INTO photo (id, photo, rental_object_id) VALUES (62, 'adv3pic1', 19);
+INSERT INTO equipment (id, name) VALUES (62, 'Wing');
+INSERT INTO equipment (id, name) VALUES (63, 'Harness');
+INSERT INTO equipment (id, name) VALUES (64, 'Variometer');
+INSERT INTO equipment (id, name) VALUES (65, 'Gloves');
+INSERT INTO equipment (id, name) VALUES (66, 'GPS');
+INSERT INTO equipment (id, name) VALUES (67, 'Flight suit');
+INSERT INTO adventure_equipment (id, adventure_id) VALUES (62, 19);
+INSERT INTO adventure_equipment (id, adventure_id) VALUES (63, 19);
+INSERT INTO adventure_equipment (id, adventure_id) VALUES (64, 19);
+INSERT INTO adventure_equipment (id, adventure_id) VALUES (65, 19);
+INSERT INTO adventure_equipment (id, adventure_id) VALUES (66, 19);
+INSERT INTO adventure_equipment (id, adventure_id) VALUES (67, 19);
+INSERT INTO conduct_rule (id, rule, type, rental_object_id) VALUES (61, 'Alcohol', 1, 19);
+INSERT INTO conduct_rule (id, rule, type, rental_object_id) VALUES (62, 'Damaging equipment', 1, 19);
+INSERT INTO conduct_rule (id, rule, type, rental_object_id) VALUES (63, 'Taking photos', 0, 19);
+INSERT INTO conduct_rule (id, rule, type, rental_object_id) VALUES (64, 'Flying in pairs', 0, 19);
 INSERT INTO adventure (id, duration) VALUES (5, 1.5);
 INSERT INTO rental_object (is_active, id, capacity, description, name, price, rental_object_type, address_id, cancellation_fee_id, rental_object_owner_id)
 VALUES (true, 20, 12, 'Mountain bikes share some similarities with other bicycles, but incorporate features designed to enhance durability and performance in rough terrain, which makes them heavier, more complex and less efficient on smooth surfaces.', 'Mountain bikes', 60, 1, 1, 1, 2);
 INSERT INTO photo (id, photo, rental_object_id) VALUES (63, 'adv4pic1', 20);
+INSERT INTO equipment (id, name) VALUES (68, 'Bike');
+INSERT INTO equipment (id, name) VALUES (69, 'Helmet');
+INSERT INTO equipment (id, name) VALUES (70, 'Knee pads');
+INSERT INTO equipment (id, name) VALUES (71, 'Gloves');
+INSERT INTO equipment (id, name) VALUES (72, 'Eye protection');
+INSERT INTO equipment (id, name) VALUES (73, 'Cycling clothes');
+INSERT INTO adventure_equipment (id, adventure_id) VALUES (68, 20);
+INSERT INTO adventure_equipment (id, adventure_id) VALUES (69, 20);
+INSERT INTO adventure_equipment (id, adventure_id) VALUES (70, 20);
+INSERT INTO adventure_equipment (id, adventure_id) VALUES (71, 20);
+INSERT INTO adventure_equipment (id, adventure_id) VALUES (72, 20);
+INSERT INTO adventure_equipment (id, adventure_id) VALUES (73, 20);
+INSERT INTO conduct_rule (id, rule, type, rental_object_id) VALUES (65, 'Alcohol', 1, 20);
+INSERT INTO conduct_rule (id, rule, type, rental_object_id) VALUES (66, 'Damaging equipment', 1, 20);
+INSERT INTO conduct_rule (id, rule, type, rental_object_id) VALUES (67, 'Taking photos', 0, 20);
+INSERT INTO conduct_rule (id, rule, type, rental_object_id) VALUES (68, 'Drinking water', 0, 20);
+INSERT INTO conduct_rule (id, rule, type, rental_object_id) VALUES (69, 'Leaving the group', 1, 20);
 INSERT INTO adventure (id, duration) VALUES (6, 4);
+INSERT INTO test.reservation (id, equipment_required, people, time_stamp, client_id, rental_object_id)
+VALUES (6, true, 4, '2022-06-16 12:34:05', 35, 18);
+INSERT INTO time_period (id, init_date, term_date, reservation_id)
+VALUES (7, '2022-07-20 10:00:00', '2022-07-24 17:00:00', 6);
+INSERT INTO test.reservation (id, equipment_required, people, time_stamp, client_id, rental_object_id)
+VALUES (7, true, 2, '2022-06-16 12:20:05', 36, 19);
+INSERT INTO time_period (id, init_date, term_date, reservation_id)
+VALUES (8, '2022-06-24 11:00:00', '2022-06-24 14:00:00', 7);
+INSERT INTO test.reservation (id, equipment_required, people, time_stamp, client_id, rental_object_id)
+VALUES (8, true, 3, '2022-06-16 12:30:05', 37, 20);
+INSERT INTO time_period (id, init_date, term_date, reservation_id)
+VALUES (9, '2022-06-27 09:00:00', '2022-06-27 16:00:00', 8);
+INSERT INTO test.reservation (id, equipment_required, people, time_stamp, client_id, rental_object_id)
+VALUES (9, true, 4, '2022-06-25 12:20:15', 34, 20);
+INSERT INTO time_period (id, init_date, term_date, reservation_id)
+VALUES (10, '2022-07-01 09:00:00', '2022-07-01 16:00:00', 9);
+INSERT INTO test.reservation (id, equipment_required, people, time_stamp, client_id, rental_object_id)
+VALUES (10, true, 3, '2022-06-18 12:10:25', 32, 20);
+INSERT INTO time_period (id, init_date, term_date, reservation_id)
+VALUES (11, '2022-07-05 10:00:00', '2022-07-05 18:00:00', 10);
+INSERT INTO test.reservation (id, equipment_required, people, time_stamp, client_id, rental_object_id)
+VALUES (11, true, 2, '2022-06-06 12:10:25', 35, 19);
+INSERT INTO time_period (id, init_date, term_date, reservation_id)
+VALUES (12, '2022-06-10 10:00:00', '2022-06-12 12:00:00', 11);
+INSERT INTO test.reservation (id, equipment_required, people, time_stamp, client_id, rental_object_id)
+VALUES (12, true, 10, '2022-05-10 12:10:25', 36, 2);
+INSERT INTO time_period (id, init_date, term_date, reservation_id)
+VALUES (13, '2022-05-16 10:00:00', '2022-05-18 12:00:00', 12);
+INSERT INTO test.review (id, comment, grade, review_type, time_stamp, author_id, reservation_id)
+VALUES (8, 'WOW', 5, 0, '2022-05-20 12:00:00', 5, 12);
+INSERT INTO test.reservation (id, equipment_required, people, time_stamp, client_id, rental_object_id)
+VALUES (13, true, 8, '2022-05-11 12:10:25', 34, 2);
+INSERT INTO time_period (id, init_date, term_date, reservation_id)
+VALUES (14, '2022-05-20 10:00:00', '2022-05-21 12:00:00', 13);
+INSERT INTO test.review (id, comment, grade, review_type, time_stamp, author_id, reservation_id)
+VALUES (9, 'WOW', 3, 0, '2022-05-22 12:00:00', 5, 13);
+INSERT INTO test.reservation (id, equipment_required, people, time_stamp, client_id, rental_object_id)
+VALUES (14, true, 12, '2022-03-11 12:10:25', 37, 2);
+INSERT INTO time_period (id, init_date, term_date, reservation_id)
+VALUES (15, '2022-03-17 10:00:00', '2022-03-19 12:00:00', 14);
+INSERT INTO test.review (id, comment, grade, review_type, time_stamp, author_id, reservation_id)
+VALUES (10, 'WOW', 4, 0, '2022-03-21 12:00:00', 5, 14);
+INSERT INTO test.reservation (id, equipment_required, people, time_stamp, client_id, rental_object_id)
+VALUES (15, true, 4, '2022-02-10 12:10:25', 36, 3);
+INSERT INTO time_period (id, init_date, term_date, reservation_id)
+VALUES (16, '2022-02-16 10:00:00', '2022-02-18 12:00:00', 12);
+INSERT INTO test.review (id, comment, grade, review_type, time_stamp, author_id, reservation_id)
+VALUES (11, 'WOW', 2, 0, '2022-02-20 12:00:00', 2, 12);
+INSERT INTO test.reservation (id, equipment_required, people, time_stamp, client_id, rental_object_id)
+VALUES (16, true, 3, '2022-02-01 12:10:25', 34, 3);
+INSERT INTO time_period (id, init_date, term_date, reservation_id)
+VALUES (17, '2022-02-11 10:00:00', '2022-02-11 16:00:00', 13);
+INSERT INTO test.review (id, comment, grade, review_type, time_stamp, author_id, reservation_id)
+VALUES (12, 'WOW', 3, 0, '2022-02-13 12:00:00', 2, 13);
+INSERT INTO test.reservation (id, equipment_required, people, time_stamp, client_id, rental_object_id)
+VALUES (17, true, 6, '2022-01-11 12:10:25', 37, 3);
+INSERT INTO time_period (id, init_date, term_date, reservation_id)
+VALUES (18, '2022-01-17 10:00:00', '2022-01-19 12:00:00', 14);
+INSERT INTO test.review (id, comment, grade, review_type, time_stamp, author_id, reservation_id)
+VALUES (13, 'WOW', 5, 0, '2022-01-20 12:00:00', 2, 14);
