@@ -334,8 +334,8 @@ export default {
   methods: {
     submit() {
       this.adventure.duration = this.minutes/60 + this.hours;
-      if (this.isDataEntered() && this.isDataCorrect()) {
-        this.makeRequest();
+      if (this.isDataEntered()) {
+        this.isDataCorrect();
       }
     },
     makeRequest() {
@@ -379,8 +379,6 @@ export default {
             text: "Server is currently off. Please try again later...",
             type: "error"
           });
-        } else if (error.response.status === 422) {
-          this.emailIsUnique = false;
         } else if (error.response.status === 500) {
           this.$notify({
             title: "Internal Server Error",
@@ -441,7 +439,6 @@ export default {
     async isDataCorrect() {
       this.addressIsValid = false;
       this.validateAddress();
-      return this.addressIsValid;
     },
     validateAddress() {
       const apiKey = 'VrDrl5BjEA0Whvb-chHbFz96HV4qlCXB-yoiTRRLKno';
@@ -467,6 +464,7 @@ export default {
               this.adventure.address.longitude = location.Longitude;
               this.adventure.address.latitude = location.Latitude;
               this.addressIsValid = true;
+              this.makeRequest();
             }
           })
           .catch(() => {

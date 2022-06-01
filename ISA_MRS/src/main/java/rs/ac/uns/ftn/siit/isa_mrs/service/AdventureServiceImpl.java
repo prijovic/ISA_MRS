@@ -35,6 +35,7 @@ import java.util.Optional;
 public class AdventureServiceImpl implements AdventureService{
     private final RentalObjectOwnerRepo rentalObjectOwnerRepo;
     private final AdditionalServiceRepo additionalServiceRepo;
+    private final AdventureEquipmentRepo adventureEquipmentRepo;
     private final CancellationFeeRepo cancellationFeeRepo;
     private final ConductRuleRepo conductRuleRepo;
     private final RentalObjectService rentalService;
@@ -170,6 +171,7 @@ public class AdventureServiceImpl implements AdventureService{
         Adventure adventure = new Adventure();
         List<AdditionalService> additionalServices = new ArrayList<>();
         List<ConductRule> conductRules = new ArrayList<>();
+        List<AdventureEquipment> adventureEquipments = new ArrayList<>();
         adventureDto.getAdditionalServices().forEach(service -> {
             AdditionalService additionalService = modelMapper.map(service, AdditionalService.class);
             additionalServiceRepo.save(additionalService);
@@ -183,6 +185,11 @@ public class AdventureServiceImpl implements AdventureService{
             conductRuleRepo.save(conductRule);
             conductRules.add(conductRule);
         });
+        adventureDto.getAdventureEquipment().forEach(equipment -> {
+            AdventureEquipment adventureEquipment = modelMapper.map(equipment, AdventureEquipment.class);
+            adventureEquipmentRepo.save(adventureEquipment);
+            adventureEquipments.add(adventureEquipment);
+        });
         CancellationFee cancellationFee = new CancellationFee();
         cancellationFee.setValue(adventureDto.getCancellationFee().getValue());
         if (cancellationFee.getValue() == 0 ) {
@@ -193,10 +200,12 @@ public class AdventureServiceImpl implements AdventureService{
         cancellationFeeRepo.save(cancellationFee);
         Address address = modelMapper.map(adventureDto.getAddress(), Address.class);
         addressRepo.save(address);
+        adventure.setDuration(adventureDto.getDuration());
         adventure.setName(adventureDto.getName());
         adventure.setCancellationFee(cancellationFee);
         adventure.setAddress(address);
         adventure.setAdditionalServices(additionalServices);
+        adventure.setAdventureEquipment(adventureEquipments);
         adventure.setConductRules(conductRules);
         adventure.setRentalObjectOwner(owner);
         adventure.setRentalObjectType(RentalObjectType.Adventure);
@@ -204,6 +213,19 @@ public class AdventureServiceImpl implements AdventureService{
         adventure.setCapacity(adventureDto.getCapacity());
         adventure.setPrice(adventureDto.getPrice());
         adventureRepo.save(adventure);
+//        DODATI ADD SERVICES, PRAVILA, OPREMU
+        adventureEquipments.forEach(equipment -> {
+            equipment.setAdventure(adventure);
+            adventureEquipmentRepo.save(equipment);
+        });
+        additionalServices.forEach(service -> {
+            service.setRentalObject(adventure);
+            additionalServiceRepo.save(service);
+        });
+        conductRules.forEach(rule -> {
+            rule.setRentalObject(adventure);
+            conductRuleRepo.save(rule);
+        });
         cancellationFee.setRentalObject(adventure);
         cancellationFeeRepo.save(cancellationFee);
         return adventure;
