@@ -60,6 +60,7 @@ public class AdventureServiceImpl implements AdventureService{
             AdventureProfileDto adventureDto = modelMapper.map(rental, AdventureProfileDto.class);
             Adventure adventure = rental.get();
             adventureDto.setReviews(rentalService.getRentalReviews(adventure, page, pageSize));
+            adventureDto.setGrade(rentalService.calculateRentalRating(adventure));
             Optional<Client> optionalClient = clientRepo.findByEmail(decodedToken.getEmail());
             if(optionalClient.isPresent()){
                 Client client = optionalClient.get();

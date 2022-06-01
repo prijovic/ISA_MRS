@@ -1,48 +1,57 @@
 <template>
-  <router-link :to="getPath" class="link" @click="setRentalIdAndType">
+
     <div class="card col-xl-3 col-lg-4 col-md-6 col-sm-10 col-xs-12 px-3 mb-3">
 <!--      <ThePhoto v-if="rental.displayPhoto" class="card-img-top" :photo="rental.displayPhoto" alt=""/>-->
-      <img v-if="rental.displayPhoto" class="card-img-top" alt="" :src="photo"/>
-      <div class="card-body pt-1 pb-0">
-        <div class="align-items-center" style="display: flex;">
-            <h1 class="card-title">{{ rental.name }}</h1>
-          <hr class="ms-1">
-        </div>
-        <div v-if="isVacationRental" class="row">
-          <div class="col main-col d-flex justify-content-center" title="Capacity">
-            <p class="h3">
-              <font-awesome-icon class="me-1" icon="user"></font-awesome-icon><strong>{{ rental.capacity }}</strong>
+      <router-link :to="getPath" class="link" @click="setRentalIdAndType">
+
+
+
+        <img v-if="rental.displayPhoto" class="card-img-top" alt="" :src="photo"/>
+        <div class="card-body pt-1 pb-0">
+          <div class="align-items-center text-start" style="display: flex;">
+            <div>
+              <h1 class="card-title cut-text">{{ rental.name }}</h1>
+            </div>
+            <hr class="ms-1">
+          </div>
+          <div v-if="isVacationRental" class="row">
+            <div class="col main-col d-flex justify-content-center" title="Capacity">
+              <p class="h3">
+                <font-awesome-icon class="me-1" icon="user"></font-awesome-icon><strong>{{ rental.capacity }}</strong>
+              </p>
+            </div>
+            <div class="col main-col d-flex justify-content-center" title="Number of rooms">
+              <p class="h3">
+                <font-awesome-icon class="me-1" icon="door-open"></font-awesome-icon><strong>{{ getNumberOfRooms }}</strong>
+              </p>
+            </div>
+            <div id="beds" class="col main-col d-flex justify-content-center" title="">
+              <p class="h3">
+                <font-awesome-icon class="me-1" icon="bed"></font-awesome-icon><strong>{{ getNumberOfBeds }}</strong>
+              </p>
+            </div>
+          </div>
+
+          <div v-if="!isVacationRental" class="p-1" style="text-align: left;">
+            <p class="h4">
+              <font-awesome-icon class="me-1" icon="user"></font-awesome-icon>{{ "Capacity: " + rental.capacity }}
             </p>
           </div>
-          <div class="col main-col d-flex justify-content-center" title="Number of rooms">
-            <p class="h3">
-              <font-awesome-icon class="me-1" icon="door-open"></font-awesome-icon><strong>{{ getNumberOfRooms }}</strong>
-            </p>
-          </div>
-          <div id="beds" class="col main-col d-flex justify-content-center" title="">
-            <p class="h3">
-              <font-awesome-icon class="me-1" icon="bed"></font-awesome-icon><strong>{{ getNumberOfBeds }}</strong>
-            </p>
+
+          <div class="row mt-1">
+            <div class="col d-flex justify-content-center">
+              <p class="h4"><strong>{{ "Grade:" + getRentalGrade }}</strong></p>
+            </div>
+            <div class="col d-flex justify-content-center">
+              <p class="h4"><strong>{{ "Price: $" + rental.price }}</strong></p>
+            </div>
           </div>
         </div>
 
-        <div v-if="!isVacationRental" class="p-1" style="text-align: left;">
-          <p class="h4">
-            <font-awesome-icon class="me-1" icon="user"></font-awesome-icon>{{ "Capacity: " + rental.capacity }}
-          </p>
-        </div>
 
-        <div class="row mt-1">
-          <div class="col d-flex justify-content-center">
-            <p class="h4"><strong>{{ "Grade: " + getRentalGrade }}</strong></p>
-          </div>
-          <div class="col d-flex justify-content-center">
-            <p class="h4"><strong>{{ "Price: $" + rental.price }}</strong></p>
-          </div>
-        </div>
-      </div>
+
+      </router-link>
     </div>
-  </router-link>
 </template>
 
 <script>
@@ -78,7 +87,6 @@ export default {
       return "/RentalProfile" + path;
     },
     isVacationRental() {
-      console.log(this.rental);
       return this.rental.rentalObjectType === "VacationRental";
     },
     getNumberOfRooms() {
@@ -92,9 +100,8 @@ export default {
       return beds;
     },
     getRentalGrade() {
-      console.log(this.rental.grade)
-      if (this.rental.grade !== null) return this.rental.grade + "★";
-      return "/";
+      if (this.rental.grade === "0" || !this.rental.grade) return "/";
+      return this.rental.grade + "★";
     },
   },
   mounted() {
@@ -125,6 +132,13 @@ export default {
 </script>
 
 <style scoped>
+.cut-text {
+  width: 100%;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
 div.card img {
   height: 25vh;
   object-fit: cover;
@@ -132,6 +146,7 @@ div.card img {
   border-top-left-radius: 40px;
   border-top-right-radius: 40px;
   /*border: 1px solid black;*/
+  /*border-bottom: none;*/
 }
 
   a {
@@ -151,5 +166,10 @@ div.card img {
     border: 1px solid black;
     border-bottom-left-radius: 40px;
     border-bottom-right-radius: 40px;
+    box-shadow: 0 0.3rem 1rem rgb(0 0 0 / 15%);
+  }
+
+  .card-img-top {
+    box-shadow: -0.05em 0 1rem rgb(0 0 0 / 15%);
   }
 </style>

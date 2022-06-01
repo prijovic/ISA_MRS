@@ -1,19 +1,29 @@
 <template>
-    <div v-if="rentalObjects" class="row mt-5 cardMenu">
-        <CardView v-for="(rental, i) in rentalObjects" :key="i" :rental="rental"></CardView>
+  <div class="searchCard tabs mt-5 mx-5" style="display: flex;">
+    <div style="display: flex;">
+      <font-awesome-icon class="me-2 ms-5 py-1" icon="magnifying-glass" style="color: #008970; font-size: 2rem;"></font-awesome-icon>
+      <input class="form-control me-5"  type="text" placeholder="Search" style="border: none;">
     </div>
+  </div>
+  <div v-if="rentalObjects" class="row mt-5 mx-1 cardMenu">
+      <CardView v-for="(rental, i) in rentalObjects" :key="i" :rental="rental"></CardView>
+  </div>
 </template>
 
 <script>
 import axios from "axios";
 import CardView from "@/components/UnregisteredUser/components/CardView";
 import {useStore} from "vuex";
+import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
+import {library} from "@fortawesome/fontawesome-svg-core";
+import {faMagnifyingGlass} from "@fortawesome/free-solid-svg-icons";
 
+library.add(faMagnifyingGlass);
 
 export default {
   name: "CardMenu",
   components: {
-    CardView
+    CardView, FontAwesomeIcon
   },
   data() {
     return {
@@ -63,6 +73,7 @@ export default {
         }
       }).then(response => {
         this.rentalObjects = response.data.content;
+        console.log(this.rentalObjects);
       });
     }
   }
@@ -70,6 +81,31 @@ export default {
 </script>
 
 <style scoped>
+input[type="text"] {
+  font-size: 1.5rem;
+  color: darkgray;
+  font-weight: 400;
+  font-style: italic;
+}
+input::placeholder {
+  font-size: 1.7rem;
+  color: #008970;
+  font-weight: 500;
+  font-style: normal;
+}
+.searchCard {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: fit-content;
+  min-width: 0;
+  word-wrap: break-word;
+  background-color: #fff;
+  background-clip: border-box;
+  border: none;
+  box-shadow: 0 0.5rem 1rem rgb(0 0 0 / 15%);
+  border-radius: 2rem;
+}
 div.cardMenu {
   text-align: center;
   justify-content: space-around;

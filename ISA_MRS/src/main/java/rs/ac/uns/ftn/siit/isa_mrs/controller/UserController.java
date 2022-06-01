@@ -5,12 +5,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.ClientDtos.ClientProfileDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.IdListWrapperClass;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.NewUserBasicInfoDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.PageDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.UserByTypeDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.UserDto;
 import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.UserType;
+import rs.ac.uns.ftn.siit.isa_mrs.service.ClientService;
 import rs.ac.uns.ftn.siit.isa_mrs.service.UserService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -26,6 +28,7 @@ import static rs.ac.uns.ftn.siit.isa_mrs.util.Paths.*;
 @RequestMapping(USER_CONTROLLER)
 public class UserController {
     private final UserService userService;
+    private final ClientService clientService;
 
     @GetMapping("/getUsers")
     public ResponseEntity<Collection<UserDto>> getAllUsers() {
@@ -76,6 +79,11 @@ public class UserController {
             @RequestParam UserType type) {
         log.info("Usli smo");
         return userService.findUsersByTypeWithPaginationSortedByField(page, pageSize, field, type);
+    }
+
+    @GetMapping(GET_CLIENT_PROFILE)
+    public ResponseEntity<ClientProfileDto> getClientProfile(HttpServletRequest request) {
+        return clientService.getClient(request.getHeader(AUTHORIZATION));
     }
 
     @Data

@@ -249,8 +249,8 @@ export default {
     },
     submit() {
       if (this.passwordValidation.valid && !this.notSamePasswords) {
-        if (this.isDataEntered() && this.isDataCorrect()) {
-          this.makeRequest();
+        if (this.isDataEntered()) {
+          this.isDataCorrect();
         }
       }
     },
@@ -378,20 +378,16 @@ export default {
       return true;
     },
     async isDataCorrect() {
-      this.addressIsValid = false;
-      this.validateAddress();
-      if (!this.addressIsValid) {
-        return false;
-      }
       if (!this.isPhoneValid()){
         this.phoneIsValid = false;
         return false;
       }
-      if (this.isRentalObjectOwner && this.isReasonValid() && !this.isAdmin) {
+      else if (this.isRentalObjectOwner && this.isReasonValid() && !this.isAdmin) {
         this.reasonIsValid = false;
         return false;
+      } else {
+        this.validateAddress();
       }
-      return true;
     },
     onTelephoneInput(phone, phoneObject) {
       this.phoneIsEntered = true;
@@ -432,6 +428,7 @@ export default {
               this.user.address.longitude = location.Longitude;
               this.user.address.latitude = location.Latitude;
               this.addressIsValid = true;
+              this.makeRequest();
             }
           })
           .catch(() => {

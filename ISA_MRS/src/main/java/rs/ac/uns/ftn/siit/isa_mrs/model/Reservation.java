@@ -17,6 +17,7 @@ public class Reservation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
+    private Integer price;
     private Integer people;
     private Boolean equipmentRequired;
     private LocalDateTime timeStamp;
@@ -30,7 +31,9 @@ public class Reservation {
     private RentalObject rentalObject;
     @ManyToOne
     private Client client;
-    @OneToMany
+//    @OneToMany
+//    private Collection<AdditionalService> additionalServices = new LinkedHashSet<>();
+    @ManyToMany(mappedBy = "reservation")
     private Collection<AdditionalService> additionalServices = new LinkedHashSet<>();
     @OneToOne
     private Income income;
