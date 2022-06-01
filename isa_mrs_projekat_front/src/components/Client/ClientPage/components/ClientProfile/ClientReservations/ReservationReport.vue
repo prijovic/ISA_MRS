@@ -9,8 +9,7 @@
             <h1 class="modal-title pb-1" style="color:#e23c52; font-weight: 700;">Report</h1>
           </div>
           <div class="row d-flex justify-content-center">
-            <img src="https://th.bing.com/th/id/R.349b51e1fa6c852514052d3fe9c5e3fc?rik=iX4TUgB5LMbLpQ&riu=http%3a%2f%2fclipart-library.com%2fimages%2f8iEjnAgaT.png&ehk=fhjUvhjzBd%2bMgm3IZeZdB85YWtRMlTOs%2fHA8jnzVDEo%3d&risl=&pid=ImgRaw&r=0" alt=""
-            style="height: 50%; width:50%;"/>
+            <img src="./warn.png" alt="" style="height: 50%; width:50%;"/>
           </div>
           <div>
             <p class="h5 mt-3">Please write your complaint in great detail.</p>
