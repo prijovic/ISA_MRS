@@ -58,6 +58,7 @@ public class BoatServiceImpl implements BoatService{
             BoatProfileDto boatDto = modelMapper.map(rental, BoatProfileDto.class);
             Boat boat = rental.get();
             boatDto.setReviews(rentalService.getRentalReviews(boat, page, pageSize));
+            boatDto.setGrade(rentalService.calculateRentalRating(boat));
             Optional<Client> optionalClient = clientRepo.findByEmail(decodedToken.getEmail());
             if(optionalClient.isPresent()){
                 Client client = optionalClient.get();

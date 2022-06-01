@@ -15,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.*;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.RentalProfileDtos.AdventureDtos.AdventureProfileDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.RentalProfileDtos.AdventureDtos.AdventuresForMenuDto;
-import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.RentalProfileDtos.VacationRentalDtos.VacationRentalsForMenuDto;
 import rs.ac.uns.ftn.siit.isa_mrs.model.*;
 import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.RentalObjectType;
 import rs.ac.uns.ftn.siit.isa_mrs.repository.AdventureRepo;
@@ -52,6 +51,7 @@ public class AdventureServiceImpl implements AdventureService{
             AdventureProfileDto adventureDto = modelMapper.map(rental, AdventureProfileDto.class);
             Adventure adventure = rental.get();
             adventureDto.setReviews(rentalService.getRentalReviews(adventure, page, pageSize));
+            adventureDto.setGrade(rentalService.calculateRentalRating(adventure));
             Optional<Client> optionalClient = clientRepo.findByEmail(decodedToken.getEmail());
             if(optionalClient.isPresent()){
                 Client client = optionalClient.get();

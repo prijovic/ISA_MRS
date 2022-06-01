@@ -32,4 +32,5 @@ public class BoatProfileDto implements Serializable {
     private Collection<FishingEquipmentDto> fishingEquipment;
     private Boolean isUserSubscribed = false;
     private PageDto<ReviewDto> reviews;
+    private String grade = null;
 }

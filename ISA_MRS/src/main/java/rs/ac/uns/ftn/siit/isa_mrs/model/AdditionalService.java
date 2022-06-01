@@ -3,6 +3,8 @@ package rs.ac.uns.ftn.siit.isa_mrs.model;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.Collection;
+import java.util.LinkedHashSet;
 
 @Entity
 @Getter
@@ -18,6 +20,11 @@ public class AdditionalService {
     private Double price;
     @ManyToOne
     private RentalObject rentalObject;
-    @ManyToOne
-    private Reservation reservation;
+    @ManyToMany
+    @JoinTable(name = "reservation_additional_services",
+            joinColumns = @JoinColumn(name = "additional_service_id"),
+            inverseJoinColumns = @JoinColumn(name = "reservation_id"))
+    private Collection<Reservation> reservation = new LinkedHashSet<>();
+//    @ManyToOne
+//    private Reservation reservation;
 }

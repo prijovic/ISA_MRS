@@ -106,12 +106,25 @@
                   </h2>
                   <div id="flush-collapseTwo" class="accordion-collapse collapse show" aria-labelledby="flush-headingTwo">
                     <div class="accordion-body p-2 pb-1">
+
                       <div v-if="rentalHasReviews" class="reviews">
+                        <nav class="" aria-label="Page navigation">
+                          <ul class="pagination justify-content-center mt-3">
+                            <li class="page-item" v-if="totalPages > 1"><button class="page-link rounded" :disabled="currentPage===0" @click="previousPage">Previous</button></li>
+                            <li class="page-item mt-auto me-1 ms-1 rounded" v-if="currentPage > 1 && totalPages > 3">...</li>
+                            <li class="page-item"><button class="page-link rounded" :disabled="currentPage === 0" @click="numberedPage(1)">{{button1Content}}</button></li>
+                            <li class="page-item" v-if="totalPages > 1"><button class="page-link rounded" :disabled="currentPage !== 0 && totalPages - currentPage > 1" @click="numberedPage(2)">{{button2Content}}</button></li>
+                            <li class="page-item" v-if="totalPages > 2"><button class="page-link rounded" :disabled="totalPages - currentPage === 1" @click="numberedPage(3)">{{button3Content}}</button></li>
+                            <li class="page-item mt-auto me-1 ms-1" v-if="totalPages - currentPage > 1 && totalPages > 3 && button3Content !== totalPages">...</li>
+                            <li class="page-item" v-if="totalPages > 1"><button class="page-link rounded" :disabled="totalPages - currentPage === 1" @click="nextPage">Next</button></li>
+                          </ul>
+                        </nav>
                         <div v-for="(review, i) in reviews" :key="i" class="review p-2 mb-1">
                           <div class="review-header">
                             <div class="align-items-center" style="display:flex; justify-content: space-between; ">
                               <div style="display: flex;">
-                                <img class="profile-pic rounded-pill" :src="'https://bootdey.com/img/Content/avatar/avatar3.png'" alt=""/>
+                                <img v-if="images[i]" class="profile-pic rounded-pill" :src="images[i]" alt=""/>
+                                <img v-else class="profile-pic rounded-pill" src="https://th.bing.com/th/id/R.4be1aa2ad558d09e7715325f39ee58ec?rik=1PL4Zzb3dyR8Wg&riu=http%3a%2f%2fsimpleicon.com%2fwp-content%2fuploads%2fuser-3.png&ehk=c57lmQWfTHgO6buztac5L2%2bc5XLCNGcgnBoJoB6P4Ms%3d&risl=&pid=ImgRaw&r=0" alt=""/>
                                 <div class="ms-1">
                                   <h6>{{ getAuthorFullName(review) }}</h6>
                                   <p class="small" style="color: gray;">{{ formatReviewDate(review.timeStamp) }}</p>
@@ -124,17 +137,7 @@
                             <p class="ps-1 pe-2">{{ review.comment }}</p>
                           </div>
                         </div>
-                        <nav aria-label="Page navigation">
-                          <ul class="pagination justify-content-center mt-3">
-                            <li class="page-item" v-if="totalPages > 1"><button class="page-link" :disabled="currentPage===0" @click="previousPage">Previous</button></li>
-                            <li class="page-item mt-auto me-1 ms-1" v-if="currentPage > 1 && totalPages > 3">...</li>
-                            <li class="page-item"><button class="page-link" :disabled="currentPage === 0" @click="numberedPage(1)">{{button1Content}}</button></li>
-                            <li class="page-item" v-if="totalPages > 1"><button class="page-link" :disabled="currentPage !== 0 && totalPages - currentPage > 1" @click="numberedPage(2)">{{button2Content}}</button></li>
-                            <li class="page-item" v-if="totalPages > 2"><button class="page-link" :disabled="totalPages - currentPage === 1" @click="numberedPage(3)">{{button3Content}}</button></li>
-                            <li class="page-item mt-auto me-1 ms-1" v-if="totalPages - currentPage > 1 && totalPages > 3 && button3Content !== totalPages">...</li>
-                            <li class="page-item" v-if="totalPages > 1"><button class="page-link" :disabled="totalPages - currentPage === 1" @click="nextPage">Next</button></li>
-                          </ul>
-                        </nav>
+
 
                       </div>
                       <div v-else class="text-center">
@@ -272,7 +275,8 @@ export default {
       rentalObject: null,
       currentPage: 0,
       totalPages: null,
-      pageSize: 2,
+      pageSize: 6,
+      images: [],
     }
   },
   mounted() {
@@ -292,6 +296,7 @@ export default {
         this.rentalObject = response.data;
         this.currentPage = this.rentalObject.reviews.currentPage;
         this.totalPages = this.rentalObject.reviews.pages;
+        this.getReviewPics();
       });
     }
     else if(this.$route.params.type === "Adventure") {
@@ -309,6 +314,7 @@ export default {
         this.rentalObject = response.data;
         this.currentPage = this.rentalObject.reviews.currentPage;
         this.totalPages = this.rentalObject.reviews.pages;
+        this.getReviewPics();
       });
     }
     else {
@@ -326,6 +332,7 @@ export default {
         this.rentalObject = response.data;
         this.currentPage = this.rentalObject.reviews.currentPage;
         this.totalPages = this.rentalObject.reviews.pages;
+        this.getReviewPics();
       });
     }
   },
@@ -382,6 +389,28 @@ export default {
     }
   },
   methods: {
+    getReviewPics() {
+      this.images = [];
+      let revs = this.rentalObject.reviews.content;
+      for(let i=0; i<revs.length; i++) {
+        if(!revs[i].author.photo) { this.images[i] = null; continue; }
+        axios.get("/Photos/", {
+          headers: {
+            Authorization: "Bearer " + this.$store.getters.access_token,
+          },
+          params: {
+            path: revs[i].author.photo,
+          },
+          responseType: "blob"
+        })
+        .then(response => {
+          this.images[i] = URL.createObjectURL(response.data);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+      }
+    },
     reloadReviews() {
       if(this.$route.params.type === "Boat") {
         axios.get("/RentalObjects/getBoat", {
@@ -398,6 +427,7 @@ export default {
               this.rentalObject = response.data;
               this.currentPage = this.rentalObject.reviews.currentPage;
               this.totalPages = this.rentalObject.reviews.pages;
+              this.getReviewPics();
             });
       }
       else if(this.$route.params.type === "Adventure") {
@@ -415,6 +445,7 @@ export default {
               this.rentalObject = response.data;
               this.currentPage = this.rentalObject.reviews.currentPage;
               this.totalPages = this.rentalObject.reviews.pages;
+              this.getReviewPics();
             });
       }
       else {
@@ -432,6 +463,7 @@ export default {
               this.rentalObject = response.data;
               this.currentPage = this.rentalObject.reviews.currentPage;
               this.totalPages = this.rentalObject.reviews.pages;
+              this.getReviewPics();
             });
       }
     },
@@ -507,6 +539,10 @@ export default {
 </script>
 
 <style scoped>
+.page-link {
+  background-color: white;
+  border: 2px solid black;
+}
 div.rentalObjectName {
   display: flex;
 }
@@ -516,27 +552,6 @@ div.lineTitle {
 
 hr {
   flex-grow: 1;
-}
-
-:root {
-  --star-size: 60px;
-  --star-color: black;
-  --star-background: blue;
-}
-
-.Stars::before {
-  content: '★★★★★';
-  background: linear-gradient(90deg, var(--star-background) var(--percent), var(--star-color) var(--percent));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.Stars {
-  --percent: calc(var(--rating) / 5 * 100%);
-  display: inline-block;
-  font-size: var(--star-size);
-  font-family: Times,serif;
-  line-height: 1;
 }
 
 button.subscribe:hover {

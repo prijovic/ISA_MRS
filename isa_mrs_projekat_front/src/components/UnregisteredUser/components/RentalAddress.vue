@@ -1,6 +1,6 @@
 <template>
   <p class="h4">
-    <font-awesome-icon class="me-1" icon="location-dot"></font-awesome-icon><small>{{ getAddress }}</small>
+    <font-awesome-icon class="me-1" icon="location-dot" style="color: #008970"></font-awesome-icon><small>{{ getAddress }}</small>
   </p>
   <div class="map-wrap">
     <div class="map" ref="mapContainer"></div>
@@ -51,7 +51,7 @@ export default {
   },
   computed: {
     getAddress() {
-      return this.address.street + ' ' + this.address.number + ', ' + this.address. city + ', ' + this.address.country
+      return this.address.street + ' ' + this.address.number + ', ' + this.address.city + ', ' + this.address.country;
     }
   }
 }

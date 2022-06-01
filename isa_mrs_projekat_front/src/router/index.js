@@ -22,7 +22,7 @@ import FishingInstructorAdventuresView
 import FishingInstructorAdventureProfileView
     from "@/components/FishingInstructor/FishingInstructorPage/components/InstructorMainViews/InstructorAllAdventuresView/InstructorAdventureProfile/InstructorAdventureProfile";
 import CardMenu from "@/components/UnregisteredUser/components/CardMenu";
-import ClientMainView from "@/components/Client/ClientPage/components/ClientMainView";
+// import ClientMainView from "@/components/Client/ClientPage/components/ClientMainView";
 import ClientSidebar from "@/components/Client/ClientPage/components/ClientSidebar/ClientSidebar";
 import RentalProfile from "@/components/UnregisteredUser/components/RentalProfile";
 import VerificationPage from "@/components/UnregisteredUser/components/VerificationPage";
@@ -352,7 +352,7 @@ const routes = [
         path: "/client",
         name: "Client",
         components: {
-            default: ClientMainView,
+            default: ClientProfile,
             sidebar: ClientSidebar,
         },
         meta: {

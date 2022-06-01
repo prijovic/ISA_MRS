@@ -1,5 +1,5 @@
 <template>
-    <div class="tags row ps-3 pe-1">
+    <div class="tags row ps-3 pe-1 mb-1">
         <div v-for="(tag, i) in freeAdditionalServices" :key="i" class="tagDiv chip chip-outline btn-outline-primary me-2 px-3 my-1" data-ripple-color="dark">
           {{tag.name}}
         </div>
@@ -24,7 +24,14 @@ export default {
   .tagDiv {
     width: fit-content;
     border-radius: 30px;
-    border: 1px solid darkblue;
+    border: 1px solid #008970;
     cursor: pointer;
+    font-weight: 700;
+    color: #008970;
+  }
+
+  .tagDiv:hover {
+    background-color: #008970;
+    color: white;
   }
 </style>

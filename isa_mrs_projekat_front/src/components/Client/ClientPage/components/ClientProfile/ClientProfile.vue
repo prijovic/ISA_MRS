@@ -3,168 +3,74 @@
     <div class="container-fluid px-lg-4 px-xl-5 p-0 m-0 pt-5 contentDiv">
       <section class="p-0 m-0">
         <div class="row">
-          <div class="col-lg-4" style="height: fit-content; display:block">
+          <div class="col-lg-4" style="height: fit-content; display:block; min-width: 18rem;">
             <div class="card card-profile mb-4" >
 <!--              <div class="card-header"></div>-->
-              <div class="card-body text-center"><img class="card-profile-img"
-                  src="https://th.bing.com/th/id/R.aafb49c4c103a2cedaa573cfa520f396?rik=h%2frtPzBFQrLrEw&pid=ImgRaw&r=0" alt="Jassa Rich">
+              <div class="card-body text-center">
+                <img v-if="this.profilePic" class="card-profile-img" :src="this.profilePic" alt=""/>
+                <img v-else class="card-profile-img" src="https://th.bing.com/th/id/R.4be1aa2ad558d09e7715325f39ee58ec?rik=1PL4Zzb3dyR8Wg&riu=http%3a%2f%2fsimpleicon.com%2fwp-content%2fuploads%2fuser-3.png&ehk=c57lmQWfTHgO6buztac5L2%2bc5XLCNGcgnBoJoB6P4Ms%3d&risl=&pid=ImgRaw&r=0" alt=""/>
                 <div class="d-flex justify-content-center">
-                  <p class="h3">Tamara Volas</p>
+                  <p class="h3">{{ getClientFullName }}</p>
                   <router-link class="btn btn-default ms-2" to="">
                     <font-awesome-icon class="h5" icon="pencil"></font-awesome-icon>
                   </router-link>
                 </div>
                 <hr>
                 <div class="row text-start px-3">
-                  <p class="h6">E-mail:&emsp;volastamara@gmail.com</p>
-                  <p class="h6">Address:</p>
+                  <div class="row">
+                    <p class="h6">E-mail:&emsp;{{ this.clientInfo.email }}</p>
+                  </div>
+                  <div class="row">
+                    <p class="h6">Phone:&emsp;{{ this.clientInfo.phone }}</p>
+                  </div>
+                  <div class="row mt-3 text-center">
+                    <RentalAddress v-if="this.clientInfo.address" :address="this.clientInfo.address"/>
+                  </div>
                 </div>
               </div>
             </div>
-<!--            <form class="card mb-4">-->
-<!--              <div class="card-header py-3">-->
-<!--                <h4 class="card-heading">Password</h4>-->
-<!--              </div>-->
-<!--              <div class="card-body">-->
-<!--                <div class="row mb-4">-->
-<!--                  <label class="form-label mb-0">Old password</label>-->
-<!--                  <input class="form-control mt-0" type="password" value="">-->
-<!--                </div>-->
-<!--                <div class="row mb-4">-->
-<!--                  <label class="form-label mb-0">New password</label>-->
-<!--                  <input class="form-control mt-0" type="password" value="">-->
-<!--                </div>-->
-<!--                <div class="row">-->
-<!--                  <label class="form-label mb-0">Confirm new password</label>-->
-<!--                  <input class="form-control mt-0" type="password" value="">-->
-<!--                </div>-->
-<!--              </div>-->
-<!--              <div class="card-footer text-end">-->
-<!--                <button class="btn btn-primary saveNewDataBtn">Save</button>-->
-<!--              </div>-->
-<!--            </form>-->
           </div>
           <div class="col-lg-8">
             <div class="row px-3 mb-2">
               <div class="card tabs pt-2 pb-1">
                 <ul class="nav justify-content-center">
-<!--                  <li class="nav-item">-->
-<!--                    <p class="h5">-->
-<!--                      <button class="px-3" v-bind:style="{fontWeight:(vacationRentalsBtnClicked)?700:400}"-->
-<!--                              @click="showVacationRentalsReservations()">Vacation rentals</button>-->
-<!--                    </p>-->
-<!--                  </li>-->
-<!--                  <li class="nav-item">-->
-<!--                    <p class="h5">-->
-<!--                      <button class="px-3" v-bind:style="{fontWeight:(boatsBtnClicked)?700:400}"-->
-<!--                              @click="showBoatsReservations">Boats</button>-->
-<!--                    </p>-->
-<!--                  </li>-->
-<!--                  <li class="nav-item">-->
-<!--                    <p class="h5">-->
-<!--                      <button class="px-3" v-bind:style="{fontWeight:(adventuresBtnClicked)?700:400}"-->
-<!--                              @click="showAdventuresReservations">Adventures</button>-->
-<!--                    </p>-->
-<!--                  </li>-->
-                  <li class="nav-item">
-                    <p class="h5">
-                      <button class="px-3" v-bind:style="{fontWeight:(subscriptionsBtnClicked)?700:400}"
-                      @click="showSubscriptions">Subscriptions</button>
-                    </p>
-                  </li>
                   <li class="nav-item">
                     <p class="h5">
                       <button class="px-3" v-bind:style="{fontWeight:(upcomingBtnClicked)?700:400}"
                               @click="showUpcomingReservations">Upcoming reservations</button>
                     </p>
                   </li>
+                  <li class="nav-item">
+                    <p class="h5">
+                      <button class="px-3" v-bind:style="{fontWeight:(subscriptionsBtnClicked)?700:400}"
+                      @click="showSubscriptions">Subscriptions</button>
+                    </p>
+                  </li>
                 </ul>
               </div>
             </div>
 <!----------------------------------------------------Zadovoljna sam--------------------------------------------------->
-            <div class="row px-3" style="overflow: hidden; overflow-y: scroll; max-height: 85vh;">
-              <div class="m-0 p-0" v-if="rentalClicked">
-                <ClientReservations></ClientReservations>
+            <div class="row px-3 pb-5" style="overflow: hidden; overflow-y: scroll; max-height: 85vh;">
+              <div  class="m-0 p-0" v-if="subscriptionsBtnClicked">
+                <div class="card px-0 mb-2">
+                  <div class="card-header py-2">
+                    <h4 class="card-heading">Subscriptions</h4>
+                  </div>
+                  <div class="card-body row text-align: center; justify-content: space-around;">
+                    <ClientSubscription v-if="this.clientInfo.subscriptions" :subscriptions="this.clientInfo.subscriptions"/>
+                  </div>
+                </div>
               </div>
-              <div v-if="subscriptionsBtnClicked">Sub</div>
-              <div v-if="upcomingBtnClicked">Upcoming</div>
-<!--              <div class="card px-0 mb-2">-->
-<!--                <div class="card-header py-2">-->
-<!--                  <h4 class="card-heading">Upcoming</h4>-->
-<!--                </div>-->
-<!--                <div class="card-body">-->
-<!--                  Rezervacija ili NONE-->
-<!--                </div>-->
-<!--              </div>-->
-<!--              <div class="card px-0 mb-5">-->
-<!--                <div class="card-header py-2">-->
-<!--                  <h4 class="card-heading">Reservation history</h4>-->
-<!--                </div>-->
-<!--                <div class="card-body">-->
-<!--                  Rezervacija ili NONE-->
-<!--                </div>-->
-<!--              </div>-->
-<!--            </div>-->
-
-
-
-
-
-
-<!--              <div class="card overflow-hidden mb-4">-->
-<!--                <div class="card-header">-->
-<!--                  <div class="input-group">-->
-<!--                    <input class="form-control" type="text" placeholder="Message">-->
-<!--                    <button class="btn btn-outline-secondary" type="button"><i class="fa fa-paper-plane"></i></button>-->
-<!--                  </div>-->
-<!--                </div>-->
-<!--                <div class="list-group rounded-0">-->
-<!--                  <div class="list-group-item border-start-0 border-end-0 py-5 border-top-0">-->
-<!--                    <div class="d-flex">-->
-<!--                      <div class="flex-shrink-0"><img class="avatar avatar-lg p-1" src="https://therichpost.com/wp-content/uploads/2021/03/avatar2.png" alt=""></div>-->
-<!--                      <div class="flex-grow-1 ps-3"><small class="float-right">10 mins ago</small>-->
-<!--                        <h5 class="fw-bold">Jassa Rich</h5>-->
-<!--                        <div class="text-muted text-sm"> Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.</div>-->
-<!--                        <div class="d-flex mt-4">-->
-<!--                          <div class="flex-shrink-0"><img class="avatar avatar-md p-1" src="https://therichpost.com/wp-content/uploads/2021/03/avatar2.png" alt="Serenity Mitchelle"></div>-->
-<!--                          <div class="flex-grow-1 ps-3 text-sm text-muted"><strong class="text-dark">Serenity Mitchelle: </strong>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.</div>-->
-<!--                        </div>-->
-<!--                        <div class="d-flex mt-4">-->
-<!--                          <div class="flex-shrink-0"><img class="avatar avatar-md p-1" src="https://therichpost.com/wp-content/uploads/2021/03/avatar2.png" alt="Tony O'Brian"></div>-->
-<!--                          <div class="flex-grow-1 ps-3 text-sm text-muted"><strong class="text-dark">Tony O'Brian: </strong>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.</div>-->
-<!--                        </div>-->
-<!--                      </div>-->
-<!--                    </div>-->
-<!--                  </div>-->
-<!--                  <div class="list-group-item border-start-0 border-end-0 py-5">-->
-<!--                    <div class="d-flex">-->
-<!--                      <div class="flex-shrink-0"><img class="avatar avatar-lg p-1" src="https://therichpost.com/wp-content/uploads/2021/03/avatar2.png" alt="Jassa Rich"></div>-->
-<!--                      <div class="flex-grow-1 ps-3"><small class="float-right">12 mins ago</small>-->
-<!--                        <h5 class="fw-bold">Jassa Rich</h5>-->
-<!--                        <div class="text-muted text-sm"> Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.</div>-->
-<!--                      </div>-->
-<!--                    </div>-->
-<!--                  </div>-->
-<!--                  <div class="list-group-item border-start-0 border-end-0 py-5">-->
-<!--                    <div class="d-flex">-->
-<!--                      <div class="flex-shrink-0"><img class="avatar avatar-lg p-1" src="https://therichpost.com/wp-content/uploads/2021/03/avatar2.png" alt="Jassa Rich"></div>-->
-<!--                      <div class="flex-grow-1 ps-3"><small class="float-right">34 mins ago</small>-->
-<!--                        <h5 class="fw-bold">Jassa Rich</h5>-->
-<!--                        <div class="text-muted text-sm"> Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.</div>-->
-<!--                        <div class="d-flex mt-4">-->
-<!--                          <div class="flex-shrink-0"><img class="avatar avatar-md p-1" src="https://therichpost.com/wp-content/uploads/2021/03/avatar2.png" alt="Javier Gregory"></div>-->
-<!--                          <div class="flex-grow-1 ps-3 text-sm text-muted"><strong class="text-dark">Javier Gregory: </strong>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.</div>-->
-<!--                        </div>-->
-<!--                      </div>-->
-<!--                    </div>-->
-<!--                  </div>-->
-<!--                </div>-->
-<!--              </div>-->
-
-
-
-
-
+              <div class="m-0 p-0" v-if="upcomingBtnClicked">
+                <div class="card px-0 mb-2">
+                  <div class="card-header py-2">
+                    <h4 class="card-heading">Upcoming</h4>
+                  </div>
+                  <div class="card-body">
+                    <ClientReservations v-if="this.clientInfo.reservations" :reservations="getUpcomingReservations"/>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -174,10 +80,14 @@
 </template>
 
 <script>
-import ClientReservations from "@/components/Client/ClientPage/components/ClientProfile/ClientReservations/ClientReservations";
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import {library} from "@fortawesome/fontawesome-svg-core";
 import {faPencil} from "@fortawesome/free-solid-svg-icons";
+import ClientReservations from "@/components/Client/ClientPage/components/ClientProfile/ClientReservations/ClientUpcomingReservations/ClientReservations";
+import axios from "axios";
+import RentalAddress from "@/components/UnregisteredUser/components/RentalAddress";
+import ClientSubscription
+  from "@/components/Client/ClientPage/components/ClientProfile/ClientSubscriptions/ClientSubscription";
 
 library.add(faPencil);
 
@@ -185,43 +95,68 @@ export default {
   name: "ClientProfile",
   data() {
     return {
-      rentalClicked: false,
-      vacationRentalsBtnClicked: false,
-      boatsBtnClicked: false,
-      adventuresBtnClicked: false,
-      subscriptionsBtnClicked: true,
-      upcomingBtnClicked: false
+      subscriptionsBtnClicked: false,
+      upcomingBtnClicked: true,
+      clientInfo: [],
+      profilePic: null,
     }
   },
-  components: {ClientReservations, FontAwesomeIcon},
+  components: {RentalAddress, ClientReservations, FontAwesomeIcon, ClientSubscription},
   mounted() {
-    // const store = useStore();
-    // this.clientId = store.state.
-
+    axios.get("/Users/getClientProfile", {
+      headers: {
+        Authorization: "Bearer " + this.$store.getters.access_token
+      }
+    })
+    .then((response) => {
+      this.clientInfo = response.data;
+      this.getProfilePic();
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+  },
+  computed: {
+    getClientFullName() {
+      return this.clientInfo.name + " " + this.clientInfo.surname;
+    },
+    getAddress() {
+      return this.address.street + ' ' + this.address.number + ', ' + this.address.city + ', ' + this.address.country;
+    },
+    getUpcomingReservations() {
+      let upcoming = [];
+      const today = new Date();
+      today.setHours(23, 59, 59, 998);
+      for(let i=0; i<this.clientInfo.reservations.length; i++) {
+        let date = new Date(this.clientInfo.reservations[i].reservationTime.initDate);
+        date.setDate(date.getDate() + 1);
+        if(date > today) upcoming.push(this.clientInfo.reservations[i]);
+      }
+      return upcoming;
+    }
   },
   methods: {
+    getProfilePic() {
+      if(!this.clientInfo.photo) { this.profilePic = null; return; }
+      axios.get("/Photos/", {
+        headers: {
+          Authorization: "Bearer " + this.$store.getters.access_token,
+        },
+        params: {
+          path: this.clientInfo.photo,
+        },
+        responseType: "blob"
+      })
+      .then(response => {
+        this.profilePic = URL.createObjectURL(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    },
     resetTabButtons() {
-      this.rentalClicked = false;
-      this.vacationRentalsBtnClicked = false;
-      this.boatsBtnClicked = false;
-      this.adventuresBtnClicked = false;
       this.subscriptionsBtnClicked = false;
       this.upcomingBtnClicked = false;
-    },
-    showVacationRentalsReservations() {
-      this.resetTabButtons();
-      this.rentalClicked = true;
-      this.vacationRentalsBtnClicked = true;
-    },
-    showBoatsReservations() {
-      this.resetTabButtons();
-      this.rentalClicked = true;
-      this.boatsBtnClicked = true;
-    },
-    showAdventuresReservations() {
-      this.resetTabButtons();
-      this.rentalClicked = true;
-      this.adventuresBtnClicked = true;
     },
     showSubscriptions() {
       this.resetTabButtons();
@@ -230,7 +165,7 @@ export default {
     showUpcomingReservations() {
       this.resetTabButtons();
       this.upcomingBtnClicked = true;
-    }
+    },
   }
 }
 </script>
