@@ -40,7 +40,7 @@
 
           <div class="row mt-1">
             <div class="col d-flex justify-content-center">
-              <p class="h4"><strong>{{ "Grade: " + getRentalGrade }}</strong></p>
+              <p class="h4"><strong>{{ "Grade:" + getRentalGrade }}</strong></p>
             </div>
             <div class="col d-flex justify-content-center">
               <p class="h4"><strong>{{ "Price: $" + rental.price }}</strong></p>

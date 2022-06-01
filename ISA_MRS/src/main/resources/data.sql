@@ -205,8 +205,18 @@ INSERT INTO test.reservation (id, price, equipment_required, people, time_stamp,
 VALUES (5, 200, true, 2, '2022-01-01 12:00:00', 3, 1);
 INSERT INTO time_period (id, init_date, term_date, reservation_id)
 VALUES (6, '2022-07-07 12:00:00', '2022-07-08 12:00:00', 5);
+INSERT INTO test.reservation (id, price, equipment_required, people, time_stamp, client_id, rental_object_id)
+VALUES (6, 800, true, 2, '2022-01-01 12:00:00', 3, 2);
 INSERT INTO time_period (id, init_date, term_date, reservation_id)
-VALUES (7, '2022-08-08 12:00:00', '2022-08-10 12:00:00', 6);
+VALUES (7, '2022-07-20 12:00:00', '2022-07-21 12:00:00', 6);
+INSERT INTO test.reservation (id, price, equipment_required, people, time_stamp, client_id, rental_object_id)
+VALUES (7, 80, true, 2, '2022-01-01 12:00:00', 3, 18);
+INSERT INTO time_period (id, init_date, term_date, reservation_id)
+VALUES (8, '2022-08-08 12:00:00', '2022-08-10 12:00:00', 7);
+INSERT INTO test.reservation (id, price, equipment_required, people, time_stamp, client_id, rental_object_id)
+VALUES (8, 250, true, 2, '2022-01-01 12:00:00', 3, 9);
+INSERT INTO time_period (id, init_date, term_date, reservation_id)
+VALUES (9, '2022-10-11 12:00:00', '2022-10-15 12:00:00', 8);
 INSERT INTO test.review (id, comment, grade, review_type, time_stamp, author_id, reservation_id)
 VALUES (1, 'Incredible! I was quite satisfied, 10/10 recomended!', 5, 0, '2022-01-13 11:00:00', 3, 5);
 INSERT INTO test.review (id, comment, grade, review_type, time_stamp, author_id, reservation_id)
@@ -221,6 +231,46 @@ INSERT INTO test.review (id, comment, grade, review_type, time_stamp, author_id,
 VALUES (6, 'PEOPLE ITS A SCAM', 1, 0, '2022-01-23 22:00:00', 3, 5);
 INSERT INTO test.review (id, comment, grade, review_type, time_stamp, author_id, reservation_id)
 VALUES (7, 'I have no words...', 1, 0, '2022-01-23 23:00:00', 3, 5);
+INSERT INTO test.review (id, comment, grade, review_type, time_stamp, author_id, reservation_id)
+VALUES (8, 'Incredible! I was quite satisfied, 10/10 recomended!', 5, 0, '2022-01-13 11:00:00', 3, 8);
+INSERT INTO test.review (id, comment, grade, review_type, time_stamp, author_id, reservation_id)
+VALUES (9, 'I have no words...', 3, 0, '2022-01-23 23:00:00', 3, 7);
+INSERT INTO test.review (id, comment, grade, review_type, time_stamp, author_id, reservation_id)
+VALUES (10, '', 4, 0, '2022-01-23 23:00:00', 3, 7);
+INSERT INTO test.review (id, comment, grade, review_type, time_stamp, author_id, reservation_id)
+VALUES (11, '', 4, 0, '2022-01-23 23:00:00', 3, 7);
+INSERT INTO test.reservation (id, price, equipment_required, people, time_stamp, client_id, rental_object_id)
+VALUES (9, 250, true, 2, '2022-01-01 12:00:00', 3, 5);
+INSERT INTO time_period (id, init_date, term_date, reservation_id)
+VALUES (10, '2022-01-01 12:00:00', '2022-01-02 12:00:00', 9);
+INSERT INTO test.review (id, comment, grade, review_type, time_stamp, author_id, reservation_id)
+VALUES (12, '', 4, 0, '2022-01-23 23:00:00', 3, 9);
+INSERT INTO test.reservation (id, price, equipment_required, people, time_stamp, client_id, rental_object_id)
+VALUES (10, 250, true, 2, '2022-01-01 12:00:00', 3, 10);
+INSERT INTO time_period (id, init_date, term_date, reservation_id)
+VALUES (11, '2021-12-30 12:00:00', '2021-12-31 12:00:00', 10);
+INSERT INTO test.review (id, comment, grade, review_type, time_stamp, author_id, reservation_id)
+VALUES (13, '', 1, 0, '2022-01-23 23:00:00', 3, 10);
+INSERT INTO test.reservation (id, price, equipment_required, people, time_stamp, client_id, rental_object_id)
+VALUES (11, 600, true, 2, '2022-01-01 12:00:00', 3, 10);
+INSERT INTO time_period (id, init_date, term_date, reservation_id)
+VALUES (12, '2021-12-20 12:00:00', '2021-12-23 12:00:00', 11);
+INSERT INTO test.review (id, comment, grade, review_type, time_stamp, author_id, reservation_id)
+VALUES (14, '', 4, 0, '2022-01-23 23:00:00', 3, 11);
+INSERT INTO test.reservation (id, price, equipment_required, people, time_stamp, client_id, rental_object_id)
+VALUES (12, 250, true, 2, '2022-01-01 12:00:00', 3, 4);
+INSERT INTO time_period (id, init_date, term_date, reservation_id)
+VALUES (13, '2021-10-10 12:00:00', '2021-10-13 12:00:00', 12);
+INSERT INTO test.review (id, comment, grade, review_type, time_stamp, author_id, reservation_id)
+VALUES (15, '', 5, 0, '2022-01-23 23:00:00', 3, 12);
+
+INSERT INTO test.reservation (id, price, equipment_required, people, time_stamp, client_id, rental_object_id)
+VALUES (13, 230, true, 2, '2022-01-01 12:00:00', 3, 6);
+INSERT INTO time_period (id, init_date, term_date, reservation_id)
+VALUES (14, '2021-09-09 12:00:00', '2021-09-10 12:00:00', 13);
+INSERT INTO test.review (id, comment, grade, review_type, time_stamp, author_id, reservation_id)
+VALUES (16, '', 3, 0, '2022-01-23 23:00:00', 3, 13);
+
 INSERT INTO test.additional_service (id, name, price, rental_object_id) VALUES (1, 'AC', 0, 1);
 INSERT INTO test.additional_service (id, name, price, rental_object_id) VALUES (2, 'Balcony', 0, 1);
 INSERT INTO test.additional_service (id, name, price, rental_object_id) VALUES (3, 'Wifi', 0, 1);
