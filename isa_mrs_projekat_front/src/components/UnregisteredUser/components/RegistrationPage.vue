@@ -18,7 +18,7 @@
                         <option value="Client" selected="selected">Client</option>
                         <option value="VacationRentalOwner">House Owner</option>
                         <option value="BoatOwner">Boat Owner</option>
-                        <option value="FishingInstructor">Fishing Instructor</option>
+                        <option value="Instructor">Fishing Instructor</option>
                         <option v-if="isAdmin" value="Admin">Admin</option>
                       </select>
                     </div>

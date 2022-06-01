@@ -41,9 +41,10 @@ public class PhotoServiceImpl implements PhotoService {
         try {
             String name = LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME) + randomStringGenerator();
             name = name.replaceAll("[: .]", "");
+            String previousName = name;
             name += ".jpg";
             Files.copy(photo.getInputStream(), Paths.get("src\\main\\resources\\static").resolve("photos").resolve(name).toAbsolutePath());
-            return new ResponseEntity<>(name, HttpStatus.OK);
+            return new ResponseEntity<>(previousName, HttpStatus.OK);
         } catch (Exception e) {
             log.error(e.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
