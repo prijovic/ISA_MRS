@@ -16,13 +16,16 @@ import rs.ac.uns.ftn.siit.isa_mrs.dto.*;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.RentalProfileDtos.AdventureDtos.AdventureProfileDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.RentalProfileDtos.AdventureDtos.AdventuresForMenuDto;
 import rs.ac.uns.ftn.siit.isa_mrs.model.*;
+import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.ConductType;
+import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.FeeType;
 import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.RentalObjectType;
-import rs.ac.uns.ftn.siit.isa_mrs.repository.AdventureRepo;
-import rs.ac.uns.ftn.siit.isa_mrs.repository.ClientRepo;
+import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.UserType;
+import rs.ac.uns.ftn.siit.isa_mrs.repository.*;
 import rs.ac.uns.ftn.siit.isa_mrs.security.JwtDecoder;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -30,12 +33,18 @@ import java.util.Optional;
 @Transactional
 @Slf4j
 public class AdventureServiceImpl implements AdventureService{
-
+    private final RentalObjectOwnerRepo rentalObjectOwnerRepo;
+    private final AdditionalServiceRepo additionalServiceRepo;
+    private final AdventureEquipmentRepo adventureEquipmentRepo;
+    private final CancellationFeeRepo cancellationFeeRepo;
+    private final ConductRuleRepo conductRuleRepo;
+    private final RentalObjectService rentalService;
     private final AdventureRepo adventureRepo;
+    private final AddressRepo addressRepo;
     private final ModelMapper modelMapper;
-    private final RentalObjectServiceImpl rentalService;
     private final ClientRepo clientRepo;
     private final JwtDecoder jwtDecoder;
+    private final PhotoRepo photoRepo;
 
     @Override
     public ResponseEntity<AdventureProfileDto> getAdventure(Long id, int page, int pageSize, String token) {
@@ -66,10 +75,9 @@ public class AdventureServiceImpl implements AdventureService{
     }
 
     @Override
-    public ResponseEntity<PageDto<AdventuresForMenuDto>> findAdventuresWithPaginationSortedByField(int offset, int pageSize,
-                                                                                           String field) {
-        PageDto<AdventuresForMenuDto> result = new PageDto<>();
+    public ResponseEntity<PageDto<AdventuresForMenuDto>> findAdventuresWithPaginationSortedByField(int offset, int pageSize, String field) {
         try{
+            PageDto<AdventuresForMenuDto> result = new PageDto<>();
             Pageable pageable = PageRequest.of(offset, pageSize).withSort(Sort.by(field));
             Page<Adventure> adventuresPage = adventureRepo.findByRentalObjectType(RentalObjectType.Adventure, pageable);
             Collection<AdventuresForMenuDto> adventureDtos = new ArrayList<>();
@@ -79,54 +87,175 @@ public class AdventureServiceImpl implements AdventureService{
             result.setPages(adventuresPage.getTotalPages());
             result.setCurrentPage(adventuresPage.getNumber() + 1);
             result.setPageSize(adventuresPage.getSize());
-            if (adventuresPage.getContent().isEmpty()) {
-                return new ResponseEntity<>(result, HttpStatus.NO_CONTENT);
-            }
-            else {
-                return new ResponseEntity<>(result, HttpStatus.OK);
-            }
+            return new ResponseEntity<>(result, HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 
     @Override
-    public ResponseEntity<PageDto<AdventureDto>> findAdventuresWithPaginationSortedByFieldAndFilteredByOwner(int offset, int pageSize, String field, String ownerEmail) {
-        PageDto<AdventureDto> result = new PageDto<>();
+    public ResponseEntity<PageDto<AdventureDto>> findAdventuresWithPaginationSortedByFieldAndFilteredByOwner(int offset, int pageSize, String field, String token) {
+        JwtDecoder.DecodedToken decodedToken;
+        try {
+            decodedToken = jwtDecoder.decodeToken(token);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
         try{
             Pageable pageable = PageRequest.of(offset, pageSize).withSort(Sort.by(field));
-            Page<Adventure> adventuresPage = adventureRepo.findAllByRentalObjectTypeAndRentalObjectOwnerEmail(RentalObjectType.Adventure, ownerEmail, pageable);
-            return getPageDtoResponseEntity(result, adventuresPage);
+            Page<Adventure> adventuresPage = adventureRepo.findAllByRentalObjectTypeAndRentalObjectOwnerEmail(RentalObjectType.Adventure, decodedToken.getEmail(), pageable);
+            return new ResponseEntity<>(packAdventures(adventuresPage), HttpStatus.OK);
         } catch (Exception e) {
             log.info(e.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    @NotNull
-    private ResponseEntity<PageDto<AdventureDto>> getPageDtoResponseEntity(PageDto<AdventureDto> result, Page<Adventure> adventuresPage) {
-        Collection<AdventureDto> adventureDtos = new ArrayList<>();
-        adventuresPage.getContent().forEach(adventure ->
-                adventureDtos.add(modelMapper.map(adventure, AdventureDto.class)));
-        result.setContent(adventureDtos);
-        result.setPages(adventuresPage.getTotalPages());
-        result.setCurrentPage(adventuresPage.getNumber() + 1);
-        result.setPageSize(adventuresPage.getSize());
-        if (adventuresPage.getContent().isEmpty()) {
-            return new ResponseEntity<>(result, HttpStatus.NO_CONTENT);
+    @Override
+    public ResponseEntity<AdventureDto> findAdventure(Long id) {
+        try {
+            Adventure adventure = adventureRepo.getById(id);
+            return new ResponseEntity<>(mapAdventuresToDto(adventure), HttpStatus.OK);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        else {
+    }
+
+    @Override
+    public ResponseEntity<AdventureDto> addAdventure(rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.AdventureDto adventureDto, String token) {
+        try {
+            JwtDecoder.DecodedToken decodedToken;
+            try {
+                decodedToken = jwtDecoder.decodeToken(token);
+            } catch (Exception e) {
+                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            }
+            Optional<RentalObjectOwner> owner = rentalObjectOwnerRepo.findByEmail(decodedToken.getEmail());
+            if (owner.isEmpty() || !owner.get().getUserType().equals(UserType.Instructor)) {
+                return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+            }
+            Adventure newAdventure = adventureDtoToAdventure(adventureDto, owner.get());
+            AdventureDto result = modelMapper.map(newAdventure, AdventureDto.class);
             return new ResponseEntity<>(result, HttpStatus.OK);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @Override
+    public ResponseEntity<AdventureDto> addAdventurePhotos(Long id, List<String> photos) {
+        try {
+            Optional<Adventure> adventure = adventureRepo.findById(id);
+            if (adventure.isEmpty()) {
+                throw new Exception();
+            }
+            List<Photo> photoList = new ArrayList<>();
+            photos.forEach(photo -> {
+                Photo photo1 = new Photo();
+                photo1.setPhoto(photo);
+                photo1.setRentalObject(adventure.get());
+                photoRepo.save(photo1);
+                photoList.add(photo1);
+            });
+            Adventure adventure1 = adventure.get();
+            adventure1.setPhotos(photoList);
+            return new ResponseEntity<>(modelMapper.map(adventure1, AdventureDto.class), HttpStatus.OK);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    private Adventure adventureDtoToAdventure(rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.AdventureDto adventureDto, RentalObjectOwner owner) {
+        Adventure adventure = new Adventure();
+        List<AdditionalService> additionalServices = new ArrayList<>();
+        List<ConductRule> conductRules = new ArrayList<>();
+        List<AdventureEquipment> adventureEquipments = new ArrayList<>();
+        adventureDto.getAdditionalServices().forEach(service -> {
+            AdditionalService additionalService = modelMapper.map(service, AdditionalService.class);
+            additionalServiceRepo.save(additionalService);
+            additionalServices.add(additionalService);
+        });
+        additionalServiceRepo.saveAll(additionalServices);
+        adventureDto.getConductRules().forEach(rule -> {
+            ConductRule conductRule = new ConductRule();
+            conductRule.setRule(rule.getRule());
+            conductRule.setType(ConductType.valueOf(rule.getType()));
+            conductRuleRepo.save(conductRule);
+            conductRules.add(conductRule);
+        });
+        adventureDto.getAdventureEquipment().forEach(equipment -> {
+            AdventureEquipment adventureEquipment = modelMapper.map(equipment, AdventureEquipment.class);
+            adventureEquipmentRepo.save(adventureEquipment);
+            adventureEquipments.add(adventureEquipment);
+        });
+        CancellationFee cancellationFee = new CancellationFee();
+        cancellationFee.setValue(adventureDto.getCancellationFee().getValue());
+        if (cancellationFee.getValue() == 0 ) {
+            cancellationFee.setFeeType(FeeType.Free);
+        } else {
+            cancellationFee.setFeeType(FeeType.Percentile);
+        }
+        cancellationFeeRepo.save(cancellationFee);
+        Address address = modelMapper.map(adventureDto.getAddress(), Address.class);
+        addressRepo.save(address);
+        adventure.setDuration(adventureDto.getDuration());
+        adventure.setName(adventureDto.getName());
+        adventure.setCancellationFee(cancellationFee);
+        adventure.setAddress(address);
+        adventure.setAdditionalServices(additionalServices);
+        adventure.setAdventureEquipment(adventureEquipments);
+        adventure.setConductRules(conductRules);
+        adventure.setRentalObjectOwner(owner);
+        adventure.setRentalObjectType(RentalObjectType.Adventure);
+        adventure.setDescription(adventureDto.getDescription());
+        adventure.setCapacity(adventureDto.getCapacity());
+        adventure.setPrice(adventureDto.getPrice());
+        adventureRepo.save(adventure);
+//        DODATI ADD SERVICES, PRAVILA, OPREMU
+        adventureEquipments.forEach(equipment -> {
+            equipment.setAdventure(adventure);
+            adventureEquipmentRepo.save(equipment);
+        });
+        additionalServices.forEach(service -> {
+            service.setRentalObject(adventure);
+            additionalServiceRepo.save(service);
+        });
+        conductRules.forEach(rule -> {
+            rule.setRentalObject(adventure);
+            conductRuleRepo.save(rule);
+        });
+        cancellationFee.setRentalObject(adventure);
+        cancellationFeeRepo.save(cancellationFee);
+        return adventure;
     }
 
     private @NotNull AdventuresForMenuDto setUpMenuDto(Adventure adventure) {
         AdventuresForMenuDto adventureDto = modelMapper.map(adventure, AdventuresForMenuDto.class);
         adventureDto.setGrade(rentalService.calculateRentalRating(adventure));
-        if(adventure.getPhotos().size() != 0) {
+        if (adventure.getPhotos().size() != 0) {
             Optional<Photo> photo = adventure.getPhotos().stream().findFirst();
             photo.ifPresent(value -> adventureDto.setDisplayPhoto(modelMapper.map(value, PhotoDto.class)));
         }
+        return adventureDto;
+    }
+
+    private PageDto<AdventureDto> packAdventures(Page<Adventure> adventuresPage) {
+        PageDto<AdventureDto> result = new PageDto<>();
+        Collection<AdventureDto> adventureDtos = new ArrayList<>();
+        adventuresPage.getContent().forEach(rentalObject -> adventureDtos.add(mapAdventuresToDto(rentalObject)));
+        result.setContent(adventureDtos);
+        result.setPages(adventuresPage.getTotalPages());
+        result.setCurrentPage(adventuresPage.getNumber());
+        result.setPageSize(adventuresPage.getSize());
+        return result;
+    }
+
+    private AdventureDto mapAdventuresToDto(Adventure adventure) {
+        AdventureDto adventureDto = modelMapper.map(adventure, AdventureDto.class);
+        adventureDto.setIsDeletable(adventure.getReservations().size() == 0);
         return adventureDto;
     }
 

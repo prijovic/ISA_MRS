@@ -32,7 +32,6 @@
     "vue-router": "^4.0.14",
     "vue-search-input": "^1.1.4",
     "vue-star-rating": "^2.1.0",
-    "vue3-openlayers": "^0.1.67",
     "vue3-tel-input": "^1.0.4",
     "vuex": "^4.0.2"
   },

@@ -5,41 +5,31 @@
       <div class="container-fluid pe-0 ps-0 me-0 ms-0">
         <div class="align-items-center">
           <div class="row main-col">
-            <div class="col d-flex justify-content-start ps-0 ms-0 me-0 pe-0">
-              <div class="col-sm-10 col-md-5 col-lg-3 col-xl-3 mb-1">
-                <div class="d-flex flex-row">
-                  <select class="form-control me-1" v-model="filterType" id="Type">
-                    <option value="VacationRental">Rental House</option>
-                    <option value="Boat">Boat</option>
-                    <option value="Adventure">Adventure</option>
-                  </select>
-                  <button @click="filterButtonClicked" class="btn rounded" :class="filterActive?'btn-red':''" :disabled="filterType===null"><font-awesome-icon :icon="filterActive?'x':'filter'"></font-awesome-icon></button>
-                </div>
-              </div>
-              <div class="col mb-1">
-                <div class="d-flex flex-row justify-content-end">
-                  <button v-if="hasChanged" class="btn btn-red me-1" data-bs-toggle="modal" data-bs-target="#confirmationDialog">
-                    Save Changes
-                  </button>
-                </div>
-                <div class="modal fade" id="confirmationDialog" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                  <div class="modal-dialog">
-                    <div class="modal-content">
-                      <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">Rental Objects' Status Change</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                      </div>
-                      <div class="modal-body">
-                        {{modalMessage}}
-                      </div>
-                      <div class="modal-footer">
-                        <button type="button" class="btn btn-red" style="margin-right: 2vh;" data-bs-dismiss="modal">No</button>
-                        <button type="button" class="btn" @click="saveChanges" data-bs-dismiss="modal">Yes</button>
-                      </div>
+            <div class="col d-flex justify-content-end pe-0 me-0">
+              <button v-if="hasChanged" class="btn btn-red my-auto mb-1 me-1" data-bs-toggle="modal" data-bs-target="#confirmationDialog">
+                Save Changes
+              </button>
+              <div class="modal fade" id="confirmationDialog" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="exampleModalLabel">Users' Status Change</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                      {{modalMessage}}
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-red" style="margin-right: 2vh;" data-bs-dismiss="modal">No</button>
+                      <button type="button" class="btn" @click="saveChanges" data-bs-dismiss="modal">Yes</button>
                     </div>
                   </div>
                 </div>
               </div>
+              <router-link to="/fishingInstructor/newAdventure" class="btn btn-default mb-1 d-flex my-auto">
+                <font-awesome-icon class="my-auto pe-2" icon="plus"></font-awesome-icon>
+                Create Adventure
+              </router-link>
             </div>
           </div>
           <div class="row main-col text-center header rounded mb-3">
@@ -48,26 +38,27 @@
               <tr>
                 <th></th>
                 <th>Name</th>
-                <th>Owner</th>
-                <th>Rental Object Type</th>
+                <th>Destination</th>
+                <th>Duration</th>
                 <th></th>
+                <th>Price</th>
                 <th>Active</th>
               </tr>
               </thead>
               <tbody>
-              <tr class="p-1" v-for="(rentalObject, index) in this.rentalObjects" :key="index" :class="index%2!==0?'odd':'even'">
+              <tr class="p-1" v-for="(rentalObject, index) in this.adventures" :key="index" :class="index%2!==0?'odd':'even'">
                 <td class="col-1">
                   <img v-if="rentalObject.photos.length !== 0" :src="imageUrls[index]" style="height: 6vh;width: 6vh; object-fit: cover; object-position: center;" class="img-fluid rounded border-1" alt="">
-                  <font-awesome-icon v-else icon="user" class="img-fluid rounded border-1" style="height: 3vh"></font-awesome-icon>
+                  <font-awesome-icon v-else icon="mountain-sun" class="img-fluid rounded border-1" style="height: 3vh"></font-awesome-icon>
                 </td>
                 <td>
-                  <router-link class="profile-link" :to="'/admin/' + rentalObject.rentalObjectType + '-' + rentalObject.id">{{rentalObject.name}}</router-link>
+                  <router-link class="profile-link" :to="'/fishingInstructor/Adventure/' + rentalObject.id">{{rentalObject.name}}</router-link>
                 </td>
                 <td>
-                  <router-link class="profile-link" :to="'/admin/user/' + rentalObject.rentalObjectOwner.id">{{rentalObject.rentalObjectOwner.name + " " + rentalObject.rentalObjectOwner.surname}}</router-link>
+                  {{rentalObject.address.city + ", " + rentalObject.address.country}}
                 </td>
                 <td>
-                  {{this.rentalObjectType(rentalObject)}}
+                  {{duration(rentalObject.duration)}}
                 </td>
                 <td>
                   <button :id="index" class="eye-btn border-0 text-decoration-none" type="button" data-bs-toggle="modal" :data-bs-target="'#profileModal' + index">
@@ -77,7 +68,7 @@
                     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
                       <div class="modal-content">
                         <div class="modal-header">
-                          <h5 class="modal-title">{{rentalObjectType(rentalObject)}} Profile</h5>
+                          <h5 class="modal-title">Adventure Profile</h5>
                           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
@@ -98,11 +89,27 @@
                                       <div class="col text-start">
                                         <h6>Price: <span style="color: black">{{rentalObject.price}}$</span></h6>
                                         <h6>Description: <span style="color: black">{{rentalObject.description}}</span></h6>
-                                        <h6>Address: <span style="color: black">{{rentalObject.address.street + " " + rentalObject.address.number + ", " + rentalObject.address.city + ", " + rentalObject.address.country}}</span></h6>
-                                        <h6>Owner: <span style="color: black">{{rentalObject.rentalObjectOwner.name + " " + rentalObject.rentalObjectOwner.surname + "(" + rentalObject.rentalObjectOwner.phone + ")"}}</span></h6>
+                                        <h6>Address: <span style="color: black">{{rentalObject.address.street +  (rentalObject.address.number ? " " + rentalObject.address.number:"") + ", " + rentalObject.address.city + ", " + rentalObject.address.country}}</span></h6>
                                         <h6>Activity:
                                           <input v-if="rentalObject.isActive" class="form-check-input" type="checkbox" checked disabled>
                                           <input v-else class="form-check-input" type="checkbox" disabled></h6>
+                                        <h6>Capacity: <span style="color: black">{{rentalObject.capacity}}</span></h6>
+                                        <h6>Equipment: <span style="color: black">{{equipment(rentalObject.adventureEquipment)}}</span></h6>
+                                        <h6>Rules of Conduct:</h6>
+                                        <table class="rounded">
+                                          <thead style="background-color: transparent">
+                                            <tr>
+                                              <th style="background-color: #008970; color: #f7f7f2; ; border-bottom: #008970 1px solid">Do</th>
+                                              <th style="background-color: #e23c52; color: #f7f7f2; border-left: #008970 1px solid; border-bottom: #e23c52 1px solid">Don't</th>
+                                            </tr>
+                                          </thead>
+                                          <tbody>
+                                            <tr v-for="(rule, index) in rulesOfConduct(rentalObject.conductRules)" :key="index" :class="index%2!==0?'odd':'even'">
+                                              <td style="border-right: #008970 1px solid">{{rule.Do}}</td>
+                                              <td>{{rule.DoNot}}</td>
+                                            </tr>
+                                          </tbody>
+                                        </table>
                                       </div>
                                     </div>
                                   </div>
@@ -114,6 +121,9 @@
                       </div>
                     </div>
                   </div>
+                </td>
+                <td>
+                  {{rentalObject.price + "$"}}
                 </td>
                 <td>
                   <input class="form-check-input" type="checkbox" :value="!rentalObject.isActive" v-model="rentalObject.isActive" @change="changeStatus(rentalObject)" :disabled="!rentalObject.isDeletable">
@@ -141,57 +151,50 @@
 </template>
 
 <script>
-import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
-import { library } from "@fortawesome/fontawesome-svg-core";
-import {faEye, faTrash, faFilter, faX} from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
+import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
+import {library} from "@fortawesome/fontawesome-svg-core";
+import {faPlus, faMountainSun} from "@fortawesome/free-solid-svg-icons";
 import {useStore} from "vuex";
 
-library.add(faEye, faTrash, faFilter, faX);
+library.add(faPlus, faMountainSun);
 
 export default {
-  name: "AdminRentalsView",
-  components: {FontAwesomeIcon},
+  name: "AdventuresView",
+  components: {
+    FontAwesomeIcon
+  },
   data() {
     return {
-      rentalObjects: [],
-      currentPage: 0,
+      adventures: [],
       totalPages: null,
+      currentPage: 0,
       pageSize: 10,
-      filterType: null,
-      filterActive: false,
       imageUrls: [],
       changedRentals: []
     }
   },
   mounted() {
     const store = useStore();
-    axios.get("/RentalObjects/getRentalObjectsPage", {headers: {
-        Authorization: "Bearer " + store.getters.access_token,
+    axios.get("/RentalObjects/getAdventuresInstructor", {headers: {
+        Authorization: "Bearer " + store.state.access_token,
       },
       params: {
         page: this.currentPage,
-        pageSize: this.pageSize
-      }
-    })
-        .then(response => {
-          this.rentalObjects = response.data.content;
-          this.currentPage = response.data.currentPage;
-          this.totalPages = response.data.pages;
-          this.rentalObjects.forEach(rentalObject => {
-            if (rentalObject.photos.length > 0) {
-              const index = this.rentalObjects.indexOf(rentalObject);
-              this.loadImage(rentalObject.photos[0].photo, index);
-            }
-          })
-        })
-        .catch(() =>{
-          this.$notify({
-            title: "Server error",
-            text: "Server is currently off. Please try again later...",
-            type: "error"
-          });
-        });
+        pageSize: this.pageSize,
+        field: "name"
+      }},
+    ).then(response => {
+      this.adventures = response.data.content;
+      this.currentPage = response.data.currentPage;
+      this.totalPages = response.data.pages;
+      this.adventures.forEach(rentalObject => {
+        if (rentalObject.photos.length > 0) {
+          const index = this.adventures.indexOf(rentalObject);
+          this.loadImage(rentalObject.photos[0].photo, index);
+        }
+      })
+    });
   },
   methods: {
     saveChanges() {
@@ -231,41 +234,6 @@ export default {
         this.changedRentals.push(rentalObject);
       }
     },
-    loadImage(name, index) {
-      axios.get("/Photos/", {headers: {
-          Authorization: "Bearer " + this.$store.getters.access_token,
-        },
-        params: {
-          path: name,
-        },
-        responseType: "blob"
-      })
-      .then(response => {
-        this.imageUrls[index] = URL.createObjectURL(response.data);
-      })
-      .catch((error) =>{
-        console.log(error);
-      });
-    },
-    filterButtonClicked() {
-      if (this.filterActive) {
-        this.filterType = null;
-        this.filterActive = !this.filterActive;
-        this.refreshPage();
-      } else if (this.filterType !== null) {
-        this.filterActive = !this.filterActive;
-        this.refreshPage();
-      }
-    },
-    rentalObjectType(rentalObject) {
-      if (rentalObject.rentalObjectType === "Adventure") {
-        return "Adventure";
-      } else if (rentalObject.rentalObjectType === "VacationRental") {
-        return "Rental House";
-      } else {
-        return rentalObject.rentalObjectType;
-      }
-    },
     previousPage() {
       this.currentPage -= 1;
       this.refreshPage();
@@ -285,51 +253,96 @@ export default {
       this.refreshPage();
     },
     refreshPage() {
-      let params;
-      let url;
-      if (this.filterType !== null) {
-        params = {
-          page: this.currentPage,
-          pageSize: this.pageSize,
-          filter: this.filterType
-        };
-        url = "/RentalObjects/getRentalObjectsFilterPage";
-      } else {
-        params = {
-          page: this.currentPage,
-          pageSize: this.pageSize
-        };
-        url = "/RentalObjects/getRentalObjectsPage";
-      }
-      axios.get(url, {headers: {
+      axios.get("/RentalObjects/getAdventureInstructor", {headers: {
           Authorization: "Bearer " + this.$store.getters.access_token,
         },
-        params
+        params: {
+          page: this.currentPage,
+          pageSize: this.pageSize,
+          field: "name"
+        }
+      })
+      .then(response => {
+        this.adventures = response.data.content;
+        this.currentPage = response.data.currentPage;
+        this.totalPages = response.data.pages;
+        this.adventures.forEach(rentalObject => {
+          if (rentalObject.photos.length > 0) {
+            const index = this.adventures.indexOf(rentalObject);
+            this.loadImage(rentalObject.photos[0].photo, index);
+          }
+        })
+      })
+      .catch(() =>{
+        this.$notify({
+          title: "Server error",
+          text: "Server is currently off. Please try again later...",
+          type: "error"
+        });
+      });
+    },
+    loadImage(name, index) {
+      axios.get("/Photos/", {headers: {
+          Authorization: "Bearer " + this.$store.getters.access_token,
+        },
+        params: {
+          path: name,
+        },
+        responseType: "blob"
       })
           .then(response => {
-            this.rentalObjects = response.data.content;
-            this.changedRentals.forEach(rentalObject =>
-              { this.rentalObjects.forEach( rentalObject1 =>
-                { if (rentalObject.id === rentalObject1.id && rentalObject.isActive !== rentalObject1.isActive)
-                  rentalObject1.isActive = rentalObject.isActive;
-                });
-              });
-            this.currentPage = response.data.currentPage;
-            this.totalPages = response.data.pages;
-            this.rentalObjects.forEach(rentalObject => {
-              if (rentalObject.photos.length > 0) {
-                const index = this.rentalObjects.indexOf(rentalObject);
-                this.loadImage(rentalObject.photos[0].photo, index);
-              }
-            })
+            this.imageUrls[index] = URL.createObjectURL(response.data);
           })
-          .catch(() =>{
-            this.$notify({
-              title: "Server error",
-              text: "Server is currently off. Please try again later...",
-              type: "error"
-            });
+          .catch((error) =>{
+            console.log(error);
           });
+    },
+    duration(duration) {
+      if (duration < 1) {
+        return Math.round(60*duration) + "min";
+      } else {
+        let minutes = duration%1 === 0 ? "" : 60*(duration%1) + "min";
+        return Math.trunc(duration) + "h " + minutes;
+      }
+    },
+    equipment(equipment) {
+      let result = "";
+      equipment.forEach(element => {
+        result += " " + element.name + ",";
+      })
+      result = result.slice(0, -1);
+      return result;
+    },
+    rulesOfConduct(rulesOfConduct) {
+      let pairsOfRules = [];
+      let positiveRules = this.positiveRules(rulesOfConduct);
+      let negativeRules = this.negativeRules(rulesOfConduct);
+      let size = Math.max(positiveRules.length, negativeRules.length);
+      for (let i = 0; i < size; i++) {
+        pairsOfRules.push({
+          "Do": i+1<=positiveRules.length?positiveRules[i]:"",
+          "DoNot": i+1<=negativeRules.length?negativeRules[i]:""
+        });
+      }
+      return pairsOfRules;
+    },
+    positiveRules(rulesOfConduct) {
+      let positiveRules = [];
+      rulesOfConduct.forEach(rule => {
+        if (rule.type === "Do") {
+          positiveRules.push(rule.rule);
+        }
+      });
+      return positiveRules;
+    },
+    negativeRules(rulesOfConduct) {
+      let negativeRules = [];
+      rulesOfConduct.forEach(rule => {
+        if (rule.type === "DoNot") {
+          negativeRules.push(rule.rule);
+        }
+      });
+      return negativeRules;
     }
   },
   computed: {
@@ -356,14 +369,14 @@ export default {
       let deleteMessage = "";
       let activateMessage = "";
       if (numberOfDeletedRentals > 1) {
-        deleteMessage = "Do you want to delete rental objects:";
+        deleteMessage = "Do you want to delete adventures:";
       } else if (numberOfDeletedRentals === 1) {
-        deleteMessage = "Do you want to delete rental object:";
+        deleteMessage = "Do you want to delete adventure:";
       }
       if (numberOfActivatedRentals > 1) {
-        activateMessage = "Do you want to activate rental objects:";
+        activateMessage = "Do you want to activate adventures:";
       } else if (numberOfActivatedRentals === 1) {
-        activateMessage = "Do you want to activate rental object:";
+        activateMessage = "Do you want to activate adventure:";
       }
       this.changedRentals.forEach(rentalObject => {
         if (!rentalObject.isActive) {
@@ -407,11 +420,5 @@ export default {
 <style scoped>
   .profile-link {
     color: #008970;
-  }
-
-  .rounded-circle {
-    background-color:  rgba(176, 184, 180);
-    color: white;
-    padding: 10px;
   }
 </style>
