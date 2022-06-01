@@ -608,3 +608,6 @@ INSERT INTO conduct_rule (id, rule, type, rental_object_id) VALUES (67, 'Taking 
 INSERT INTO conduct_rule (id, rule, type, rental_object_id) VALUES (68, 'Drinking water', 0, 20);
 INSERT INTO conduct_rule (id, rule, type, rental_object_id) VALUES (69, 'Leaving the group', 1, 20);
 INSERT INTO adventure (id, duration) VALUES (20, 4);
+INSERT INTO subscribed_client (rental_id, subscriber_id) VALUES (1, 3);
+INSERT INTO subscribed_client (rental_id, subscriber_id) VALUES (2, 3);
+INSERT INTO subscribed_client (rental_id, subscriber_id) VALUES (3, 3);
