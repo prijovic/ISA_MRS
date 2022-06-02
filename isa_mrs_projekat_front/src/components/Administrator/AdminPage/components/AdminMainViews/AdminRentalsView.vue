@@ -146,6 +146,7 @@ import { library } from "@fortawesome/fontawesome-svg-core";
 import {faEye, faTrash, faFilter, faX} from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
 import {useStore} from "vuex";
+import {toggleLoading, toggleProcessing} from "@/components/state";
 
 library.add(faEye, faTrash, faFilter, faX);
 
@@ -165,6 +166,7 @@ export default {
     }
   },
   mounted() {
+    toggleLoading();
     const store = useStore();
     axios.get("/RentalObjects/getRentalObjectsPage", {headers: {
         Authorization: "Bearer " + store.getters.access_token,
@@ -184,6 +186,7 @@ export default {
               this.loadImage(rentalObject.photos[0].photo, index);
             }
           })
+          toggleLoading();
         })
         .catch(() =>{
           this.$notify({
@@ -191,10 +194,12 @@ export default {
             text: "Server is currently off. Please try again later...",
             type: "error"
           });
+          toggleLoading();
         });
   },
   methods: {
     saveChanges() {
+      toggleProcessing();
       let ids = this.changedRentalsIds;
       let lwc = {list: ids};
       axios.put("/RentalObjects/multipleRentalsStatusChange",
@@ -214,6 +219,7 @@ export default {
               type: "success"
             });
             this.changedRentals = [];
+            toggleProcessing();
           })
           .catch(() =>{
             this.$notify({
@@ -221,6 +227,7 @@ export default {
               text: "Something went wrong. Please try again later...",
               type: "error"
             });
+            toggleProcessing();
           })
     },
     changeStatus(rentalObject) {
@@ -287,6 +294,7 @@ export default {
     refreshPage() {
       let params;
       let url;
+      toggleProcessing();
       if (this.filterType !== null) {
         params = {
           page: this.currentPage,
@@ -322,6 +330,7 @@ export default {
                 this.loadImage(rentalObject.photos[0].photo, index);
               }
             })
+            toggleProcessing();
           })
           .catch(() =>{
             this.$notify({
@@ -329,6 +338,7 @@ export default {
               text: "Server is currently off. Please try again later...",
               type: "error"
             });
+            toggleProcessing();
           });
     }
   },

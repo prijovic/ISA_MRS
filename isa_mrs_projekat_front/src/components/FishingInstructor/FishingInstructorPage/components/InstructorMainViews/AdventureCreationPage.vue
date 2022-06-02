@@ -228,6 +228,7 @@ import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import {library} from "@fortawesome/fontawesome-svg-core";
 import {faPlus, faMinus, faX, faPlusCircle} from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
+import {toggleProcessing} from "@/components/state";
 
 library.add(faPlus, faMinus, faX, faPlusCircle);
 
@@ -339,6 +340,7 @@ export default {
       }
     },
     makeRequest() {
+      toggleProcessing();
       axios.post("/RentalObjects/addAdventure", this.adventure, {
         headers: {
           Authorization: "Bearer " + this.$store.getters.access_token,
@@ -367,7 +369,8 @@ export default {
                 text: "You have successfully added a new adventure.",
                 position: "bottom right",
                 type: "success"
-              })
+              });
+              toggleProcessing();
             })
           })
         }
@@ -379,13 +382,15 @@ export default {
             text: "Server is currently off. Please try again later...",
             type: "error"
           });
+          toggleProcessing();
         } else if (error.response.status === 500) {
           this.$notify({
             title: "Internal Server Error",
             text: "Something went wrong on the server! Please try again later...",
             position: "bottom right",
             type: "error"
-          })
+          });
+          toggleProcessing();
         }
       })
     },

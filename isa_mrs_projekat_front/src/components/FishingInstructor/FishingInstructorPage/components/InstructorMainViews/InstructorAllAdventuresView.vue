@@ -156,6 +156,7 @@ import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import {library} from "@fortawesome/fontawesome-svg-core";
 import {faPlus, faMountainSun} from "@fortawesome/free-solid-svg-icons";
 import {useStore} from "vuex";
+import {toggleLoading, toggleProcessing} from "@/components/state";
 
 library.add(faPlus, faMountainSun);
 
@@ -175,6 +176,7 @@ export default {
     }
   },
   mounted() {
+    toggleLoading();
     const store = useStore();
     axios.get("/RentalObjects/getAdventuresInstructor", {headers: {
         Authorization: "Bearer " + store.state.access_token,
@@ -184,7 +186,8 @@ export default {
         pageSize: this.pageSize,
         field: "name"
       }},
-    ).then(response => {
+    )
+    .then(response => {
       this.adventures = response.data.content;
       this.currentPage = response.data.currentPage;
       this.totalPages = response.data.pages;
@@ -193,11 +196,20 @@ export default {
           const index = this.adventures.indexOf(rentalObject);
           this.loadImage(rentalObject.photos[0].photo, index);
         }
-      })
-    });
+      });
+      toggleLoading();
+    })
+    .catch(() =>{
+      this.$notify({
+        title: "Server error",
+        text: "Something went wrong. Please try again later...",
+        type: "error"
+      });
+    })
   },
   methods: {
     saveChanges() {
+      toggleProcessing();
       let ids = this.changedRentalsIds;
       let lwc = {list: ids};
       axios.put("/RentalObjects/multipleRentalsStatusChange",
@@ -217,6 +229,7 @@ export default {
               type: "success"
             });
             this.changedRentals = [];
+            toggleProcessing();
           })
           .catch(() =>{
             this.$notify({
@@ -224,6 +237,7 @@ export default {
               text: "Something went wrong. Please try again later...",
               type: "error"
             });
+            toggleProcessing();
           })
     },
     changeStatus(rentalObject) {
@@ -253,6 +267,7 @@ export default {
       this.refreshPage();
     },
     refreshPage() {
+      toggleProcessing();
       axios.get("/RentalObjects/getAdventureInstructor", {headers: {
           Authorization: "Bearer " + this.$store.getters.access_token,
         },
@@ -271,7 +286,8 @@ export default {
             const index = this.adventures.indexOf(rentalObject);
             this.loadImage(rentalObject.photos[0].photo, index);
           }
-        })
+        });
+        toggleProcessing();
       })
       .catch(() =>{
         this.$notify({
@@ -279,6 +295,7 @@ export default {
           text: "Server is currently off. Please try again later...",
           type: "error"
         });
+        toggleProcessing();
       });
     },
     loadImage(name, index) {
