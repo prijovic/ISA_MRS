@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -26,7 +27,7 @@ public class PhotoServiceImpl implements PhotoService {
     @Override
     public ResponseEntity<InputStreamResource> getPhoto(String path) {
         try {
-            var imgFile = new ClassPathResource("static/photos/" + path + ".jpg");
+            var imgFile = new FileSystemResource("src/main/resources/static/photos/" + path + ".jpg");
             return ResponseEntity.ok()
                     .contentType(MediaType.IMAGE_JPEG)
                     .body(new InputStreamResource(imgFile.getInputStream()));
@@ -41,10 +42,8 @@ public class PhotoServiceImpl implements PhotoService {
         try {
             String name = LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME) + randomStringGenerator();
             name = name.replaceAll("[: .]", "");
-            String previousName = name;
-            name += ".jpg";
-            Files.copy(photo.getInputStream(), Paths.get("src\\main\\resources\\static").resolve("photos").resolve(name).toAbsolutePath());
-            return new ResponseEntity<>(previousName, HttpStatus.OK);
+            Files.copy(photo.getInputStream(), Paths.get("src\\main\\resources\\static").resolve("photos").resolve(name + ".jpg").toAbsolutePath());
+            return new ResponseEntity<>(name, HttpStatus.OK);
         } catch (Exception e) {
             log.error(e.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
