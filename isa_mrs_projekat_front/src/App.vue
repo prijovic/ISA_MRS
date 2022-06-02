@@ -1,21 +1,24 @@
 <template>
+  <processing-layer v-if="processing"></processing-layer>
   <the-navbar></the-navbar>
   <router-view name="sidebar"/>
-
   <div class="container-fluid" :style="{'padding-left': sidebarWidth}">
+    <loading-page v-if="loading"></loading-page>
     <router-view :key="$route.path"/>
     <notifications position="bottom right" :max=maxNotif style="font-size: 200px"/>
   </div>
 </template>
 
 <script>
-import {sidebarWidth} from "@/components/state";
+import {sidebarWidth, loading, processing} from "@/components/state";
 import TheNavbar from "@/components/GeneralComponents/TheNavbar";
+import ProcessingLayer from "@/components/GeneralComponents/ProcessingLayer";
+import LoadingPage from "@/components/GeneralComponents/LoadingPage";
 
 export default {
   name: 'App',
   setup() {
-    return {sidebarWidth};
+    return {sidebarWidth, loading, processing};
   },
   computed: {
     maxNotif() {
@@ -23,6 +26,8 @@ export default {
     }
   },
   components: {
+    LoadingPage,
+    ProcessingLayer,
     TheNavbar
   }
 }

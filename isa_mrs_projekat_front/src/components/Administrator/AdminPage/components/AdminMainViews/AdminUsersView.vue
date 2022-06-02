@@ -133,6 +133,7 @@ import { faUserPlus, faEye } from "@fortawesome/free-solid-svg-icons";
 import {useStore} from "vuex";
 import axios from "axios";
 import store from "@/store";
+import {toggleLoading, toggleProcessing} from "@/components/state";
 
 library.add(faUserPlus, faEye);
 
@@ -169,6 +170,7 @@ export default {
           });
     },
     saveChanges() {
+      toggleProcessing();
       let ids = this.changedUsersIds;
       let lwc = {list: ids};
       axios.put("/Users/multipleUserStatusChange",
@@ -188,6 +190,7 @@ export default {
           type: "success"
         });
         this.changedUsers = [];
+        toggleProcessing();
       })
       .catch(() =>{
         this.$notify({
@@ -195,6 +198,7 @@ export default {
           text: "Something went wrong. Please try again later...",
           type: "error"
         });
+        toggleProcessing();
       })
     },
     changedStatus(user) {
@@ -241,6 +245,7 @@ export default {
       this.refreshPage();
     },
     refreshPage() {
+      toggleLoading();
       axios.get("/Users/getUsersPage", {headers: {
           Authorization: "Bearer " + this.$store.getters.access_token,
         },
@@ -260,6 +265,7 @@ export default {
             });
             this.currentPage = response.data.currentPage;
             this.totalPages = response.data.pages;
+            toggleLoading();
           })
           .catch(() =>{
             this.$notify({
@@ -267,10 +273,12 @@ export default {
               text: "Server is currently off. Please try again later...",
               type: "error"
             });
+            toggleLoading();
           });
     }
   },
   mounted() {
+    toggleLoading();
     const store = useStore();
     axios.get("/Users/getUsersPage", {headers: {
         Authorization: "Bearer " + store.state.access_token,
@@ -293,6 +301,7 @@ export default {
           console.log(this.imageUrls)
         }
       });
+      toggleLoading();
     })
     .catch(() =>{
       this.$notify({
@@ -300,6 +309,7 @@ export default {
         text: "Server is currently off. Please try again later...",
         type: "error"
       });
+      toggleLoading();
     });
   },
   computed: {

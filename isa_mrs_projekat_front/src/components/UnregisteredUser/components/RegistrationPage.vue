@@ -120,6 +120,7 @@ import { VueTelInput }  from 'vue3-tel-input';
 import 'vue3-tel-input/dist/vue3-tel-input.css';
 import store from "@/store";
 import axios from "axios";
+import {toggleProcessing} from "@/components/state";
 
 export default {
   name: "RegistrationPage",
@@ -268,6 +269,7 @@ export default {
             position: "bottom right",
             type: "success"
           });
+          toggleProcessing();
           this.$router.push("/admin/users");
         })
         .catch(error => {
@@ -277,7 +279,9 @@ export default {
               text: "Server is currently off. Please try again later...",
               type: "error"
             });
+            toggleProcessing();
           } else if (error.response.status === 422) {
+            toggleProcessing();
             this.emailIsUnique = false;
           } else if (error.response.status === 500) {
             this.$notify({
@@ -285,7 +289,8 @@ export default {
               text: "Something went wrong on the server! Please try again later...",
               position: "bottom right",
               type: "error"
-            })
+            });
+            toggleProcessing();
           }
         })
       } else {
@@ -304,6 +309,7 @@ export default {
             position: "bottom right",
             type: "success"
           });
+          toggleProcessing();
           this.$router.push("/");
         })
         .catch(error => {
@@ -313,7 +319,9 @@ export default {
               text: "Server is currently off. Please try again later...",
               type: "error"
             });
+            toggleProcessing();
           } else if (error.response.status === 422) {
+            toggleProcessing();
             this.emailIsUnique = false;
           } else if (error.response.status === 400) {
             this.$notify({
@@ -321,14 +329,16 @@ export default {
               text: "Bad registration request.",
               position: "bottom right",
               type: "warn"
-            })
+            });
+            toggleProcessing();
           } else if (error.response.status === 500) {
             this.$notify({
               title: "Internal Server Error",
               text: "Something went wrong on the server! Please try again later...",
               position: "bottom right",
               type: "error"
-            })
+            });
+            toggleProcessing();
           }
         })
       }
@@ -405,6 +415,7 @@ export default {
       return Boolean(this.user.phoneNumber);
     },
     validateAddress() {
+      toggleProcessing();
       const apiKey = 'VrDrl5BjEA0Whvb-chHbFz96HV4qlCXB-yoiTRRLKno';
       const url = 'https://geocoder.ls.hereapi.com/6.2/geocode.json' +
           '?apiKey=' + apiKey +
