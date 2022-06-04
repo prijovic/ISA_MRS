@@ -232,7 +232,6 @@
 <script>
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import {library} from "@fortawesome/fontawesome-svg-core";
-import {faPlus, faMinus, faX, faPlusCircle} from "@fortawesome/free-solid-svg-icons";
 import {faMinus, faPlus, faPlusCircle, faX} from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
 import {toggleLoading, toggleProcessing} from "@/components/state";
@@ -243,7 +242,6 @@ library.add(faPlus, faMinus, faX, faPlusCircle);
 
 export default {
   name: "AdventureCreationPage",
-  components: {FontAwesomeIcon},
   components: {AvailabilityPeriodSelector, FontAwesomeIcon},
   data() {
     return {
@@ -265,7 +263,6 @@ export default {
           longitude: null,
           latitude: null
         },
-        adventureEquipment: []
         adventureEquipment: [],
         availabilityPeriod: {
           initDate: null,
@@ -675,7 +672,6 @@ export default {
 
   .equipment-tag {
     background-color: #008970;
-    color: #99EEDF;
     font-weight: bold;
     color: white;
     border: 2px solid #008970;
@@ -684,7 +680,6 @@ export default {
   }
 
   .equipment-tag:hover   {
-    background-color: #99EEDF;
     background-color: white;
     color: #008970;
     border: 2px solid #008970;
@@ -700,7 +695,6 @@ export default {
 
   .tag-button {
     background-color: transparent;
-    color: #99EEDF;
     color: white;
     border: none;
   }
