@@ -37,8 +37,8 @@ public class RentalObject {
     private Collection<SpecialOffer> specialOffers = new LinkedHashSet<>();
     @OneToOne(cascade = CascadeType.ALL)
     private CancellationFee cancellationFee;
-    @OneToMany(mappedBy = "rentalObject", cascade = CascadeType.ALL)
-    private Collection<TimePeriod> availabilityPeriods = new LinkedHashSet<>();
+    @OneToOne
+    private TimePeriod availabilityPeriod;
     @OneToMany(mappedBy = "rentalObject", cascade = CascadeType.ALL)
     private Collection<Reservation> reservations = new LinkedHashSet<>();
     @ManyToOne

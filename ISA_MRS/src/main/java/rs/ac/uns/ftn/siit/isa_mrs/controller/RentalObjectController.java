@@ -115,6 +115,11 @@ public class RentalObjectController {
         return adventureService.findAdventuresWithPaginationSortedByFieldAndFilteredByOwner(page, pageSize, field, request.getHeader(AUTHORIZATION));
     }
 
+    @GetMapping(GET_ADVENTURE + "Instructor")
+    public ResponseEntity<AdventureDto> getAdventure(@RequestParam Long id) {
+        return adventureService.findAdventure(id);
+    }
+
     @PostMapping("/addAdventure")
     public ResponseEntity<AdventureDto> addAdventure(@RequestBody rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.AdventureDto adventure, HttpServletRequest request) {
         return adventureService.addAdventure(adventure, request.getHeader(AUTHORIZATION));
@@ -125,10 +130,10 @@ public class RentalObjectController {
         return adventureService.addAdventurePhotos(dto.getId(), dto.getPhotos());
     }
 
-    @PostMapping(AVAILABILITY_PERIOD)
-    public ResponseEntity<RentalObjectPeriodsDto> setPeriods(@RequestBody PeriodsSettingForm periodsSettingForm) {
-        return rentalObjectService.setAvailabilityPeriods(periodsSettingForm.getId(), periodsSettingForm.getDates());
-    }
+//    @PostMapping(AVAILABILITY_PERIOD)
+//    public ResponseEntity<RentalObjectPeriodsDto> setPeriods(@RequestBody PeriodsSettingForm periodsSettingForm) {
+//        return rentalObjectService.setAvailabilityPeriods(periodsSettingForm.getId(), periodsSettingForm.getDates());
+//    }
 
     @PostMapping(ADD_SUBSCRIBER)
     public ResponseEntity<Void> addSubscriber(@RequestBody addSubscriberDto asd, HttpServletRequest request) {

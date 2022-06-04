@@ -25,4 +25,5 @@ public class AdventureDto implements Serializable {
     private Collection<ConductRuleDto> conductRules;
     private Collection<AdventureEquipmentDto> adventureEquipment;
     private Collection<AdditionalServiceDto> additionalServices;
+    private TimePeriodDto availabilityPeriod;
 }

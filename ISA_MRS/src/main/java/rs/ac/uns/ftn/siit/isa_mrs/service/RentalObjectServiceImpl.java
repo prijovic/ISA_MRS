@@ -41,27 +41,27 @@ public class RentalObjectServiceImpl implements RentalObjectService {
     private final ReviewRepo reviewRepo;
     private final JwtDecoder jwtDecoder;
 
-    @Override
-    public ResponseEntity<RentalObjectPeriodsDto> setAvailabilityPeriods(Long id, List<LocalDate> dates) {
-        try {
-            Optional<RentalObject> rentalObjectOptional = rentalObjectRepo.findById(id);
-            if (rentalObjectOptional.isEmpty()) {
-                return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-            }
-            List<TimePeriod> periods = makePeriods(dates);
-            RentalObject rentalObject = rentalObjectOptional.get();
-            for (TimePeriod period:periods) {
-                period.setRentalObject(rentalObject);
-                timePeriodRepo.save(period);
-            }
-            rentalObject.setAvailabilityPeriods(periods);
-            rentalObjectRepo.save(rentalObject);
-            RentalObjectPeriodsDto rentalObjectPeriodsDto = modelMapper.map(rentalObject, RentalObjectPeriodsDto.class);
-            return new ResponseEntity<>(rentalObjectPeriodsDto, HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
+//    @Override
+//    public ResponseEntity<RentalObjectPeriodsDto> setAvailabilityPeriods(Long id, List<LocalDate> dates) {
+//        try {
+//            Optional<RentalObject> rentalObjectOptional = rentalObjectRepo.findById(id);
+//            if (rentalObjectOptional.isEmpty()) {
+//                return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+//            }
+//            List<TimePeriod> periods = makePeriods(dates);
+//            RentalObject rentalObject = rentalObjectOptional.get();
+//            for (TimePeriod period:periods) {
+//                period.setRentalObject(rentalObject);
+//                timePeriodRepo.save(period);
+//            }
+//            rentalObject.setAvailabilityPeriods(periods);
+//            rentalObjectRepo.save(rentalObject);
+//            RentalObjectPeriodsDto rentalObjectPeriodsDto = modelMapper.map(rentalObject, RentalObjectPeriodsDto.class);
+//            return new ResponseEntity<>(rentalObjectPeriodsDto, HttpStatus.OK);
+//        } catch (Exception e) {
+//            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
+//    }
 
     @Override
     public ResponseEntity<PageDto<RentalObjectDto>> getRentalObjects(int page, int pageSize) {

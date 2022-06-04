@@ -67,6 +67,18 @@ export default {
   border: 1px solid #e23c52;
 }
 
+.btn-yellow {
+  background-color: #ffd055;
+  color: white;
+  border: 1px solid rgb(255, 208, 85, 0.4);
+}
+
+.btn-yellow:active, .btn-yellow:hover, .btn-yellow:focus {
+  background-color: rgb(255, 208, 85, 0.4);
+  color: white;
+  border: 1px solid #ffd055;
+}
+
 input[type=checkbox] {
   opacity: 100%;
   border: 1px solid #008970;
