@@ -1,5 +1,5 @@
 <template>
-  <div class="modal fade" :id="'bill-'+this.id" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal fade" :id="'cancel-'+this.id" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
       <div class="modal-content">
         <div class="modal-header p-0 m-0" style="border-bottom: none">
@@ -10,7 +10,7 @@
           </div>
           <div class="row my-0 py-0 " v-for="(service, i) in services" :key="i">
             <div class="col-md-9">
-                <p class="h5">{{ service.name }}</p>
+              <p class="h5">{{ service.name }}</p>
             </div>
             <div class="col-md-3 align-items-end" style="border-left: 1px solid lightgray;">
               <p class="h5" style="font-weight: 800;">${{ service.price }}</p>
@@ -59,14 +59,12 @@
 
 <script>
 export default {
-  name: "ReservationPreview",
-  props: ["services", "days", "price", "total", "id"],
-  computed: {
-    calculateTotal() {
-      return this.days*this.price;
+  name: "ReservationCancellation",
+  props: [],
+  computed() {
+    return {
+
     }
-  },
-  mounted() {
   },
 }
 </script>

@@ -103,18 +103,14 @@ export default {
         date.setDate(date.getDate() + 1);
         if(date < today) past.push(this.clientInfo.reservations[i]);
       }
-      console.log(past);
       return past;
     }
   },
   methods: {
     calculateTotal(reservation) {
       let days = this.getNumberOfDays(reservation);
-      console.log(days);
       let services = this.calculateAdditionalServices(reservation);
-      console.log(services);
       let price = reservation.price;
-      console.log(price);
       return days*price+services;
     },
     getNumberOfDays(reservation) {
@@ -148,7 +144,6 @@ export default {
     getPhotos() {
       let reservations = this.getPastReservations;
       for (let i=0; i < reservations.length; i++) {
-        console.log(reservations[i].rentalObject.displayPhoto.photo);
         if(!reservations[i].rentalObject.displayPhoto.photo) { this.images[i] = null; continue; }
         axios.get("/Photos/", {
           headers: {

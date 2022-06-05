@@ -18,13 +18,10 @@ import java.util.List;
 public interface RentalObjectService {
 //    ResponseEntity<RentalObjectPeriodsDto> setAvailabilityPeriods(Long id, List<LocalDate> dates);
     ResponseEntity<PageDto<RentalObjectDto>> getRentalObjects(int page, int pageSize);
-    ResponseEntity<Collection<RentalObjectDto>> changeRentalObjectsStatus(Collection<Long> ids);
-    ResponseEntity<PageDto<RentalObjectDto>> getRentalObjects(int page, int pageSize, String filter);
+    ResponseEntity<Collection<RentalObjectDto>> changeRentalObjectsStatus(Collection<Long> ids);    ResponseEntity<PageDto<RentalObjectDto>> getRentalObjects(int page, int pageSize, String filter);
     ResponseEntity<Void> addSubscriber(Long rentalId, String email);
-
-    String calculateOwnerRating(@NotNull RentalObjectOwner owner);
-
-    PageDto<ReviewDto> getRentalReviews(RentalObject rental, int page, int pageSize);
-
     String calculateRentalRating(RentalObject rental);
+    PageDto<ReviewDto> getRentalReviews(RentalObject rental, int page, int pageSize);
+    String calculateOwnerRating(RentalObjectOwner owner);
+    ResponseEntity<Void> cancelSubscription(Long rentalId, String token);
 }

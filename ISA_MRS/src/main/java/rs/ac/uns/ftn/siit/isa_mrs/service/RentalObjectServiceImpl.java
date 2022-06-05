@@ -94,6 +94,7 @@ public class RentalObjectServiceImpl implements RentalObjectService {
         }
     }
 
+    @Override
     public ResponseEntity<Void> addSubscriber(Long rentalId, String token) {
         try {
             JwtDecoder.DecodedToken decodedToken;
@@ -109,6 +110,30 @@ public class RentalObjectServiceImpl implements RentalObjectService {
             Client client = optionalClient.get();
             rental.getSubscribers().add(client);
             client.getSubscriptions().add(rental);
+            rentalObjectRepo.save(rental);
+            clientRepo.save(client);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    public ResponseEntity<Void> cancelSubscription(Long rentalId, String token) {
+        try {
+            JwtDecoder.DecodedToken decodedToken;
+            try {
+                decodedToken = jwtDecoder.decodeToken(token);
+            } catch (Exception e) {
+                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            }
+            Optional<RentalObject> optionalRental = rentalObjectRepo.findById(rentalId);
+            Optional<Client> optionalClient = clientRepo.findByEmail(decodedToken.getEmail());
+            if(optionalRental.isEmpty() || optionalClient.isEmpty()) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            RentalObject rental = optionalRental.get();
+            Client client = optionalClient.get();
+            rental.getSubscribers().remove(client);
+            client.getSubscriptions().remove(rental);
             rentalObjectRepo.save(rental);
             clientRepo.save(client);
             return new ResponseEntity<>(HttpStatus.OK);

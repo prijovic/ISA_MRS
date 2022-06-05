@@ -69,6 +69,7 @@ INSERT INTO fee (id, fee_type, value) VALUES (1, 0, 0);
 INSERT INTO cancellation_fee (id) VALUES (1);
 INSERT INTO rental_object (is_active, id, capacity, description, name, price, rental_object_type, address_id, cancellation_fee_id, rental_object_owner_id)
 VALUES (true, 1, 10, '2 bedrooms, a living room with open-plan kitchen and 2 bathrooms. The air-conditioned, mechanized, fully furnished, alarm protected. A balcony which opens from the living room and the first bedroom, a storage and a parking space in the garage.', 'Abstract', 200, 2, 1, 1, 4);
+UPDATE test.cancellation_fee SET rental_object_id = 1 WHERE (id = 1);
 INSERT INTO time_period(id, init_date, term_date, rental_object_id) VALUES (1, '2022-05-01 00:00:00', '2023-05-01 00:00:00', 1);
 INSERT INTO photo (id, photo, rental_object_id) VALUES (2, 'ren1pic1', 1);
 INSERT INTO photo (id, photo, rental_object_id) VALUES (3, 'ren1pic2', 1);
@@ -87,8 +88,11 @@ INSERT INTO conduct_rule (id, rule, type, rental_object_id) VALUES (6, 'Using th
 INSERT INTO room (id, beds, vacation_rental_id) VALUES (1, 5, 1);
 INSERT INTO room (id, beds, vacation_rental_id) VALUES (2, 2, 1);
 INSERT INTO vacation_rental (id, check_in, check_out) VALUES (1, '14:00', '12:00');
+INSERT INTO fee (id, fee_type, value) VALUES (2, 1, 50);
+INSERT INTO cancellation_fee (id) VALUES (2);
 INSERT INTO rental_object (is_active, id, capacity, description, name, price, rental_object_type, address_id, cancellation_fee_id, rental_object_owner_id)
-VALUES (true, 2, 20, 'Yacht that includes high-end finishes and features and the latest in modern performance technology. Geared towards fishing, water sports, or cruising with a sleeker design and more powerful motor for faster cruising speeds.', 'Exotic', 800, 0, 1, 1, 5);
+VALUES (true, 2, 20, 'Yacht that includes high-end finishes and features and the latest in modern performance technology. Geared towards fishing, water sports, or cruising with a sleeker design and more powerful motor for faster cruising speeds.', 'Exotic', 800, 0, 1, 2, 5);
+UPDATE test.cancellation_fee SET rental_object_id = 2 WHERE (id = 2);
 INSERT INTO photo (id, photo, rental_object_id) VALUES (10, 'boat1pic1', 2);
 INSERT INTO photo (id, photo, rental_object_id) VALUES (11, 'boat1pic2', 2);
 INSERT INTO photo (id, photo, rental_object_id) VALUES (12, 'boat1pic3', 2);
@@ -212,7 +216,7 @@ VALUES (7, '2022-07-20 12:00:00', '2022-07-21 12:00:00', 6);
 INSERT INTO test.reservation (id, price, equipment_required, people, time_stamp, client_id, rental_object_id)
 VALUES (7, 80, true, 2, '2022-01-01 12:00:00', 3, 18);
 INSERT INTO time_period (id, init_date, term_date, reservation_id)
-VALUES (8, '2022-08-08 12:00:00', '2022-08-08 15:00:00', 7);
+VALUES (8, '2022-08-08 12:00:00', '2022-08-10 12:00:00', 7);
 INSERT INTO test.reservation (id, price, equipment_required, people, time_stamp, client_id, rental_object_id)
 VALUES (8, 250, true, 2, '2022-01-01 12:00:00', 3, 9);
 INSERT INTO time_period (id, init_date, term_date, reservation_id)
@@ -252,7 +256,7 @@ VALUES (11, '2021-12-30 12:00:00', '2021-12-31 12:00:00', 10);
 INSERT INTO test.review (id, status, comment, grade, review_type, time_stamp, author_id, reservation_id)
 VALUES (13, 1, '', 1, 0, '2022-01-23 23:00:00', 3, 10);
 INSERT INTO test.reservation (id, price, equipment_required, people, time_stamp, client_id, rental_object_id)
-VALUES (11, 600, true, 2, '2022-01-01 12:00:00', 3, 2);
+VALUES (11, 600, true, 2, '2022-01-01 12:00:00', 3, 10);
 INSERT INTO time_period (id, init_date, term_date, reservation_id)
 VALUES (12, '2021-12-20 12:00:00', '2021-12-23 12:00:00', 11);
 INSERT INTO test.review (id, status, comment, grade, review_type, time_stamp, author_id, reservation_id)

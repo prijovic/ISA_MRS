@@ -26,4 +26,5 @@ public class Paths {
     public static final String OWNER_CONTROLLER = "/RentalOwners";
     public static final String ADD_SUBSCRIBER = "/subscribe";
     public static final String GET_CLIENT_PROFILE = "/getClientProfile";
+    public static final String CANCEL_SUBSCRIPTION = "/cancelSubscription";
 }
