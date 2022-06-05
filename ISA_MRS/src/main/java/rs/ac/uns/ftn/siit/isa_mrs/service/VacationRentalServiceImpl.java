@@ -11,6 +11,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.AdventureDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.RentalProfileDtos.VacationRentalDtos.VacationRentalProfileDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.RentalProfileDtos.VacationRentalDtos.VacationRentalsForMenuDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.AddVacationRentalDto;
@@ -18,12 +19,16 @@ import rs.ac.uns.ftn.siit.isa_mrs.dto.PageDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.PhotoDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.VacationRentalDto;
 import rs.ac.uns.ftn.siit.isa_mrs.model.*;
+import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.ConductType;
+import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.FeeType;
 import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.RentalObjectType;
+import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.UserType;
 import rs.ac.uns.ftn.siit.isa_mrs.repository.*;
 import rs.ac.uns.ftn.siit.isa_mrs.security.JwtDecoder;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -42,6 +47,7 @@ public class VacationRentalServiceImpl implements VacationRentalService{
     private final ClientRepo clientRepo;
     private final RentalObjectServiceImpl rentalService;
     private final JwtDecoder jwtDecoder;
+    private final PhotoRepo photoRepo;
 
     @Override
     public ResponseEntity<VacationRentalProfileDto> getVacationRental(Long id, int page, int pageSize, String token) {
@@ -154,94 +160,114 @@ public class VacationRentalServiceImpl implements VacationRentalService{
         }
     }
 
-//    @Override
-//    public ResponseEntity<VacationRentalDto> addNewVacationRental(AddVacationRentalDto vrd) {
-//        log.info("Uslo u kontroler");
-//        log.info(vrd.getName());
-//        log.info(vrd.getOwnerEmail());
-//        Optional<RentalObjectOwner> owner = ownerRepo.findByEmail(vrd.getOwnerEmail());
-//        log.info(String.valueOf(owner));
-//        if (owner.isEmpty()){
-//            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-//        }
-//        else{
-//            try{
-//                RentalObjectOwner vacationRentalOwner = owner.get();
-//                Address address = new Address();
-//                address.setCountry(vrd.getAddress().getCountry());
-//                address.setCity(vrd.getAddress().getCity());
-//                address.setStreet(vrd.getAddress().getStreet());
-//                address.setNumber(vrd.getAddress().getNumber());
-//                address.setLatitude(vrd.getAddress().getLatitude());
-//                address.setLongitude(vrd.getAddress().getLongitude());
-//                addressRepo.save(address);
-//                log.info("Adresa napravljena");
-//
-//                CancellationFee cancellationFee = new CancellationFee();
-//                cancellationFee.setFeeType(vrd.getCancellationFee().getFeeType());
-//                cancellationFee.setValue(vrd.getCancellationFee().getValue());
-//                cancellationFeeRepo.save(cancellationFee);
-//
-//                VacationRental vacationRental = new VacationRental();
-//                vacationRental.setName(vrd.getName());
-//                vacationRental.setRentalObjectType(RentalObjectType.VacationRental);
-//                vacationRental.setDescription(vrd.getDescription());
-//                vacationRental.setPrice(vrd.getPrice());
-//                vacationRental.setCapacity(vrd.getCapacity());
-//                vacationRental.setRentalObjectOwner(vacationRentalOwner);
-//                vacationRental.setAddress(address);
-//                vacationRental.setCancellationFee(cancellationFee);
-//
-//                Collection<AdditionalService> additionalServices = new ArrayList<>();
-//                for(var item : vrd.getAdditionalServices()){
-//                    AdditionalService additionalService = new AdditionalService();
-//                    additionalService.setName(item.getName());
-//                    additionalService.setPrice(item.getPrice());
-//                    additionalServiceRepo.save(additionalService);
-//                    additionalServices.add(additionalService);
-//                }
-//                log.info("Dodatne usluge napravljene");
-//                vacationRental.setAdditionalServices(additionalServices);
-//
-//                Collection<ConductRule> conductRules = new ArrayList<>();
-//                for(var item : vrd.getConductRules()){
-//                    ConductRule conductRule = new ConductRule();
-//                    conductRule.setType(item.getType());
-//                    conductRule.setRule(item.getRule());
-//                    conductRuleRepo.save(conductRule);
-//                    conductRules.add(conductRule);
-//                }
-//                vacationRental.setConductRules(conductRules);
-//
-//                Collection<Room> rooms = new ArrayList<>();
-//                for(var item : vrd.getRooms()){
-//                    Room room = new Room();
-//                    room.setBeds(item.getBeds());
-//                    roomRepo.save(room);
-//                    rooms.add(room);
-//                }
-//                vacationRental.setRooms(rooms);
-//                log.info("Dodate sobe");
-//                Collection<Photo> photos = new ArrayList<>();
-//                for(var item : vrd.getPhotos()){
-//                    Photo photo = new Photo();
-//                    photo.setPhoto(item.getPhoto());
-//                    photos.add(photo);
-//                }
-//                vacationRental.setPhotos(photos);
-//                vacationRentalRepo.save(vacationRental);
-//                VacationRentalDto RentalDto = modelMapper.map(vacationRental, VacationRentalDto.class);
-//
-//                return new ResponseEntity<>(RentalDto, HttpStatus.OK);
-//            } catch (IllegalArgumentException e) {
-//                log.error(e.getMessage());
-//                return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
-//            } catch (Exception e) {
-//                log.error(e.getMessage());
-//                return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-//            }
-//        }
-//    }
+    @Override
+    public ResponseEntity<VacationRentalDto> addVacationRental(AddVacationRentalDto addVacationRentalDto, String token) {
+        try {
+            JwtDecoder.DecodedToken decodedToken;
+            try {
+                decodedToken = jwtDecoder.decodeToken(token);
+            } catch (Exception e) {
+                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            }
+            Optional<RentalObjectOwner> owner = ownerRepo.findByEmail(decodedToken.getEmail());
+            if (owner.isEmpty() || !owner.get().getUserType().equals(UserType.VacationRentalOwner)) {
+                return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+            }
+            VacationRental newVacationRental = vacationRentalDtoToVacationRental(addVacationRentalDto, owner.get());
+            VacationRentalDto result = modelMapper.map(newVacationRental, VacationRentalDto.class);
+            return new ResponseEntity<>(result, HttpStatus.OK);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    public ResponseEntity<VacationRentalDto> addVacationRentalPhotos(Long id, List<String> photos) {
+        try {
+            Optional<VacationRental> vacationRental = vacationRentalRepo.findById(id);
+            if(vacationRental.isEmpty()){
+                throw new Exception();
+            }
+            List<Photo> photoList = new ArrayList<>();
+            photos.forEach(photo -> {
+                Photo photo1 = new Photo();
+                photo1.setPhoto(photo);
+                photo1.setRentalObject(vacationRental.get());
+                photoRepo.save(photo1);
+                photoList.add(photo1);
+            });
+            VacationRental vacationRental1 = vacationRental.get();
+            vacationRental1.setPhotos(photoList);
+            return new ResponseEntity<>(modelMapper.map(vacationRental1, VacationRentalDto.class), HttpStatus.OK);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    private VacationRental vacationRentalDtoToVacationRental(AddVacationRentalDto vacationRentalDto, RentalObjectOwner owner) {
+        VacationRental vacationRental = new VacationRental();
+        List<AdditionalService> additionalServices = new ArrayList<>();
+        List<ConductRule> conductRules = new ArrayList<>();
+        List<Room> rooms = new ArrayList<>();
+        vacationRentalDto.getAdditionalServices().forEach(service -> {
+            AdditionalService additionalService = modelMapper.map(service, AdditionalService.class);
+            additionalServiceRepo.save(additionalService);
+            additionalServices.add(additionalService);
+        });
+        additionalServiceRepo.saveAll(additionalServices);
+        vacationRentalDto.getConductRules().forEach(rule -> {
+            ConductRule conductRule = new ConductRule();
+            conductRule.setRule(rule.getRule());
+            conductRule.setType(ConductType.valueOf(rule.getType()));
+            conductRuleRepo.save(conductRule);
+            conductRules.add(conductRule);
+        });
+        vacationRentalDto.getRooms().forEach(room -> {
+            Room vacationRentalRoom = modelMapper.map(room, Room.class);
+            roomRepo.save(vacationRentalRoom);
+            rooms.add(vacationRentalRoom);
+        });
+        CancellationFee cancellationFee = new CancellationFee();
+        cancellationFee.setValue(vacationRentalDto.getCancellationFee().getValue());
+        if (cancellationFee.getValue() == 0 ) {
+            cancellationFee.setFeeType(FeeType.Free);
+        } else {
+            cancellationFee.setFeeType(FeeType.Percentile);
+        }
+        cancellationFeeRepo.save(cancellationFee);
+        Address address = modelMapper.map(vacationRentalDto.getAddress(), Address.class);
+        addressRepo.save(address);
+        vacationRental.setName(vacationRentalDto.getName());
+        vacationRental.setCancellationFee(cancellationFee);
+        vacationRental.setAddress(address);
+        vacationRental.setAdditionalServices(additionalServices);
+        vacationRental.setRooms(rooms);
+        vacationRental.setConductRules(conductRules);
+        vacationRental.setRentalObjectOwner(owner);
+        vacationRental.setRentalObjectType(RentalObjectType.VacationRental);
+        vacationRental.setDescription(vacationRentalDto.getDescription());
+        vacationRental.setCapacity(vacationRentalDto.getCapacity());
+        vacationRental.setPrice(vacationRentalDto.getPrice());
+        vacationRentalRepo.save(vacationRental);
+
+        rooms.forEach(room -> {
+            room.setVacationRental(vacationRental);
+            roomRepo.save(room);
+        });
+        additionalServices.forEach(service -> {
+            service.setRentalObject(vacationRental);
+            additionalServiceRepo.save(service);
+        });
+        conductRules.forEach(rule -> {
+            rule.setRentalObject(vacationRental);
+            conductRuleRepo.save(rule);
+        });
+        cancellationFee.setRentalObject(vacationRental);
+        cancellationFeeRepo.save(cancellationFee);
+        return vacationRental;
+    }
 
     private @NotNull VacationRentalsForMenuDto setUpMenuDto(VacationRental rental) {
         VacationRentalsForMenuDto rentalDto = modelMapper.map(rental, VacationRentalsForMenuDto.class);

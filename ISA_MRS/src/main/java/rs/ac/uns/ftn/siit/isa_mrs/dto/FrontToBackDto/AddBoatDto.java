@@ -10,7 +10,6 @@ public class AddBoatDto implements Serializable {
     private String name;
     private String boatOwnerEmail;
     private String description;
-    private Collection<PhotoDto> photos;
     private Integer capacity;
     private Double price;
     private Collection<AdditionalServiceDto> additionalServices;

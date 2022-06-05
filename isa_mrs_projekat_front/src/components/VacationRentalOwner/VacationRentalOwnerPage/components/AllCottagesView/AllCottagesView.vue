@@ -55,7 +55,7 @@
                   <font-awesome-icon v-else icon="user" class="img-fluid rounded border-1" style="height: 3vh"></font-awesome-icon>
                 </td>
                 <td>
-                  <router-link class="profile-link" :to="'/#'">{{rentalObject.name}}</router-link>
+                  <router-link class="profile-link" :to="'/vacationRentalOwner/VacationRental/' + rentalObject.id">{{rentalObject.name}}</router-link>
                 </td>
                 <td>
                   {{rentalObject.address.city + ", " + rentalObject.address.country}}
@@ -157,6 +157,7 @@ import {library} from "@fortawesome/fontawesome-svg-core";
 import {faAngleDoubleLeft, faAngleDoubleRight, faAngleLeft, faAngleRight, faFrown, faPlus}
   from "@fortawesome/free-solid-svg-icons";
 import {useStore} from "vuex";
+import {toggleLoading, toggleProcessing} from "@/components/state";
 
 library.add(faAngleRight, faAngleLeft, faFrown, faAngleDoubleRight, faAngleDoubleLeft, faPlus);
 
@@ -176,6 +177,7 @@ export default {
     }
   },
   mounted() {
+    toggleLoading();
     const store = useStore();
     axios.get("/RentalObjects/getVacationRentalsOwner", {headers: {
         Authorization: "Bearer " + store.state.access_token,
@@ -191,15 +193,24 @@ export default {
       this.totalPages = response.data.pages;
       this.cottages.forEach(rentalObject => {
         console.log(rentalObject.name);
-        if(rentalObject.photos.length > 0){
+        if (rentalObject.photos.length > 0) {
           const index = this.cottages.indexOf(rentalObject);
           this.loadImage(rentalObject.photos[0].photo, index);
         }
-      })
-    });
+      });
+      toggleLoading();
+    })
+        .catch(() =>{
+          this.$notify({
+            title: "Server error",
+            text: "Something went wrong. Please try again later...",
+            type: "error"
+          });
+        })
   },
   methods: {
     saveChanges() {
+      toggleProcessing();
       let ids = this.changedRentalsIds;
       let lwc = {list: ids};
       axios.put("/RentalObjects/multipleRentalsStatusChange",
@@ -219,6 +230,7 @@ export default {
               type: "success"
             });
             this.changedRentals = [];
+            toggleProcessing();
           })
           .catch(() =>{
             this.$notify({
@@ -226,6 +238,7 @@ export default {
               text: "Something went wrong. Please try again later...",
               type: "error"
             });
+            toggleProcessing();
           })
     },
     changeStatus(rentalObject) {
@@ -255,6 +268,7 @@ export default {
       this.refreshPage();
     },
     refreshPage() {
+      toggleProcessing();
       axios.get("/RentalObjects/getVacationRentalsOwner", {headers: {
           Authorization: "Bearer " + this.$store.getters.access_token,
         },
@@ -273,7 +287,8 @@ export default {
                 const index = this.cottages.indexOf(rentalObject);
                 this.loadImage(rentalObject.photos[0].photo, index);
               }
-            })
+            });
+            toggleProcessing();
           })
           .catch(() =>{
             this.$notify({
@@ -281,6 +296,7 @@ export default {
               text: "Server is currently off. Please try again later...",
               type: "error"
             });
+            toggleProcessing();
           });
     },
     loadImage(name, index) {

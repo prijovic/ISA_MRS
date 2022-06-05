@@ -37,6 +37,9 @@ import AdventureCreationPage
 import AllCottagesView
     from "@/components/VacationRentalOwner/VacationRentalOwnerPage/components/AllCottagesView/AllCottagesView";
 import AllBoatsView from "@/components/BoatOwner/BoatOwnerPage/components/AllBoatsView/AllBoatsView";
+import VacationRentalAdditionForm
+    from "@/components/VacationRentalOwner/VacationRentalOwnerPage/components/VacationRentalAdditionForm";
+import BoatAdditionForm from "@/components/BoatOwner/BoatOwnerPage/components/BoatAdditionForm";
 
 
 
@@ -331,6 +334,28 @@ const routes = [
         }
     },
     {
+        path: "/vacationRentalOwner/:type/:id",
+        name: "OwnerVacationRental",
+        components: {
+            default: RentalProfile,
+            sidebar: TheOwnerSidebar
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
+        path: "/vacationRentalOwner/newCottage",
+        name: "AddNewVacationRental",
+        components:{
+            default: VacationRentalAdditionForm,
+            sidebar: TheOwnerSidebar
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
         path: "/vacationRentalOwner/calendar",
         name: "VacationRentalOwnerReservations",
         components: {
@@ -369,6 +394,28 @@ const routes = [
         components: {
             default: AllBoatsView,
             sidebar: TheBoatOwnerSidebar,
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
+        path: "/boatOwner/:type/:id",
+        name: "BoatOwnerBoat",
+        components: {
+            default: RentalProfile,
+            sidebar: TheBoatOwnerSidebar
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
+        path: "/boatOwner/newBoat",
+        name: "AddNewBoat",
+        components:{
+            default: BoatAdditionForm,
+            sidebar: TheBoatOwnerSidebar
         },
         meta: {
             public: false

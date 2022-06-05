@@ -14,6 +14,7 @@ import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.RentalProfileDtos.VacationR
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.RentalProfileDtos.VacationRentalDtos.VacationRentalsForMenuDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BoatDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.AddBoatDto;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.AddVacationRentalDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.RentalPhotosDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.SubscribingDtos.addSubscriberDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.PageDto;
@@ -125,6 +126,16 @@ public class RentalObjectController {
         return adventureService.addAdventurePhotos(dto.getId(), dto.getPhotos());
     }
 
+    @PostMapping("/connectPhotosToVacationRental")
+    public ResponseEntity<VacationRentalDto> connectPhotosToVacationRental(@RequestBody RentalPhotosDto dto) {
+        return vacationRentalService.addVacationRentalPhotos(dto.getId(), dto.getPhotos());
+    }
+
+    @PostMapping("/connectPhotosToBoat")
+    public ResponseEntity<BoatDto> connectPhotosToBoat(@RequestBody RentalPhotosDto dto) {
+        return boatService.addBoatPhotos(dto.getId(), dto.getPhotos());
+    }
+
     @PostMapping(AVAILABILITY_PERIOD)
     public ResponseEntity<RentalObjectPeriodsDto> setPeriods(@RequestBody PeriodsSettingForm periodsSettingForm) {
         return rentalObjectService.setAvailabilityPeriods(periodsSettingForm.getId(), periodsSettingForm.getDates());
@@ -141,15 +152,13 @@ public class RentalObjectController {
         private List<LocalDate> dates;
     }
 
-//    @PostMapping(ADD_VACATION_RENTAL)
-//    public ResponseEntity<VacationRentalDto> addVacationRental(@RequestBody AddVacationRentalDto avrd){
-//        log.info("Kontroler");
-//        return vacationRentalService.addNewVacationRental(avrd);
-//    }
+    @PostMapping("/addVacationRental")
+    public ResponseEntity<VacationRentalDto> addVacationRental(@RequestBody AddVacationRentalDto vacationRental, HttpServletRequest request) {
+        return vacationRentalService.addVacationRental(vacationRental, request.getHeader(AUTHORIZATION));
+    }
 
-//    @PostMapping(ADD_BOAT)
-//    public ResponseEntity<BoatDto> addBoat(@RequestBody AddBoatDto abd){
-//        log.info("Kontroler");
-//        return boatService.addNewBoat(abd);
-//    }
+    @PostMapping("/addBoat")
+    public ResponseEntity<BoatDto> addBoat(@RequestBody AddBoatDto boat, HttpServletRequest request){
+        return boatService.addBoat(boat, request.getHeader(AUTHORIZATION));
+    }
 }

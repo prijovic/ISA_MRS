@@ -21,4 +21,5 @@ public class VacationRentalDto implements Serializable {
     private RentalObjectOwnerDto rentalObjectOwner;
     private Collection<ConductRuleDto> conductRules;
     private Collection<AdditionalServiceDto> additionalServices;
+    private Collection<RoomDto> rooms;
 }
