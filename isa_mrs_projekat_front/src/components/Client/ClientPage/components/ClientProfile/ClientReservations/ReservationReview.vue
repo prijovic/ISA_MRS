@@ -1,5 +1,5 @@
 <template>
-  <div class="modal fade" id="review" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal fade" :id="'review-'+this.id" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
       <div class="modal-content">
         <div class="modal-header p-0 m-0" style="border-bottom: none">
@@ -41,6 +41,7 @@ import StarRating from "vue-star-rating";
 
 export default {
   name: "ReservationReview",
+  props: ["id"],
   components: {StarRating},
   computed: {
 

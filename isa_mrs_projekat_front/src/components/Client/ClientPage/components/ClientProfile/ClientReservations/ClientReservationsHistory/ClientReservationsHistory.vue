@@ -44,17 +44,19 @@
                 </div>
                 <div class="row">
                   <button class="w-100 btn mb-2" style="background-color: #ffd055; border: 1px solid #ffd055;
-                  font-weight: 500; color: white;" data-bs-toggle="modal" data-bs-target="#review">
+                  font-weight: 500; color: white;" data-bs-toggle="modal"
+                          :data-bs-target="'#review-'+reservation.rentalObject.id">
                     Review
                   </button>
-                  <ReservationReview />
+                  <ReservationReview :id="reservation.rentalObject.id"/>
                 </div>
                 <div class="row">
-                  <button class="w-100 btn" style="background-color:#e23c52; border: 1px solid #e23c52; font-weight: 500; color: white;"
-                          data-bs-toggle="modal" data-bs-target="#report">
+                  <button class="w-100 btn" style="background-color:#e23c52; border: 1px solid #e23c52;
+                          font-weight: 500; color: white;" data-bs-toggle="modal"
+                          :data-bs-target="'#report-'+reservation.rentalObject.id">
                     Report
                   </button>
-                  <ReservationReport/>
+                  <ReservationReport :id="reservation.rentalObject.id"/>
                 </div>
               </div>
             </div>
