@@ -1,6 +1,8 @@
 package rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto;
 
 import lombok.Data;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.FishingEquipmentDto;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.NavigationEquipmentDto;
 
 import java.io.Serializable;
 import java.util.Collection;
