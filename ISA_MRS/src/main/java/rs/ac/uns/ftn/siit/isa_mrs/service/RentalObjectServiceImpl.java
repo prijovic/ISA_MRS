@@ -13,10 +13,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.PageDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.RentalObjectDto;
-import rs.ac.uns.ftn.siit.isa_mrs.dto.RentalObjectPeriodsDto;
 import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.RentalObjectType;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.RentalProfileDtos.ReviewDtos.ReviewDto;
 import rs.ac.uns.ftn.siit.isa_mrs.model.*;
+import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.RequestStatus;
 import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.ReviewType;
 import rs.ac.uns.ftn.siit.isa_mrs.repository.ClientRepo;
 import rs.ac.uns.ftn.siit.isa_mrs.repository.RentalObjectRepo;
@@ -146,29 +146,6 @@ public class RentalObjectServiceImpl implements RentalObjectService {
         return rentalObjectDto;
     }
 
-    @Override
-    public PageDto<ReviewDto> getRentalReviews(RentalObject rental, int page, int pageSize) {
-        PageDto<ReviewDto> result = new PageDto<>();
-        Collection<ReviewDto> reviewDtos = new ArrayList<>();
-        Pageable pageable = PageRequest.of(page, pageSize).withSort(Sort.by(Sort.Order.desc("timeStamp")));
-        Page<Review> reviewPage = reviewRepo.findAllByReservationRentalObjectAndAuthorIsActiveAndReviewType(rental, true,
-                ReviewType.RentalReview, pageable);
-        reviewPage.getContent().forEach(review -> reviewDtos.add(modelMapper.map(review, ReviewDto.class)));
-        result.setContent(reviewDtos);
-        result.setPages(reviewPage.getTotalPages());
-        result.setCurrentPage(reviewPage.getNumber());
-        result.setPageSize(reviewPage.getSize());
-        return result;
-    }
-
-    @Override
-    public String calculateRentalRating(@NotNull RentalObject rental) {
-        Collection<Reservation> reservations = rental.getReservations();
-        if(reservations.isEmpty()) return null;
-        double grade = getRentalGrade(reservations);
-        return gradeFormatting(grade);
-    }
-
     private List<TimePeriod> makePeriods(List<LocalDate> dates){
         List<TimePeriod> timePeriods = new ArrayList<>();
         dates.sort(Comparator.naturalOrder());
@@ -202,15 +179,56 @@ public class RentalObjectServiceImpl implements RentalObjectService {
         return df.format(grade);
     }
 
+    @Override
+    public String calculateRentalRating(@NotNull RentalObject rental) {
+        Collection<Reservation> reservations = rental.getReservations();
+        if(reservations.isEmpty()) return "0";
+        double grade = getRentalGrade(reservations);
+        return gradeFormatting(grade);
+    }
+
+    @Override
+    public String calculateOwnerRating(@NotNull RentalObjectOwner owner) {
+        double grade = getOwnerGrade(owner);
+        return gradeFormatting(grade);
+    }
+
     private double getRentalGrade(Collection<Reservation> reservations) {
         double sumOfGrades = 0, amountOfGrades = 0;
         for(var reservation : reservations) {
             for(var review : reservation.getReviews())
-                if(review.getReviewType() == ReviewType.RentalReview && review.getAuthor().getIsActive())
+                if(review.getReviewType() == ReviewType.RentalReview && review.getAuthor().getIsActive() && review.getStatus() == RequestStatus.Accepted)
                 { sumOfGrades += review.getGrade(); amountOfGrades++; }
         }
         if(amountOfGrades == 0) return 0;
         return sumOfGrades/amountOfGrades;
+    }
+
+    public double getOwnerGrade(RentalObjectOwner owner) {
+        double sumOfGrades = 0, amountOfGrades = 0;
+        Collection<RentalObject> rentals = rentalObjectRepo.findAllByRentalObjectOwner(owner);
+        for(var rental : rentals) {
+            for(var reservation : rental.getReservations()) {
+                for(var review : reservation.getReviews())
+                    if(review.getReviewType() == ReviewType.OwnerReview && review.getAuthor().getIsActive() && review.getStatus() == RequestStatus.Accepted)
+                    { sumOfGrades += review.getGrade(); amountOfGrades++; break;} } }
+        if(amountOfGrades == 0) return 0;
+        return sumOfGrades/amountOfGrades;
+    }
+
+    @Override
+    public PageDto<ReviewDto> getRentalReviews(RentalObject rental, int page, int pageSize) {
+        PageDto<ReviewDto> result = new PageDto<>();
+        Collection<ReviewDto> reviewDtos = new ArrayList<>();
+        Pageable pageable = PageRequest.of(page, pageSize).withSort(Sort.by(Sort.Order.desc("timeStamp")));
+        Page<Review> reviewPage = reviewRepo.findAllByReservationRentalObjectAndAuthorIsActiveAndReviewTypeAndStatus(
+                rental, true, ReviewType.RentalReview, pageable, RequestStatus.Accepted);
+        reviewPage.getContent().forEach(review -> reviewDtos.add(modelMapper.map(review, ReviewDto.class)));
+        result.setContent(reviewDtos);
+        result.setPages(reviewPage.getTotalPages());
+        result.setCurrentPage(reviewPage.getNumber());
+        result.setPageSize(reviewPage.getSize());
+        return result;
     }
 
 }

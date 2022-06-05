@@ -64,6 +64,7 @@ public class AdventureServiceImpl implements AdventureService{
             Adventure adventure = rental.get();
             adventureDto.setReviews(rentalService.getRentalReviews(adventure, page, pageSize));
             adventureDto.setGrade(rentalService.calculateRentalRating(adventure));
+            adventureDto.setOwnerGrade(rentalService.calculateOwnerRating(adventure.getRentalObjectOwner()));
             adventureDto.setIsDeletable(isAdventureDeletable(adventure));
             Optional<Client> optionalClient = clientRepo.findByEmail(decodedToken.getEmail());
             if(optionalClient.isPresent()){

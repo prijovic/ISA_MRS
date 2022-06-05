@@ -234,7 +234,7 @@ import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import {library} from "@fortawesome/fontawesome-svg-core";
 import {faMinus, faPlus, faPlusCircle, faX} from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
-import {toggleLoading, toggleProcessing} from "@/components/state";
+import {toggleLoading, /*toggleProcessing*/} from "@/components/state";
 import store from "@/store";
 import AvailabilityPeriodSelector from "@/components/RentalObjectOwner/AvailabilityPeriodSelector";
 

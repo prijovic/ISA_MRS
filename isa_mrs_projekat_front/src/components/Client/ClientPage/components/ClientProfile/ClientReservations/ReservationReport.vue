@@ -9,7 +9,7 @@
             <h1 class="modal-title pb-1" style="color:#e23c52; font-weight: 700;">Report</h1>
           </div>
           <div class="row d-flex justify-content-center">
-            <img src="./warn.png" alt="" style="height: 50%; width:50%;"/>
+            <img src="../../../../../Images/warn.png" alt="" style="height: 50%; width:50%;"/>
           </div>
           <div>
             <p class="h5 mt-3">Please write your complaint in great detail.</p>

@@ -73,7 +73,6 @@ export default {
         }
       }).then(response => {
         this.rentalObjects = response.data.content;
-        console.log(this.rentalObjects);
       });
     }
   }

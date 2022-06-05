@@ -62,6 +62,7 @@ public class BoatServiceImpl implements BoatService{
             Boat boat = rental.get();
             boatDto.setReviews(rentalService.getRentalReviews(boat, page, pageSize));
             boatDto.setGrade(rentalService.calculateRentalRating(boat));
+            boatDto.setOwnerGrade(rentalService.calculateOwnerRating(boat.getRentalObjectOwner()));
             Optional<Client> optionalClient = clientRepo.findByEmail(decodedToken.getEmail());
             if(optionalClient.isPresent()){
                 Client client = optionalClient.get();

@@ -28,8 +28,8 @@
                 <button class="w-100 btn mb-2" style="font-weight: 500; color: white;" data-bs-toggle="modal" data-bs-target="#bill">
                   Reservation Preview
                 </button>
-                <ReservationPreview :services="reservations[i].additionalServices" :days="getNumberOfDays(reservations[i])"
-                :price="reservations[i].price" :total="calculateTotal(reservations[i])"/>
+                <ReservationPreview :services="reservation.additionalServices" :days="getNumberOfDays(reservation)"
+                :price="reservation.price" :total="calculateTotal(reservation)"/>
               </div>
               <div class="row">
                 <button class="w-100 btn" style="background-color:#e23c52; font-weight: 500; color: white;">

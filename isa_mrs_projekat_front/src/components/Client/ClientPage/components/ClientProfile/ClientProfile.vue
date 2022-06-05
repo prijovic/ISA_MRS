@@ -8,7 +8,7 @@
 <!--              <div class="card-header"></div>-->
               <div class="card-body text-center">
                 <img v-if="this.profilePic" class="card-profile-img" :src="this.profilePic" alt=""/>
-                <img v-else class="card-profile-img" src="https://th.bing.com/th/id/R.4be1aa2ad558d09e7715325f39ee58ec?rik=1PL4Zzb3dyR8Wg&riu=http%3a%2f%2fsimpleicon.com%2fwp-content%2fuploads%2fuser-3.png&ehk=c57lmQWfTHgO6buztac5L2%2bc5XLCNGcgnBoJoB6P4Ms%3d&risl=&pid=ImgRaw&r=0" alt=""/>
+                <img v-else class="card-profile-img" src="../../../../Images/noProfilePic.png" alt=""/>
                 <div class="d-flex justify-content-center">
                   <p class="h3">{{ getClientFullName }}</p>
                   <router-link class="btn btn-default ms-2" to="">
@@ -259,6 +259,8 @@ a {
   z-index: 2;
   width: 18rem;
   height: 18rem;
+  min-width: 12rem;
+  min-height: 12rem;
   border-radius: 100%;
   object-fit: cover;
   object-position: center;

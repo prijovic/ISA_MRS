@@ -1,5 +1,5 @@
 <template>
-  <div class="modal fade" id="bill" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal fade" id="bill" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
       <div class="modal-content">
         <div class="modal-header p-0 m-0" style="border-bottom: none">
@@ -65,7 +65,13 @@ export default {
     calculateTotal() {
       return this.days*this.price;
     }
-  }
+  },
+  mounted() {
+    console.log(this.services);
+    console.log(this.days);
+    console.log(this.price);
+    console.log(this.total);
+  },
 }
 </script>
 
