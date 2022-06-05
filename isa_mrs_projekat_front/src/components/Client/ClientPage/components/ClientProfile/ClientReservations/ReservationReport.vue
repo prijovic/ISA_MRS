@@ -41,4 +41,8 @@ export default {
 textarea::placeholder {
   color: white;
 }
+
+textarea {
+  color: white;
+}
 </style>

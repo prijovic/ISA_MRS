@@ -212,7 +212,7 @@ VALUES (7, '2022-07-20 12:00:00', '2022-07-21 12:00:00', 6);
 INSERT INTO test.reservation (id, price, equipment_required, people, time_stamp, client_id, rental_object_id)
 VALUES (7, 80, true, 2, '2022-01-01 12:00:00', 3, 18);
 INSERT INTO time_period (id, init_date, term_date, reservation_id)
-VALUES (8, '2022-08-08 12:00:00', '2022-08-10 12:00:00', 7);
+VALUES (8, '2022-08-08 12:00:00', '2022-08-08 15:00:00', 7);
 INSERT INTO test.reservation (id, price, equipment_required, people, time_stamp, client_id, rental_object_id)
 VALUES (8, 250, true, 2, '2022-01-01 12:00:00', 3, 9);
 INSERT INTO time_period (id, init_date, term_date, reservation_id)
@@ -252,7 +252,7 @@ VALUES (11, '2021-12-30 12:00:00', '2021-12-31 12:00:00', 10);
 INSERT INTO test.review (id, status, comment, grade, review_type, time_stamp, author_id, reservation_id)
 VALUES (13, 1, '', 1, 0, '2022-01-23 23:00:00', 3, 10);
 INSERT INTO test.reservation (id, price, equipment_required, people, time_stamp, client_id, rental_object_id)
-VALUES (11, 600, true, 2, '2022-01-01 12:00:00', 3, 10);
+VALUES (11, 600, true, 2, '2022-01-01 12:00:00', 3, 2);
 INSERT INTO time_period (id, init_date, term_date, reservation_id)
 VALUES (12, '2021-12-20 12:00:00', '2021-12-23 12:00:00', 11);
 INSERT INTO test.review (id, status, comment, grade, review_type, time_stamp, author_id, reservation_id)
@@ -611,17 +611,3 @@ INSERT INTO adventure (id, duration) VALUES (20, 4);
 INSERT INTO subscribed_client (rental_id, subscriber_id) VALUES (1, 3);
 INSERT INTO subscribed_client (rental_id, subscriber_id) VALUES (2, 3);
 INSERT INTO subscribed_client (rental_id, subscriber_id) VALUES (3, 3);
-
-INSERT INTO test.reservation (id, price, equipment_required, people, time_stamp, client_id, rental_object_id)
-VALUES (24, 250, true, 2, '2022-01-01 12:00:00', 3, 1);
-INSERT INTO time_period (id, init_date, term_date, reservation_id)
-VALUES (25, '2022-05-05 00:00:00', '2021-05-05 00:00:00', 24);
-INSERT INTO test.review (id, status, comment, grade, review_type, time_stamp, author_id, reservation_id)
-VALUES (25, 1, '', 5, 1, '2022-05-06 23:00:00', 3, 24);
-
-INSERT INTO test.reservation (id, price, equipment_required, people, time_stamp, client_id, rental_object_id)
-VALUES (25, 250, true, 2, '2022-01-01 12:00:00', 3, 1);
-INSERT INTO time_period (id, init_date, term_date, reservation_id)
-VALUES (26, '2022-05-05 00:00:00', '2021-05-05 00:00:00', 25);
-INSERT INTO test.review (id, status, comment, grade, review_type, time_stamp, author_id, reservation_id)
-VALUES (26, 1, '', 1, 1, '2022-05-06 23:00:00', 3, 25);

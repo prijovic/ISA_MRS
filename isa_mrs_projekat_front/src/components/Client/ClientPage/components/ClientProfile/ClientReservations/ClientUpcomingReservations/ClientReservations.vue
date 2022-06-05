@@ -25,11 +25,15 @@
           <div class="col-md-4 p-5 d-flex flex-grow-1 justify-content-center align-items-center" style="height: 20vh;">
             <div style="width: 100%;">
               <div class="row">
-                <button class="w-100 btn mb-2" style="font-weight: 500; color: white;" data-bs-toggle="modal" data-bs-target="#bill">
+                <button class="w-100 btn mb-2" style="font-weight: 500; color: white;" data-bs-toggle="modal"
+                        :data-bs-target="'#bill-'+reservation.rentalObject.id">
                   Reservation Preview
                 </button>
-                <ReservationPreview :services="reservation.additionalServices" :days="getNumberOfDays(reservation)"
-                :price="reservation.price" :total="calculateTotal(reservation)"/>
+                <ReservationPreview :services="reservation.additionalServices"
+                                    :days="getNumberOfDays(reservation)"
+                                    :price="reservation.price" 
+                                    :total="calculateTotal(reservation)"
+                                    :id="reservation.rentalObject.id"/>
               </div>
               <div class="row">
                 <button class="w-100 btn" style="background-color:#e23c52; font-weight: 500; color: white;">
