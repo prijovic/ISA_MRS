@@ -349,7 +349,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ResponseEntity<UserDto> updateUserData(UpdateUserDto updateUserDto, String token) {
-        log.info("Uslo u servis");
         JwtDecoder.DecodedToken decodedToken;
         try {
             decodedToken = jwtDecoder.decodeToken(token);

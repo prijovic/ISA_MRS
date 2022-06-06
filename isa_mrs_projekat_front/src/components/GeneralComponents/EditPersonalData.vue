@@ -28,7 +28,7 @@
                     </div>
                     <div class="row">
                       <label for="phone">Phone</label>
-                      <vue-tel-input v-model="phoneInput" id="phone" mode="international" defaultCountry="RS" :onlyCountries=onlyCountries @input="onTelephoneInput"></vue-tel-input>
+                      <vue-tel-input v-model="user.phone" id="phone" mode="international" defaultCountry="RS" :onlyCountries=onlyCountries @input="onTelephoneInput"></vue-tel-input>
                       <p v-if='!phoneIsValid'>Invalid phone number.</p>
                     </div>
                   </div>
@@ -98,7 +98,7 @@ export default {
       user: {
         name: null,
         surname: null,
-        phoneNumber: null,
+        phone: null,
         email: null,
         address: {
           street: null,
@@ -148,7 +148,6 @@ export default {
     submit(){
       if (this.isDataEntered()) {
         this.isDataCorrect();
-        this.editData();
       }
     },
     editData() {
@@ -229,13 +228,13 @@ export default {
       this.phoneIsEntered = true;
       if (phoneObject?.valid) {
         this.phoneIsValid = true;
-        this.user.phoneNumber = phoneObject.number;
+        this.user.phone = phoneObject.number;
       } else if (phoneObject) {
-        this.user.phoneNumber = null;
+        this.user.phone = null;
       }
     },
     isPhoneValid() {
-      return Boolean(this.user.phoneNumber);
+      return Boolean(this.user.phone);
     },
     validateAddress() {
       toggleProcessing();
@@ -262,6 +261,7 @@ export default {
               this.user.address.longitude = location.Longitude;
               this.user.address.latitude = location.Latitude;
               this.addressIsValid = true;
+              this.editData();
             }
           })
           .catch(() => {
@@ -286,7 +286,6 @@ export default {
     })
         .then(response => {
           this.user = response.data;
-          console.log(response.data);
           toggleProcessing();
         })
         .catch(() =>{

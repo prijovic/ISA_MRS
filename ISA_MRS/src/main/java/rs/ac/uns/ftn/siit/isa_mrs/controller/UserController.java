@@ -101,7 +101,6 @@ public class UserController {
 
     @PutMapping("/editUser")
     public ResponseEntity<UserDto> updateUserData(@RequestBody UpdateUserDto updateUserDto, HttpServletRequest request) {
-        log.info("Uslo u kontroler edit");
         return userService.updateUserData(updateUserDto, request.getHeader(AUTHORIZATION));
     }
 
