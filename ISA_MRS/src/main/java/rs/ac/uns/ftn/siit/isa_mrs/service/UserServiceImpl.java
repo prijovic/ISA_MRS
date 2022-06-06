@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.NewUserBasicInfoDto;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.UpdateUserDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.PageDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.UserByTypeDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.UserDto;
@@ -327,5 +328,47 @@ public class UserServiceImpl implements UserService {
             }
         }
         return clientIsDeletable;
+    }
+
+    @Override
+    public ResponseEntity<UserDto> getUser(String token) {
+        JwtDecoder.DecodedToken decodedToken;
+        try {
+            decodedToken = jwtDecoder.decodeToken(token);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        Optional<User> optionalUser = userRepo.findByEmail(decodedToken.getEmail());
+        if(optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            UserDto userDto = modelMapper.map(user, UserDto.class);
+            return new ResponseEntity<>(userDto, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(null, HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<UserDto> updateUserData(UpdateUserDto updateUserDto, String token) {
+        log.info("Uslo u servis");
+        JwtDecoder.DecodedToken decodedToken;
+        try {
+            decodedToken = jwtDecoder.decodeToken(token);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        Optional<User> optionalUser = userRepo.findByEmail(decodedToken.getEmail());
+        if(optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            user.setName(updateUserDto.getName());
+            user.setSurname(updateUserDto.getSurname());
+            user.setPhone(updateUserDto.getPhone());
+            Address address = modelMapper.map(updateUserDto.getAddress(), Address.class);
+            addressRepo.save(address);
+            user.setAddress(address);
+            userRepo.save(user);
+            UserDto userDto = modelMapper.map(user, UserDto.class);
+            return new ResponseEntity<>(userDto, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(null, HttpStatus.OK);
     }
 }

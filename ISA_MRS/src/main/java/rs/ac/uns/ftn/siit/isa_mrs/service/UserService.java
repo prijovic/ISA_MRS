@@ -2,6 +2,7 @@ package rs.ac.uns.ftn.siit.isa_mrs.service;
 
 import org.springframework.http.ResponseEntity;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.NewUserBasicInfoDto;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.UpdateUserDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.PageDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.RentalObjectOwnerDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.UserByTypeDto;
@@ -23,4 +24,6 @@ public interface UserService {
     ResponseEntity<String> resendVerificationMail(String email);
     ResponseEntity<PageDto<UserByTypeDto>> findUsersByTypeWithPaginationSortedByField(int offset, int pageSize,
                                                                                       String field, UserType type);
+    ResponseEntity<UserDto> getUser(String token);
+    ResponseEntity<UserDto> updateUserData(UpdateUserDto updateUserDto, String token);
 }

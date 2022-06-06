@@ -429,7 +429,7 @@ export default {
                     }).then(() =>{
                       this.$notify( {
                         title: "Successful adding",
-                        text: "You have successfully added a new adventure.",
+                        text: "You have successfully added a new boat.",
                         position: "bottom right",
                         type: "success"
                       });
