@@ -1,33 +1,78 @@
 <template>
-  <div class="container-fluid">
-    <div>
-      <date-picker v-model="date" :attributes="attributes" @dayclick="onDayClick"
-                   :available-dates='{start: startDate, end: endDate}'
-                   :columns="2" color="green" :first-day-of-week="2">
+  <div class="container p-0 m-0">
+    <form class="p-0 m-0" @submit.prevent>
+      <date-picker v-model="range" mode="dateTime" :masks="masks" is-range is24hr @popoverDidHide="printaj">
+        <template v-slot="{ inputValue, inputEvents, isDragging }">
+          <div class="row p-0 m-0">
+            <div class="form-inline d-flex justify-content-center p-0 m-0">
+              <div class="row" style="max-width: 400px">
+                <div class="col input-group">
+                  <div class="input-group-prepend">
+                  <span class="input-group-text" id="start">
+                    From:
+                  </span>
+                  </div>
+                  <input
+                      class="form-control"
+                      :class="isDragging ? 'text-gray-600' : 'text-gray-900'"
+                      :value="inputValue.start"
+                      v-on="inputEvents.start"/>
+                </div>
+                <div class="col-1 p-0 m-0" style="display: table">
+                  <div style="display: table-cell; vertical-align: middle; horiz-align: center">
+                    <font-awesome-icon icon="arrow-right" style="color:#008970; height: 25px"></font-awesome-icon>
+                  </div>
+                </div>
+                <div class="col input-group">
+                  <div class="input-group-prepend">
+                  <span class="input-group-text" id="end">
+                    To:
+                  </span>
+                  </div>
+                  <input
+                      class="form-control"
+                      :class="isDragging ? 'text-gray-600' : 'text-gray-900'"
+                      :value="inputValue.end"
+                      v-on="inputEvents.end"/>
+                </div>
+              </div>
+            </div>
+          </div>
+        </template>
       </date-picker>
-    </div>
-    <div class="flex">
-      <button class="btn btn-default" style="margin-right: 2vh" :disabled="daySpan===0" @click.prevent="confirm">Confirm</button>
-      <button class="btn btn-default" style="margin-right: 2vh" :disabled="disableWeeklyRepeat" @click.prevent="repeatWeekly">Repeat Weekly</button>
-      <button class="btn btn-default" :disabled="disableMonthlyRepeat" @click.prevent="repeatMonthly">Repeat Monthly</button>
-      <button class="btn btn-default" style="margin-left: 2vh" :disabled="daySpan===0" @click.prevent="clear">Clear</button>
-    </div>
+    </form>
   </div>
 </template>
 
 <script>
+import {faCalendarDay, faArrowRight} from "@fortawesome/free-solid-svg-icons";
+import {library} from "@fortawesome/fontawesome-svg-core";
+import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import {DatePicker} from "v-calendar"
 import axios from "axios";
 import store from "@/store";
 
+library.add(faCalendarDay, faArrowRight)
+
 export default {
-  props: ["rentalId"],
+  props: ["rental"],
   components: {
-    DatePicker
+    DatePicker, FontAwesomeIcon
+  },
+  setup(props) {
+    if (props.rental) {
+      console.log(props.rental);
+    }
   },
   data() {
     return {
-      days: [],
+      range: {
+        start: null,
+        end: null
+      },
+      masks: {
+        input: 'YYYY-MM-DD hh:mm',
+      },
       date: null
     };
   },
@@ -39,7 +84,7 @@ export default {
       return this.rentalId;
     },
     startDate() {
-      return new Date();
+      return new Date().setDate(new Date().getDate());
     },
     endDate() {
       const date = new Date();
@@ -85,14 +130,19 @@ export default {
     }
   },
   methods: {
+    printaj() {
+      console.log(this.days)
+    },
     onDayClick(day) {
+      console.log(day);
       const idx = this.days.findIndex(d => d.id === day.id);
       if (idx >= 0) {
         this.days.splice(idx, 1);
-      } else {
-        if (this.startDate < day.date && day.date < this.endDate){
-          this.addDay(day.date);
-        }
+      } else if (this.startDate <= day.date && day.date < this.endDate){
+        this.days.push({
+          id: day.id,
+          date: day.date,
+        });
       }
     },
     addDay(date) {
@@ -168,16 +218,25 @@ export default {
 }
 </script>
 
-<style>
-  .btn {
-    margin-top: 15px;
-    background-color: #378220;
-    color: #f7f7f2;
+<style scoped>
+
+  .input-group-text {
+    background-color: transparent;
+    border-right: none;
+    color: #008970;
+    display: table;
   }
 
-  .btn:active, .btn:hover, .btn:focus {
-    background-color: #f7f7f2;
-    color: #378220;
-    border: 1px solid #3F9725;
+  .form-control {
+    border-left: none;
+  }
+
+  .input-group-text font-awesome-icon {
+    display: table-cell;
+    vertical-align: middle;
+  }
+
+  .input-group {
+    max-width: 400px;
   }
 </style>

@@ -79,6 +79,19 @@
               <i><strong>{{ "Price: $" + this.rentalObject.price }}</strong></i>
             </p>
           </div>
+
+          <div v-if="isOwner" class="row">
+            <div class="d-flex justify-content-center">
+              <button class="btn btn-red mt-3 me-1" :class="!this.rentalObject.isDeletable ? 'disabled':''" ><font-awesome-icon style="margin-right: 10px" icon="trash"></font-awesome-icon>Delete</button>
+              <router-link :to="'/fishingInstructor/updateAdventure/' + this.$route.params.id" class="btn btn-yellow mt-3 me-1" :class="!this.rentalObject.isDeletable ? 'disabled':''"><font-awesome-icon style="margin-right: 10px" icon="pencil"></font-awesome-icon>Edit</router-link>
+            </div>
+          </div>
+
+          <div v-if="isOwner" class="row">
+            <div class="d-flex justify-content-center">
+              <router-link :to="'/#' + this.$route.params.id" class="btn mt-3 me-1"><font-awesome-icon style="margin-right: 10px" icon="tag"></font-awesome-icon>Special Offer</router-link>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -205,7 +218,9 @@
           </p>
         </div>
 
-        <RentalAddress :address="this.rentalObject.address"/>
+        <div v-if="isOwner" class="row mb-5">
+          <RentalAddress :address="this.rentalObject.address"/>
+        </div>
 
       </div>
     </div>
@@ -243,33 +258,18 @@ import RentalRules from "@/components/UnregisteredUser/components/RentalRules";
 import StarRating from 'vue-star-rating';
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import {library} from "@fortawesome/fontawesome-svg-core";
-import {
-  faBed,
-  faCircleCheck,
-  faCircleXmark,
-  faClock,
-  faDoorOpen,
-  faLocationDot,
-  faUser,
-  faUserTie,
-} from "@fortawesome/free-solid-svg-icons";
+import { faBed, faCircleCheck, faCircleXmark, faClock, faDoorOpen, faLocationDot, faUser, faUserTie, faPencil, faTrash, faTag } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios/index";
 import {useStore} from "vuex";
 import store from "@/store";
 
 
-library.add(faUser);
-library.add(faDoorOpen);
-library.add(faBed);
-library.add(faClock);
-library.add(faLocationDot);
-library.add(faCircleCheck);
-library.add(faCircleXmark);
-library.add(faUserTie);
+library.add(faUser, faDoorOpen, faBed, faClock, faLocationDot, faCircleCheck, faCircleXmark, faUserTie, faPencil, faTrash, faTag);
 
 export default {
   name: "RentalProfile",
-  components: {RentalRules, RentalAddress, RentalTags, RentalDescription, ImageSlider, FontAwesomeIcon, StarRating},
+  components: {
+    RentalRules, RentalAddress, RentalTags, RentalDescription, ImageSlider, FontAwesomeIcon, StarRating},
   data() {
     return {
       rentalObject: null,
@@ -337,6 +337,9 @@ export default {
     }
   },
   computed: {
+    isOwner() {
+      return this.$store.getters.user === "fishingInstructor";
+    },
     buttonText() {
       return this.isUserSubscribed ? "Subscribed!" : "Subscribe";
     },

@@ -17,8 +17,10 @@ public class TimePeriod {
     private Long id;
     private LocalDate initDate;
     private LocalDate termDate;
-    @ManyToOne
+    @OneToOne
     private RentalObject rentalObject;
     @OneToOne
     private Reservation reservation;
+    @ManyToOne
+    private RentalObjectOwner rentalObjectOwner;
 }

@@ -208,6 +208,12 @@
                     </div>
                   </div>
                 </div>
+
+                <div class="row justify-content-center mt-4">
+                  <label class="ms-3">Availability Period</label>
+                  <availability-period-selector :rental="rentalPeriod"></availability-period-selector>
+                </div>
+
               </div>
               <div class="col-2"></div>
             </div>
@@ -226,18 +232,21 @@
 <script>
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import {library} from "@fortawesome/fontawesome-svg-core";
-import {faPlus, faMinus, faX, faPlusCircle} from "@fortawesome/free-solid-svg-icons";
+import {faMinus, faPlus, faPlusCircle, faX} from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
-import {toggleProcessing} from "@/components/state";
+import {toggleLoading, toggleProcessing} from "@/components/state";
+import store from "@/store";
+import AvailabilityPeriodSelector from "@/components/RentalObjectOwner/AvailabilityPeriodSelector";
 
 library.add(faPlus, faMinus, faX, faPlusCircle);
 
 export default {
   name: "AdventureCreationPage",
-  components: {FontAwesomeIcon},
+  components: {AvailabilityPeriodSelector, FontAwesomeIcon},
   data() {
     return {
       adventure: {
+        id: null,
         name: null,
         description: null,
         capacity: null,
@@ -254,7 +263,11 @@ export default {
           longitude: null,
           latitude: null
         },
-        adventureEquipment: []
+        adventureEquipment: [],
+        availabilityPeriod: {
+          initDate: null,
+          termDate: null,
+        }
       },
       photo: null,
       photos: [],
@@ -284,7 +297,60 @@ export default {
       addressIsValid: true
     }
   },
+  mounted() {
+    toggleLoading();
+    if (this.$route.params.id !== undefined) {
+      axios.get("/RentalObjects/getAdventureInstructor", {
+        headers: {
+          Authorization: "Bearer " + store.getters.access_token,
+        },
+        params: {
+          id: this.$route.params.id
+        }
+      })
+      .then((response) => {
+        let adventure = response.data;
+        this.adventure.id = adventure.id;
+        this.adventure.name = adventure.name;
+        this.adventure.description = adventure.description;
+        this.hours = Math.trunc(adventure.duration);
+        this.minutes = 60*(adventure.duration%1);
+        this.adventure.address = adventure.address;
+        this.adventure.price = adventure.price;
+        this.adventure.capacity = adventure.capacity;
+        this.adventure.adventureEquipment = adventure.adventureEquipment;
+        this.adventure.additionalServices = adventure.additionalServices;
+        this.adventure.conductRules = adventure.conductRules;
+        adventure.photos.forEach(photo => {
+          this.photos.push(photo.photo);
+          this.loadImage(photo.photo, this.photos.indexOf(photo.photo));
+        });
+        console.log(adventure);
+        if (adventure.availabilityPeriod !== null) {
+          this.adventure.availabilityPeriod.initDate = adventure.availabilityPeriod.initDate;
+          this.adventure.availabilityPeriod.termDate = adventure.availabilityPeriod.termDate;
+        }
+        console.log(this.adventure);
+        toggleLoading();
+      })
+      .catch(() => {
+        this.$notify({
+          title: "Server error",
+          text: "Server is currently off. Please try again later...",
+          type: "error"
+        });
+        toggleLoading();
+      })
+    }
+  },
   computed: {
+    rentalPeriod() {
+      if (this.adventure.availabilityPeriod.initDate !== null) {
+        return {start: new Date(this.adventure.availabilityPeriod.initDate), end: new Date(this.adventure.availabilityPeriod.termDate)};
+      } else {
+        return null;
+      }
+    },
     rulesOfConduct() {
       let pairsOfRules = [];
       let positiveRules = this.positiveRules(this.adventure.conductRules);
@@ -340,7 +406,6 @@ export default {
       }
     },
     makeRequest() {
-      toggleProcessing();
       axios.post("/RentalObjects/addAdventure", this.adventure, {
         headers: {
           Authorization: "Bearer " + this.$store.getters.access_token,
@@ -358,7 +423,6 @@ export default {
           })
           .then((response) => {
             let body = {id: adventure.data.id, photos: [response.data]}
-            console.log(body);
             axios.post("/RentalObjects/connectPhotosToRental", body,{
               headers: {
                 Authorization: "Bearer " + this.$store.getters.access_token,
@@ -369,8 +433,7 @@ export default {
                 text: "You have successfully added a new adventure.",
                 position: "bottom right",
                 type: "success"
-              });
-              toggleProcessing();
+              })
             })
           })
         }
@@ -382,15 +445,13 @@ export default {
             text: "Server is currently off. Please try again later...",
             type: "error"
           });
-          toggleProcessing();
         } else if (error.response.status === 500) {
           this.$notify({
             title: "Internal Server Error",
             text: "Something went wrong on the server! Please try again later...",
             position: "bottom right",
             type: "error"
-          });
-          toggleProcessing();
+          })
         }
       })
     },
@@ -444,6 +505,22 @@ export default {
     async isDataCorrect() {
       this.addressIsValid = false;
       this.validateAddress();
+    },
+    loadImage(name, index) {
+      axios.get("/Photos/", {headers: {
+          Authorization: "Bearer " + this.$store.getters.access_token,
+        },
+        params: {
+          path: name,
+        },
+        responseType: "blob"
+      })
+          .then(response => {
+            this.imageUrls[index] = URL.createObjectURL(response.data);
+          })
+          .catch((error) =>{
+            console.log(error);
+          });
     },
     validateAddress() {
       const apiKey = 'VrDrl5BjEA0Whvb-chHbFz96HV4qlCXB-yoiTRRLKno';
@@ -595,14 +672,17 @@ export default {
 
   .equipment-tag {
     background-color: #008970;
-    color: #99EEDF;
+    font-weight: bold;
+    color: white;
+    border: 2px solid #008970;
     width: fit-content;
     font-size: 12px;
   }
 
   .equipment-tag:hover   {
-    background-color: #99EEDF;
+    background-color: white;
     color: #008970;
+    border: 2px solid #008970;
     width: fit-content;
     font-size: 12px;
   }
@@ -615,7 +695,7 @@ export default {
 
   .tag-button {
     background-color: transparent;
-    color: #99EEDF;
+    color: white;
     border: none;
   }
 

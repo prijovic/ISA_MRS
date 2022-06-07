@@ -23,10 +23,13 @@ import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.UserType;
 import rs.ac.uns.ftn.siit.isa_mrs.repository.*;
 import rs.ac.uns.ftn.siit.isa_mrs.security.JwtDecoder;
 
+import java.time.LocalDateTime;
+import java.time.chrono.ChronoLocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @Service
 @RequiredArgsConstructor
@@ -61,6 +64,7 @@ public class AdventureServiceImpl implements AdventureService{
             Adventure adventure = rental.get();
             adventureDto.setReviews(rentalService.getRentalReviews(adventure, page, pageSize));
             adventureDto.setGrade(rentalService.calculateRentalRating(adventure));
+            adventureDto.setIsDeletable(isAdventureDeletable(adventure));
             Optional<Client> optionalClient = clientRepo.findByEmail(decodedToken.getEmail());
             if(optionalClient.isPresent()){
                 Client client = optionalClient.get();
@@ -214,7 +218,6 @@ public class AdventureServiceImpl implements AdventureService{
         adventure.setCapacity(adventureDto.getCapacity());
         adventure.setPrice(adventureDto.getPrice());
         adventureRepo.save(adventure);
-//        DODATI ADD SERVICES, PRAVILA, OPREMU
         adventureEquipments.forEach(equipment -> {
             equipment.setAdventure(adventure);
             adventureEquipmentRepo.save(equipment);
@@ -255,8 +258,18 @@ public class AdventureServiceImpl implements AdventureService{
 
     private AdventureDto mapAdventuresToDto(Adventure adventure) {
         AdventureDto adventureDto = modelMapper.map(adventure, AdventureDto.class);
-        adventureDto.setIsDeletable(adventure.getReservations().size() == 0);
+        adventureDto.setIsDeletable(isAdventureDeletable(adventure));
         return adventureDto;
+    }
+
+    private boolean isAdventureDeletable(Adventure adventure) {
+        AtomicBoolean isDeletable = new AtomicBoolean(true);
+        adventure.getReservations().forEach(reservation -> {
+            if (reservation.getReservationTime().getInitDate().isAfter(ChronoLocalDate.from(LocalDateTime.now()))) {
+                isDeletable.set(false);
+            }
+        });
+        return isDeletable.get();
     }
 
 }

@@ -15,6 +15,8 @@ import java.util.LinkedHashSet;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RentalObjectOwner extends SaleParticipant{
+    @OneToMany(mappedBy = "rentalObjectOwner")
+    private Collection<TimePeriod> unavailabilityPeriods = new LinkedHashSet<>();
     @OneToMany(mappedBy = "rentalObjectOwner", cascade = CascadeType.ALL)
     private Collection<RentalObject> rentalObjects = new LinkedHashSet<>();
 }

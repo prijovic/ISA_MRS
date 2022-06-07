@@ -301,6 +301,17 @@ const routes = [
         }
     },
     {
+        path: "/fishingInstructor/updateAdventure/:id",
+        name: "AdventureUpdate",
+        components: {
+            default: AdventureCreationPage,
+            sidebar: TheFishingInstructorSidebar
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
         path: "/vacationRentalOwner",
         name: "VacationRentalOwnerHome",
         components: {

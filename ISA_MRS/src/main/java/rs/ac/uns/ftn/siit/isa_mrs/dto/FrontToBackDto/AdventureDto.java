@@ -10,6 +10,7 @@ import java.util.Collection;
 
 @Data
 public class AdventureDto implements Serializable {
+    private final Long id;
     private final String name;
     private final String description;
     private final Integer capacity;
