@@ -16,8 +16,8 @@ public class ClientReservationDto implements Serializable {
     private Boolean equipmentRequired;
     private LocalDateTime timeStamp;
     private TimePeriodDto reservationTime;
-    // private Collection<ReviewDto> reviews;
-    // private Collection<ReportDto> reports;
+    private Collection<ReservationReviewDto> reviews;
+    private Collection<ReservationReportDto> reports;
     private ReservationRentalObjectDto rentalObject;
     private Collection<ReservationAdditionalServiceDto> additionalServices;
 }

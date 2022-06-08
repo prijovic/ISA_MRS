@@ -110,7 +110,7 @@
             <div class="row ps-1">
               <p class="h5" style="display: flex;">
                 <span class="mt-1" >
-                <font-awesome-icon class="me-2" icon="user-tie"></font-awesome-icon><i>Owner: {{ getOwnerFullName }}</i>
+                <font-awesome-icon class="me-2" icon="user-tie"></font-awesome-icon><i>{{ ownerOrInstructor }}: {{ getOwnerFullName }}</i>
                 </span>
                 <star-rating class="h5 ms-3" v-model:rating="this.rentalObject.ownerGrade"
                              text-class="mt-1 font-weight-normal"
@@ -293,6 +293,65 @@ export default {
       bedsPerRoom: null,
     }
   },
+  computed: {
+    ownerOrInstructor() {
+      if(this.rentalObject.rentalObjectType === "Adventure") return "Instructor";
+      return "Owner";
+    },
+    isOwner() {
+      return this.$store.getters.user === "fishingInstructor";
+    },
+    buttonText() {
+      return this.isUserSubscribed ? "Subscribed!" : "Subscribe";
+    },
+    reviews() {
+      return this.rentalObject.reviews.content;
+    },
+    getNumberOfRooms() {
+      return this.rentalObject.rooms.length;
+    },
+    getNumberOfBeds() {
+      let beds = 0;
+      this.rentalObject.rooms.forEach(room => { beds += room.beds; });
+      return beds;
+    },
+    doesRentalHavePhotos() {
+      return this.rentalObject.photos.length > 0;
+    },
+    isUserSubscribed() {
+      return this.rentalObject.isUserSubscribed;
+    },
+    showSubscriptionArea() {
+      return this.$store.getters.user === "client";
+    },
+    isVacationRental() {
+      return this.rentalObject.rentalObjectType === "VacationRental";
+    },
+    isBoat() {
+      return this.rentalObject.rentalObjectType === "Boat";
+    },
+    isAdventure() {
+      return this.rentalObject.rentalObjectType === "Adventure";
+    },
+    getOwnerFullName() {
+      return this.rentalObject.rentalObjectOwner.name + " " + this.rentalObject.rentalObjectOwner.surname;
+    },
+    getAccessToken() {
+      return store.state.access_token;
+    },
+    rentalHasReviews() {
+      return this.reviews.length > 0;
+    },
+    button1Content() {
+      return this.currentPage === 0 ? this.currentPage+1: this.totalPages - this.currentPage === 1 ? this.currentPage - 1 : this.currentPage;
+    },
+    button2Content() {
+      return this.currentPage === 0 ? this.currentPage+2: this.totalPages - this.currentPage === 1 ? this.currentPage : this.currentPage+1;
+    },
+    button3Content() {
+      return this.currentPage === 0 ? this.currentPage+3: this.totalPages - this.currentPage === 1 ? this.currentPage + 1 : this.currentPage+2;
+    }
+  },
   mounted() {
     const store = useStore();
     if(this.$route.params.type === "Boat") {
@@ -349,61 +408,6 @@ export default {
         this.getReviewPics();
         this.numOfBedsPerRoom();
       });
-    }
-  },
-  computed: {
-    isOwner() {
-      return this.$store.getters.user === "fishingInstructor";
-    },
-    buttonText() {
-      return this.isUserSubscribed ? "Subscribed!" : "Subscribe";
-    },
-    reviews() {
-      return this.rentalObject.reviews.content;
-    },
-    getNumberOfRooms() {
-      return this.rentalObject.rooms.length;
-    },
-    getNumberOfBeds() {
-      let beds = 0;
-      this.rentalObject.rooms.forEach(room => { beds += room.beds; });
-      return beds;
-    },
-    doesRentalHavePhotos() {
-      return this.rentalObject.photos.length > 0;
-    },
-    isUserSubscribed() {
-      return this.rentalObject.isUserSubscribed;
-    },
-    showSubscriptionArea() {
-      return this.$store.getters.user === "client";
-    },
-    isVacationRental() {
-      return this.rentalObject.rentalObjectType === "VacationRental";
-    },
-    isBoat() {
-      return this.rentalObject.rentalObjectType === "Boat";
-    },
-    isAdventure() {
-      return this.rentalObject.rentalObjectType === "Adventure";
-    },
-    getOwnerFullName() {
-      return this.rentalObject.rentalObjectOwner.name + " " + this.rentalObject.rentalObjectOwner.surname;
-    },
-    getAccessToken() {
-      return store.state.access_token;
-    },
-    rentalHasReviews() {
-      return this.reviews.length > 0;
-    },
-    button1Content() {
-      return this.currentPage === 0 ? this.currentPage+1: this.totalPages - this.currentPage === 1 ? this.currentPage - 1 : this.currentPage;
-    },
-    button2Content() {
-      return this.currentPage === 0 ? this.currentPage+2: this.totalPages - this.currentPage === 1 ? this.currentPage : this.currentPage+1;
-    },
-    button3Content() {
-      return this.currentPage === 0 ? this.currentPage+3: this.totalPages - this.currentPage === 1 ? this.currentPage + 1 : this.currentPage+2;
     }
   },
   methods: {

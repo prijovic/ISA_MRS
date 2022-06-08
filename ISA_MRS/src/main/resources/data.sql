@@ -248,10 +248,10 @@ INSERT INTO test.reservation (id, price, equipment_required, people, time_stamp,
 VALUES (9, 250, true, 2, '2022-01-01 12:00:00', 3, 5, false);
 INSERT INTO time_period (id, init_date, term_date, reservation_id)
 VALUES (10, '2022-01-01 12:00:00', '2022-01-02 12:00:00', 9);
-INSERT INTO test.review (id, status, comment, grade, review_type, time_stamp, author_id, reservation_id)
-VALUES (9, 1, 'Pretty good!', 4, 0, '2022-01-23 23:00:00', 3, 9);
-INSERT INTO test.review (id, status, comment, grade, review_type, time_stamp, author_id, reservation_id)
-VALUES (10, 1, 'They were cool', 4, 1, '2022-01-23 23:00:00', 3, 9);
+-- INSERT INTO test.review (id, status, comment, grade, review_type, time_stamp, author_id, reservation_id)
+-- VALUES (9, 1, 'Pretty good!', 4, 0, '2022-01-23 23:00:00', 3, 9);
+-- INSERT INTO test.review (id, status, comment, grade, review_type, time_stamp, author_id, reservation_id)
+-- VALUES (10, 1, 'They were cool', 4, 1, '2022-01-23 23:00:00', 3, 9);
 
 
 INSERT INTO test.reservation (id, price, equipment_required, people, time_stamp, client_id, rental_object_id, cancelled)

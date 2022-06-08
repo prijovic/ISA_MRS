@@ -28,4 +28,5 @@ public class Paths {
     public static final String GET_CLIENT_PROFILE = "/getClientProfile";
     public static final String CANCEL_SUBSCRIPTION = "/cancelSubscription";
     public static final String CANCEL_RESERVATION = "/cancelReservation";
+    public static final String ADD_REVIEW = "/addReview";
 }

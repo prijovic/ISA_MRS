@@ -103,6 +103,7 @@ export default {
   },
   components: {RentalAddress, ClientReservations, FontAwesomeIcon, ClientSubscription},
   mounted() {
+    // console.log(this.$store.getters.access_token);
     axios.get("/Users/getClientProfile", {
       headers: {
         Authorization: "Bearer " + this.$store.getters.access_token

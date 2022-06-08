@@ -48,7 +48,9 @@
                           :data-bs-target="'#review-'+reservation.id">
                     Review
                   </button>
-                  <ReservationReview :id="reservation.id"/>
+                  <ReservationReview :id="reservation.id"
+                                     :reviews="reservation.reviews"
+                                     :resId="reservation.id"/>
                 </div>
                 <div class="row">
                   <button class="w-100 btn" style="background-color:#e23c52; border: 1px solid #e23c52;

@@ -2,17 +2,22 @@ package rs.ac.uns.ftn.siit.isa_mrs.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.ReviewDtos.SaveReviewDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.ReservationDto;
 import rs.ac.uns.ftn.siit.isa_mrs.model.*;
+import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.RequestStatus;
+import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.ReviewType;
 import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.UserType;
 import rs.ac.uns.ftn.siit.isa_mrs.repository.*;
 import rs.ac.uns.ftn.siit.isa_mrs.security.JwtDecoder;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -28,6 +33,7 @@ public class ReservationServiceImpl implements ReservationService {
     private final RentalObjectOwnerRepo rentalObjectOwnerRepo;
     private final RentalObjectRepo rentalObjectRepo;
     private final ReservationRepo reservationRepo;
+    private final ReviewRepo reviewRepo;
     private final ModelMapper modelMapper;
 
     @Override
@@ -92,5 +98,47 @@ public class ReservationServiceImpl implements ReservationService {
         } else {
             return null;
         }
+    }
+
+    @Override
+    public ResponseEntity<Void> addReview(SaveReviewDto srd, String token) {
+        try {
+            JwtDecoder.DecodedToken decodedToken;
+            try {
+                decodedToken = jwtDecoder.decodeToken(token);
+            } catch (Exception e) {
+                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            }
+            Optional<Reservation> res = reservationRepo.findById(srd.getReservationId());
+            Optional<Client> cli = clientRepo.findByEmail(decodedToken.getEmail());
+            if (res.isEmpty() || cli.isEmpty()) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            Reservation reservation = res.get();
+            Client client = cli.get();
+            Review ownerReview = setUpReviewData(srd.getOwnerReview().getGrade(), srd.getOwnerReview().getComment(),
+                    ReviewType.OwnerReview, reservation, client);
+            reservation.getReviews().add(ownerReview);
+            Review rentalReview = setUpReviewData(srd.getRentalReview().getGrade(), srd.getRentalReview().getComment(),
+                    ReviewType.RentalReview, reservation, client);
+            reservation.getReviews().add(rentalReview);
+            reviewRepo.save(ownerReview);
+            reviewRepo.save(rentalReview);
+            reservationRepo.save(reservation);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    private @NotNull Review setUpReviewData(int grade, String comment, ReviewType type, Reservation reservation,
+                                            Client client) {
+        Review review = new Review();
+        review.setGrade(grade);
+        review.setComment(comment);
+        review.setReviewType(type);
+        review.setStatus(RequestStatus.Pending);
+        review.setReservation(reservation);
+        review.setTimeStamp(LocalDateTime.now());
+        review.setAuthor(client);
+        return review;
     }
 }
