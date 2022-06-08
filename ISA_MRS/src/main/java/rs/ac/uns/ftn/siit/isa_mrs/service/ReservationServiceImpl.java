@@ -9,10 +9,7 @@ import org.springframework.stereotype.Service;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.ReservationDto;
 import rs.ac.uns.ftn.siit.isa_mrs.model.*;
 import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.UserType;
-import rs.ac.uns.ftn.siit.isa_mrs.repository.ClientRepo;
-import rs.ac.uns.ftn.siit.isa_mrs.repository.RentalObjectOwnerRepo;
-import rs.ac.uns.ftn.siit.isa_mrs.repository.RentalObjectRepo;
-import rs.ac.uns.ftn.siit.isa_mrs.repository.UserRepo;
+import rs.ac.uns.ftn.siit.isa_mrs.repository.*;
 import rs.ac.uns.ftn.siit.isa_mrs.security.JwtDecoder;
 
 import java.time.LocalDate;
@@ -30,7 +27,24 @@ public class ReservationServiceImpl implements ReservationService {
     private final ClientRepo clientRepo;
     private final RentalObjectOwnerRepo rentalObjectOwnerRepo;
     private final RentalObjectRepo rentalObjectRepo;
+    private final ReservationRepo reservationRepo;
     private final ModelMapper modelMapper;
+
+    @Override
+    public ResponseEntity<Void> cancelReservation(Long id) {
+        try {
+            Optional<Reservation> reservation = reservationRepo.findById(id);
+            if(reservation.isPresent()) {
+                Reservation r = reservation.get();
+                r.setCancelled(true);
+                reservationRepo.save(r);
+                return new ResponseEntity<>(HttpStatus.OK);
+            }
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
     @Override
     public ResponseEntity<Collection<ReservationDto>> getFutureReservations(String token) {

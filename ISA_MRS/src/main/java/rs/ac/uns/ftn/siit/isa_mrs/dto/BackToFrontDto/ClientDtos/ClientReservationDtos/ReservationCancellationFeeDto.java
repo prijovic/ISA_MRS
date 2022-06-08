@@ -7,7 +7,7 @@ import java.io.Serializable;
 
 @Data
 public class ReservationCancellationFeeDto implements Serializable {
-    private final Long id;
-    private final FeeType feeType;
-    private final Double value;
+    private Long id;
+    private FeeType feeType;
+    private Double value;
 }

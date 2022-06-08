@@ -19,6 +19,7 @@ public class Reservation {
     private Long id;
     private Integer price;
     private Integer people;
+    private Boolean cancelled;
     private Boolean equipmentRequired;
     private LocalDateTime timeStamp;
     @OneToOne(mappedBy = "reservation", cascade = CascadeType.ALL)

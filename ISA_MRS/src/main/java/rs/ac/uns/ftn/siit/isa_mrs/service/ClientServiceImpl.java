@@ -58,6 +58,7 @@ public class ClientServiceImpl implements ClientService {
         Collection<Reservation> reservations = reservationRepo.findAllByClientId(clientId);
         Collection<ClientReservationDto> reservationDtos = new ArrayList<>();
         for(var reservation : reservations) {
+            if(reservation.getCancelled()) continue;
             ClientReservationDto reservationDto = modelMapper.map(reservation, ClientReservationDto.class);
             reservationDto.setRentalObject(setUpReservationRentalObjectDto(reservation.getRentalObject()));
             reservationDtos.add(reservationDto);

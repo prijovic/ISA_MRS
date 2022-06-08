@@ -33,30 +33,30 @@
               <div style="width: 100%;">
                 <div class="row">
                   <button class="w-100 btn mb-2" style="font-weight: 500; color: white;" data-bs-toggle="modal"
-                          :data-bs-target="'#bill-'+reservation.rentalObject.id">
+                          :data-bs-target="'#bill-'+reservation.id">
                     Reservation Preview
                   </button>
                   <ReservationPreview :services="reservation.additionalServices"
                                       :days="getNumberOfDays(reservation)"
                                       :price="reservation.price"
                                       :total="calculateTotal(reservation)"
-                                      :id="reservation.rentalObject.id"  />
+                                      :id="reservation.id" />
                 </div>
                 <div class="row">
                   <button class="w-100 btn mb-2" style="background-color: #ffd055; border: 1px solid #ffd055;
                   font-weight: 500; color: white;" data-bs-toggle="modal"
-                          :data-bs-target="'#review-'+reservation.rentalObject.id">
+                          :data-bs-target="'#review-'+reservation.id">
                     Review
                   </button>
-                  <ReservationReview :id="reservation.rentalObject.id"/>
+                  <ReservationReview :id="reservation.id"/>
                 </div>
                 <div class="row">
                   <button class="w-100 btn" style="background-color:#e23c52; border: 1px solid #e23c52;
                           font-weight: 500; color: white;" data-bs-toggle="modal"
-                          :data-bs-target="'#report-'+reservation.rentalObject.id">
+                          :data-bs-target="'#report-'+reservation.id">
                     Report
                   </button>
-                  <ReservationReport :id="reservation.rentalObject.id"/>
+                  <ReservationReport :id="reservation.id"/>
                 </div>
               </div>
             </div>
