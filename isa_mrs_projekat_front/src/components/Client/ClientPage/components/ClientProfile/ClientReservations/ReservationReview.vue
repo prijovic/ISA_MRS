@@ -13,19 +13,22 @@
           </div>
           <div class="row my-0 py-0 my-3" >
             <div class="col-12 d-flex justify-content-center align-items-center">
-              <star-rating v-model="this.newReviews.ownerReview.grade"
-                           text-class="h1 my-0 font-weight-normal" :round-start-rating="false"
+              <star-rating text-class="h1 my-0 font-weight-normal" :round-start-rating="false"
                            :glow="5" glow-color="#ffd055" :star-size="50"
-                           :read-only="isReviewPresent"
-                           :rating="isReviewPresent ? getOwnerGrade : 0"
+                           :read-only="isReviewPresent || isSaved"
+                           :rating="getOwnerGrade"
                            v-model:rating="this.newReviews.ownerReview.grade"></star-rating>
             </div>
             <div v-if="ownerGradeMissing" id="missingOwnerGradeMessage" class="row text-center">
               <p class="h6 mt-3" style="color: #e23c52"><strong>You must select a grade.</strong></p>
             </div>
           </div>
-          <textarea id="ownerComment" :hidden="isReviewPresent ? !ownerCommentExists : false"
-                    :value="isReviewPresent ? getOwnerComment : null " :disabled="isReviewPresent || isSaved"
+          <textarea id="ownerCommentExists" v-if="isReviewPresent" :hidden="!ownerCommentExists"
+                    :value="this.newReviews.ownerReview.comment" disabled
+                    rows="3" class="w-100 p-2 px-3"
+                    style="background-color:#ffd055; border-radius: 20px; resize: none;" maxlength="1000" ></textarea>
+          <textarea :id="'insertOwnerComment'+this.resId" v-if="!isReviewPresent"
+                    :content="this.newReviews.ownerReview.comment" :disabled="isSaved"
                     rows="3" placeholder="Leave a review here" class="w-100 p-2 px-3"
                     style="background-color:#ffd055; border-radius: 20px; resize: none;" maxlength="1000" ></textarea>
           <div>
@@ -33,21 +36,26 @@
           </div>
           <div class="row my-0 py-0  my-3">
             <div class="col-12 d-flex justify-content-center align-items-center">
-              <star-rating v-model="this.newReviews.rentalReview.grade"
-                           text-class="h1 my-0 font-weight-normal" :round-start-rating="false"
+              <star-rating text-class="h1 my-0 font-weight-normal" :round-start-rating="false"
                            :glow="5" glow-color="#ffd055" :star-size="50"
-                           :read-only="isReviewPresent"
-                           :rating="isReviewPresent ? getRentalGrade : 0"
+                           :read-only="isReviewPresent || isSaved"
+                           :rating="getRentalGrade"
                            v-model:rating="this.newReviews.rentalReview.grade"></star-rating>
             </div>
             <div v-if="rentalGradeMissing" id="missingRentalGradeMessage" class="row text-center">
               <p class="h6 mt-3" style="color: #e23c52"><strong>You must select a grade.</strong></p>
             </div>
           </div>
-          <textarea id="rentalComment" :hidden="isReviewPresent ? !rentalCommentExists : false"
-                    :value="isReviewPresent ? getRentalComment : '' " :disabled="isReviewPresent || isSaved"
+          <textarea id="rentalCommentExists" v-if="isReviewPresent" :hidden="!rentalCommentExists"
+                    :value="this.newReviews.rentalReview.comment" disabled
+                    rows="3" class="w-100 p-2 px-3"
+                    style="background-color:#ffd055; border-radius: 20px; resize: none;" maxlength="1000" ></textarea>
+
+          <textarea :id="'insertRentalComment'+this.resId" v-if="!isReviewPresent"
+                    :content="this.newReviews.rentalReview.comment" :disabled="isSaved"
                     rows="3" placeholder="Leave a review here" class="w-100 p-2 px-3"
-                    style="background-color:#ffd055; border-radius: 20px; resize: none;" maxlength="1000"></textarea>
+                    style="background-color:#ffd055; border-radius: 20px; resize: none;" maxlength="1000" ></textarea>
+
         </div>
         <div class="modal-footer d-flex" style="border-top: none; justify-content: space-evenly">
           <button v-if="!isReviewPresent" type="button" class="btn btn-secondary" data-bs-dismiss="modal"
@@ -80,7 +88,7 @@ export default {
       closeButtonTxt: "Cancel",
       ownerGradeMissing: false,
       rentalGradeMissing: false,
-      newPlaceholder: "No comment.",
+      // newPlaceholder: "No comment.",
       newReviews: {
         reservationId: this.resId,
         ownerReview: {
@@ -94,10 +102,22 @@ export default {
       },
     }
   },
+  mounted() {
+    this.newReviews.ownerReview.comment = this.getOwnerComment;
+    this.newReviews.rentalReview.comment = this.getRentalComment;
+  },
   methods: {
     save() {
-      this.saveCommentValues();
+      this.newReviews.ownerReview.comment = document.getElementById("insertOwnerComment"+this.resId).value;
+      this.newReviews.rentalReview.comment = document.getElementById("insertRentalComment"+this.resId).value;
       if(!this.saveChecks()) this.saveReviews();
+    },
+    saveChecks() {
+      this.ownerGradeMissing = false;
+      this.rentalGradeMissing = false;
+      if(this.newReviews.ownerReview.grade === null) this.ownerGradeMissing = true;
+      if(this.newReviews.rentalReview.grade === null) this.rentalGradeMissing = true;
+      return this.ownerGradeMissing || this.rentalGradeMissing;
     },
     saveReviews() {
       axios.post("/Reservations/addReview", this.newReviews, {
@@ -127,17 +147,6 @@ export default {
           })
         }
       })
-    },
-    saveChecks() {
-      this.ownerGradeMissing = false;
-      this.rentalGradeMissing = false;
-      if(this.newReviews.ownerReview.grade === null) this.ownerGradeMissing = true;
-      if(this.newReviews.rentalReview.grade === null) this.rentalGradeMissing = true;
-      return this.ownerGradeMissing || this.rentalGradeMissing;
-    },
-    saveCommentValues() {
-      this.newReviews.ownerReview.comment = document.getElementById('ownerComment').value;
-      this.newReviews.rentalReview.comment = document.getElementById('rentalComment').value;
     },
   },
   computed: {
