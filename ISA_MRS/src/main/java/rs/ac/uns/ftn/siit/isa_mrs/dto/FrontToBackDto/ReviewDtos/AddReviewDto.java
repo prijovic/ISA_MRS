@@ -5,7 +5,7 @@ import lombok.Data;
 import java.io.Serializable;
 
 @Data
-public class SaveReviewDto implements Serializable {
+public class AddReviewDto implements Serializable {
     private Long reservationId;
     private ReviewInfoDto ownerReview;
     private ReviewInfoDto rentalReview;

@@ -7,7 +7,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.ReviewDtos.SaveReviewDto;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.ReportDtos.AddReportDto;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.ReviewDtos.AddReviewDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.ReservationDto;
 import rs.ac.uns.ftn.siit.isa_mrs.model.*;
 import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.RequestStatus;
@@ -34,6 +35,7 @@ public class ReservationServiceImpl implements ReservationService {
     private final RentalObjectRepo rentalObjectRepo;
     private final ReservationRepo reservationRepo;
     private final ReviewRepo reviewRepo;
+    private final ReportRepo reportRepo;
     private final ModelMapper modelMapper;
 
     @Override
@@ -101,7 +103,7 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     @Override
-    public ResponseEntity<Void> addReview(SaveReviewDto srd, String token) {
+    public ResponseEntity<Void> addReview(AddReviewDto ard, String token) {
         try {
             JwtDecoder.DecodedToken decodedToken;
             try {
@@ -109,15 +111,15 @@ public class ReservationServiceImpl implements ReservationService {
             } catch (Exception e) {
                 return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
             }
-            Optional<Reservation> res = reservationRepo.findById(srd.getReservationId());
+            Optional<Reservation> res = reservationRepo.findById(ard.getReservationId());
             Optional<Client> cli = clientRepo.findByEmail(decodedToken.getEmail());
             if (res.isEmpty() || cli.isEmpty()) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             Reservation reservation = res.get();
             Client client = cli.get();
-            Review ownerReview = setUpReviewData(srd.getOwnerReview().getGrade(), srd.getOwnerReview().getComment(),
+            Review ownerReview = setUpReviewData(ard.getOwnerReview().getGrade(), ard.getOwnerReview().getComment(),
                     ReviewType.OwnerReview, reservation, client);
             reservation.getReviews().add(ownerReview);
-            Review rentalReview = setUpReviewData(srd.getRentalReview().getGrade(), srd.getRentalReview().getComment(),
+            Review rentalReview = setUpReviewData(ard.getRentalReview().getGrade(), ard.getRentalReview().getComment(),
                     ReviewType.RentalReview, reservation, client);
             reservation.getReviews().add(rentalReview);
             reviewRepo.save(ownerReview);
@@ -140,5 +142,32 @@ public class ReservationServiceImpl implements ReservationService {
         review.setTimeStamp(LocalDateTime.now());
         review.setAuthor(client);
         return review;
+    }
+
+    @Override
+    public ResponseEntity<Void> addReport(AddReportDto ard, String token) {
+        try {
+            JwtDecoder.DecodedToken decodedToken;
+            try {
+                decodedToken = jwtDecoder.decodeToken(token);
+            } catch (Exception e) {
+                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            }
+            Optional<Reservation> res = reservationRepo.findById(ard.getReservationId());
+            Optional<Client> cli = clientRepo.findByEmail(decodedToken.getEmail());
+            if (res.isEmpty() || cli.isEmpty()) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            Reservation reservation = res.get();
+            Client client = cli.get();
+            Report report = new Report();
+            report.setComment(ard.getComment());
+            report.setTimeStamp(LocalDateTime.now());
+            report.setReservation(reservation);
+            report.setAuthor(client);
+            // pending
+            reportRepo.save(report);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }

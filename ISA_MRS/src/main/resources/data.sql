@@ -672,3 +672,5 @@ INSERT INTO adventure (id, duration) VALUES (20, 4);
 INSERT INTO subscribed_client (rental_id, subscriber_id) VALUES (1, 3);
 INSERT INTO subscribed_client (rental_id, subscriber_id) VALUES (2, 3);
 INSERT INTO subscribed_client (rental_id, subscriber_id) VALUES (3, 3);
+
+INSERT INTO test.report (id, comment, author_id, reservation_id) VALUES (1, 'Owner has entered the apartment while we were out and stole our jewellery.', 3, 8);

@@ -1,5 +1,5 @@
 <template>
-  <div class="mt-3 mx-5 p-0">
+  <div class="mt-3 mx-5 me-4 p-0">
     <div class="card px-0 mb-2">
       <div class="card-header py-2">
         <h4 class="card-heading">Reservation History</h4>
@@ -29,7 +29,7 @@
                 <p class="h4"><strong style="color:#008970;">Total:</strong> ${{  calculateTotal(reservation) }}</p>
               </div>
             </div>
-            <div class="col-md-4 p-5 d-flex flex-grow-1 justify-content-center align-items-center" style="height: 20vh;">
+            <div class="col-md-4 p-5 d-flex flex-grow-1 justify-content-center align-items-center" style="height: 25vh;">
               <div style="width: 100%;">
                 <div class="row">
                   <button class="w-100 btn mb-2" style="font-weight: 500; color: white;" data-bs-toggle="modal"
@@ -58,7 +58,9 @@
                           :data-bs-target="'#report-'+reservation.id">
                     Report
                   </button>
-                  <ReservationReport :id="reservation.id"/>
+                  <ReservationReport :id="reservation.id"
+                                     :resId="reservation.id"
+                                     :reports="reservation.reports"/>
                 </div>
               </div>
             </div>

@@ -45,7 +45,8 @@
                                      :cancellationFee="reservation.rentalObject.cancellationFee"
                                      :reservationStartDate="reservation.reservationTime.initDate"
                                      :reservationId="reservation.id"
-                                     :total="calculateTotal(reservation)"/>
+                                     :total="calculateTotal(reservation)"
+                                     @customChange="removeReservation"/>
           </div>
         </div>
 
@@ -77,6 +78,9 @@ export default {
   computed: {
   },
   methods: {
+    removeReservation(/*event*/) {
+
+    },
     calculateTotal(reservation) {
       let days = this.getNumberOfDays(reservation);
       let services = this.calculateAdditionalServices(reservation);

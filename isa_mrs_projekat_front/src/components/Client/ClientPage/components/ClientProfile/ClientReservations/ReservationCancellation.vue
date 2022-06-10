@@ -35,11 +35,11 @@
         </div>
         <div class="modal-footer d-flex" style="border-top: none; justify-content: space-evenly">
           <button v-if="isCancellable" type="button" class="btn btn-secondary" data-bs-dismiss="modal"
-                  style="background-color:#e23c52; color: white; width: 40%">No</button>
-          <button v-if="isCancellable" type="button" class="btn btn-secondary" data-bs-dismiss="modal"
-                  style="color: white; width: 40%" @click="cancelReservation">Yes</button>
+                  style="background-color:#e23c52; color: white; width: 40%">{{ this.denyButtonTxt }}</button>
+          <button v-if="isCancellable" type="button" class="btn btn-secondary" :disabled="isCancelled"
+                  style="color: white; width: 40%" @click="cancelReservation">{{ this.confirmButtonTxt }}</button>
           <button v-if="!isCancellable" type="button" class="btn btn-secondary w-100" data-bs-dismiss="modal"
-                  style="background-color:#e23c52; color: white;" >Close</button>
+                  style="background-color:#e23c52; color: white;">Close</button>
         </div>
       </div>
     </div>
@@ -53,8 +53,12 @@ import axios from "axios/index";
 export default {
   name: "ReservationCancellation",
   props: ["id", "cancellationFee", "reservationStartDate", "reservationId", "total"],
+  emits: ["customChange"],
   data() {
     return {
+      isCancelled: false,
+      confirmButtonTxt: "Yes",
+      denyButtonTxt: "No",
       cantCancelText: "You can only cancel reservation up until 3 days before. We are sorry for the inconvenience.",
       freeCancelText: "Canceling this reservation is free.",
       fixedFeeCancelText: "The fee for cancelling this reservation is $" + this.cancellationFee.value + ".",
@@ -88,7 +92,7 @@ export default {
     },
   },
   methods: {
-    cancelReservation() {
+    cancelReservation(event) {
       axios.put("/Reservations/cancelReservation", null, {
         headers: {
           Authorization: "Bearer " + this.$store.getters.access_token
@@ -98,7 +102,10 @@ export default {
         }
       })
       .then(() => {
-        console.log("Otkazano");
+        this.confirmButtonTxt = "Cancelled!";
+        this.isCancelled = true;
+        this.denyButtonTxt = "Close";
+        this.$emit("customChange", event.target.value);
       })
       .catch(error => {
         if (error.response.status === 404) {
@@ -125,5 +132,7 @@ export default {
 </script>
 
 <style scoped>
-
+button:disabled {
+  background-color: #008970;
+}
 </style>
