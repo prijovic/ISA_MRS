@@ -236,7 +236,7 @@ public class AdventureServiceImpl implements AdventureService{
         return adventure;
     }
 
-    private @NotNull AdventuresForMenuDto setUpMenuDto(Adventure adventure) {
+    public @NotNull AdventuresForMenuDto setUpMenuDto(Adventure adventure) {
         AdventuresForMenuDto adventureDto = modelMapper.map(adventure, AdventuresForMenuDto.class);
         adventureDto.setGrade(rentalService.calculateRentalRating(adventure));
         if (adventure.getPhotos().size() != 0) {

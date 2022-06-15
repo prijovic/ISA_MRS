@@ -13,13 +13,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.InstructorDtos.InstructorMenu.InstructorsForMenuDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.InstructorDtos.InstructorProfile.InstructorProfileDto;
-import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.RentalProfileDtos.VacationRentalDtos.VacationRentalProfileDto;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.RentalProfileDtos.AdventureDtos.AdventuresForMenuDto;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.RentalProfileDtos.ReviewDtos.ReviewDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.PageDto;
-import rs.ac.uns.ftn.siit.isa_mrs.model.Client;
-import rs.ac.uns.ftn.siit.isa_mrs.model.RentalObjectOwner;
-import rs.ac.uns.ftn.siit.isa_mrs.model.VacationRental;
+import rs.ac.uns.ftn.siit.isa_mrs.model.*;
+import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.RequestStatus;
+import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.ReviewType;
 import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.UserType;
 import rs.ac.uns.ftn.siit.isa_mrs.repository.RentalObjectOwnerRepo;
+import rs.ac.uns.ftn.siit.isa_mrs.repository.RentalObjectRepo;
 import rs.ac.uns.ftn.siit.isa_mrs.security.JwtDecoder;
 
 import java.util.ArrayList;
@@ -32,37 +34,48 @@ import java.util.Optional;
 public class InstructorServiceImpl implements InstructorService{
 
     private final RentalObjectOwnerRepo ownerRepo;
+    private final RentalObjectRepo rentalRepo;
+    private final AdventureServiceImpl adventureService;
     private final RentalObjectServiceImpl rosi;
     private final ModelMapper modelMapper;
     private final JwtDecoder jwtDecoder;
 
-    public ResponseEntity<InstructorProfileDto> getInstructor(Long id, int page, int pageSize, String token) {
+    @Override
+    public ResponseEntity<InstructorProfileDto> getInstructor(Long id) {
         try{
-            JwtDecoder.DecodedToken decodedToken;
-            try {
-                decodedToken = jwtDecoder.decodeToken(token);
-            } catch (Exception e) {
-                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-            }
-            Optional<RentalObjectOwner> owner = ownerRepo.;
+            Optional<RentalObjectOwner> owner = ownerRepo.findById(id);
             if(owner.isEmpty()) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             InstructorProfileDto instructorDto = modelMapper.map(owner, InstructorProfileDto.class);
-
-            VacationRental vacationRental = rental.get();
-            rentalDto.setReviews(rentalService.getRentalReviews(vacationRental, page, pageSize));
-            rentalDto.setGrade(rentalService.calculateRentalRating(vacationRental));
-            rentalDto.setOwnerGrade(rentalService.calculateOwnerRating(vacationRental.getRentalObjectOwner()));
-            Optional<Client> optionalClient = clientRepo.findByEmail(decodedToken.getEmail());
-            if(optionalClient.isPresent()){
-                Client client = optionalClient.get();
-                if(vacationRental.getSubscribers().contains(client)) rentalDto.setIsUserSubscribed(true);
-            }
-            return new ResponseEntity<>(rentalDto, HttpStatus.OK);
+            RentalObjectOwner instructor = owner.get();
+            instructorDto.setReviews(getOwnerReviews(instructor));
+            instructorDto.setGrade(rosi.calculateOwnerRating(instructor));
+            instructorDto.setRentalObjects(setUpAdventures(instructor.getRentalObjects()));
+            return new ResponseEntity<>(instructorDto, HttpStatus.OK);
         }
         catch (Exception e) {
             log.error(e.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    private Collection<AdventuresForMenuDto> setUpAdventures(Collection<RentalObject> adventures) {
+        Collection<AdventuresForMenuDto> adventureDtos = new ArrayList<>();
+        for(var adventure : adventures)
+            adventureDtos.add(adventureService.setUpMenuDto((Adventure)adventure));
+        return adventureDtos;
+    }
+
+    private Collection<ReviewDto> getOwnerReviews(RentalObjectOwner owner) {
+        Collection<RentalObject> rentals = rentalRepo.findAllByRentalObjectOwner(owner);
+        Collection<ReviewDto> reviews = new ArrayList<>();
+        for(var rental : rentals) {
+            for(var reservation : rental.getReservations()) {
+                for(var review : reservation.getReviews())
+                    if(review.getReviewType() == ReviewType.OwnerReview && review.getAuthor().getIsActive() && review.getStatus() == RequestStatus.Accepted)
+                        reviews.add(modelMapper.map(review, ReviewDto.class));
+            }
+        }
+        return reviews;
     }
 
     @Override

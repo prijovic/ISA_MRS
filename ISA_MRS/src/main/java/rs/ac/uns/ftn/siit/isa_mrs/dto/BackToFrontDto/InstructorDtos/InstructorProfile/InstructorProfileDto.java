@@ -3,6 +3,7 @@ package rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.InstructorDtos.InstructorP
 import lombok.Data;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.InstructorDtos.InstructorAddressDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.RentalProfileDtos.AdventureDtos.AdventuresForMenuDto;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.RentalProfileDtos.ReviewDtos.ReviewDto;
 import rs.ac.uns.ftn.siit.isa_mrs.model.Review;
 
 import java.io.Serializable;
@@ -18,5 +19,6 @@ public class InstructorProfileDto implements Serializable {
     private String phone;
     private InstructorAddressDto address;
     private Collection<AdventuresForMenuDto> rentalObjects;
-    private Collection<Review> reviews;
+    private Collection<ReviewDto> reviews;
+    private String grade;
 }
