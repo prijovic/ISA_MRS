@@ -1,5 +1,5 @@
 <template>
-  <div class="page-holder ps-1">
+  <div v-if="instructor" class="page-holder ps-1">
     <div class="container-fluid px-lg-4 px-xl-5 p-0 m-0 pt-5 contentDiv">
       <section class="p-0 m-0">
         <div class="row">
@@ -8,20 +8,23 @@
               <!--              <div class="card-header"></div>-->
               <div class="card-body text-center">
                 <img v-if="this.profilePic" class="card-profile-img" :src="this.profilePic" alt=""/>
-                <img v-else class="card-profile-img" src="../../Images/noProfilePic.png" alt=""/>
+                <img v-else class="card-profile-img" src="../../../Images/instructorNoProfilePic.png" alt=""/>
                 <div class="d-flex justify-content-center">
-<!--                  <p class="h3">{{ getClientFullName }}</p>-->
+                  <p class="h3">{{ fullName }}</p>
                 </div>
                 <hr>
                 <div class="row text-start px-3">
                   <div class="row">
-<!--                    <p class="h6">E-mail:&emsp;{{ this.clientInfo.email }}</p>-->
+                    <p class="h6">E-mail:&emsp;{{ this.instructor.email }}</p>
                   </div>
                   <div class="row">
-<!--                    <p class="h6">Phone:&emsp;{{ this.clientInfo.phone }}</p>-->
+                    <p class="h6">Phone:&emsp;{{ this.instructor.phone }}</p>
                   </div>
                   <div class="row mt-3 text-center">
-<!--                    <RentalAddress v-if="this.clientInfo.address" :address="this.clientInfo.address"/>-->
+                    <p class="h4">
+                      <font-awesome-icon class="me-1" icon="location-dot" style="color: #008970"></font-awesome-icon>
+                      <small>{{ getAddress }}</small>
+                    </p>
                   </div>
                 </div>
               </div>
@@ -53,7 +56,7 @@
                     <h4 class="card-heading">Adventures</h4>
                   </div>
                   <div class="card-body row text-align: center; justify-content: space-around;">
-
+                    <InstructorProfileAdventures :adventures="instructor.rentalObjects"/>
                   </div>
                 </div>
               </div>
@@ -63,7 +66,8 @@
                     <h4 class="card-heading">Reviews</h4>
                   </div>
                   <div class="card-body">
-
+                    <InstructorProfileReviews :reviews="instructor.reviews"
+                                              :grade="instructor.grade"/>
                   </div>
                 </div>
               </div>
@@ -76,30 +80,72 @@
 </template>
 
 <script>
+import axios from "axios";
+import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
+import { library } from "@fortawesome/fontawesome-svg-core";
+import { faLocationDot } from "@fortawesome/free-solid-svg-icons";
+import InstructorProfileAdventures
+  from "@/components/UnregisteredUser/components/Instructor/InstructorProfileAdventures";
+import InstructorProfileReviews from "@/components/UnregisteredUser/components/Instructor/InstructorProfileReviews";
 
+library.add(faLocationDot);
 
 export default {
   name: "InstructorProfile",
-  components: {
-
-  },
-  props: ["instructor"],
+  components: {InstructorProfileAdventures, FontAwesomeIcon, InstructorProfileReviews},
   data() {
     return {
-      instr: null,
+      instructor: null,
       adventuresBtnClicked: true,
       reviewsBtnClicked: false,
+      profilePic: null,
     }
   },
   mounted() {
     // this.$route.params.id
+    axios.get("/RentalOwners/getInstructor", {
+      headers: {
+        Authorization: "Bearer " + this.$store.getters.access_token
+      },
+      params: {
+        id: this.$route.params.id,
+      }
+    })
+        .then((response) => {
+          this.instructor = response.data;
+          this.getProfilePic();
+        })
+        .catch((error) => {
+          console.log(error);
+        });
   },
   computed: {
     fullName() {
       return this.instructor.name + " " + this.instructor.surname;
     },
+    getAddress() {
+      return this.instructor.address.city + ', ' + this.instructor.address.country;
+    },
   },
   methods: {
+    getProfilePic() {
+      if(!this.instructor.photo) { this.profilePic = null; return; }
+      axios.get("/Photos/", {
+        headers: {
+          Authorization: "Bearer " + this.$store.getters.access_token,
+        },
+        params: {
+          path: this.instructor.photo,
+        },
+        responseType: "blob"
+      })
+          .then(response => {
+            this.profilePic = URL.createObjectURL(response.data);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+    },
     resetTabButtons() {
       this.adventuresBtnClicked = false;
       this.reviewsBtnClicked = false;

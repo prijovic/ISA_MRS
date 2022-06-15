@@ -35,6 +35,7 @@ export default {
     }
   },
   mounted() {
+    if(!this.instructor.photo) { this.setUpProfilePic(); return; }
     axios.get("/Photos/", {
       headers: {
         Authorization: "Bearer " + this.$store.getters.access_token,
@@ -48,15 +49,15 @@ export default {
           this.photo = URL.createObjectURL(response.data);
           this.setUpProfilePic();
         })
-        .catch(() => {
-          this.setUpProfilePic();
+        .catch((error) => {
+          console.log(error);
         });
   },
   methods: {
     setUpProfilePic() {
       let picDiv = document.getElementById('imgDiv' + this.instructor.id);
       if(!this.photo) {
-        picDiv.style.backgroundImage = "url('" + require('../../Images/instructorNoProfilePic.png') + "')";
+        picDiv.style.backgroundImage = "url('" + require('../../../Images/instructorNoProfilePic.png') + "')";
       }
       else {
         picDiv.style.backgroundImage="url('" + this.photo + "')";

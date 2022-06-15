@@ -1,6 +1,5 @@
 <template>
-  <div v-for="(subscription, i) in subscriptions" :key="i" class="card col-xl-6 col-lg-6 col-md-6 col-sm-10 col-xs-12 px-3 mb-4">
-    <!--      <ThePhoto v-if="rental.displayPhoto" class="card-img-top" :photo="rental.displayPhoto" alt=""/>-->
+  <div v-for="(subscription, i) in subscriptions" :key="i" class="card col-xl-6 col-lg-6 col-md-6 col-sm-10 col-xs-12 px-3 mb-5">
     <router-link :to="getPath(subscription)" class="link" @click="setRentalIdAndType">
 
       <img v-if="subscription.photos[0].photo" class="card-img-top" alt="" :src="images[i]"/>

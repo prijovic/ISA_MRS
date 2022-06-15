@@ -84,7 +84,7 @@ import {library} from "@fortawesome/fontawesome-svg-core";
 import {faPencil} from "@fortawesome/free-solid-svg-icons";
 import ClientReservations from "@/components/Client/ClientPage/components/ClientProfile/ClientReservations/ClientUpcomingReservations/ClientReservations";
 import axios from "axios";
-import RentalAddress from "@/components/UnregisteredUser/components/RentalAddress";
+import RentalAddress from "@/components/UnregisteredUser/components/Rental/RentalAddress";
 import ClientSubscription
   from "@/components/Client/ClientPage/components/ClientProfile/ClientSubscriptions/ClientSubscription";
 

@@ -15,12 +15,12 @@
 
 <script>
 import axios from "axios";
-import CardView from "@/components/UnregisteredUser/components/RentalCardView";
+import CardView from "@/components/UnregisteredUser/components/Rental/RentalCardView";
 import {useStore} from "vuex";
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import {library} from "@fortawesome/fontawesome-svg-core";
 import {faMagnifyingGlass} from "@fortawesome/free-solid-svg-icons";
-import InstructorCardView from "@/components/UnregisteredUser/components/InstructorCardView";
+import InstructorCardView from "@/components/UnregisteredUser/components/Instructor/InstructorCardView";
 // import InstructorCardView from "@/components/UnregisteredUser/components/InstructorCardView";
 
 library.add(faMagnifyingGlass);

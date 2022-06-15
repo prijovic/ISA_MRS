@@ -150,7 +150,7 @@
                             <div class="align-items-center" style="display:flex; justify-content: space-between; ">
                               <div style="display: flex;">
                                 <img v-if="images[i]" class="profile-pic rounded-pill" :src="images[i]" alt=""/>
-                                <img v-else class="profile-pic rounded-pill" src="../../Images/noProfilePic.png" alt=""/>
+                                <img v-else class="profile-pic rounded-pill" src="../../../Images/noProfilePic.png" alt=""/>
                                 <div class="ms-1">
                                   <h6>{{ getAuthorFullName(review) }}</h6>
                                   <p class="small" style="color: gray;">{{ formatReviewDate(review.timeStamp) }}</p>
@@ -263,11 +263,11 @@
 </template>
 
 <script>
-import ImageSlider from "@/components/UnregisteredUser/components/ImageSlider";
-import RentalDescription from "@/components/UnregisteredUser/components/RentalDescription";
-import RentalTags from "@/components/UnregisteredUser/components/RentalTags";
-import RentalAddress from "@/components/UnregisteredUser/components/RentalAddress";
-import RentalRules from "@/components/UnregisteredUser/components/RentalRules";
+import ImageSlider from "@/components/UnregisteredUser/components/Rental/ImageSlider";
+import RentalDescription from "@/components/UnregisteredUser/components/Rental/RentalDescription";
+import RentalTags from "@/components/UnregisteredUser/components/Rental/RentalTags";
+import RentalAddress from "@/components/UnregisteredUser/components/Rental/RentalAddress";
+import RentalRules from "@/components/UnregisteredUser/components/Rental/RentalRules";
 import StarRating from 'vue-star-rating';
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import {library} from "@fortawesome/fontawesome-svg-core";

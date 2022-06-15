@@ -169,8 +169,8 @@ INSERT INTO users (id, email, is_active, name, password, phone, surname, address
 (32, 'volastamara@gmail.com+1', 1, 'Tamara', '123', '06312345687', 'Volan', 1, 3, false);
 INSERT INTO sale_participant (points, id) VALUES (0, 32);
 INSERT INTO client (id) VALUES (32);
-INSERT INTO users (id, email, is_active, name, password, phone, surname, address_id, user_type, first_login) VALUES
-(33, 'volastamara@gmail.com+2', 1, 'Tamara', '123', '0631234665', 'Volan', 1, 3, false);
+INSERT INTO users (id, email, is_active, name, password, phone, surname, address_id, user_type, first_login, photo) VALUES
+(33, 'tamara@gmail.com', 1, 'Tamara', '123', '0631234665', 'Volan', 1, 3, false, 'kaoTamara2');
 INSERT INTO sale_participant (points, id) VALUES (0, 33);
 INSERT INTO client (id) VALUES (33);
 INSERT INTO users (id, email, is_active, name, password, phone, surname, address_id, user_type, first_login) VALUES
@@ -226,13 +226,13 @@ VALUES (4, 1, 'Nothing bad to say', 5, 1, '2022-01-23 23:00:00', 3, 6);
 
 
 INSERT INTO test.reservation (id, price, equipment_required, people, time_stamp, client_id, rental_object_id, cancelled)
-VALUES (7, 80, true, 2, '2022-01-01 12:00:00', 3, 18, false);
+VALUES (7, 80, true, 2, '2022-01-01 12:00:00', 33, 18, false);
 INSERT INTO time_period (id, init_date, term_date, reservation_id)
-VALUES (8, '2022-08-08 12:00:00', '2022-08-08 15:00:00', 7);
+VALUES (8, '2022-01-08 12:00:00', '2022-01-08 15:00:00', 7);
 INSERT INTO test.review (id, status, comment, grade, review_type, time_stamp, author_id, reservation_id)
-VALUES (5, 1, 'It was okay I guess', 3, 0, '2022-01-23 23:00:00', 3, 7);
+VALUES (5, 1, 'It was okay I guess', 3, 0, '2022-01-23 23:00:00', 33, 7);
 INSERT INTO test.review (id, status, comment, grade, review_type, time_stamp, author_id, reservation_id)
-VALUES (6, 1, 'Instructor was kind', 5, 1, '2022-01-23 23:00:00', 3, 7);
+VALUES (6, 1, 'Instructor was kind', 5, 1, '2022-01-10 15:23:00', 33, 7);
 
 
 INSERT INTO test.reservation (id, price, equipment_required, people, time_stamp, client_id, rental_object_id, cancelled)
@@ -351,7 +351,7 @@ VALUES (20, '2021-09-09 12:00:00', '2021-09-09 12:00:00', 19);
 INSERT INTO test.review (id, status, comment, grade, review_type, time_stamp, author_id, reservation_id)
 VALUES (29, 1, 'Not incredible but quite good', 4, 0, '2022-01-23 23:00:00', 3, 19);
 INSERT INTO test.review (id, status, comment, grade, review_type, time_stamp, author_id, reservation_id)
-VALUES (30, 1, 'Instructor was very skilled', 5, 1, '2022-01-23 23:00:00', 3, 19);
+VALUES (30, 1, 'Instructor was very skilled', 5, 1, '2022-01-23 19:00:00', 3, 19);
 
 
 INSERT INTO test.reservation (id, price, equipment_required, people, time_stamp, client_id, rental_object_id, cancelled)
@@ -361,17 +361,17 @@ VALUES (21, '2021-09-09 12:00:00', '2021-09-09 12:00:00', 20);
 INSERT INTO test.review (id, status, comment, grade, review_type, time_stamp, author_id, reservation_id)
 VALUES (31, 1, 'If you decide to go on this adventure, you are gonna see breathtaking views', 5, 0, '2022-01-23 23:00:00', 3, 20);
 INSERT INTO test.review (id, status, comment, grade, review_type, time_stamp, author_id, reservation_id)
-VALUES (32, 1, 'Experienced expert', 5, 1, '2022-01-23 23:00:00', 3, 20);
+VALUES (32, 1, 'Experienced expert', 5, 1, '2022-01-09 8:06:00', 3, 20);
 
 
 INSERT INTO test.reservation (id, price, equipment_required, people, time_stamp, client_id, rental_object_id, cancelled)
 VALUES (21, 85, true, 2, '2022-01-01 12:00:00', 3, 18, false);
 INSERT INTO time_period (id, init_date, term_date, reservation_id)
-VALUES (22, '2022-06-06 08:00:00', '2022-06-06 14:30:00', 21);
-INSERT INTO test.review (id, status, comment, grade, review_type, time_stamp, author_id, reservation_id)
-VALUES (33, 1, 'I was so tired at the end, would not recommend if your stamina is not incredible', 4, 0, '2022-01-23 23:00:00', 3, 21);
-INSERT INTO test.review (id, status, comment, grade, review_type, time_stamp, author_id, reservation_id)
-VALUES (34, 1, 'Not bad', 4, 1, '2022-01-23 23:00:00', 3, 21);
+VALUES (22, '2022-07-06 08:00:00', '2022-07-06 14:30:00', 21);
+-- INSERT INTO test.review (id, status, comment, grade, review_type, time_stamp, author_id, reservation_id)
+-- VALUES (33, 1, 'I was so tired at the end, would not recommend if your stamina is not incredible', 4, 0, '2022-01-23 23:00:00', 3, 21);
+-- INSERT INTO test.review (id, status, comment, grade, review_type, time_stamp, author_id, reservation_id)
+-- VALUES (34, 1, 'Not bad', 4, 1, '2022-01-02 10:52:00', 3, 21);
 
 
 INSERT INTO test.reservation (id, equipment_required, people, time_stamp, client_id, rental_object_id, cancelled)
