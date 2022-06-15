@@ -1,7 +1,7 @@
 INSERT INTO address (id, country, city, street, number, latitude, longitude) VALUES (1, 'Srbija', 'Novi Sad', 'Ulica Miše Dimitrijevića', 41, 45.24398, 19.83099);
 INSERT INTO users (id, email, is_active, name, password, phone, surname, address_id, user_type, first_login) VALUES (1, 'prijovic.uros13@gmail.com', true, 'Uros', 'Uros12345', '066430250', 'Prijovic', 1, 5, false);
 INSERT INTO admin (id) VALUES (1);
-INSERT INTO users (id, email, is_active, name, password, phone, surname, address_id, user_type, first_login) VALUES (2, 'prijovicu318@gmail.com', true, 'Uros', 'Uros12345', '066430250', 'Prijovic', 1, 0, false);
+INSERT INTO users (id, email, is_active, name, password, phone, surname, address_id, user_type, first_login, photo) VALUES (2, 'prijovicu318@gmail.com', true, 'Uros', 'Uros12345', '066430250', 'Prijovic', 1, 0, false, 'pecaros');
 INSERT INTO sale_participant (points, id) VALUES (0, 2);
 INSERT INTO rental_object_owner (id) VALUES (2);
 INSERT INTO users (id, email, is_active, name, password, phone, surname, address_id, user_type, first_login, photo) VALUES (3, 'volastamara@gmail.com', 1, 'Tamara', 'kljucko', '+381629673333', 'Volan', 1, 3, false, 'kaoTamara');
@@ -674,3 +674,7 @@ INSERT INTO subscribed_client (rental_id, subscriber_id) VALUES (2, 3);
 INSERT INTO subscribed_client (rental_id, subscriber_id) VALUES (3, 3);
 
 INSERT INTO test.report (id, comment, author_id, reservation_id) VALUES (1, 'Owner has entered the apartment while we were out and stole our jewellery.', 3, 8);
+
+INSERT INTO test.users (id, email, first_login, is_active, name, password, phone, surname, user_type, address_id) VALUES (38, 'milosvolas@gmail.com', 0, 1, 'Djuro', 'kljucko', '069696969', 'Pecaros', 0, 1);
+INSERT INTO sale_participant (points, id) VALUES (0, 38);
+INSERT INTO rental_object_owner (id) VALUES (38);

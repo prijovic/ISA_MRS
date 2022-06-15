@@ -37,6 +37,8 @@ import AdventureCreationPage
 import AllCottagesView
     from "@/components/VacationRentalOwner/VacationRentalOwnerPage/components/AllCottagesView/AllCottagesView";
 import AllBoatsView from "@/components/BoatOwner/BoatOwnerPage/components/AllBoatsView/AllBoatsView";
+import InstructorProfile from "@/components/UnregisteredUser/components/InstructorProfile";
+//import InstructorCardView from "@/components/UnregisteredUser/components/InstructorCardView";
 
 
 
@@ -439,6 +441,28 @@ const routes = [
         meta: {
             public: false
         }
+    },
+    {
+        path: "/client/Instructors",
+        name: "InstructorCardView",
+        components: {
+            default: CardMenu,
+            sidebar: ClientSidebar,
+        },
+        meta: {
+            public: false
+        },
+    },
+    {
+        path: "/client/InstructorProfile/:id",
+        name: "InstructorProfile",
+        components: {
+            default: InstructorProfile,
+            sidebar: ClientSidebar,
+        },
+        meta: {
+            public: false
+        },
     },
     {
         path: "/client/RentalProfile/:type-:id",

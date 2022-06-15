@@ -1,6 +1,6 @@
 <template>
 
-    <div class="card col-xl-3 col-lg-4 col-md-6 col-sm-10 col-xs-12 px-3 mb-3" >
+    <div class="card col-xl-3 col-lg-4 col-md-6 col-sm-10 col-xs-12 px-3 mb-5">
 <!--      <ThePhoto v-if="rental.displayPhoto" class="card-img-top" :photo="rental.displayPhoto" alt=""/>-->
       <router-link :to="getPath" class="link" @click="setRentalIdAndType">
 
@@ -178,10 +178,10 @@ div.card img {
     border: 1px solid black;
     border-bottom-left-radius: 40px;
     border-bottom-right-radius: 40px;
-    box-shadow: 0 0.3rem 1rem rgb(0 0 0 / 15%);
+    box-shadow: 0 0.3rem 1rem rgb(0 0 0 / 30%);
   }
 
   .card-img-top {
-    box-shadow: -0.05em 0 1rem rgb(0 0 0 / 15%);
+    box-shadow: -0.06em 0 1rem rgb(0 0 0 / 30%);
   }
 </style>

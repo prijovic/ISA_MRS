@@ -5,7 +5,7 @@
     <MenuLink to="/client/Adventure/all" icon="mountain-sun">Adventures</MenuLink>
     <MenuLink to="/client/Boat/all" icon="ship">Boats</MenuLink>
     <MenuLink to="/client/VacationRental/all" icon="house">Rental Houses</MenuLink>
-    <MenuLink to="" icon="fish-fins">Fishing Instructors</MenuLink>
+    <MenuLink to="/client/Instructors" icon="fish-fins">Fishing Instructors</MenuLink>
     <hr>
     <MenuLink to="/client/ReservationsHistory" icon="address-book">Reservation History</MenuLink>
     <span class="collapse-icon" :class="{'rotate-180': collapsed}" @click="toggleSidebar">
