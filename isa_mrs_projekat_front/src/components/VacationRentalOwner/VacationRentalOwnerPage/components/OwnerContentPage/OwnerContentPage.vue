@@ -2,7 +2,7 @@
   <div>
     <font-awesome-icon class="d-inline-block" icon="spinner" style="color: gray; height: 30px"></font-awesome-icon>
     <h2 class="d-inline-block">Building...</h2>
-    <EditPersonalData></EditPersonalData>
+    <DefineSpecialOffer></DefineSpecialOffer>
   </div>
 </template>
 
@@ -10,13 +10,14 @@
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
-import EditPersonalData from "@/components/GeneralComponents/EditPersonalData";
+import DefineSpecialOffer from "@/components/RentalObjectOwner/DefineSpecialOffer";
+
 
 library.add(faSpinner);
 export default {
   name: "OwnerContentPage",
   components: {
-    EditPersonalData,
+    DefineSpecialOffer,
     FontAwesomeIcon
   }
 }
