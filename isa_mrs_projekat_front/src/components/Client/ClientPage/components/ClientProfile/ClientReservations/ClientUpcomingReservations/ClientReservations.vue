@@ -1,5 +1,5 @@
 <template>
-  <div v-for="(reservation, i) in reservations" :key="i" class="card reservation mb-3">
+  <div v-for="(reservation, i) in this.sortedReservations" :key="i" class="card reservation mb-3">
     <div class="row">
       <div class="col-md-4" >
         <router-link :to="getPath(reservation)" class="link" @click="setRentalIdAndType(reservation)">
@@ -71,6 +71,7 @@ export default {
   data() {
     return {
       images: [],
+      sortedReservations: [],
     }
   },
   computed: {
@@ -120,6 +121,8 @@ export default {
     },
   },
   mounted() {
+    this.sortedReservations = this.reservations;
+    this.sortedReservations = this.sortedReservations.sort((a, b) => new Date(b.initDate) < new Date(a.initDate) ? 1: -1);
     //if(!this.reservations) return;
     for (let i=0; i < this.reservations.length; i++) {
       if(!this.reservations[i].rentalObject.displayPhoto.photo) { this.images[i] = null; continue; }

@@ -107,7 +107,7 @@ export default {
         date.setDate(date.getDate() + 1);
         if(date < today) past.push(this.clientInfo.reservations[i]);
       }
-      return past;
+      return past.sort((a, b) => new Date(b.initDate) > new Date(a.initDate) ? 1: -1);
     }
   },
   methods: {
