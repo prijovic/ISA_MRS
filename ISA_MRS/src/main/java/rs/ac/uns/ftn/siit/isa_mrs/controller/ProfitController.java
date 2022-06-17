@@ -38,7 +38,6 @@ public class ProfitController {
 
     @Data
     public static class FeeRequest {
-        private String feeType;
         private String rentalObjectType;
         private Double value;
     }

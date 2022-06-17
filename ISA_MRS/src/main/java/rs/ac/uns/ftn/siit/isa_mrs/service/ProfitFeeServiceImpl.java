@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import rs.ac.uns.ftn.siit.isa_mrs.controller.ProfitController;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.ProfitFeeDto;
 import rs.ac.uns.ftn.siit.isa_mrs.model.ProfitFee;
-import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.FeeType;
 import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.RentalObjectType;
 import rs.ac.uns.ftn.siit.isa_mrs.repository.ProfitFeeRepo;
 
@@ -47,7 +46,6 @@ public class ProfitFeeServiceImpl implements ProfitFeeService {
             fees.forEach((fee) -> {
                 profitFeeRepo.findProfitFeeByRentalObjectType(RentalObjectType.valueOf(fee.getRentalObjectType())).ifPresent(profitFeeRepo::delete);
                 ProfitFee profitFee = new ProfitFee();
-                profitFee.setFeeType(FeeType.valueOf(fee.getFeeType()));
                 profitFee.setRentalObjectType(RentalObjectType.valueOf(fee.getRentalObjectType()));
                 profitFee.setValue(fee.getValue());
                 profitFeeRepo.save(profitFee);

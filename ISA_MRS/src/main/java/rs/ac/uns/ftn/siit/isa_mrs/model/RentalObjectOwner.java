@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 
@@ -15,8 +16,8 @@ import java.util.LinkedHashSet;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RentalObjectOwner extends SaleParticipant{
-    @OneToMany(mappedBy = "rentalObjectOwner")
-    private Collection<TimePeriod> unavailabilityPeriods = new LinkedHashSet<>();
+    private LocalDateTime initDate;
+    private LocalDateTime termDate;
     @OneToMany(mappedBy = "rentalObjectOwner", cascade = CascadeType.ALL)
     private Collection<RentalObject> rentalObjects = new LinkedHashSet<>();
 }

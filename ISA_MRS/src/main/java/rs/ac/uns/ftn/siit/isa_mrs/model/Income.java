@@ -15,6 +15,7 @@ public class Income {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
+    private double fee;
     private LocalDateTime timeStamp;
     private Double value;
     @OneToOne

@@ -19,6 +19,7 @@ import rs.ac.uns.ftn.siit.isa_mrs.security.JwtDecoder;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.chrono.ChronoLocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -91,7 +92,8 @@ public class ReservationServiceImpl implements ReservationService {
             Collection<RentalObject> rentalObjects = rentalObjectRepo.findAllByRentalObjectOwner(owner);
             rentalObjects.forEach(rentalObject -> {
                 rentalObject.getReservations().forEach(reservation ->  {
-                    if (reservation.getReservationTime().getInitDate().isAfter(LocalDate.now()) || reservation.getReservationTime().getTermDate().isAfter(LocalDate.now())){
+                    if (reservation.getInitDate().isAfter(ChronoLocalDateTime.from(LocalDateTime.now())) ||
+                            reservation.getTermDate().isAfter(ChronoLocalDateTime.from(LocalDateTime.now()))){
                         reservations.add(reservation);
                     }
                 });

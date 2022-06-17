@@ -42,7 +42,6 @@ public class BoatServiceImpl implements BoatService{
     private final ClientRepo clientRepo;
     private final RentalObjectOwnerRepo ownerRepo;
     private final AddressRepo addressRepo;
-    private final CancellationFeeRepo cancellationFeeRepo;
     private final AdditionalServiceRepo additionalServiceRepo;
     private final ConductRuleRepo conductRuleRepo;
     private final JwtDecoder jwtDecoder;

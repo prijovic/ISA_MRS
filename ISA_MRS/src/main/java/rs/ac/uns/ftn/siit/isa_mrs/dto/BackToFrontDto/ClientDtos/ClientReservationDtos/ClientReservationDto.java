@@ -1,8 +1,6 @@
 package rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.ClientDtos.ClientReservationDtos;
 
 import lombok.Data;
-import rs.ac.uns.ftn.siit.isa_mrs.dto.AdditionalServiceDto;
-import rs.ac.uns.ftn.siit.isa_mrs.dto.TimePeriodDto;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -15,7 +13,8 @@ public class ClientReservationDto implements Serializable {
     private Integer people;
     private Boolean equipmentRequired;
     private LocalDateTime timeStamp;
-    private TimePeriodDto reservationTime;
+    private LocalDateTime initDate;
+    private LocalDateTime termDate;
     private Collection<ReservationReviewDto> reviews;
     private Collection<ReservationReportDto> reports;
     private ReservationRentalObjectDto rentalObject;

@@ -21,13 +21,10 @@ import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.ReviewType;
 import rs.ac.uns.ftn.siit.isa_mrs.repository.ClientRepo;
 import rs.ac.uns.ftn.siit.isa_mrs.repository.RentalObjectRepo;
 import rs.ac.uns.ftn.siit.isa_mrs.repository.ReviewRepo;
-import rs.ac.uns.ftn.siit.isa_mrs.repository.TimePeriodRepo;
 import rs.ac.uns.ftn.siit.isa_mrs.security.JwtDecoder;
 
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
-import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 @Slf4j
@@ -35,7 +32,6 @@ import java.util.*;
 @RequiredArgsConstructor
 public class RentalObjectServiceImpl implements RentalObjectService {
     private final RentalObjectRepo rentalObjectRepo;
-    private final TimePeriodRepo timePeriodRepo;
     private final ClientRepo clientRepo;
     private final ModelMapper modelMapper;
     private final ReviewRepo reviewRepo;
@@ -169,33 +165,6 @@ public class RentalObjectServiceImpl implements RentalObjectService {
         RentalObjectDto rentalObjectDto = modelMapper.map(rentalObject, RentalObjectDto.class);
         rentalObjectDto.setIsDeletable(rentalObject.getReservations().size() == 0);
         return rentalObjectDto;
-    }
-
-    private List<TimePeriod> makePeriods(List<LocalDate> dates){
-        List<TimePeriod> timePeriods = new ArrayList<>();
-        dates.sort(Comparator.naturalOrder());
-        for (int i = 0; i < dates.size() - 1; i++) {
-            LocalDate start = dates.get(i);
-            if (timePeriods.size()!=0 &&
-                    (start.isBefore(timePeriods.get(timePeriods.size()-1).getTermDate()) ||
-                    start.isEqual(timePeriods.get(timePeriods.size()-1).getTermDate()))){
-                continue;
-            }
-            LocalDate end = dates.get(i);
-            for (int j = i+1; j < dates.size(); j++) {
-                if (ChronoUnit.DAYS.between(dates.get(i), dates.get(j)) == 1){
-                    end = dates.get(j);
-                }
-                else {
-                    break;
-                }
-            }
-            TimePeriod timePeriod = new TimePeriod();
-            timePeriod.setInitDate(start);
-            timePeriod.setTermDate(end);
-            timePeriods.add(timePeriod);
-        }
-        return timePeriods;
     }
 
     private String gradeFormatting(double grade) {

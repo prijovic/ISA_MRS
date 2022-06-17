@@ -22,8 +22,8 @@ public class Reservation {
     private Boolean cancelled;
     private Boolean equipmentRequired;
     private LocalDateTime timeStamp;
-    @OneToOne(mappedBy = "reservation", cascade = CascadeType.ALL)
-    private TimePeriod reservationTime;
+    private LocalDateTime initDate;
+    private LocalDateTime termDate;
     @OneToMany(mappedBy = "reservation", cascade = CascadeType.ALL)
     private Collection<Review> reviews = new LinkedHashSet<>();
     @OneToMany(mappedBy = "reservation")
@@ -32,8 +32,6 @@ public class Reservation {
     private RentalObject rentalObject;
     @ManyToOne
     private Client client;
-//    @OneToMany
-//    private Collection<AdditionalService> additionalServices = new LinkedHashSet<>();
     @ManyToMany(mappedBy = "reservation")
     private Collection<AdditionalService> additionalServices = new LinkedHashSet<>();
     @OneToOne

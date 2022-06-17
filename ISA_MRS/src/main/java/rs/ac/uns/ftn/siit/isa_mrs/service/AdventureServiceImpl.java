@@ -17,14 +17,13 @@ import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.RentalProfileDtos.Adventure
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.RentalProfileDtos.AdventureDtos.AdventuresForMenuDto;
 import rs.ac.uns.ftn.siit.isa_mrs.model.*;
 import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.ConductType;
-import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.FeeType;
 import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.RentalObjectType;
 import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.UserType;
 import rs.ac.uns.ftn.siit.isa_mrs.repository.*;
 import rs.ac.uns.ftn.siit.isa_mrs.security.JwtDecoder;
 
 import java.time.LocalDateTime;
-import java.time.chrono.ChronoLocalDate;
+import java.time.chrono.ChronoLocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -39,7 +38,6 @@ public class AdventureServiceImpl implements AdventureService{
     private final RentalObjectOwnerRepo rentalObjectOwnerRepo;
     private final AdditionalServiceRepo additionalServiceRepo;
     private final AdventureEquipmentRepo adventureEquipmentRepo;
-    private final CancellationFeeRepo cancellationFeeRepo;
     private final ConductRuleRepo conductRuleRepo;
     private final RentalObjectService rentalService;
     private final AdventureRepo adventureRepo;
@@ -196,19 +194,11 @@ public class AdventureServiceImpl implements AdventureService{
             adventureEquipmentRepo.save(adventureEquipment);
             adventureEquipments.add(adventureEquipment);
         });
-        CancellationFee cancellationFee = new CancellationFee();
-        cancellationFee.setValue(adventureDto.getCancellationFee().getValue());
-        if (cancellationFee.getValue() == 0 ) {
-            cancellationFee.setFeeType(FeeType.Free);
-        } else {
-            cancellationFee.setFeeType(FeeType.Percentile);
-        }
-        cancellationFeeRepo.save(cancellationFee);
         Address address = modelMapper.map(adventureDto.getAddress(), Address.class);
         addressRepo.save(address);
         adventure.setDuration(adventureDto.getDuration());
         adventure.setName(adventureDto.getName());
-        adventure.setCancellationFee(cancellationFee);
+        adventure.setCancellationFee(adventureDto.getCancellationFee());
         adventure.setAddress(address);
         adventure.setAdditionalServices(additionalServices);
         adventure.setAdventureEquipment(adventureEquipments);
@@ -231,8 +221,6 @@ public class AdventureServiceImpl implements AdventureService{
             rule.setRentalObject(adventure);
             conductRuleRepo.save(rule);
         });
-        cancellationFee.setRentalObject(adventure);
-        cancellationFeeRepo.save(cancellationFee);
         return adventure;
     }
 
@@ -266,7 +254,7 @@ public class AdventureServiceImpl implements AdventureService{
     private boolean isAdventureDeletable(Adventure adventure) {
         AtomicBoolean isDeletable = new AtomicBoolean(true);
         adventure.getReservations().forEach(reservation -> {
-            if (reservation.getReservationTime().getInitDate().isAfter(ChronoLocalDate.from(LocalDateTime.now()))) {
+            if (reservation.getInitDate().isAfter(ChronoLocalDateTime.from(LocalDateTime.now()))) {
                 isDeletable.set(false);
             }
         });
