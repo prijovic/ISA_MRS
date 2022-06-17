@@ -4,6 +4,7 @@ import lombok.Data;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.AdditionalServiceDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.AdventureEquipmentDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.ConductRuleDto;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.TimePeriodDto;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -21,4 +22,5 @@ public class AdventureDto implements Serializable {
     private final AddressDto address;
     private final Double duration;
     private final Collection<AdventureEquipmentDto> adventureEquipment;
+    private final TimePeriodDto availabilityPeriod;
 }

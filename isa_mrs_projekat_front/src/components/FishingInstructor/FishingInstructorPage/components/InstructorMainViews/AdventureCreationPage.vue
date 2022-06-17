@@ -4,7 +4,8 @@
     <div class="col-8 pt-5 mb-5">
       <div class="container px-4 py-3 rounded form" spellcheck="false" >
         <div class="container-fluid">
-          <h3>New Adventure</h3>
+          <h3 v-if="adventure.id === null">New Adventure</h3>
+          <h3 v-else>Adventure</h3>
           <div class="row main justify-content-center">
             <div class="row main">
               <div class="col-2"></div>
@@ -181,7 +182,9 @@
                           </td>
                           <td style="word-wrap: break-word;">
                             <div class="d-flex d-inline-flex justify-content-between p-0">
-                              <div>{{rule.DoNot}}</div><button v-if="rule.DoNot" class="button" style="border: none; background-color: transparent; color: #e23c52" @click="removeRule(rule.DoNot)"><font-awesome-icon icon="minus"></font-awesome-icon></button>                            </div>
+                              <div>{{rule.DoNot}}</div>
+                              <button v-if="rule.DoNot" class="button" style="border: none; background-color: transparent; color: #e23c52" @click="removeRule(rule.DoNot)"><font-awesome-icon icon="minus"></font-awesome-icon></button>
+                            </div>
                           </td>
                         </tr>
                         </tbody>
@@ -211,7 +214,53 @@
 
                 <div class="row justify-content-center mt-4">
                   <label class="ms-3">Availability Period</label>
-                  <availability-period-selector :rental="rentalPeriod"></availability-period-selector>
+                  <div class="container p-0 m-0 mb-1 text-center">
+                    <calendar :attributes="attrs"></calendar>
+                  </div>
+                  <div class="container p-0 m-0">
+                    <form class="p-0 m-0" @submit.prevent>
+                      <date-picker v-model="range" mode="dateTime" :masks="masks" is-range is24hr>
+                        <template v-slot="{ inputValue, inputEvents, isDragging }">
+                          <div class="row p-0 m-0">
+                            <div class="form-inline d-flex justify-content-center p-0 m-0">
+                              <div class="row" style="max-width: 400px">
+                                <div class="col input-group">
+                                  <div class="input-group-prepend">
+                  <span class="input-group-text" id="start">
+                    From:
+                  </span>
+                                  </div>
+                                  <input
+                                      class="form-control maz-border-left-0"
+                                      :class="isDragging ? 'text-gray-600' : 'text-gray-900'"
+                                      :value="inputValue.start"
+                                      v-on="inputEvents.start"
+                                      />
+                                </div>
+                                <div class="col-1 p-0 m-0" style="display: table">
+                                  <div style="display: table-cell; vertical-align: middle; horiz-align: center">
+                                    <font-awesome-icon icon="arrow-right" style="color:#008970; height: 25px"></font-awesome-icon>
+                                  </div>
+                                </div>
+                                <div class="col input-group">
+                                  <div class="input-group-prepend">
+                  <span class="input-group-text" id="end">
+                    To:
+                  </span>
+                                  </div>
+                                  <input
+                                      class="form-control"
+                                      :class="isDragging ? 'text-gray-600' : 'text-gray-900'"
+                                      :value="inputValue.end"
+                                      v-on="inputEvents.end"/>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </template>
+                      </date-picker>
+                    </form>
+                  </div>
                 </div>
 
               </div>
@@ -232,17 +281,17 @@
 <script>
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import {library} from "@fortawesome/fontawesome-svg-core";
-import {faMinus, faPlus, faPlusCircle, faX} from "@fortawesome/free-solid-svg-icons";
+import {faMinus, faPlus, faPlusCircle, faX, faArrowRight} from "@fortawesome/free-solid-svg-icons";
+import {DatePicker, Calendar} from "v-calendar"
 import axios from "axios";
 import {toggleLoading, toggleProcessing} from "@/components/state";
 import store from "@/store";
-import AvailabilityPeriodSelector from "@/components/RentalObjectOwner/AvailabilityPeriodSelector";
 
-library.add(faPlus, faMinus, faX, faPlusCircle);
+library.add(faPlus, faMinus, faX, faPlusCircle, faArrowRight);
 
 export default {
   name: "AdventureCreationPage",
-  components: {AvailabilityPeriodSelector, FontAwesomeIcon},
+  components: {FontAwesomeIcon, DatePicker, Calendar},
   data() {
     return {
       adventure: {
@@ -270,6 +319,24 @@ export default {
         }
       },
       photo: null,
+      range: {
+        start: null,
+        end: null
+      },
+      masks: {
+        input: 'YYYY-MM-DD hh:mm',
+      },
+      attrs: [
+        {
+          highlight: {
+            start: { fillMode: 'outline' },
+            base: { fillMode: 'light' },
+            end: { fillMode: 'outline' },
+          },
+          dates: { start: null, end: null },
+        },
+      ],
+      date: null,
       photos: [],
       imageUrls: [],
       equipmentPiece: {name:""},
@@ -325,11 +392,16 @@ export default {
           this.photos.push(photo.photo);
           this.loadImage(photo.photo, this.photos.indexOf(photo.photo));
         });
-        console.log(adventure);
         if (adventure.availabilityPeriod !== null) {
-          this.adventure.availabilityPeriod.initDate = adventure.availabilityPeriod.initDate;
-          this.adventure.availabilityPeriod.termDate = adventure.availabilityPeriod.termDate;
+          this.adventure.availabilityPeriod.initDate = new Date(adventure.availabilityPeriod.initDate);
+          this.adventure.availabilityPeriod.termDate = new Date(adventure.availabilityPeriod.termDate);
+          this.range.start = new Date(this.adventure.availabilityPeriod.initDate);
+          this.range.end = new Date(this.adventure.availabilityPeriod.termDate);
+          this.attrs[0].dates.start = this.range.start.addDays(1);
+          this.attrs[0].dates.end = this.range.end.addDays(1);
         }
+        console.log(adventure);
+        console.log(this.range);
         console.log(this.adventure);
         toggleLoading();
       })
@@ -341,6 +413,9 @@ export default {
         });
         toggleLoading();
       })
+    }
+    else {
+      toggleLoading();
     }
   },
   computed: {
@@ -406,12 +481,20 @@ export default {
       }
     },
     makeRequest() {
-      axios.post("/RentalObjects/addAdventure", this.adventure, {
+      let adventure = this.adventure;
+      if (this.range.start == null || this.range.end == null) {
+        adventure.availabilityPeriod = null
+      } else {
+        adventure.availabilityPeriod.initDate = this.range.start;
+        adventure.availabilityPeriod.termDate = this.range.end;
+      }
+      axios.post("/RentalObjects/addAdventure", adventure, {
         headers: {
           Authorization: "Bearer " + this.$store.getters.access_token,
         }
       })
       .then((adventure) => {
+        console.log("1");
         for (let i = 0; i < this.photos.length; i++) {
           let formData = new FormData();
           formData.append("file", this.photos[i]);
@@ -422,6 +505,7 @@ export default {
             },
           })
           .then((response) => {
+            console.log("2");
             let body = {id: adventure.data.id, photos: [response.data]}
             axios.post("/RentalObjects/connectPhotosToRental", body,{
               headers: {
@@ -433,7 +517,7 @@ export default {
                 text: "You have successfully added a new adventure.",
                 position: "bottom right",
                 type: "success"
-              })
+              });
             })
           })
         }
@@ -551,6 +635,7 @@ export default {
           })
           .catch(() => {
             this.addressIsValid = false;
+            toggleProcessing();
           });
     },
     transliterate(word) {
@@ -724,5 +809,21 @@ export default {
 
   p {
     color: #e23c52;
+  }
+
+  .input-group-text {
+    background-color: transparent;
+    border-right: none;
+    color: #008970;
+    display: table;
+  }
+
+  .input-group-text font-awesome-icon {
+    display: table-cell;
+    vertical-align: middle;
+  }
+
+  .input-group {
+    max-width: 400px;
   }
 </style>

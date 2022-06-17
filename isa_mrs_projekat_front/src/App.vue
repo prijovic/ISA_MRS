@@ -67,6 +67,18 @@ export default {
   border: 1px solid #e23c52;
 }
 
+.btn-transparent {
+  background-color: transparent;
+  color: #008970;
+  border: none;
+}
+
+.btn-transparent:active, .btn-transparent:hover, .btn-transparent:focus {
+  background-color: transparent;
+  color: rgb(0, 137, 112, 0.4);
+  border: none;
+}
+
 .btn-yellow {
   background-color: #ffd055;
   color: white;

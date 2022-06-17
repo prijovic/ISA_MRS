@@ -23,6 +23,7 @@ import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.UserType;
 import rs.ac.uns.ftn.siit.isa_mrs.repository.*;
 import rs.ac.uns.ftn.siit.isa_mrs.security.JwtDecoder;
 
+import java.sql.Time;
 import java.time.LocalDateTime;
 import java.time.chrono.ChronoLocalDate;
 import java.util.ArrayList;
@@ -36,6 +37,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @Transactional
 @Slf4j
 public class AdventureServiceImpl implements AdventureService{
+    private final TimePeriodRepo timePeriodRepo;
     private final RentalObjectOwnerRepo rentalObjectOwnerRepo;
     private final AdditionalServiceRepo additionalServiceRepo;
     private final AdventureEquipmentRepo adventureEquipmentRepo;
@@ -217,7 +219,12 @@ public class AdventureServiceImpl implements AdventureService{
         adventure.setDescription(adventureDto.getDescription());
         adventure.setCapacity(adventureDto.getCapacity());
         adventure.setPrice(adventureDto.getPrice());
-        adventureRepo.save(adventure);
+        if (adventureDto.getAvailabilityPeriod() != null) {
+            TimePeriod timePeriod = modelMapper.map(adventureDto.getAvailabilityPeriod(), TimePeriod.class);
+            timePeriodRepo.save(timePeriod);
+            adventure.setAvailabilityPeriod(timePeriod);
+            timePeriodRepo.save(timePeriod);
+        }
         adventureEquipments.forEach(equipment -> {
             equipment.setAdventure(adventure);
             adventureEquipmentRepo.save(equipment);
@@ -232,6 +239,7 @@ public class AdventureServiceImpl implements AdventureService{
         });
         cancellationFee.setRentalObject(adventure);
         cancellationFeeRepo.save(cancellationFee);
+        adventureRepo.save(adventure);
         return adventure;
     }
 
