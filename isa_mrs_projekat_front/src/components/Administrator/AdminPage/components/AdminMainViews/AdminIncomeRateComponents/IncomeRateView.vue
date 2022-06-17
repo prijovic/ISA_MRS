@@ -65,10 +65,10 @@ export default {
       const fees = response.data;
       fees.forEach((fee) => {
         let result = fee.value;
-        if (result === 0 || fee.feeType === "Free") {
+        if (result === 0)  {
           result = "Free";
         }
-        else if (fee.feeType === "Percentile") {
+        else {
           result += "%";
         }
         if (fee.rentalObjectType === "Boat") {

@@ -635,7 +635,7 @@ export default {
           })
           .catch(() => {
             this.addressIsValid = false;
-            toggleProcessing();
+            //toggleProcessing();
           });
     },
     transliterate(word) {
