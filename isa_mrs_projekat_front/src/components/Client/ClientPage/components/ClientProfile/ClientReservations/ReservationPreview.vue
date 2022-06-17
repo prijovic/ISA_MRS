@@ -1,12 +1,12 @@
 <template>
-  <div class="modal fade" id="bill" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal fade" :id="'bill-'+this.id" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
       <div class="modal-content">
         <div class="modal-header p-0 m-0" style="border-bottom: none">
         </div>
         <div class="modal-body pt-0 mt-0">
           <div class="row text-center pb-0 mb-0" style="border-bottom: 1px solid lightgray;">
-            <h1 class="modal-title pb-1" style="color:#008970; font-weight: 700;">Receipt</h1>
+            <h1 class="modal-title pb-1" style="color: #008970; font-weight: 700;">Receipt</h1>
           </div>
           <div class="row my-0 py-0 " v-for="(service, i) in services" :key="i">
             <div class="col-md-9">
@@ -60,12 +60,14 @@
 <script>
 export default {
   name: "ReservationPreview",
-  props: ["services", "days", "price", "total"],
+  props: ["services", "days", "price", "total", "id"],
   computed: {
     calculateTotal() {
       return this.days*this.price;
     }
-  }
+  },
+  mounted() {
+  },
 }
 </script>
 

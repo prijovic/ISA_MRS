@@ -16,10 +16,9 @@ import rs.ac.uns.ftn.siit.isa_mrs.dto.BoatDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.AddBoatDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.AddVacationRentalDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.RentalPhotosDto;
-import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.SubscribingDtos.addSubscriberDto;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.SubscribingDtos.SubscriptionDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.PageDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.VacationRentalDto;
-import rs.ac.uns.ftn.siit.isa_mrs.dto.RentalObjectPeriodsDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.*;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.IdListWrapperClass;
 import rs.ac.uns.ftn.siit.isa_mrs.service.AdventureService;
@@ -147,8 +146,13 @@ public class RentalObjectController {
 //    }
 
     @PostMapping(ADD_SUBSCRIBER)
-    public ResponseEntity<Void> addSubscriber(@RequestBody addSubscriberDto asd, HttpServletRequest request) {
-        return rentalObjectService.addSubscriber(asd.getRentalId(), request.getHeader(AUTHORIZATION));
+    public ResponseEntity<Void> addSubscriber(@RequestBody SubscriptionDto sd, HttpServletRequest request) {
+        return rentalObjectService.addSubscriber(sd.getRentalId(), request.getHeader(AUTHORIZATION));
+    }
+
+    @PostMapping(CANCEL_SUBSCRIPTION)
+    public ResponseEntity<Void> cancelSubscription(@RequestBody SubscriptionDto sd, HttpServletRequest request) {
+        return rentalObjectService.cancelSubscription(sd.getRentalId(), request.getHeader(AUTHORIZATION));
     }
 
     @Data

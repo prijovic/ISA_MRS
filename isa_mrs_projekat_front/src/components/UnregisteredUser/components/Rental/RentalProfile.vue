@@ -10,13 +10,17 @@
 
       <div class="col-md-5 p-3 d-flex flex-grow-1 justify-content-center align-items-center rentalBasicInfo">
         <div style="width: 100%;">
-          <div class="row mb-3">
-            <div class="rentalObjectName align-items-center">
-              <hr><h1 class="display-3">{{ this.rentalObject.name }}</h1><hr>
+          <div class="row">
+            <div class="align-items-center text-start" style="display: flex;">
+              <hr class="ms-1">
+              <div>
+                <h1 class="display-3 card-title cut-text" :title="this.rentalObject.name">{{ this.rentalObject.name }}</h1>
+              </div>
+              <hr class="ms-1">
             </div>
           </div>
 
-          <div class="row mb-3">
+          <div class="row my-0 mb-2">
             <div class="col-12 d-flex justify-content-center align-items-center">
               <star-rating v-model:rating="this.rentalObject.grade" text-class="h1 my-0 font-weight-normal" :read-only="true" :round-start-rating="false" :glow="5" glow-color="#ffd055"></star-rating>
             </div>
@@ -34,13 +38,13 @@
               </p>
             </div>
             <div class="col main d-flex justify-content-center" title="">
-              <p class="display-5">
+              <p class="display-5" :title="this.bedsPerRoom">
                 <font-awesome-icon class="me-1" icon="bed"></font-awesome-icon><strong>{{ getNumberOfBeds }}</strong>
               </p>
             </div>
           </div>
 
-          <div v-if="isVacationRental" class="row mb-3 ">
+          <div v-if="isVacationRental" class="row">
             <div class="col d-flex justify-content-center">
               <p class="h3">
                 <font-awesome-icon class="me-1" icon="clock"></font-awesome-icon>{{ "Check in:  " +
@@ -68,13 +72,13 @@
   <!--          </div>-->
   <!--        </div>-->
 
-          <div class="row mt-3 ps-1 text-center">
-            <p class="h3">
-              <font-awesome-icon class="me-2" icon="user-tie"></font-awesome-icon><i>{{ getOwnerFullName }}</i>
-            </p>
-          </div>
+<!--          <div class="row mt-3 ps-1 text-center">-->
+<!--            <p class="h3">-->
+<!--              <font-awesome-icon class="me-2" icon="user-tie"></font-awesome-icon><i>{{ getOwnerFullName }}</i>-->
+<!--            </p>-->
+<!--          </div>-->
 
-          <div class="row mt-3 ps-1" style="text-align: center;">
+          <div class="row ps-1" style="text-align: center;">
             <p class="h3">
               <i><strong>{{ "Price: $" + this.rentalObject.price }}</strong></i>
             </p>
@@ -102,12 +106,21 @@
         <div class="row">
           <div class="" style="">
             <RentalDescription :description="this.rentalObject.description"/>
+
+            <div class="row ps-1">
+              <p class="h5" style="display: flex;">
+                <span class="mt-1" >
+                <font-awesome-icon class="me-2" icon="user-tie"></font-awesome-icon><i>{{ ownerOrInstructor }}: {{ getOwnerFullName }}</i>
+                </span>
+                <star-rating class="h5 ms-3" v-model:rating="this.rentalObject.ownerGrade"
+                             text-class="mt-1 font-weight-normal"
+                             :read-only="true" :round-start-rating="false" :glow="5"
+                             glow-color="#ffd055" :star-size="20"></star-rating>
+              </p>
+            </div>
+
             <RentalTags :additional-services="this.rentalObject.additionalServices"/>
             <RentalRules :conduct-rules="this.rentalObject.conductRules"/>
-
-
-<!--            <RentalReviews :reviews-page="reviews" @reload="reloadReviews"/>-->
-
             <div class="row main">
               <div class="accordion accordion-flush" id="accordionFlushExample">
                 <div class="accordion-item">
@@ -137,7 +150,7 @@
                             <div class="align-items-center" style="display:flex; justify-content: space-between; ">
                               <div style="display: flex;">
                                 <img v-if="images[i]" class="profile-pic rounded-pill" :src="images[i]" alt=""/>
-                                <img v-else class="profile-pic rounded-pill" src="https://th.bing.com/th/id/R.4be1aa2ad558d09e7715325f39ee58ec?rik=1PL4Zzb3dyR8Wg&riu=http%3a%2f%2fsimpleicon.com%2fwp-content%2fuploads%2fuser-3.png&ehk=c57lmQWfTHgO6buztac5L2%2bc5XLCNGcgnBoJoB6P4Ms%3d&risl=&pid=ImgRaw&r=0" alt=""/>
+                                <img v-else class="profile-pic rounded-pill" src="../../../Images/noProfilePic.png" alt=""/>
                                 <div class="ms-1">
                                   <h6>{{ getAuthorFullName(review) }}</h6>
                                   <p class="small" style="color: gray;">{{ formatReviewDate(review.timeStamp) }}</p>
@@ -147,7 +160,7 @@
                             </div>
                           </div>
                           <div class="review-body" style="text-align: justify; color: black;">
-                            <p class="ps-1 pe-2">{{ review.comment }}</p>
+                            <p v-if="review.comment" class="ps-1 pe-2">{{ review.comment }}</p>
                           </div>
                         </div>
 
@@ -218,7 +231,7 @@
           </p>
         </div>
 
-        <div v-if="isOwner" class="row mb-5">
+        <div class="row mb-5">
           <RentalAddress :address="this.rentalObject.address"/>
         </div>
 
@@ -250,11 +263,11 @@
 </template>
 
 <script>
-import ImageSlider from "@/components/UnregisteredUser/components/ImageSlider";
-import RentalDescription from "@/components/UnregisteredUser/components/RentalDescription";
-import RentalTags from "@/components/UnregisteredUser/components/RentalTags";
-import RentalAddress from "@/components/UnregisteredUser/components/RentalAddress";
-import RentalRules from "@/components/UnregisteredUser/components/RentalRules";
+import ImageSlider from "@/components/UnregisteredUser/components/Rental/ImageSlider";
+import RentalDescription from "@/components/UnregisteredUser/components/Rental/RentalDescription";
+import RentalTags from "@/components/UnregisteredUser/components/Rental/RentalTags";
+import RentalAddress from "@/components/UnregisteredUser/components/Rental/RentalAddress";
+import RentalRules from "@/components/UnregisteredUser/components/Rental/RentalRules";
 import StarRating from 'vue-star-rating';
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import {library} from "@fortawesome/fontawesome-svg-core";
@@ -277,6 +290,66 @@ export default {
       totalPages: null,
       pageSize: 6,
       images: [],
+      bedsPerRoom: null,
+    }
+  },
+  computed: {
+    ownerOrInstructor() {
+      if(this.rentalObject.rentalObjectType === "Adventure") return "Instructor";
+      return "Owner";
+    },
+    isOwner() {
+      return this.$store.getters.user === "fishingInstructor";
+    },
+    buttonText() {
+      return this.isUserSubscribed ? "Subscribed!" : "Subscribe";
+    },
+    reviews() {
+      return this.rentalObject.reviews.content;
+    },
+    getNumberOfRooms() {
+      return this.rentalObject.rooms.length;
+    },
+    getNumberOfBeds() {
+      let beds = 0;
+      this.rentalObject.rooms.forEach(room => { beds += room.beds; });
+      return beds;
+    },
+    doesRentalHavePhotos() {
+      return this.rentalObject.photos.length > 0;
+    },
+    isUserSubscribed() {
+      return this.rentalObject.isUserSubscribed;
+    },
+    showSubscriptionArea() {
+      return this.$store.getters.user === "client";
+    },
+    isVacationRental() {
+      return this.rentalObject.rentalObjectType === "VacationRental";
+    },
+    isBoat() {
+      return this.rentalObject.rentalObjectType === "Boat";
+    },
+    isAdventure() {
+      return this.rentalObject.rentalObjectType === "Adventure";
+    },
+    getOwnerFullName() {
+      return this.rentalObject.rentalObjectOwner.name + " " + this.rentalObject.rentalObjectOwner.surname;
+    },
+    getAccessToken() {
+      return store.state.access_token;
+    },
+    rentalHasReviews() {
+      return this.reviews.length > 0;
+    },
+    button1Content() {
+      return this.currentPage === 0 ? this.currentPage+1: this.totalPages - this.currentPage === 1 ? this.currentPage - 1 : this.currentPage;
+    },
+    button2Content() {
+      return this.currentPage === 0 ? this.currentPage+2: this.totalPages - this.currentPage === 1 ? this.currentPage : this.currentPage+1;
+    },
+    button3Content() {
+      return this.currentPage === 0 ? this.currentPage+3: this.totalPages - this.currentPage === 1 ? this.currentPage + 1 : this.currentPage+2;
     }
   },
   mounted() {
@@ -333,65 +406,21 @@ export default {
         this.currentPage = this.rentalObject.reviews.currentPage;
         this.totalPages = this.rentalObject.reviews.pages;
         this.getReviewPics();
+        this.numOfBedsPerRoom();
       });
     }
   },
-  computed: {
-    isOwner() {
-      return this.$store.getters.user === "fishingInstructor";
-    },
-    buttonText() {
-      return this.isUserSubscribed ? "Subscribed!" : "Subscribe";
-    },
-    reviews() {
-      return this.rentalObject.reviews.content;
-    },
-    getNumberOfRooms() {
-      return this.rentalObject.rooms.length;
-    },
-    getNumberOfBeds() {
-      let beds = 0;
-      this.rentalObject.rooms.forEach(room => { beds += room.beds; });
-      return beds;
-    },
-    doesRentalHavePhotos() {
-      return this.rentalObject.photos.length > 0;
-    },
-    isUserSubscribed() {
-      return this.rentalObject.isUserSubscribed;
-    },
-    showSubscriptionArea() {
-      return this.$store.getters.user === "client";
-    },
-    isVacationRental() {
-      return this.rentalObject.rentalObjectType === "VacationRental";
-    },
-    isBoat() {
-      return this.rentalObject.rentalObjectType === "Boat";
-    },
-    isAdventure() {
-      return this.rentalObject.rentalObjectType === "Adventure";
-    },
-    getOwnerFullName() {
-      return this.rentalObject.rentalObjectOwner.name + " " + this.rentalObject.rentalObjectOwner.surname;
-    },
-    getAccessToken() {
-      return store.state.access_token;
-    },
-    rentalHasReviews() {
-      return this.reviews.length > 0;
-    },
-    button1Content() {
-      return this.currentPage === 0 ? this.currentPage+1: this.totalPages - this.currentPage === 1 ? this.currentPage - 1 : this.currentPage;
-    },
-    button2Content() {
-      return this.currentPage === 0 ? this.currentPage+2: this.totalPages - this.currentPage === 1 ? this.currentPage : this.currentPage+1;
-    },
-    button3Content() {
-      return this.currentPage === 0 ? this.currentPage+3: this.totalPages - this.currentPage === 1 ? this.currentPage + 1 : this.currentPage+2;
-    }
-  },
   methods: {
+    numOfBedsPerRoom() {
+      let result = "Beds per room: ";
+      for(let i=0; i<this.rentalObject.rooms.length; i++) {
+        result += this.rentalObject.rooms[i].beds;
+        if(i === this.rentalObject.rooms.length - 1)
+          break
+        result += " + ";
+      }
+      this.bedsPerRoom = result;
+    },
     getReviewPics() {
       this.images = [];
       let revs = this.rentalObject.reviews.content;
@@ -542,6 +571,13 @@ export default {
 </script>
 
 <style scoped>
+.cut-text {
+  width: 100%;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
 .page-link {
   background-color: white;
   border: 2px solid black;

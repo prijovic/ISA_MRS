@@ -26,4 +26,10 @@ public class Paths {
     public static final String OWNER_CONTROLLER = "/RentalOwners";
     public static final String ADD_SUBSCRIBER = "/subscribe";
     public static final String GET_CLIENT_PROFILE = "/getClientProfile";
+    public static final String CANCEL_SUBSCRIPTION = "/cancelSubscription";
+    public static final String CANCEL_RESERVATION = "/cancelReservation";
+    public static final String ADD_REVIEW = "/addReview";
+    public static final String ADD_REPORT = "/addReport";
+    public static final String GET_INSTRUCTORS = "/getInstructors";
+    public static final String GET_INSTRUCTOR = "/getInstructor";
 }

@@ -5,6 +5,7 @@
     <MenuLink to="/client/Adventure/all" icon="mountain-sun">Adventures</MenuLink>
     <MenuLink to="/client/Boat/all" icon="ship">Boats</MenuLink>
     <MenuLink to="/client/VacationRental/all" icon="house">Rental Houses</MenuLink>
+    <MenuLink to="/client/Instructors" icon="fish-fins">Fishing Instructors</MenuLink>
     <hr>
     <MenuLink to="/client/ReservationsHistory" icon="address-book">Reservation History</MenuLink>
     <span class="collapse-icon" :class="{'rotate-180': collapsed}" @click="toggleSidebar">
@@ -17,9 +18,9 @@
 import {collapsed, toggleSidebar, sidebarWidth} from "@/components/state";
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import { library } from "@fortawesome/fontawesome-svg-core";
-import { faAngleDoubleLeft, faHouse, faShip, faMountainSun, faIdCard, faAddressBook} from "@fortawesome/free-solid-svg-icons";
+import { faAngleDoubleLeft, faHouse, faShip, faMountainSun, faIdCard, faAddressBook, faFishFins} from "@fortawesome/free-solid-svg-icons";
 import MenuLink from "@/components/GeneralComponents/MenuLink";
-library.add(faAngleDoubleLeft, faHouse, faShip, faMountainSun, faIdCard, faAddressBook);
+library.add(faAngleDoubleLeft, faHouse, faShip, faMountainSun, faIdCard, faAddressBook, faFishFins);
 export default {
   name: "ClientSidebar",
   components: {

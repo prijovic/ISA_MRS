@@ -1,49 +1,49 @@
 <template>
 
-    <div class="card col-xl-3 col-lg-4 col-md-6 col-sm-10 col-xs-12 px-3 mb-3">
+    <div class="card col-xl-3 col-lg-4 col-md-6 col-sm-10 col-xs-12 px-3 mb-5">
 <!--      <ThePhoto v-if="rental.displayPhoto" class="card-img-top" :photo="rental.displayPhoto" alt=""/>-->
       <router-link :to="getPath" class="link" @click="setRentalIdAndType">
 
 
 
         <img v-if="rental.displayPhoto" class="card-img-top" alt="" :src="photo"/>
-        <div class="card-body pt-1 pb-0">
-          <div class="align-items-center text-start" style="display: flex;">
+        <div class="card-body pt-1 pb-0" style="color: black">
+          <div class="align-items-center text-start pb-3" style="display: flex;">
             <div>
-              <h1 class="card-title cut-text">{{ rental.name }}</h1>
+              <h1 style="color: black" class="card-title cut-text" :title="rental.name">{{ rental.name }}</h1>
             </div>
             <hr class="ms-1">
           </div>
           <div v-if="isVacationRental" class="row">
             <div class="col main-col d-flex justify-content-center" title="Capacity">
-              <p class="h3">
-                <font-awesome-icon class="me-1" icon="user"></font-awesome-icon><strong>{{ rental.capacity }}</strong>
+              <p class="h5">
+                <font-awesome-icon class="me-1" icon="user"></font-awesome-icon>{{ rental.capacity }}
               </p>
             </div>
             <div class="col main-col d-flex justify-content-center" title="Number of rooms">
-              <p class="h3">
-                <font-awesome-icon class="me-1" icon="door-open"></font-awesome-icon><strong>{{ getNumberOfRooms }}</strong>
+              <p class="h5">
+                <font-awesome-icon class="me-1" icon="door-open"></font-awesome-icon>{{ getNumberOfRooms }}
               </p>
             </div>
             <div id="beds" class="col main-col d-flex justify-content-center" title="">
-              <p class="h3">
-                <font-awesome-icon class="me-1" icon="bed"></font-awesome-icon><strong>{{ getNumberOfBeds }}</strong>
+              <p class="h5">
+                <font-awesome-icon class="me-1" icon="bed" :title="this.bedsPerRoom"></font-awesome-icon>{{ getNumberOfBeds }}
               </p>
             </div>
           </div>
 
-          <div v-if="!isVacationRental" class="p-1" style="text-align: left;">
-            <p class="h4">
+          <div v-if="!isVacationRental" class="p-1 text-center" style="text-align: left;">
+            <p class="h5">
               <font-awesome-icon class="me-1" icon="user"></font-awesome-icon>{{ "Capacity: " + rental.capacity }}
             </p>
           </div>
 
           <div class="row mt-1">
             <div class="col d-flex justify-content-center">
-              <p class="h4"><strong>{{ "Grade:" + getRentalGrade }}</strong></p>
+              <p class="h5">{{ "Grade: " + getRentalGrade }}</p>
             </div>
             <div class="col d-flex justify-content-center">
-              <p class="h4"><strong>{{ "Price: $" + rental.price }}</strong></p>
+              <p class="h5">{{ "Price: $" + rental.price }}</p>
             </div>
           </div>
         </div>
@@ -76,7 +76,8 @@ export default {
   data() {
     return {
       path: "/client/RentalProfile",
-      photo: null
+      photo: null,
+      bedsPerRoom: null,
     }
   },
   computed: {
@@ -105,6 +106,7 @@ export default {
     },
   },
   mounted() {
+    if(this.isVacationRental) this.numOfBedsPerRoom();
     axios.get("/Photos/", {
       headers: {
         Authorization: "Bearer " + this.$store.getters.access_token,
@@ -122,6 +124,16 @@ export default {
         });
   },
   methods: {
+    numOfBedsPerRoom() {
+      let result = "Beds per room: ";
+      for(let i=0; i<this.rental.rooms.length; i++) {
+        result += this.rental.rooms[i].beds;
+        if(i === this.rental.rooms.length - 1)
+          break
+        result += " + ";
+      }
+      this.bedsPerRoom = result;
+    },
     setRentalIdAndType() {
       this.$store.dispatch("rentalId", this.rental.id);
       this.$store.dispatch("rentalType", this.rental.rentalObjectType);
@@ -166,10 +178,10 @@ div.card img {
     border: 1px solid black;
     border-bottom-left-radius: 40px;
     border-bottom-right-radius: 40px;
-    box-shadow: 0 0.3rem 1rem rgb(0 0 0 / 15%);
+    box-shadow: 0 0.3rem 1rem rgb(0 0 0 / 30%);
   }
 
   .card-img-top {
-    box-shadow: -0.05em 0 1rem rgb(0 0 0 / 15%);
+    box-shadow: -0.06em 0 1rem rgb(0 0 0 / 30%);
   }
 </style>

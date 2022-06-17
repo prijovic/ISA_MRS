@@ -8,11 +8,11 @@
 <!--              <div class="card-header"></div>-->
               <div class="card-body text-center">
                 <img v-if="this.profilePic" class="card-profile-img" :src="this.profilePic" alt=""/>
-                <img v-else class="card-profile-img" src="https://th.bing.com/th/id/R.4be1aa2ad558d09e7715325f39ee58ec?rik=1PL4Zzb3dyR8Wg&riu=http%3a%2f%2fsimpleicon.com%2fwp-content%2fuploads%2fuser-3.png&ehk=c57lmQWfTHgO6buztac5L2%2bc5XLCNGcgnBoJoB6P4Ms%3d&risl=&pid=ImgRaw&r=0" alt=""/>
+                <img v-else class="card-profile-img" src="../../../../Images/noProfilePic.png" alt=""/>
                 <div class="d-flex justify-content-center">
                   <p class="h3">{{ getClientFullName }}</p>
-                  <router-link class="btn btn-default ms-2" to="">
-                    <font-awesome-icon class="h5" icon="pencil"></font-awesome-icon>
+                  <router-link class="btn btn-default ms-2" to="" style="height: fit-content;">
+                    <font-awesome-icon class="h5" icon="pencil" style="color: #008970"></font-awesome-icon>
                   </router-link>
                 </div>
                 <hr>
@@ -49,7 +49,6 @@
                 </ul>
               </div>
             </div>
-<!----------------------------------------------------Zadovoljna sam--------------------------------------------------->
             <div class="row px-3 pb-5" style="overflow: hidden; overflow-y: scroll; max-height: 85vh;">
               <div  class="m-0 p-0" v-if="subscriptionsBtnClicked">
                 <div class="card px-0 mb-2">
@@ -85,7 +84,7 @@ import {library} from "@fortawesome/fontawesome-svg-core";
 import {faPencil} from "@fortawesome/free-solid-svg-icons";
 import ClientReservations from "@/components/Client/ClientPage/components/ClientProfile/ClientReservations/ClientUpcomingReservations/ClientReservations";
 import axios from "axios";
-import RentalAddress from "@/components/UnregisteredUser/components/RentalAddress";
+import RentalAddress from "@/components/UnregisteredUser/components/Rental/RentalAddress";
 import ClientSubscription
   from "@/components/Client/ClientPage/components/ClientProfile/ClientSubscriptions/ClientSubscription";
 
@@ -103,6 +102,7 @@ export default {
   },
   components: {RentalAddress, ClientReservations, FontAwesomeIcon, ClientSubscription},
   mounted() {
+    // console.log(this.$store.getters.access_token);
     axios.get("/Users/getClientProfile", {
       headers: {
         Authorization: "Bearer " + this.$store.getters.access_token
@@ -183,32 +183,34 @@ export default {
 .btn-default:hover, .btn-default:active, .btn-default:focus {
   border: 1px solid white;
 }
+
 div.tabs button {
   border: none;
   background-color: inherit;
 }
+
 div.tabs button:hover {
 
 }
+
 ::-webkit-scrollbar {
   display: none;
 }
-.form-control:focus {
-  border-color: inherit;
-  -webkit-box-shadow: none;
-  box-shadow: none;
-}
+
 button.saveNewDataBtn {
   background-color: black;
   border: 1px solid black;
 }
+
 button.saveNewDataBtn:hover {
   background-color: white;
   color: black;
 }
+
 .card-header:first-child {
   border-radius: calc(1rem - 1px) calc(1rem - 1px) 0 0;
 }
+
 .card-header {
   position: relative;
   padding: 2rem 2rem;
@@ -217,6 +219,7 @@ button.saveNewDataBtn:hover {
   box-shadow: 0 0.125rem 0.25rem rgb(0 0 0 / 8%);
   z-index: 2;
 }
+
 .card {
   position: relative;
   display: flex;
@@ -230,15 +233,11 @@ button.saveNewDataBtn:hover {
   box-shadow: 0 0.5rem 1rem rgb(0 0 0 / 15%);
   border-radius: 1rem;
 }
+
 h1, .h1, h2, .h2, h3, .h3, h4, .h4, h5, .h5, h6, .h6 {
   line-height: 1.2;
 }
-.text-muted {
-  color: #6c757d !important;
-}
-.text-sm {
-  font-size: .7875rem !important;
-}
+
 .page-holder {
   display: flex;
   overflow-x: hidden;
@@ -246,51 +245,35 @@ h1, .h1, h2, .h2, h3, .h3, h4, .h4, h5, .h5, h6, .h6 {
   min-height: calc(100vh - 72px);
   flex-wrap: wrap;
 }
+
 a {
   color: #4650dd!important;
   text-decoration: underline!important;
   cursor: pointer;
 }
+
 .card-profile-img {
-  /*margin-top: -12rem;*/
   margin-bottom: 1rem;
   border: 3px solid #fff;
   box-shadow: 0 0.5rem 1rem rgb(0 0 0 / 15%);
   z-index: 2;
   width: 18rem;
   height: 18rem;
+  min-width: 12rem;
+  min-height: 12rem;
   border-radius: 100%;
   object-fit: cover;
   object-position: center;
 }
+
 img, svg {
   vertical-align: middle;
 }
-.avatar.avatar-lg {
-  width: 5rem;
-  height: 5rem;
-  line-height: 5rem;
-}
-.avatar {
-  display: inline-block;
-  position: relative;
-  width: 3rem;
-  height: 3rem;
-  text-align: center;
-  border: #dee2e6;
-  border-radius: 50%;
-  background: #fff;
-  box-shadow: 0 0.5rem 1rem rgb(0 0 0 / 15%);
-  line-height: 3rem;
-}
-.form-control
-{
-  color: #343a40;
-}
-.contentDiv
-{
+
+.contentDiv {
   padding-top: 4rem;
 }
+
 .card-profile .card-header {
   height: 15rem;
   background-position: center center;

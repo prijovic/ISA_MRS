@@ -1,5 +1,5 @@
 <template>
-  <div class="mt-3 mx-5 p-0">
+  <div class="mt-3 mx-5 me-4 p-0">
     <div class="card px-0 mb-2">
       <div class="card-header py-2">
         <h4 class="card-heading">Reservation History</h4>
@@ -29,30 +29,38 @@
                 <p class="h4"><strong style="color:#008970;">Total:</strong> ${{  calculateTotal(reservation) }}</p>
               </div>
             </div>
-            <div class="col-md-4 p-5 d-flex flex-grow-1 justify-content-center align-items-center" style="height: 20vh;">
+            <div class="col-md-4 p-5 d-flex flex-grow-1 justify-content-center align-items-center" style="height: 25vh;">
               <div style="width: 100%;">
                 <div class="row">
-                  <button class="w-100 btn mb-2" style="font-weight: 500; color: white;" data-bs-toggle="modal" data-bs-target="#bill">
+                  <button class="w-100 btn mb-2" style="font-weight: 500; color: white;" data-bs-toggle="modal"
+                          :data-bs-target="'#bill-'+reservation.id">
                     Reservation Preview
                   </button>
-                  <ReservationPreview :services="this.clientInfo.reservations[i].additionalServices"
-                                      :days="getNumberOfDays(this.clientInfo.reservations[i])"
-                                      :price="this.clientInfo.reservations[i].price"
-                                      :total="calculateTotal(this.clientInfo.reservations[i])"/>
+                  <ReservationPreview :services="reservation.additionalServices"
+                                      :days="getNumberOfDays(reservation)"
+                                      :price="reservation.price"
+                                      :total="calculateTotal(reservation)"
+                                      :id="reservation.id" />
                 </div>
                 <div class="row">
                   <button class="w-100 btn mb-2" style="background-color: #ffd055; border: 1px solid #ffd055;
-                  font-weight: 500; color: white;" data-bs-toggle="modal" data-bs-target="#review">
+                  font-weight: 500; color: white;" data-bs-toggle="modal"
+                          :data-bs-target="'#review-'+reservation.id">
                     Review
                   </button>
-                  <ReservationReview />
+                  <ReservationReview :id="reservation.id"
+                                     :reviews="reservation.reviews"
+                                     :resId="reservation.id"/>
                 </div>
                 <div class="row">
-                  <button class="w-100 btn" style="background-color:#e23c52; border: 1px solid #e23c52; font-weight: 500; color: white;"
-                          data-bs-toggle="modal" data-bs-target="#report">
+                  <button class="w-100 btn" style="background-color:#e23c52; border: 1px solid #e23c52;
+                          font-weight: 500; color: white;" data-bs-toggle="modal"
+                          :data-bs-target="'#report-'+reservation.id">
                     Report
                   </button>
-                  <ReservationReport/>
+                  <ReservationReport :id="reservation.id"
+                                     :resId="reservation.id"
+                                     :reports="reservation.reports"/>
                 </div>
               </div>
             </div>
@@ -99,18 +107,14 @@ export default {
         date.setDate(date.getDate() + 1);
         if(date < today) past.push(this.clientInfo.reservations[i]);
       }
-      console.log(past);
       return past;
     }
   },
   methods: {
     calculateTotal(reservation) {
       let days = this.getNumberOfDays(reservation);
-      console.log(days);
       let services = this.calculateAdditionalServices(reservation);
-      console.log(services);
       let price = reservation.price;
-      console.log(price);
       return days*price+services;
     },
     getNumberOfDays(reservation) {
@@ -144,7 +148,6 @@ export default {
     getPhotos() {
       let reservations = this.getPastReservations;
       for (let i=0; i < reservations.length; i++) {
-        console.log(reservations[i].rentalObject.displayPhoto.photo);
         if(!reservations[i].rentalObject.displayPhoto.photo) { this.images[i] = null; continue; }
         axios.get("/Photos/", {
           headers: {

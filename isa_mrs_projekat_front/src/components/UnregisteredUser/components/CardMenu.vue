@@ -8,26 +8,35 @@
   <div v-if="rentalObjects" class="row mt-5 mx-1 cardMenu">
       <CardView v-for="(rental, i) in rentalObjects" :key="i" :rental="rental"></CardView>
   </div>
+  <div v-else class="row mt-5 mx-1 cardMenu" style="border: none; display: flex;">
+      <InstructorCardView class="" v-for="(instructor, i) in instructors" :key="i" :instructor="instructor"></InstructorCardView>
+  </div>
 </template>
 
 <script>
 import axios from "axios";
-import CardView from "@/components/UnregisteredUser/components/CardView";
+import CardView from "@/components/UnregisteredUser/components/Rental/RentalCardView";
 import {useStore} from "vuex";
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import {library} from "@fortawesome/fontawesome-svg-core";
 import {faMagnifyingGlass} from "@fortawesome/free-solid-svg-icons";
+import InstructorCardView from "@/components/UnregisteredUser/components/Instructor/InstructorCardView";
+// import InstructorCardView from "@/components/UnregisteredUser/components/InstructorCardView";
 
 library.add(faMagnifyingGlass);
 
 export default {
   name: "CardMenu",
   components: {
+    InstructorCardView,
+    // InstructorCardView,
     CardView, FontAwesomeIcon
   },
   data() {
     return {
       rentalObjects: null,
+      x: [1,2,3,4,5,1,2,3,4,5,1,2,3,4,5],
+      instructors: null,
     }
   },
   mounted() {
@@ -73,8 +82,21 @@ export default {
         }
       }).then(response => {
         this.rentalObjects = response.data.content;
-        console.log(this.rentalObjects);
       });
+    }
+    else {
+      axios.get("/RentalOwners/getInstructors", {
+        headers: {
+          Authorization: "Bearer " + store.state.access_token,
+        },
+        params: {
+          page: 0,
+          pageSize: 10,
+          field: "name"
+        }
+      }).then(response => {
+        this.instructors = response.data.content;
+      })
     }
   }
 }

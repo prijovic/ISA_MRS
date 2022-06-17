@@ -6,6 +6,7 @@ import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.RentalProfileDtos.ReviewDto
 import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.RentalObjectType;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Collection;
 
 @Data
@@ -27,6 +28,8 @@ public class AdventureProfileDto implements Serializable {
     private Boolean isUserSubscribed = false;
     private PageDto<ReviewDto> reviews;
     private String grade = null;
+    private String ownerGrade = null;
     private Boolean isDeletable;
-    private TimePeriodDto availabilityPeriod;
+    private LocalDateTime initDate;
+    private LocalDateTime termDate;
 }

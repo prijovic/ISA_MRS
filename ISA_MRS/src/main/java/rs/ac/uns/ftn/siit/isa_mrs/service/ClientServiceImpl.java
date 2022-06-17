@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.ClientDtos.ClientProfileDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.ClientDtos.ClientReservationDtos.ClientReservationDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.ClientDtos.ClientReservationDtos.ReservationRentalObjectDto;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.ClientDtos.ClientReservationDtos.ReservationReportDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.PhotoDto;
 import rs.ac.uns.ftn.siit.isa_mrs.model.Client;
 import rs.ac.uns.ftn.siit.isa_mrs.model.Photo;
@@ -58,11 +59,23 @@ public class ClientServiceImpl implements ClientService {
         Collection<Reservation> reservations = reservationRepo.findAllByClientId(clientId);
         Collection<ClientReservationDto> reservationDtos = new ArrayList<>();
         for(var reservation : reservations) {
+            if(reservation.getCancelled()) continue;
             ClientReservationDto reservationDto = modelMapper.map(reservation, ClientReservationDto.class);
+            reservationDto.setReports(setUpReservationReports(reservation));
             reservationDto.setRentalObject(setUpReservationRentalObjectDto(reservation.getRentalObject()));
             reservationDtos.add(reservationDto);
         }
         return reservationDtos;
+    }
+
+    private Collection<ReservationReportDto> setUpReservationReports(Reservation reservation) {
+        Collection<ReservationReportDto> reports = new ArrayList<>();
+        for(var report : reservation.getReports()) {
+            ReservationReportDto r = modelMapper.map(report, ReservationReportDto.class);
+            r.setUser(report.getAuthor().getUserType());
+            reports.add(r);
+        }
+        return reports;
     }
 
     private ReservationRentalObjectDto setUpReservationRentalObjectDto(RentalObject rental) {
