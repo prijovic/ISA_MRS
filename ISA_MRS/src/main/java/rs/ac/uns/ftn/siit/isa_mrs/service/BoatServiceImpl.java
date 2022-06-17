@@ -42,7 +42,6 @@ public class BoatServiceImpl implements BoatService{
     private final ClientRepo clientRepo;
     private final RentalObjectOwnerRepo ownerRepo;
     private final AddressRepo addressRepo;
-    private final CancellationFeeRepo cancellationFeeRepo;
     private final AdditionalServiceRepo additionalServiceRepo;
     private final ConductRuleRepo conductRuleRepo;
     private final JwtDecoder jwtDecoder;
@@ -62,6 +61,7 @@ public class BoatServiceImpl implements BoatService{
             Boat boat = rental.get();
             boatDto.setReviews(rentalService.getRentalReviews(boat, page, pageSize));
             boatDto.setGrade(rentalService.calculateRentalRating(boat));
+            boatDto.setOwnerGrade(rentalService.calculateOwnerRating(boat.getRentalObjectOwner()));
             Optional<Client> optionalClient = clientRepo.findByEmail(decodedToken.getEmail());
             if(optionalClient.isPresent()){
                 Client client = optionalClient.get();

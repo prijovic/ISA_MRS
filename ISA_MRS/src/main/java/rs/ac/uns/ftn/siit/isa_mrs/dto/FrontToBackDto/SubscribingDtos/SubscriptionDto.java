@@ -5,6 +5,6 @@ import lombok.Data;
 import java.io.Serializable;
 
 @Data
-public class addSubscriberDto implements Serializable {
+public class SubscriptionDto implements Serializable {
     private Long rentalId;
 }

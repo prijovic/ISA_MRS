@@ -18,8 +18,6 @@ public class ClientProfileDto implements Serializable {
     private String phone;
     private Boolean isActive;
     private AddressDto address;
-    // private Collection<ReportDto> reports;
-    // private Collection<ReviewDto> reviews;
     private Integer points;
     private Collection<ClientReservationDto> reservations;
     private Collection<RentalObjectDto> subscriptions;

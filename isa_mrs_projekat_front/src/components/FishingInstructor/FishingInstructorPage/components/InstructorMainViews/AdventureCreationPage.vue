@@ -284,7 +284,7 @@ import {library} from "@fortawesome/fontawesome-svg-core";
 import {faMinus, faPlus, faPlusCircle, faX, faArrowRight} from "@fortawesome/free-solid-svg-icons";
 import {DatePicker, Calendar} from "v-calendar"
 import axios from "axios";
-import {toggleLoading, toggleProcessing} from "@/components/state";
+import {toggleLoading, /*toggleProcessing*/} from "@/components/state";
 import store from "@/store";
 
 library.add(faPlus, faMinus, faX, faPlusCircle, faArrowRight);

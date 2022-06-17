@@ -35,7 +35,6 @@ public class VacationRentalServiceImpl implements VacationRentalService{
     private final ModelMapper modelMapper;
     private final RentalObjectOwnerRepo ownerRepo;
     private final AddressRepo addressRepo;
-    private final CancellationFeeRepo cancellationFeeRepo;
     private final AdditionalServiceRepo additionalServiceRepo;
     private final ConductRuleRepo conductRuleRepo;
     private final RoomRepo roomRepo;
@@ -58,6 +57,7 @@ public class VacationRentalServiceImpl implements VacationRentalService{
             VacationRental vacationRental = rental.get();
             rentalDto.setReviews(rentalService.getRentalReviews(vacationRental, page, pageSize));
             rentalDto.setGrade(rentalService.calculateRentalRating(vacationRental));
+            rentalDto.setOwnerGrade(rentalService.calculateOwnerRating(vacationRental.getRentalObjectOwner()));
             Optional<Client> optionalClient = clientRepo.findByEmail(decodedToken.getEmail());
             if(optionalClient.isPresent()){
                 Client client = optionalClient.get();

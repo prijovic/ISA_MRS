@@ -18,7 +18,7 @@ public class AdventureDto implements Serializable {
     private final Double price;
     private final Collection<AdditionalServiceDto> additionalServices;
     private final Collection<ConductRuleDto> conductRules;
-    private final CancellationFeeDto cancellationFee;
+    private final double cancellationFee;
     private final AddressDto address;
     private final Double duration;
     private final Collection<AdventureEquipmentDto> adventureEquipment;

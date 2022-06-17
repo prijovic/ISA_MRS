@@ -13,21 +13,18 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.PageDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.RentalObjectDto;
-import rs.ac.uns.ftn.siit.isa_mrs.dto.RentalObjectPeriodsDto;
 import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.RentalObjectType;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.RentalProfileDtos.ReviewDtos.ReviewDto;
 import rs.ac.uns.ftn.siit.isa_mrs.model.*;
+import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.RequestStatus;
 import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.ReviewType;
 import rs.ac.uns.ftn.siit.isa_mrs.repository.ClientRepo;
 import rs.ac.uns.ftn.siit.isa_mrs.repository.RentalObjectRepo;
 import rs.ac.uns.ftn.siit.isa_mrs.repository.ReviewRepo;
-import rs.ac.uns.ftn.siit.isa_mrs.repository.TimePeriodRepo;
 import rs.ac.uns.ftn.siit.isa_mrs.security.JwtDecoder;
 
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
-import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 @Slf4j
@@ -35,7 +32,6 @@ import java.util.*;
 @RequiredArgsConstructor
 public class RentalObjectServiceImpl implements RentalObjectService {
     private final RentalObjectRepo rentalObjectRepo;
-    private final TimePeriodRepo timePeriodRepo;
     private final ClientRepo clientRepo;
     private final ModelMapper modelMapper;
     private final ReviewRepo reviewRepo;
@@ -94,6 +90,7 @@ public class RentalObjectServiceImpl implements RentalObjectService {
         }
     }
 
+    @Override
     public ResponseEntity<Void> addSubscriber(Long rentalId, String token) {
         try {
             JwtDecoder.DecodedToken decodedToken;
@@ -109,6 +106,30 @@ public class RentalObjectServiceImpl implements RentalObjectService {
             Client client = optionalClient.get();
             rental.getSubscribers().add(client);
             client.getSubscriptions().add(rental);
+            rentalObjectRepo.save(rental);
+            clientRepo.save(client);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    public ResponseEntity<Void> cancelSubscription(Long rentalId, String token) {
+        try {
+            JwtDecoder.DecodedToken decodedToken;
+            try {
+                decodedToken = jwtDecoder.decodeToken(token);
+            } catch (Exception e) {
+                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            }
+            Optional<RentalObject> optionalRental = rentalObjectRepo.findById(rentalId);
+            Optional<Client> optionalClient = clientRepo.findByEmail(decodedToken.getEmail());
+            if(optionalRental.isEmpty() || optionalClient.isEmpty()) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            RentalObject rental = optionalRental.get();
+            Client client = optionalClient.get();
+            rental.getSubscribers().remove(client);
+            client.getSubscriptions().remove(rental);
             rentalObjectRepo.save(rental);
             clientRepo.save(client);
             return new ResponseEntity<>(HttpStatus.OK);
@@ -146,71 +167,62 @@ public class RentalObjectServiceImpl implements RentalObjectService {
         return rentalObjectDto;
     }
 
-    @Override
-    public PageDto<ReviewDto> getRentalReviews(RentalObject rental, int page, int pageSize) {
-        PageDto<ReviewDto> result = new PageDto<>();
-        Collection<ReviewDto> reviewDtos = new ArrayList<>();
-        Pageable pageable = PageRequest.of(page, pageSize).withSort(Sort.by(Sort.Order.desc("timeStamp")));
-        Page<Review> reviewPage = reviewRepo.findAllByReservationRentalObjectAndAuthorIsActiveAndReviewType(rental, true,
-                ReviewType.RentalReview, pageable);
-        reviewPage.getContent().forEach(review -> reviewDtos.add(modelMapper.map(review, ReviewDto.class)));
-        result.setContent(reviewDtos);
-        result.setPages(reviewPage.getTotalPages());
-        result.setCurrentPage(reviewPage.getNumber());
-        result.setPageSize(reviewPage.getSize());
-        return result;
-    }
-
-    @Override
-    public String calculateRentalRating(@NotNull RentalObject rental) {
-        Collection<Reservation> reservations = rental.getReservations();
-        if(reservations.isEmpty()) return null;
-        double grade = getRentalGrade(reservations);
-        return gradeFormatting(grade);
-    }
-
-    private List<TimePeriod> makePeriods(List<LocalDate> dates){
-        List<TimePeriod> timePeriods = new ArrayList<>();
-        dates.sort(Comparator.naturalOrder());
-        for (int i = 0; i < dates.size() - 1; i++) {
-            LocalDate start = dates.get(i);
-            if (timePeriods.size()!=0 &&
-                    (start.isBefore(timePeriods.get(timePeriods.size()-1).getTermDate()) ||
-                    start.isEqual(timePeriods.get(timePeriods.size()-1).getTermDate()))){
-                continue;
-            }
-            LocalDate end = dates.get(i);
-            for (int j = i+1; j < dates.size(); j++) {
-                if (ChronoUnit.DAYS.between(dates.get(i), dates.get(j)) == 1){
-                    end = dates.get(j);
-                }
-                else {
-                    break;
-                }
-            }
-            TimePeriod timePeriod = new TimePeriod();
-            timePeriod.setInitDate(start);
-            timePeriod.setTermDate(end);
-            timePeriods.add(timePeriod);
-        }
-        return timePeriods;
-    }
-
     private String gradeFormatting(double grade) {
         DecimalFormat df = new DecimalFormat("#.##");
         df.setRoundingMode(RoundingMode.CEILING);
         return df.format(grade);
     }
 
+    @Override
+    public String calculateRentalRating(@NotNull RentalObject rental) {
+        Collection<Reservation> reservations = rental.getReservations();
+        if(reservations.isEmpty()) return "0";
+        double grade = getRentalGrade(reservations);
+        return gradeFormatting(grade);
+    }
+
+    @Override
+    public String calculateOwnerRating(@NotNull RentalObjectOwner owner) {
+        double grade = getOwnerGrade(owner);
+        return gradeFormatting(grade);
+    }
+
     private double getRentalGrade(Collection<Reservation> reservations) {
         double sumOfGrades = 0, amountOfGrades = 0;
         for(var reservation : reservations) {
             for(var review : reservation.getReviews())
-                if(review.getReviewType() == ReviewType.RentalReview && review.getAuthor().getIsActive())
+                if(review.getReviewType() == ReviewType.RentalReview && review.getAuthor().getIsActive() && review.getStatus() == RequestStatus.Accepted)
                 { sumOfGrades += review.getGrade(); amountOfGrades++; }
         }
         if(amountOfGrades == 0) return 0;
         return sumOfGrades/amountOfGrades;
+    }
+
+    public double getOwnerGrade(RentalObjectOwner owner) {
+        double sumOfGrades = 0, amountOfGrades = 0;
+        Collection<RentalObject> rentals = rentalObjectRepo.findAllByRentalObjectOwner(owner);
+        for(var rental : rentals) {
+            for(var reservation : rental.getReservations()) {
+                for(var review : reservation.getReviews())
+                    if(review.getReviewType() == ReviewType.OwnerReview && review.getAuthor().getIsActive() && review.getStatus() == RequestStatus.Accepted)
+                    { sumOfGrades += review.getGrade(); amountOfGrades++; break;} } }
+        if(amountOfGrades == 0) return 0;
+        return sumOfGrades/amountOfGrades;
+    }
+
+    @Override
+    public PageDto<ReviewDto> getRentalReviews(RentalObject rental, int page, int pageSize) {
+        PageDto<ReviewDto> result = new PageDto<>();
+        Collection<ReviewDto> reviewDtos = new ArrayList<>();
+        Pageable pageable = PageRequest.of(page, pageSize).withSort(Sort.by(Sort.Order.desc("timeStamp")));
+        Page<Review> reviewPage = reviewRepo.findAllByReservationRentalObjectAndAuthorIsActiveAndReviewTypeAndStatus(
+                rental, true, ReviewType.RentalReview, pageable, RequestStatus.Accepted);
+        reviewPage.getContent().forEach(review -> reviewDtos.add(modelMapper.map(review, ReviewDto.class)));
+        result.setContent(reviewDtos);
+        result.setPages(reviewPage.getTotalPages());
+        result.setCurrentPage(reviewPage.getNumber());
+        result.setPageSize(reviewPage.getSize());
+        return result;
     }
 
 }

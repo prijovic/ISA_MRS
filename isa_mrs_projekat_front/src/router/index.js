@@ -22,7 +22,7 @@ import FishingInstructorAdventuresView
 import CardMenu from "@/components/UnregisteredUser/components/CardMenu";
 // import ClientMainView from "@/components/Client/ClientPage/components/ClientMainView";
 import ClientSidebar from "@/components/Client/ClientPage/components/ClientSidebar/ClientSidebar";
-import RentalProfile from "@/components/UnregisteredUser/components/RentalProfile";
+import RentalProfile from "@/components/UnregisteredUser/components/Rental/RentalProfile";
 import VerificationPage from "@/components/UnregisteredUser/components/VerificationPage";
 import ClientProfile from "@/components/Client/ClientPage/components/ClientProfile/ClientProfile";
 import AdminUsersView
@@ -37,6 +37,8 @@ import AdventureCreationPage
 import AllCottagesView
     from "@/components/VacationRentalOwner/VacationRentalOwnerPage/components/AllCottagesView/AllCottagesView";
 import AllBoatsView from "@/components/BoatOwner/BoatOwnerPage/components/AllBoatsView/AllBoatsView";
+import InstructorProfile from "@/components/UnregisteredUser/components/Instructor/InstructorProfile";
+//import InstructorCardView from "@/components/UnregisteredUser/components/InstructorCardView";
 
 
 
@@ -439,6 +441,28 @@ const routes = [
         meta: {
             public: false
         }
+    },
+    {
+        path: "/client/Instructors",
+        name: "InstructorCardView",
+        components: {
+            default: CardMenu,
+            sidebar: ClientSidebar,
+        },
+        meta: {
+            public: false
+        },
+    },
+    {
+        path: "/client/InstructorProfile/:id",
+        name: "InstructorProfile",
+        components: {
+            default: InstructorProfile,
+            sidebar: ClientSidebar,
+        },
+        meta: {
+            public: false
+        },
     },
     {
         path: "/client/RentalProfile/:type-:id",

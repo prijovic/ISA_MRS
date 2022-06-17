@@ -1,47 +1,59 @@
 <template>
-      <div v-for="(reservation, i) in reservations" :key="i" class="card reservation mb-3">
+  <div v-for="(reservation, i) in reservations" :key="i" class="card reservation mb-3">
+    <div class="row">
+      <div class="col-md-4" >
+        <router-link :to="getPath(reservation)" class="link" @click="setRentalIdAndType(reservation)">
+          <img class="rentalPhoto" :src="images[i]" alt=""/>
+        </router-link>
+      </div>
+      <div class="col-md-4">
         <div class="row">
-          <div class="col-md-4" >
-            <router-link :to="getPath(reservation)" class="link" @click="setRentalIdAndType(reservation)">
-              <img class="rentalPhoto" :src="images[i]" alt=""/>
-            </router-link>
-          </div>
-          <div class="col-md-4">
-            <div class="row">
-              <div class="rentalObjectName align-items-center text-start" style="display: flex;">
-                <div>
-                  <h1 class="display-6 me-1 card-title cut-text">{{ reservation.rentalObject.name }}</h1>
-                </div>
-                <hr>
-              </div>
+          <div class="rentalObjectName align-items-center text-start" style="display: flex;">
+            <div>
+              <h1 class="display-6 me-1 card-title cut-text">{{ reservation.rentalObject.name }}</h1>
             </div>
-            <div class="row">
-              <p class="h4" ><strong style="color:#008970;">Date:</strong> {{  getDateSpan(reservation) }}</p>
-            </div>
-            <div class="row">
-              <p class="h4"><strong style="color:#008970;">Total:</strong> ${{  calculateTotal(reservation) }}</p>
-            </div>
-          </div>
-          <div class="col-md-4 p-5 d-flex flex-grow-1 justify-content-center align-items-center" style="height: 20vh;">
-            <div style="width: 100%;">
-              <div class="row">
-                <button class="w-100 btn mb-2" style="font-weight: 500; color: white;" data-bs-toggle="modal" data-bs-target="#bill">
-                  Reservation Preview
-                </button>
-                <ReservationPreview :services="reservations[i].additionalServices" :days="getNumberOfDays(reservations[i])"
-                :price="reservations[i].price" :total="calculateTotal(reservations[i])"/>
-              </div>
-              <div class="row">
-                <button class="w-100 btn" style="background-color:#e23c52; font-weight: 500; color: white;">
-                  Cancel Reservation
-                </button>
-              </div>
-            </div>
-
-
+            <hr>
           </div>
         </div>
+        <div class="row">
+          <p class="h4" ><strong style="color:#008970;">Date:</strong> {{  getDateSpan(reservation) }}</p>
+        </div>
+        <div class="row">
+          <p class="h4"><strong style="color:#008970;">Total:</strong> ${{  calculateTotal(reservation) }}</p>
+        </div>
       </div>
+      <div class="col-md-4 p-5 d-flex flex-grow-1 justify-content-center align-items-center" style="height: 20vh;">
+        <div style="width: 100%;">
+          <div class="row">
+            <button class="w-100 btn mb-2" style="font-weight: 500; color: white;" data-bs-toggle="modal"
+                    :data-bs-target="'#bill-'+reservation.id">
+              Reservation Preview
+            </button>
+            <ReservationPreview :services="reservation.additionalServices"
+                                :days="getNumberOfDays(reservation)"
+                                :price="reservation.price"
+                                :total="calculateTotal(reservation)"
+                                :id="reservation.id"/>
+          </div>
+          <div class="row">
+            <button class="w-100 btn" style="background-color:#e23c52; font-weight: 500; color: white;"
+                    data-bs-toggle="modal" :data-bs-target="'#cancel-'+reservation.id">
+              Cancel Reservation
+            </button>
+            <ReservationCancellation v-if="reservation.rentalObject.cancellationFee"
+                                     :id="reservation.id"
+                                     :cancellationFee="reservation.rentalObject.cancellationFee"
+                                     :reservationStartDate="reservation.reservationTime.initDate"
+                                     :reservationId="reservation.id"
+                                     :total="calculateTotal(reservation)"
+                                     @customChange="removeReservation"/>
+          </div>
+        </div>
+
+
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -50,12 +62,14 @@
 import axios from "axios/index";
 import ReservationPreview
   from "@/components/Client/ClientPage/components/ClientProfile/ClientReservations/ReservationPreview";
+import ReservationCancellation
+  from "@/components/Client/ClientPage/components/ClientProfile/ClientReservations/ReservationCancellation";
 //import {useStore} from "vuex";
 
 export default {
   name: "ClientReservations",
   props: ["reservations"],
-  components: {ReservationPreview},
+  components: {ReservationPreview, ReservationCancellation},
   data() {
     return {
       images: [],
@@ -64,6 +78,9 @@ export default {
   computed: {
   },
   methods: {
+    removeReservation(/*event*/) {
+
+    },
     calculateTotal(reservation) {
       let days = this.getNumberOfDays(reservation);
       let services = this.calculateAdditionalServices(reservation);

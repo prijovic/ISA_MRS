@@ -33,4 +33,5 @@ public class BoatProfileDto implements Serializable {
     private Boolean isUserSubscribed = false;
     private PageDto<ReviewDto> reviews;
     private String grade = null;
+    private String ownerGrade = null;
 }

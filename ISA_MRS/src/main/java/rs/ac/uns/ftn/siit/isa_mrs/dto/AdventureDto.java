@@ -6,6 +6,7 @@ import rs.ac.uns.ftn.siit.isa_mrs.model.RentalObjectOwner;
 import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.RentalObjectType;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Collection;
 
 @Data
@@ -25,5 +26,6 @@ public class AdventureDto implements Serializable {
     private Collection<ConductRuleDto> conductRules;
     private Collection<AdventureEquipmentDto> adventureEquipment;
     private Collection<AdditionalServiceDto> additionalServices;
-    private TimePeriodDto availabilityPeriod;
+    private LocalDateTime initDate;
+    private LocalDateTime termDate;
 }
