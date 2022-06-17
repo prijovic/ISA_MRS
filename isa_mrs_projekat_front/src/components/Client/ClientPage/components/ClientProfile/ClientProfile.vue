@@ -128,7 +128,7 @@ export default {
       const today = new Date();
       today.setHours(23, 59, 59, 998);
       for(let i=0; i<this.clientInfo.reservations.length; i++) {
-        let date = new Date(this.clientInfo.reservations[i].reservationTime.initDate);
+        let date = new Date(this.clientInfo.reservations[i].initDate);
         date.setDate(date.getDate() + 1);
         if(date > today) upcoming.push(this.clientInfo.reservations[i]);
       }

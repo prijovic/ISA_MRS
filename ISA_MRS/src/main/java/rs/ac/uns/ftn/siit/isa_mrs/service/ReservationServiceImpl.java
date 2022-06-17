@@ -17,8 +17,8 @@ import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.UserType;
 import rs.ac.uns.ftn.siit.isa_mrs.repository.*;
 import rs.ac.uns.ftn.siit.isa_mrs.security.JwtDecoder;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.chrono.ChronoLocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -36,15 +36,24 @@ public class ReservationServiceImpl implements ReservationService {
     private final ReservationRepo reservationRepo;
     private final ReviewRepo reviewRepo;
     private final ReportRepo reportRepo;
+    private final IncomeRepo incomeRepo;
     private final ModelMapper modelMapper;
 
+    // INSERT INTO income (id, fee, time_stamp, value, reservation_id) VALUES (1, 5, '2022-07-01 12:23:34', 731.5, 1);
     @Override
-    public ResponseEntity<Void> cancelReservation(Long id) {
+    public ResponseEntity<Void> cancelReservation(Long id, double feeAmount) {
         try {
             Optional<Reservation> reservation = reservationRepo.findById(id);
             if(reservation.isPresent()) {
                 Reservation r = reservation.get();
                 r.setCancelled(true);
+                Optional<Income> income = incomeRepo.findByReservationId(id);
+                if(income.isEmpty()) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+                Income i = income.get();
+                i.setTimeStamp(LocalDateTime.now());
+                if(feeAmount == 0) i.setValue(feeAmount);
+                else i.setValue(feeAmount - (feeAmount/100 * i.getFee()));
+                incomeRepo.save(i);
                 reservationRepo.save(r);
                 return new ResponseEntity<>(HttpStatus.OK);
             }
@@ -91,7 +100,8 @@ public class ReservationServiceImpl implements ReservationService {
             Collection<RentalObject> rentalObjects = rentalObjectRepo.findAllByRentalObjectOwner(owner);
             rentalObjects.forEach(rentalObject -> {
                 rentalObject.getReservations().forEach(reservation ->  {
-                    if (reservation.getReservationTime().getInitDate().isAfter(LocalDate.now()) || reservation.getReservationTime().getTermDate().isAfter(LocalDate.now())){
+                    if (reservation.getInitDate().isAfter(ChronoLocalDateTime.from(LocalDateTime.now())) ||
+                            reservation.getTermDate().isAfter(ChronoLocalDateTime.from(LocalDateTime.now()))){
                         reservations.add(reservation);
                     }
                 });
@@ -163,7 +173,7 @@ public class ReservationServiceImpl implements ReservationService {
             report.setTimeStamp(LocalDateTime.now());
             report.setReservation(reservation);
             report.setAuthor(client);
-            // pending
+            report.setStatus(RequestStatus.Pending);
             reportRepo.save(report);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (Exception e) {

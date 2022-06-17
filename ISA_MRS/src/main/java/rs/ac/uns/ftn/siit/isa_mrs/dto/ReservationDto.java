@@ -17,5 +17,6 @@ public class ReservationDto implements Serializable {
     private Boolean equipmentRequired;
     private LocalDateTime timeStamp;
     private RentalObjectDto rentalObject;
-    private TimePeriodDto reservationTime;
+    private LocalDateTime initDate;
+    private LocalDateTime termDate;
 }

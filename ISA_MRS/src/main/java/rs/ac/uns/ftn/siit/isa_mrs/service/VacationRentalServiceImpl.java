@@ -35,7 +35,6 @@ public class VacationRentalServiceImpl implements VacationRentalService{
     private final ModelMapper modelMapper;
     private final RentalObjectOwnerRepo ownerRepo;
     private final AddressRepo addressRepo;
-    private final CancellationFeeRepo cancellationFeeRepo;
     private final AdditionalServiceRepo additionalServiceRepo;
     private final ConductRuleRepo conductRuleRepo;
     private final RoomRepo roomRepo;

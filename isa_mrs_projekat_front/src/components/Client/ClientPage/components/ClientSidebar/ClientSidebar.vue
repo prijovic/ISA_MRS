@@ -2,9 +2,9 @@
   <div class="sidebar rounded-right" :style="{width:sidebarWidth}">
     <MenuLink to="/client/profile" icon="id-card">Profile</MenuLink>
     <hr>
-    <MenuLink to="/client/Adventure/all" icon="mountain-sun">Adventures</MenuLink>
-    <MenuLink to="/client/Boat/all" icon="ship">Boats</MenuLink>
     <MenuLink to="/client/VacationRental/all" icon="house">Rental Houses</MenuLink>
+    <MenuLink to="/client/Boat/all" icon="ship">Boats</MenuLink>
+    <MenuLink to="/client/Adventure/all" icon="mountain-sun">Adventures</MenuLink>
     <MenuLink to="/client/Instructors" icon="fish-fins">Fishing Instructors</MenuLink>
     <hr>
     <MenuLink to="/client/ReservationsHistory" icon="address-book">Reservation History</MenuLink>

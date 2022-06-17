@@ -25,6 +25,7 @@ import rs.ac.uns.ftn.siit.isa_mrs.util.ObjectConverter;
 import javax.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
 import java.time.chrono.ChronoLocalDate;
+import java.time.chrono.ChronoLocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -303,7 +304,7 @@ public class UserServiceImpl implements UserService {
         Collection<RentalObject> rentalObjects = rentalObjectRepo.findAllByRentalObjectOwner(owner);
         for (RentalObject rentalObject : rentalObjects) {
             for (Reservation reservation : rentalObject.getReservations()) {
-                if (reservation.getReservationTime().getInitDate().isAfter(ChronoLocalDate.from(LocalDateTime.now()))) {
+                if (reservation.getInitDate().isAfter(ChronoLocalDateTime.from(LocalDateTime.now()))) {
                     rentalObjectOwnerIsDeletable = false;
                     break;
                 }
@@ -318,7 +319,7 @@ public class UserServiceImpl implements UserService {
     private boolean isClientDeletable(Client client) {
         boolean clientIsDeletable = true;
         for (Reservation reservation : client.getReservations()) {
-            if (reservation.getReservationTime().getInitDate().isAfter(ChronoLocalDate.from(LocalDateTime.now()))) {
+            if (reservation.getInitDate().isAfter(ChronoLocalDateTime.from(LocalDateTime.now()))) {
                 clientIsDeletable = false;
                 break;
             }

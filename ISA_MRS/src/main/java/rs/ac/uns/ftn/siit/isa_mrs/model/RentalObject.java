@@ -7,6 +7,8 @@ import lombok.Setter;
 import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.RentalObjectType;
 
 import javax.persistence.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 
@@ -24,6 +26,9 @@ public class RentalObject {
     private String name;
     private RentalObjectType rentalObjectType;
     private String description;
+    private double cancellationFee;
+    private LocalDateTime initDate;
+    private LocalDateTime termDate;
     @OneToMany(mappedBy = "rentalObject", cascade = CascadeType.ALL)
     private Collection<Photo> photos = new LinkedHashSet<>();
     private Integer capacity;
@@ -35,10 +40,6 @@ public class RentalObject {
     private Collection<ConductRule> conductRules = new LinkedHashSet<>();
     @OneToMany(mappedBy = "rentalObject", cascade = CascadeType.ALL)
     private Collection<SpecialOffer> specialOffers = new LinkedHashSet<>();
-    @OneToOne(cascade = CascadeType.ALL)
-    private CancellationFee cancellationFee;
-    @OneToOne
-    private TimePeriod availabilityPeriod;
     @OneToMany(mappedBy = "rentalObject", cascade = CascadeType.ALL)
     private Collection<Reservation> reservations = new LinkedHashSet<>();
     @ManyToOne
