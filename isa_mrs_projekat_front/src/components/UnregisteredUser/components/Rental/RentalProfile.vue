@@ -1,5 +1,5 @@
 <template>
-  <div v-if="rentalObject" class="container-fluid mt-2 pe-0">
+  <div v-if="rentalObject" class="container-fluid mt-2 pe-0"> <!--style="overflow-x: hidden;"-->
     <div class="row align-items-start">
       <div class="col-md-7 p-3">
         <ImageSlider :photos="this.rentalObject.photos"/>
@@ -180,7 +180,7 @@
         </div>
       </div>
 
-      <div class="col-md-5">
+      <div class="col-md-5" >
         <div v-if="isBoat" class="row main mb-4">
           <div class="lineTitle">
             <p class="h3"><strong>Boat info</strong></p>
@@ -231,8 +231,10 @@
           </p>
         </div>
 
-        <div class="row mb-5">
-          <RentalAddress :address="this.rentalObject.address"/>
+        <div class="row mb-5" >
+          <div class="col-12 p-0 px-2 m-0">
+            <RentalAddress :address="this.rentalObject.address"/>
+          </div>
         </div>
 
       </div>

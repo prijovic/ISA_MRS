@@ -28,8 +28,8 @@ public class ReservationController {
     }
 
     @PutMapping(CANCEL_RESERVATION)
-    public ResponseEntity<Void> cancelReservation(@RequestParam Long id) {
-        return reservationService.cancelReservation(id);
+    public ResponseEntity<Void> cancelReservation(@RequestParam Long id, @RequestParam double feeAmount) {
+        return reservationService.cancelReservation(id, feeAmount);
     }
 
     @PostMapping(ADD_REVIEW)

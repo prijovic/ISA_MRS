@@ -5,7 +5,7 @@ INSERT INTO address (id, country, city, street, number, latitude, longitude) VAL
 INSERT INTO users (id, email, is_active, name, password, phone, surname, address_id, user_type, first_login) VALUES (1, 'prijovic.uros13@gmail.com', true, 'Uros', 'Uros12345', '+381653977974', 'Prijovic', 1, 5, false);
 INSERT INTO admin (id) VALUES (1);
 INSERT INTO address (id, country, city, street, number, latitude, longitude) VALUES (2, 'Srbija', 'Subotica', 'Ulicа Prаškа', 12, 46.10781, 19.6516);
-INSERT INTO users (id, email, is_active, name, password, phone, surname, address_id, user_type, first_login, photo) VALUES (2, 'prijovicu318@gmail.com', true, 'Uros', 'Uros12345', '+381485928220', 'Prijovic', 2, 0, false, 'pecaros');
+INSERT INTO users (id, email, is_active, name, password, phone, surname, address_id, user_type, first_login, photo) VALUES (2, 'a@a', true, 'Uros', 'a', '+381485928220', 'Prijovic', 2, 0, false, 'pecaros');
 INSERT INTO sale_participant (points, id) VALUES (0, 2);
 INSERT INTO rental_object_owner (id) VALUES (2);
 INSERT INTO address (id, country, city, street, number, latitude, longitude) VALUES (3, 'Magyarország', 'Budapest', 'Kossuth Lajos tér', 1, 47.507, 19.04675);
@@ -328,8 +328,7 @@ INSERT INTO boat (engine_number, engine_power, length, max_speed, type, id) VALU
 INSERT INTO photo (id, photo, rental_object_id) VALUES (55, 'boat7pic1', 16);
 INSERT INTO photo (id, photo, rental_object_id) VALUES (56, 'boat7pic2', 16);
 INSERT INTO address (id, country, city, street, number, latitude, longitude) VALUES (23, 'Türkiye', 'Bodrum', 'Cumhuriyet Caddesi', 16, 37.03336, 27.43212);
-INSERT INTO rental_object (is_active, id, capacity, description, name, price, rental_object_type, address_id, cancellation_fee, rental_object_owner_id, init_date, term_date)
-VALUES (true, 17, 20, 'Entertainment areas include two large exterior decks, 3 dining areas and a spacious main lounge. Sunbathing and spending time in the jacuzzi are among the activities that our guests may prefer.', 'Deluxe Yacht', 700, 0, 23, 35, 5, '2022-01-01 00:00:00', '2023-10-30 00:00:00');
+INSERT INTO rental_object (is_active, id, capacity, description, name, price, rental_object_type, address_id, cancellation_fee, rental_object_owner_id, init_date, term_date) VALUES (true, 17, 20, 'Entertainment areas include two large exterior decks, 3 dining areas and a spacious main lounge. Sunbathing and spending time in the jacuzzi are among the activities that our guests may prefer.', 'Deluxe Yacht', 700, 0, 23, 35, 5, '2022-01-01 00:00:00', '2023-10-30 00:00:00');
 INSERT INTO boat (engine_number, engine_power, length, max_speed, type, id) VALUES ('210VTU', 700, 60, 70, 'Mega Yacht', 17);
 INSERT INTO photo (id, photo, rental_object_id) VALUES (57, 'boat8pic1', 17);
 INSERT INTO photo (id, photo, rental_object_id) VALUES (58, 'boat8pic2', 17);
@@ -373,8 +372,7 @@ INSERT INTO conduct_rule (id, rule, type, rental_object_id) VALUES (61, 'Alcohol
 INSERT INTO conduct_rule (id, rule, type, rental_object_id) VALUES (62, 'Damaging equipment', 1, 19);
 INSERT INTO conduct_rule (id, rule, type, rental_object_id) VALUES (63, 'Taking photos', 0, 19);
 INSERT INTO conduct_rule (id, rule, type, rental_object_id) VALUES (64, 'Bring family', 0, 19);
-INSERT INTO address (id, country, city, street, number, latitude, longitude)
-VALUES (26, 'Türkiye', 'İstanbul', 'Narlıkapı Caddesi', 104, 40.9953, 28.93047);
+INSERT INTO address (id, country, city, street, number, latitude, longitude) VALUES (26, 'Türkiye', 'İstanbul', 'Narlıkapı Caddesi', 104, 40.9953, 28.93047);
 INSERT INTO rental_object (is_active, id, capacity, description, name, price, rental_object_type, address_id, cancellation_fee, rental_object_owner_id, init_date, term_date) VALUES (true, 20, 12, 'This will not be a dry experience! Come join us in no boat fishing on a beautiful serbian lake and have the time of your life.', 'Fishy on me', 60, 1, 26, 15, 2, '2022-01-01 00:00:00', '2023-01-25 00:00:00');
 INSERT INTO adventure (id, duration) VALUES (20, 4);
 INSERT INTO photo (id, photo, rental_object_id) VALUES (63, 'adv4pic1', 20);
@@ -396,8 +394,8 @@ INSERT INTO conduct_rule (id, rule, type, rental_object_id) VALUES (67, 'Taking 
 INSERT INTO conduct_rule (id, rule, type, rental_object_id) VALUES (68, 'Bring snacks', 0, 20);
 INSERT INTO conduct_rule (id, rule, type, rental_object_id) VALUES (69, 'Leaving the group', 1, 20);
 INSERT INTO reservation (id, price, equipment_required, people, time_stamp, client_id, rental_object_id, cancelled, init_date, term_date) VALUES (1, 200, true, 10, '2022-07-01 12:23:34', 3, 1, false, '2022-07-07 12:00:00', '2022-07-08 12:00:00');
-INSERT INTO review (id, status, comment, grade, review_type, time_stamp, author_id, reservation_id) VALUES (1, 0, 'Incredible! I was quite satisfied, 10/10 recomended!', 5, 0, '2022-01-13 11:00:00', 3, 1);
-INSERT INTO review (id, status, comment, grade, review_type, time_stamp, author_id, reservation_id) VALUES (2, 0, 'The owner was super nice!', 5, 1, '2022-01-13 11:00:00', 3, 1);
+INSERT INTO review (id, status, comment, grade, review_type, time_stamp, author_id, reservation_id) VALUES (1, 1, 'Incredible! I was quite satisfied, 10/10 recomended!', 5, 0, '2022-01-13 11:00:00', 3, 1);
+INSERT INTO review (id, status, comment, grade, review_type, time_stamp, author_id, reservation_id) VALUES (2, 1, 'The owner was super nice!', 5, 1, '2022-01-13 11:00:00', 3, 1);
 INSERT INTO reservation_additional_services (additional_service_id, reservation_id) VALUES (7, 1);
 INSERT INTO reservation_additional_services (additional_service_id, reservation_id) VALUES (8, 1);
 INSERT INTO reservation_additional_services (additional_service_id, reservation_id) VALUES (9, 1);
@@ -410,12 +408,12 @@ INSERT INTO reservation (id, price, equipment_required, people, time_stamp, clie
 INSERT INTO income (id, fee, time_stamp, value, reservation_id) VALUES (3, 10, '2022-01-02 22:02:50', 72, 3);
 INSERT INTO review (id, status, comment, grade, review_type, time_stamp, author_id, reservation_id) VALUES (5, 1, 'It was okay I guess', 3, 0, '2022-01-23 23:00:00', 6, 3);
 INSERT INTO review (id, status, comment, grade, review_type, time_stamp, author_id, reservation_id) VALUES (6, 1, 'Instructor was kind', 5, 1, '2022-01-10 15:23:00', 6, 3);
-INSERT INTO reservation (id, price, equipment_required, people, time_stamp, client_id, rental_object_id, cancelled, init_date, term_date) VALUES (4, 250, true, 10, '2022-06-01 09:01:59', 3, 9, false, '2022-06-08 12:00:00', '2022-06-08 12:00:00');
+INSERT INTO reservation (id, price, equipment_required, people, time_stamp, client_id, rental_object_id, cancelled, init_date, term_date) VALUES (4, 250, true, 10, '2022-06-17 09:01:59', 3, 9, false, '2022-07-08 12:00:00', '2022-07-08 12:00:00');
 INSERT INTO income (id, fee, time_stamp, value, reservation_id) VALUES (4, 5, '2022-06-01 09:01:59', 237.5, 4);
-INSERT INTO review (id, status, comment, grade, review_type, time_stamp, author_id, reservation_id) VALUES (7, 0, 'It was somehow not as pretty in person as in photos, but it was still nice to stay in.', 4, 0, '2022-01-13 11:00:00', 3, 4);
-INSERT INTO review (id, status, comment, grade, review_type, time_stamp, author_id, reservation_id) VALUES (8, 0, 'They made me feel a bit uncomfortable', 3, 1, '2022-01-13 11:00:00', 3, 4);
-INSERT INTO report (id, comment, author_id, status, reservation_id) VALUES (1, 'Owner has entered the apartment while we were out and stole our jewellery.', 3, 0, 4);
+INSERT INTO review (id, status, comment, grade, review_type, time_stamp, author_id, reservation_id) VALUES (7, 1, 'It was somehow not as pretty in person as in photos, but it was still nice to stay in.', 4, 0, '2022-01-13 11:00:00', 3, 4);
+INSERT INTO review (id, status, comment, grade, review_type, time_stamp, author_id, reservation_id) VALUES (8, 1, 'They made me feel a bit uncomfortable', 3, 1, '2022-01-13 11:00:00', 3, 4);
 INSERT INTO reservation (id, price, equipment_required, people, time_stamp, client_id, rental_object_id, cancelled, init_date, term_date) VALUES (5, 250, true, 11, '2022-01-25 16:07:20', 3, 5, false, '2022-02-01 12:00:00', '2022-02-02 12:00:00');
+INSERT INTO report (id, comment, author_id, status, reservation_id) VALUES (1, 'Owner has entered the apartment while we were out and stole our jewellery.', 3, 1, 5);
 INSERT INTO income (id, fee, time_stamp, value, reservation_id) VALUES (5, 5, '2022-01-25 16:07:20', 475, 5);
 INSERT INTO review (id, status, comment, grade, review_type, time_stamp, author_id, reservation_id) VALUES (9, 1, 'Pretty good!', 4, 0, '2022-01-23 23:00:00', 3, 5);
 INSERT INTO review (id, status, comment, grade, review_type, time_stamp, author_id, reservation_id) VALUES (10, 1, 'They were cool', 4, 1, '2022-01-23 23:00:00', 3, 5);
@@ -433,8 +431,8 @@ INSERT INTO review (id, status, comment, grade, review_type, time_stamp, author_
 INSERT INTO review (id, status, comment, grade, review_type, time_stamp, author_id, reservation_id) VALUES (16, 1, 'They were okaaaayy but we only interacted for a bit', 3, 1, '2022-01-23 23:00:00', 3, 8);
 INSERT INTO reservation (id, price, equipment_required, people, time_stamp, client_id, rental_object_id, cancelled, init_date, term_date) VALUES (9, 230, true, 8, '2021-08-30 20:31:35', 3, 6, false, '2021-09-09 12:00:00', '2021-09-09 12:00:00');
 INSERT INTO income (id, fee, time_stamp, value, reservation_id) VALUES (9, 5, '2021-08-30 20:31:35', 218.5, 9);
-INSERT INTO review (id, status, comment, grade, review_type, time_stamp, author_id, reservation_id) VALUES (17, 0, 'Was not really a fan of simplicity and vintage furniture', 3, 0, '2022-01-23 23:00:00', 3, 9);
-INSERT INTO review (id, status, comment, grade, review_type, time_stamp, author_id, reservation_id) VALUES (18, 0, 'A bit impatient but kind overall', 4, 1, '2022-01-23 23:00:00', 3, 9);
+INSERT INTO review (id, status, comment, grade, review_type, time_stamp, author_id, reservation_id) VALUES (17, 1, 'Was not really a fan of simplicity and vintage furniture', 3, 0, '2022-01-23 23:00:00', 3, 9);
+INSERT INTO review (id, status, comment, grade, review_type, time_stamp, author_id, reservation_id) VALUES (18, 1, 'A bit impatient but kind overall', 4, 1, '2022-01-23 23:00:00', 3, 9);
 INSERT INTO reservation (id, price, equipment_required, people, time_stamp, client_id, rental_object_id, cancelled, init_date, term_date) VALUES (10, 800, true, 8, '2021-07-25 12:03:11', 3, 16, false, '2021-08-03 12:00:00', '2021-08-05 12:00:00');
 INSERT INTO income (id, fee, time_stamp, value, reservation_id) VALUES (10, 5, '2021-07-25 12:03:11', 2280, 10);
 INSERT INTO review (id, status, comment, grade, review_type, time_stamp, author_id, reservation_id) VALUES (19, 1, 'It was sooo dirty!!! Unacceptable', 1, 0, '2022-01-23 23:00:00', 3, 10);
@@ -461,8 +459,8 @@ INSERT INTO review (id, status, comment, grade, review_type, time_stamp, author_
 INSERT INTO review (id, status, comment, grade, review_type, time_stamp, author_id, reservation_id) VALUES (30, 1, 'Instructor was very skilled', 5, 1, '2022-01-23 19:00:00', 6, 15);
 INSERT INTO reservation (id, price, equipment_required, people, time_stamp, client_id, rental_object_id, cancelled, init_date, term_date) VALUES (16, 60, true, 1, '2021-11-01 05:41:02', 3, 20, false, '2021-11-09 12:00:00', '2021-11-09 12:00:00');
 INSERT INTO income (id, fee, time_stamp, value, reservation_id) VALUES (16, 10, '2021-11-01 05:41:02', 54, 16);
-INSERT INTO review (id, status, comment, grade, review_type, time_stamp, author_id, reservation_id) VALUES (31, 0, 'If you decide to go on this adventure, you are gonna see breathtaking views', 5, 0, '2022-01-23 23:00:00', 3, 16);
-INSERT INTO review (id, status, comment, grade, review_type, time_stamp, author_id, reservation_id) VALUES (32, 0, 'Experienced expert', 5, 1, '2022-01-09 8:06:00', 3, 16);
+INSERT INTO review (id, status, comment, grade, review_type, time_stamp, author_id, reservation_id) VALUES (31, 1, 'If you decide to go on this adventure, you are gonna see breathtaking views', 5, 0, '2022-01-23 23:00:00', 3, 16);
+INSERT INTO review (id, status, comment, grade, review_type, time_stamp, author_id, reservation_id) VALUES (32, 1, 'Experienced expert', 5, 1, '2022-01-09 8:06:00', 3, 16);
 INSERT INTO reservation (id, price, equipment_required, people, time_stamp, client_id, rental_object_id, cancelled, init_date, term_date) VALUES (17, 85, true, 1, '2022-07-01 01:22:14', 3, 18, false, '2022-07-06 08:00:00', '2022-07-06 14:30:00');
 INSERT INTO income (id, fee, time_stamp, value, reservation_id) VALUES (17, 10, '2022-07-01 01:22:14', 76.5, 17);
 INSERT INTO reservation (id, price, equipment_required, people, time_stamp, client_id, rental_object_id, cancelled, init_date, term_date) VALUES (18, 75, true, 1, '2022-05-30 03:15:44', 3, 19, false, '2022-06-06 15:00:00', '2022-06-06 16:30:00');
