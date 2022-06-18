@@ -7,16 +7,18 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.AdminDtos.ReviewDto;
 import rs.ac.uns.ftn.siit.isa_mrs.model.Request;
+import rs.ac.uns.ftn.siit.isa_mrs.model.Review;
 import rs.ac.uns.ftn.siit.isa_mrs.model.User;
 import rs.ac.uns.ftn.siit.isa_mrs.security.JwtGenerator;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.io.IOException;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -29,7 +31,6 @@ public class EmailSenderServiceImpl implements EmailSenderService{
     private final JavaMailSender mailSender;
     private final Configuration configuration;
     private final JwtGenerator jwtGenerator;
-    private final PasswordEncoder passwordEncoder;
 
     @Override
     public void sendRequestHandledEmail(Request request, Map<String, Object> model) throws MessagingException, IOException, TemplateException {
@@ -72,6 +73,23 @@ public class EmailSenderServiceImpl implements EmailSenderService{
         Template template = configuration.getTemplate("added-user-email.ftl");
         String html = FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
         messageHelper.setTo(user.getEmail());
+        messageHelper.setText(html, true);
+        messageHelper.setSubject(subject);
+        mailSender.send(message);
+    }
+
+    @Override
+    public void sendReviewStatusNotificationEmail(Review review, String commentedObject) throws MessagingException, IOException, TemplateException {
+        final String email = review.getReservation().getClient().getEmail();
+        final String subject = "Accepted Review";
+        Map<String, Object> model = new HashMap<>();
+        model.put("date", review.getTimeStamp().format(DateTimeFormatter.ofPattern("dd.MM.yyyy. hh:mm")));
+        model.put("commented", commentedObject);
+        MimeMessage message = mailSender.createMimeMessage();
+        MimeMessageHelper messageHelper = new MimeMessageHelper(message, MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED);
+        Template template = configuration.getTemplate("review-accepted-email.ftl");
+        String html = FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
+        messageHelper.setTo(email);
         messageHelper.setText(html, true);
         messageHelper.setSubject(subject);
         mailSender.send(message);

@@ -57,14 +57,48 @@
                     {{review.subjectName}}
                   </td>
                   <td>
-                    <button class="btn" @click="manageReview(review.id, true)">
+                    <button class="btn" data-bs-toggle="modal" data-bs-target="#confirmationDialog">
                       <font-awesome-icon icon="check"></font-awesome-icon>
                     </button>
+                    <div class="modal fade" id="confirmationDialog" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Users' Status Change</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+                          <div class="modal-body">
+                            Do you want to accept {{review.author.name + " " + review.author.surname}}'s review for {{review.subjectName}}?
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-red" style="margin-right: 2vh;" data-bs-dismiss="modal">No</button>
+                            <button type="button" class="btn" @click="manageReview(review.id, true)" data-bs-dismiss="modal">Yes</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </td>
                   <td>
-                    <button class="btn btn-red" @click="manageReview(review.id, false)">
+                    <button class="btn btn-red" data-bs-toggle="modal" data-bs-target="#confirmationDialogReject">
                       <font-awesome-icon icon="ban"></font-awesome-icon>
                     </button>
+                    <div class="modal fade" id="confirmationDialogReject" tabindex="-1" aria-labelledby="RejectDialog" aria-hidden="true">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title" id="RejectDialog">Users' Status Change</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+                          <div class="modal-body">
+                            Do you want to reject {{review.author.name + " " + review.author.surname}}'s review for {{review.subjectName}}?
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-red" style="margin-right: 2vh;" data-bs-dismiss="modal">No</button>
+                            <button type="button" class="btn" @click="manageReview(review.id, false)" data-bs-dismiss="modal">Yes</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </td>
                 </tr>
               </tbody>

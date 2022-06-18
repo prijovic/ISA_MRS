@@ -32,6 +32,7 @@ public class ReviewServiceImpl implements ReviewService{
     private final ReviewRepo reviewRepo;
     private final ModelMapper modelMapper;
     private final ReservationRepo reservationRepo;
+    private final EmailSenderService emailSenderService;
 
     @Override
     public ResponseEntity<PageDto<ReviewDto>> getReviews(int page, int pageSize) {
@@ -65,6 +66,18 @@ public class ReviewServiceImpl implements ReviewService{
             Review review = reviewRepo.getById(id);
             if (accepted) {
                 review.setStatus(RequestStatus.Accepted);
+                String commentedObject;
+                Reservation reservation = reservationRepo.findByReviewsIsContaining(review);
+                if (review.getReviewType().equals(ReviewType.RentalReview)) {
+                    commentedObject = reservation.getRentalObject().getName();
+                } else if (review.getReviewType().equals(ReviewType.OwnerReview)) {
+                    RentalObjectOwner owner = reservation.getRentalObject().getRentalObjectOwner();
+                    commentedObject = owner.getName() + " " + owner.getSurname();
+                } else {
+                    Client client = reservation.getClient();
+                    commentedObject = client.getName() + " " + client.getSurname();
+                }
+                emailSenderService.sendReviewStatusNotificationEmail(review, commentedObject);
             } else {
                 review.setStatus(RequestStatus.Rejected);
             }
