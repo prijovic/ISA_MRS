@@ -103,11 +103,11 @@ export default {
       const today = new Date();
       today.setHours(23, 59, 59, 998);
       for(let i=0; i<this.clientInfo.reservations.length; i++) {
-        let date = new Date(this.clientInfo.reservations[i].reservationTime.initDate);
+        let date = new Date(this.clientInfo.reservations[i].initDate);
         date.setDate(date.getDate() + 1);
         if(date < today) past.push(this.clientInfo.reservations[i]);
       }
-      return past;
+      return past.sort((a, b) => new Date(b.initDate) > new Date(a.initDate) ? 1: -1);
     }
   },
   methods: {
@@ -118,8 +118,10 @@ export default {
       return days*price+services;
     },
     getNumberOfDays(reservation) {
-      let initDate = reservation.reservationTime.initDate, termDate = reservation.reservationTime.termDate;
+      let initDate = reservation.initDate, termDate = reservation.termDate;
       let date1 = new Date(initDate), date2 = new Date(termDate);
+      date1.setHours(0, 0, 0);
+      date2.setHours(0, 0, 0);
       let timeDiff = date2.getTime() - date1.getTime();
       let daysDiff = timeDiff / (1000 * 3600 * 24);
       return daysDiff + 1;
@@ -130,10 +132,12 @@ export default {
       return totalServices;
     },
     getDateSpan(reservation) {
-      let initDate = reservation.reservationTime.initDate, termDate = reservation.reservationTime.termDate;
+      let initDate = reservation.initDate, termDate = reservation.termDate;
       let date1 = new Date(initDate), date2 = new Date(termDate);
+      // date1.setHours(0, 0, 0);
+      // date2.setHours(0, 0, 0);
       let dateDisplay = date1.getDate() + '.' + (date1.getMonth() + 1) + '.' +  date1.getFullYear() + '.';
-      if(initDate !== termDate)
+      if(date1.getFullYear() !== date2.getFullYear() || date1.getMonth() !== date2.getMonth() || date1.getDate() !== date2.getDate())
         dateDisplay += ' - ' + date2.getDate() + '.' + (date2.getMonth() + 1) + '.' +  date2.getFullYear() + '.';
       return dateDisplay;
     },

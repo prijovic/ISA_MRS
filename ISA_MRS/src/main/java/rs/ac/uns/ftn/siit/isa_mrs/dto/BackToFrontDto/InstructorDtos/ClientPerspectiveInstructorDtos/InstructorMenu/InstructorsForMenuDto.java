@@ -1,7 +1,7 @@
-package rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.InstructorDtos.InstructorMenu;
+package rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.InstructorDtos.ClientPerspectiveInstructorDtos.InstructorMenu;
 
 import lombok.Data;
-import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.InstructorDtos.InstructorAddressDto;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.AddressDto;
 
 import java.io.Serializable;
 
@@ -12,6 +12,6 @@ public class InstructorsForMenuDto implements Serializable {
     private String name;
     private String surname;
     private Boolean isActive;
-    private InstructorAddressDto address;
+    private AddressDto address;
     private String grade = null;
 }

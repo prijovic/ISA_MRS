@@ -7,10 +7,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.InstructorDtos.InstructorMenu.InstructorsForMenuDto;
-import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.InstructorDtos.InstructorProfile.InstructorProfileDto;
-import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.RentalProfileDtos.VacationRentalDtos.VacationRentalProfileDto;
-import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.RentalProfileDtos.VacationRentalDtos.VacationRentalsForMenuDto;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.InstructorDtos.ClientPerspectiveInstructorDtos.InstructorMenu.InstructorsForMenuDto;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.InstructorDtos.ClientPerspectiveInstructorDtos.InstructorProfile.ClientInstructorProfileDto;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.InstructorDtos.InstructorDtos.InstructorProfileDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.PageDto;
 import rs.ac.uns.ftn.siit.isa_mrs.service.InstructorService;
 
@@ -33,8 +32,14 @@ public class RentalObjectOwnerController {
         return instructorService.findInstructorsWithPaginationSortedByField(page, pageSize, field);
     }
 
-    @GetMapping(GET_INSTRUCTOR)
-    public ResponseEntity<InstructorProfileDto> getInstructor(@RequestParam Long id) {
+    @GetMapping(GET_INSTRUCTOR_FOR_CLIENT)
+    public ResponseEntity<ClientInstructorProfileDto> getInstructor(@RequestParam Long id) {
         return instructorService.getInstructor(id);
     }
+
+    @GetMapping(GET_INSTRUCTOR)
+    public ResponseEntity<InstructorProfileDto> getInstructor(HttpServletRequest request) {
+        return instructorService.getInstructor(request.getHeader(AUTHORIZATION));
+    }
+
 }

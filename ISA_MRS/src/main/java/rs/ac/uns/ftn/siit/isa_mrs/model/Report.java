@@ -18,6 +18,7 @@ public class Report {
     private Long id;
     private String comment;
     private RequestStatus status;
+    private Boolean showedUp;
     private LocalDateTime timeStamp;
     @ManyToOne
     private Reservation reservation;
