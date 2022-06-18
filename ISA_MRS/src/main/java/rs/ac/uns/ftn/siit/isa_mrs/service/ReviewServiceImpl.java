@@ -59,6 +59,23 @@ public class ReviewServiceImpl implements ReviewService{
         }
     }
 
+    @Override
+    public ResponseEntity<ReviewDto> changeReviewStatus(Long id, boolean accepted) {
+        try {
+            Review review = reviewRepo.getById(id);
+            if (accepted) {
+                review.setStatus(RequestStatus.Accepted);
+            } else {
+                review.setStatus(RequestStatus.Rejected);
+            }
+            reviewRepo.save(review);
+            return new ResponseEntity<>(modelMapper.map(review, ReviewDto.class), HttpStatus.OK);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     private PageDto<ReviewDto> reviewPageToDto(Page<Review> reviewPage) {
         PageDto<ReviewDto> result = new PageDto<>();
         Collection<ReviewDto> reviewDtos = new ArrayList<>();

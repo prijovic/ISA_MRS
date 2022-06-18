@@ -57,12 +57,12 @@
                     {{review.subjectName}}
                   </td>
                   <td>
-                    <button class="btn">
+                    <button class="btn" @click="manageReview(review.id, true)">
                       <font-awesome-icon icon="check"></font-awesome-icon>
                     </button>
                   </td>
                   <td>
-                    <button class="btn btn-red">
+                    <button class="btn btn-red" @click="manageReview(review.id, false)">
                       <font-awesome-icon icon="ban"></font-awesome-icon>
                     </button>
                   </td>
@@ -94,6 +94,7 @@ import { library } from "@fortawesome/fontawesome-svg-core";
 import {faFilter, faX, faCheck, faBan} from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
 import {useStore} from "vuex";
+import {toggleProcessing} from "@/components/state";
 
 library.add(faFilter, faX, faCheck, faBan);
 
@@ -135,6 +136,36 @@ export default {
     });
   },
   methods: {
+    manageReview(reviewId, accepted) {
+      toggleProcessing();
+      axios.put("/Reviews/manageReview", null,{
+        headers: {
+          Authorization: "Bearer " + this.$store.getters.access_token,
+        },
+        params: {
+         id: reviewId,
+         accepted: accepted
+        }
+      })
+      .then((response) => {
+        this.$notify( {
+          title: "Successfully managed",
+          text: "You have successfully" + (accepted?"accepted":"rejected") + " the review with id " + response.data.id + ".",
+          position: "bottom right",
+          type: "success"
+        });
+        this.refreshPage();
+        toggleProcessing();
+      })
+      .catch(() => {
+        this.$notify({
+          title: "Server error",
+          text: "Server is currently off. Please try again later...",
+          type: "error"
+        });
+        toggleProcessing();
+      })
+    },
     filterButtonClicked() {
       if (this.filterActive) {
         this.filterSubject = null;
