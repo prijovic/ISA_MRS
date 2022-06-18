@@ -57,8 +57,8 @@
         </div>
       </div>
       <div class="row">
-        <div class="container p-3 rounded shadow mt-5">
-          <Line :chart-data="chartData" :height="400" :width="400"></Line>
+        <div class="container d-flex justify-content-center p-3 rounded shadow mt-5">
+          <Line :chart-data="chartData" ></Line>
         </div>
       </div>
       <div class="row">
