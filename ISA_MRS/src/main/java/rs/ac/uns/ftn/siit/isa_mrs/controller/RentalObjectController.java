@@ -148,11 +148,6 @@ public class RentalObjectController {
         return boatService.addBoatPhotos(dto.getId(), dto.getPhotos());
     }
 
-//    @PostMapping(AVAILABILITY_PERIOD)
-//    public ResponseEntity<RentalObjectPeriodsDto> setPeriods(@RequestBody PeriodsSettingForm periodsSettingForm) {
-//        return rentalObjectService.setAvailabilityPeriods(periodsSettingForm.getId(), periodsSettingForm.getDates());
-//    }
-    
     @PostMapping(ADD_SUBSCRIBER)
     public ResponseEntity<Void> addSubscriber(@RequestBody SubscriptionDto sd, HttpServletRequest request) {
         return rentalObjectService.addSubscriber(sd.getRentalId(), request.getHeader(AUTHORIZATION));
@@ -180,9 +175,7 @@ public class RentalObjectController {
     }
 
     @PostMapping("/defineSpecialOffer")
-    public ResponseEntity<SpecialOfferDto> defineOffer(@RequestParam Long id, @RequestParam LocalDateTime initDate, @RequestParam LocalDateTime termDate,
-                                                       @RequestParam Integer capacity, @RequestParam Double discount, @RequestParam List<Service> includedServices){
-        log.info("Uslo u konroler");
-        return rentalObjectService.defineSpecialOffer(id, initDate, termDate, capacity, discount, includedServices);
+    public ResponseEntity<Void> defineOffer(@RequestBody rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.SpecialOfferDto specialOfferDto){
+        return rentalObjectService.defineSpecialOffer(specialOfferDto);
     }
 }

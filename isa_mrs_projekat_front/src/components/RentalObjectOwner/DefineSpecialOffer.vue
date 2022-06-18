@@ -12,50 +12,11 @@
 
                 <div class="row justify-content-center">
                   <div class="row justify-content-center">
-                    <label for="start">Duration of special offer</label>
+                    <label>Duration of special offer</label>
                   </div>
-                  <div class="container p-0 m-0">
-                    <form class="p-0 m-0" @submit.prevent>
-                      <date-picker v-model="range" mode="dateTime" :masks="masks" is-range is24hr @popoverDidHide="printaj">
-                        <template v-slot="{ inputValue, inputEvents, isDragging }">
-                          <div class="row p-0 m-0">
-                            <div class="form-inline d-flex justify-content-center p-0 m-0">
-                              <div class="row" style="max-width: 400px">
-                                <div class="col input-group">
-                                  <div class="input-group-prepend">
-                                  <span class="input-group-text" id="start">
-                                    From:
-                                  </span>
-                                  </div>
-                                  <input
-                                      class="form-control"
-                                      :class="isDragging ? 'text-gray-600' : 'text-gray-900'"
-                                      :value="inputValue.start"
-                                      v-on="inputEvents.start"/>
-                                </div>
-                                <div class="col-1 p-0 m-0" style="display: table">
-                                  <div style="display: table-cell; vertical-align: middle; horiz-align: center">
-                                    <font-awesome-icon icon="arrow-right" style="color:#008970; height: 25px"></font-awesome-icon>
-                                  </div>
-                                </div>
-                                <div class="col input-group">
-                                  <div class="input-group-prepend">
-                                  <span class="input-group-text" id="end">
-                                    To:
-                                  </span>
-                                  </div>
-                                  <input
-                                      class="form-control"
-                                      :class="isDragging ? 'text-gray-600' : 'text-gray-900'"
-                                      :value="inputValue.end"
-                                      v-on="inputEvents.end"/>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </template>
-                      </date-picker>
-                    </form>
+                  <div class="container p-0 m-0 text-center" style="max-width: 400px">
+                    <date-picker v-model="range" mode="dateTime" is-range is24hr :firstDayOfWeek=2>
+                    </date-picker>
                   </div>
                 </div>
 
@@ -63,7 +24,7 @@
                   <div class="row justify-content-center">
                     <label for="capacity">Capacity</label>
                   </div>
-                  <input type="number" v-model="capacity" step="any" min="0"  id="capacity" class="form-control" placeholder="Max people" @input="capacityIsEntered=true">
+                  <input type="number" v-model="specialOffer.capacity" step="any" min="0"  id="capacity" class="form-control" placeholder="Max people" @input="capacityIsEntered=true">
                   <p v-if='!capacityIsEntered'>'Capacity' is a mandatory field.</p>
                 </div>
 
@@ -71,7 +32,7 @@
                   <div class="row justify-content-center">
                     <label for="discount">Discount</label>
                   </div>
-                  <input type="number" v-model="discount" step="any" min="0"  id="discount" class="form-control" placeholder="Discount" @input="discountIsEntered=true">
+                  <input type="number" v-model="specialOffer.discount" step="any" min="0"  id="discount" class="form-control" placeholder="Discount" @input="discountIsEntered=true">
                   <p v-if='!discountIsEntered'>'Capacity' is a mandatory field.</p>
                 </div>
 
@@ -87,7 +48,7 @@
                   </div>
                   <div class="row tag-container">
                     <p v-if='serviceAlreadyExists'>Service already exists.</p>
-                    <div class="includedServices-tag rounded-pill mt-1 ms-1 p-1" v-for="(includedService, index) in includedServices" :key="index">
+                    <div class="includedServices-tag rounded-pill mt-1 ms-1 p-1" v-for="(includedService, index) in specialOffer.includedServices" :key="index">
                       {{includedService.name}}
                       <button class="tag-button text-center" @click="removeIncludedService(includedService)"><font-awesome-icon icon="x" style="width: 9px; height: 9px"></font-awesome-icon></button>
                     </div>
@@ -113,34 +74,31 @@ import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import {DatePicker} from "v-calendar"
 import axios from "axios";
 import store from "@/store";
+import {toggleProcessing} from "@/components/state";
 
 library.add(faCalendarDay, faArrowRight)
 
 export default {
-  props: ["rental"],
   name: "DefineSpecialOffer",
   components: {
     DatePicker,
     FontAwesomeIcon
   },
-  setup(props) {
-    if (props.rental) {
-      console.log(props.rental);
-    }
-  },
   data() {
     return {
+      specialOffer:{
+        rentalObjectId: null,
+        initDate: null,
+        termDate: null,
+        capacity: null,
+        discount: null,
+        includedServices: []
+      },
       range: {
         start: null,
         end: null
       },
-      capacity: null,
-      discount: null,
-      includedServices: [],
       includedService: {name:""},
-      masks: {
-        input: 'YYYY-MM-DD hh:mm',
-      },
       date: null,
       serviceAlreadyExists: false,
       capacityIsEntered: true,
@@ -151,114 +109,18 @@ export default {
     accessToken() {
       return store.state.access_token;
     },
-    isCapacityEntered(){
-      return Boolean(this.capacity);
+    isCapacityEntered() {
+      return Boolean(this.specialOffer.capacity);
     },
-    isDiscountEntered(){
-      return Boolean(this.discount);
-    },
-    getRentalObjectId() {
-      return this.rentalId;
-    },
-    startDate() {
-      return new Date().setDate(new Date().getDate());
-    },
-    endDate() {
-      const date = new Date();
-      return date.setFullYear(date.getFullYear() + 1)
-    },
-    dates() {
-      return this.days.map(day => day.date);
-    },
-    attributes() {
-      return this.dates.map(date => {
-        return {
-          highlight: true,
-          dates: date,
-        }
-      });
-    },
-    daySpan() {
-      let result = 0;
-      if (this.days.length > 1) {
-        let max = new Date(Math.max(...this.dates));
-        let min = new Date(Math.min(...this.dates));
-        let difference = Math.abs(max-min);
-        result = difference/(1000 * 3600 * 24);
-      }
-      else {
-        result = this.days.length;
-      }
-      return result;
-    },
-    disableWeeklyRepeat() {
-      let daySpan = this.daySpan;
-      if (daySpan!==0) {
-        return daySpan>6;
-      }
-      return true;
-    },
-    disableMonthlyRepeat() {
-      let daySpan = this.daySpan;
-      if (daySpan!==0) {
-        return daySpan>30;
-      }
-      return true;
+    isDiscountEntered() {
+      return Boolean(this.specialOffer.discount);
     }
   },
   methods: {
-    printaj() {
-      console.log(this.days)
-    },
-    onDayClick(day) {
-      console.log(day);
-      const idx = this.days.findIndex(d => d.id === day.id);
-      if (idx >= 0) {
-        this.days.splice(idx, 1);
-      } else if (this.startDate <= day.date && day.date < this.endDate){
-        this.days.push({
-          id: day.id,
-          date: day.date,
-        });
-      }
-    },
-    addDay(date) {
-      let id = date.getFullYear() + "-" + (date.getMonth()+1) + "-" + date.getDate();
-      this.days.push({
-        id: id,
-        date: date,
-      });
-    },
-    repeatWeekly() {
-      const dates = this.dates;
-      dates.forEach(date => {
-        let new_date = new Date(date.getTime());
-        new_date.setDate(new_date.getDate() + 7);
-        while (new_date < this.endDate) {
-          this.addDay(new Date(new_date.getTime()));
-          new_date.setDate(new_date.getDate() + 7);
-        }
-      });
-    },
-    repeatMonthly() {
-      const dates = this.dates;
-      dates.forEach(date => {
-        let new_date = new Date(date.getTime());
-        new_date.setMonth(new_date.getMonth() + 1);
-        while (new_date < this.endDate) {
-          this.addDay(new Date(new_date.getTime()));
-          new_date.setMonth(new_date.getMonth() + 1);
-        }
-      });
-    },
-    clear() {
-      this.days = [];
-      this.date = null;
-    },
     addIncludedService() {
       if (this.includedService.name.trim() !== "") {
-        if (this.includedServices.indexOf(this.includedService.name.trim()) === -1) {
-          this.includedServices.push(this.includedService);
+        if (this.specialOffer.includedServices.indexOf(this.includedService.name.trim()) === -1) {
+          this.specialOffer.includedServices.push(this.includedService);
           this.includedService = {name: ""};
           this.serviceAlreadyExists=false;
         }
@@ -268,7 +130,7 @@ export default {
       }
     },
     removeIncludedService(serviceName) {
-      this.includedServices.splice(this.includedServices.indexOf(serviceName), 1);
+      this.specialOffer.includedServices.splice(this.specialOffer.includedServices.indexOf(serviceName), 1);
     },
     isDataEntered(){
       if(!this.isCapacityEntered){
@@ -287,16 +149,11 @@ export default {
       }
     },
     confirm() {
-      console.log(this.id);
-      axios.post("/RentalObjects/defineSpecialOffer",
-          {
-            id: this.$route.params.id,
-            initDate: this.range.start,
-            termDate: this.range.end,
-            capacity: this.capacity,
-            discount: this.discount,
-            includedServices: this.includedServices
-          },
+      let specialOffer = this.specialOffer;
+      specialOffer.rentalObjectId = this.$route.params.id;
+      specialOffer.initDate = this.range.start;
+      specialOffer.termDate = this.range.end;
+      axios.post("/RentalObjects/defineSpecialOffer", specialOffer,
           {
             headers: {
               Authorization: "Bearer " + this.accessToken,
@@ -307,11 +164,12 @@ export default {
           })
           .then(()=> {
             this.$notify({
-              title: "Availability period settings",
-              text: "",
+              title: "Define special offer",
+              text: "You have successfully defined the special offer.",
               type: "success"
             });
             this.$emit("requestManaged");
+            toggleProcessing();
           })
           .catch((error) =>{
             if (error.response.status===404) {
@@ -327,6 +185,7 @@ export default {
                 type: "error"
               })
             }
+            toggleProcessing();
           })
     }
   }
