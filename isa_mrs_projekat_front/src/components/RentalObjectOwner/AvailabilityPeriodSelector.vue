@@ -1,7 +1,7 @@
 <template>
   <div class="container p-0 m-0">
     <form class="p-0 m-0" @submit.prevent>
-      <date-picker v-model="range" mode="dateTime" :masks="masks" is-range is24hr @popoverDidHide="printaj">
+      <date-picker v-model="range" mode="dateTime" :masks="masks" is-range is24hr>
         <template v-slot="{ inputValue, inputEvents, isDragging }">
           <div class="row p-0 m-0">
             <div class="form-inline d-flex justify-content-center p-0 m-0">
@@ -16,7 +16,8 @@
                       class="form-control"
                       :class="isDragging ? 'text-gray-600' : 'text-gray-900'"
                       :value="inputValue.start"
-                      v-on="inputEvents.start"/>
+                      v-on="inputEvents.start"
+                      @change="printaj"/>
                 </div>
                 <div class="col-1 p-0 m-0" style="display: table">
                   <div style="display: table-cell; vertical-align: middle; horiz-align: center">
@@ -131,7 +132,7 @@ export default {
   },
   methods: {
     printaj() {
-      console.log(this.days)
+      console.log(this.range)
     },
     onDayClick(day) {
       console.log(day);

@@ -171,6 +171,60 @@ public class AdventureServiceImpl implements AdventureService{
         }
     }
 
+    @Override
+    public ResponseEntity<Long> updateAdventure(rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.AdventureDto adventureDto) {
+        try {
+            Adventure adventure = adventureRepo.getById(adventureDto.getId());
+            alterAdventure(adventure, adventureDto);
+            return new ResponseEntity<>(adventure.getId(), HttpStatus.OK);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    private void alterAdventure(Adventure adventure, rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.AdventureDto adventureDto) {
+        adventureDto.getAdditionalServices().forEach(service -> {
+            if (adventure.hasService(service.getName(), service.getPrice())) {
+
+            } else if (adventure.hasService(service.getName())) {
+                adventure.setAdditionalServicePrice(service.getName(), service.getPrice());
+            } else {
+                AdditionalService additionalService = modelMapper.map(service, AdditionalService.class);
+                additionalService.setRentalObject(adventure);
+                additionalServiceRepo.save(additionalService);
+                adventure.getAdditionalServices().add(additionalService);
+            }
+        });
+        adventureDto.getConductRules().forEach(rule -> {
+            if (!adventure.hasRule(rule.getRule(), ConductType.valueOf(rule.getType()))) {
+                ConductRule conductRule = new ConductRule();
+                conductRule.setRule(rule.getRule());
+                conductRule.setType(ConductType.valueOf(rule.getType()));
+                conductRule.setRentalObject(adventure);
+                conductRuleRepo.save(conductRule);
+                adventure.getConductRules().add(conductRule);
+            }
+        });
+        adventureDto.getAdventureEquipment().forEach(equipment -> {
+            if (!adventure.hasEquipment(equipment.getName())) {
+                AdventureEquipment adventureEquipment = modelMapper.map(equipment, AdventureEquipment.class);
+                adventureEquipment.setAdventure(adventure);
+                adventureEquipmentRepo.save(adventureEquipment);
+                adventure.getAdventureEquipment().add(adventureEquipment);
+            }
+        });
+        adventure.setInitDate(adventureDto.getInitDate());
+        adventure.setTermDate(adventureDto.getTermDate());
+        adventure.setDuration(adventureDto.getDuration());
+        adventure.setName(adventureDto.getName());
+        adventure.setCancellationFee(adventureDto.getCancellationFee());
+        adventure.setDescription(adventureDto.getDescription());
+        adventure.setCapacity(adventureDto.getCapacity());
+        adventure.setPrice(adventureDto.getPrice());
+        adventureRepo.save(adventure);
+    }
+
     private Adventure adventureDtoToAdventure(rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.AdventureDto adventureDto, RentalObjectOwner owner) {
         Adventure adventure = new Adventure();
         List<AdditionalService> additionalServices = new ArrayList<>();
@@ -196,6 +250,8 @@ public class AdventureServiceImpl implements AdventureService{
         });
         Address address = modelMapper.map(adventureDto.getAddress(), Address.class);
         addressRepo.save(address);
+        adventure.setInitDate(adventureDto.getInitDate());
+        adventure.setTermDate(adventureDto.getTermDate());
         adventure.setDuration(adventureDto.getDuration());
         adventure.setName(adventureDto.getName());
         adventure.setCancellationFee(adventureDto.getCancellationFee());
@@ -208,7 +264,6 @@ public class AdventureServiceImpl implements AdventureService{
         adventure.setDescription(adventureDto.getDescription());
         adventure.setCapacity(adventureDto.getCapacity());
         adventure.setPrice(adventureDto.getPrice());
-        adventureRepo.save(adventure);
         adventureEquipments.forEach(equipment -> {
             equipment.setAdventure(adventure);
             adventureEquipmentRepo.save(equipment);
@@ -221,6 +276,7 @@ public class AdventureServiceImpl implements AdventureService{
             rule.setRentalObject(adventure);
             conductRuleRepo.save(rule);
         });
+        adventureRepo.save(adventure);
         return adventure;
     }
 

@@ -477,6 +477,7 @@ export default {
   h3 {
     text-align: center;
   }
+
   p {
     color: #e23c52;
   }

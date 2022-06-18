@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.AdventureDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.RentalProfileDtos.AdventureDtos.AdventureProfileDto;
@@ -113,13 +114,18 @@ public class RentalObjectController {
     @GetMapping(GET_ADVENTURES + "Instructor")
     public ResponseEntity<PageDto<AdventureDto>> getAdventuresForInstructor(
             @RequestParam Integer page, @RequestParam Integer pageSize,
-            @RequestParam String field, HttpServletRequest request) {
+            @RequestParam String field, HttpServletRequest request){
         return adventureService.findAdventuresWithPaginationSortedByFieldAndFilteredByOwner(page, pageSize, field, request.getHeader(AUTHORIZATION));
     }
 
     @GetMapping(GET_ADVENTURE + "Instructor")
     public ResponseEntity<AdventureDto> getAdventure(@RequestParam Long id) {
         return adventureService.findAdventure(id);
+    }
+
+    @PutMapping("/updateAdventure")
+    public ResponseEntity<Long> updateAdventure(@RequestBody rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.AdventureDto adventure) {
+        return adventureService.updateAdventure(adventure);
     }
 
     @PostMapping("/addAdventure")
@@ -146,7 +152,7 @@ public class RentalObjectController {
 //    public ResponseEntity<RentalObjectPeriodsDto> setPeriods(@RequestBody PeriodsSettingForm periodsSettingForm) {
 //        return rentalObjectService.setAvailabilityPeriods(periodsSettingForm.getId(), periodsSettingForm.getDates());
 //    }
-
+    
     @PostMapping(ADD_SUBSCRIBER)
     public ResponseEntity<Void> addSubscriber(@RequestBody SubscriptionDto sd, HttpServletRequest request) {
         return rentalObjectService.addSubscriber(sd.getRentalId(), request.getHeader(AUTHORIZATION));

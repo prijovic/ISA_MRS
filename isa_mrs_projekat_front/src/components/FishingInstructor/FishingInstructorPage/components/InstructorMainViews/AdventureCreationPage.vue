@@ -1,10 +1,11 @@
 <template>
-  <div class="row">
+  <div class="row" :key="adventure.id">
     <div class="col-2"></div>
     <div class="col-8 pt-5 mb-5">
       <div class="container px-4 py-3 rounded form" spellcheck="false" >
         <div class="container-fluid">
-          <h3>New Adventure</h3>
+          <h3 v-if="adventure.id === null">New Adventure</h3>
+          <h3 v-else>Adventure</h3>
           <div class="row main justify-content-center">
             <div class="row main">
               <div class="col-2"></div>
@@ -87,7 +88,7 @@
                   <div class="row justify-content-center">
                     <label for="cancellation">Cancellation fee</label>
                   </div>
-                  <input v-model="adventure.cancellationFee.value" type="number" step="any" min="0" max="100"  id="cancellation" class="form-control" placeholder="Cancellation fee in %" @input="cancellationFeeIsEntered=true">
+                  <input v-model="adventure.cancellationFee" type="number" step="any" min="0" max="100"  id="cancellation" class="form-control" placeholder="Cancellation fee in %" @input="cancellationFeeIsEntered=true">
                   <p v-if='!cancellationFeeIsEntered'>'Cancellation fee' is a mandatory field.</p>
                 </div>
 
@@ -181,7 +182,9 @@
                           </td>
                           <td style="word-wrap: break-word;">
                             <div class="d-flex d-inline-flex justify-content-between p-0">
-                              <div>{{rule.DoNot}}</div><button v-if="rule.DoNot" class="button" style="border: none; background-color: transparent; color: #e23c52" @click="removeRule(rule.DoNot)"><font-awesome-icon icon="minus"></font-awesome-icon></button>                            </div>
+                              <div>{{rule.DoNot}}</div>
+                              <button v-if="rule.DoNot" class="button" style="border: none; background-color: transparent; color: #e23c52" @click="removeRule(rule.DoNot)"><font-awesome-icon icon="minus"></font-awesome-icon></button>
+                            </div>
                           </td>
                         </tr>
                         </tbody>
@@ -211,7 +214,10 @@
 
                 <div class="row justify-content-center mt-4">
                   <label class="ms-3">Availability Period</label>
-                  <availability-period-selector :rental="rentalPeriod"></availability-period-selector>
+                  <div class="container p-0 m-0 text-center" style="max-width: 400px">
+                      <date-picker v-model="range" mode="dateTime" is-range is24hr :firstDayOfWeek=2>
+                      </date-picker>
+                  </div>
                 </div>
 
               </div>
@@ -232,17 +238,17 @@
 <script>
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import {library} from "@fortawesome/fontawesome-svg-core";
-import {faMinus, faPlus, faPlusCircle, faX} from "@fortawesome/free-solid-svg-icons";
+import {faMinus, faPlus, faPlusCircle, faX, faArrowRight} from "@fortawesome/free-solid-svg-icons";
+import {DatePicker} from "v-calendar"
 import axios from "axios";
-import {toggleLoading, /*toggleProcessing*/} from "@/components/state";
+import {toggleLoading, toggleProcessing} from "@/components/state";
 import store from "@/store";
-import AvailabilityPeriodSelector from "@/components/RentalObjectOwner/AvailabilityPeriodSelector";
 
-library.add(faPlus, faMinus, faX, faPlusCircle);
+library.add(faPlus, faMinus, faX, faPlusCircle, faArrowRight);
 
 export default {
   name: "AdventureCreationPage",
-  components: {AvailabilityPeriodSelector, FontAwesomeIcon},
+  components: {FontAwesomeIcon, DatePicker},
   data() {
     return {
       adventure: {
@@ -254,7 +260,7 @@ export default {
         duration: 0,
         additionalServices: [],
         conductRules: [],
-        cancellationFee: {value: null},
+        cancellationFee: null,
         address: {
           country: null,
           city: null,
@@ -264,12 +270,16 @@ export default {
           latitude: null
         },
         adventureEquipment: [],
-        availabilityPeriod: {
-          initDate: null,
-          termDate: null,
-        }
+        initDate: null,
+        termDate: null,
       },
       photo: null,
+      range:{
+        start: null,
+        end: null
+      },
+      primaryPhotos: [],
+      date: null,
       photos: [],
       imageUrls: [],
       equipmentPiece: {name:""},
@@ -310,7 +320,6 @@ export default {
       })
       .then((response) => {
         let adventure = response.data;
-        this.adventure.id = adventure.id;
         this.adventure.name = adventure.name;
         this.adventure.description = adventure.description;
         this.hours = Math.trunc(adventure.duration);
@@ -321,16 +330,19 @@ export default {
         this.adventure.adventureEquipment = adventure.adventureEquipment;
         this.adventure.additionalServices = adventure.additionalServices;
         this.adventure.conductRules = adventure.conductRules;
+        this.adventure.cancellationFee = adventure.cancellationFee;
+        if (adventure.initDate != null && adventure.termDate != null) {
+          this.adventure.initDate = new Date(adventure.initDate);
+          this.adventure.termDate = new Date(adventure.termDate);
+          this.range.start = this.adventure.initDate;
+          this.range.end = this.adventure.termDate;
+        }
         adventure.photos.forEach(photo => {
           this.photos.push(photo.photo);
+          this.primaryPhotos.push(photo.photo);
           this.loadImage(photo.photo, this.photos.indexOf(photo.photo));
         });
-        console.log(adventure);
-        if (adventure.availabilityPeriod !== null) {
-          this.adventure.availabilityPeriod.initDate = adventure.availabilityPeriod.initDate;
-          this.adventure.availabilityPeriod.termDate = adventure.availabilityPeriod.termDate;
-        }
-        console.log(this.adventure);
+        this.adventure.id = adventure.id;
         toggleLoading();
       })
       .catch(() => {
@@ -342,15 +354,11 @@ export default {
         toggleLoading();
       })
     }
+    else {
+      toggleLoading();
+    }
   },
   computed: {
-    rentalPeriod() {
-      if (this.adventure.availabilityPeriod.initDate !== null) {
-        return {start: new Date(this.adventure.availabilityPeriod.initDate), end: new Date(this.adventure.availabilityPeriod.termDate)};
-      } else {
-        return null;
-      }
-    },
     rulesOfConduct() {
       let pairsOfRules = [];
       let positiveRules = this.positiveRules(this.adventure.conductRules);
@@ -392,7 +400,7 @@ export default {
       return Boolean(this.adventure.capacity);
     },
     isCancellationFeeEntered() {
-      return Boolean(this.adventure.cancellationFee.value);
+      return Boolean(this.adventure.cancellationFee);
     },
     isPhotoEntered() {
       return this.photos.length > 0;
@@ -405,8 +413,13 @@ export default {
         this.isDataCorrect();
       }
     },
-    makeRequest() {
-      axios.post("/RentalObjects/addAdventure", this.adventure, {
+    createAdventure() {
+      let adventure = this.adventure;
+      this.range.start.setTime(this.range.start.getTime() + 2*60*60*1000);
+      this.range.end.setTime(this.range.end.getTime() + 2*60*60*1000);
+      adventure.initDate = this.range.start;
+      adventure.termDate = this.range.end;
+      axios.post("/RentalObjects/addAdventure", adventure, {
         headers: {
           Authorization: "Bearer " + this.$store.getters.access_token,
         }
@@ -433,10 +446,11 @@ export default {
                 text: "You have successfully added a new adventure.",
                 position: "bottom right",
                 type: "success"
-              })
+              });
             })
           })
         }
+        toggleProcessing();
       })
       .catch(error => {
         if (!error.response) {
@@ -453,6 +467,66 @@ export default {
             type: "error"
           })
         }
+        toggleProcessing();
+      })
+    },
+    updateAdventure() {
+      let adventure = this.adventure;
+      this.range.start.setTime(this.range.start.getTime() + 2*60*60*1000);
+      this.range.end.setTime(this.range.end.getTime() + 2*60*60*1000);
+      adventure.initDate = this.range.start;
+      adventure.termDate = this.range.end;
+      axios.put("/RentalObjects/updateAdventure", adventure, {
+        headers: {
+          Authorization: "Bearer " + this.$store.getters.access_token,
+        }
+      })
+      .then((id) => {
+        for (let i = 0; i < this.photos.length; i++) {
+          if (!this.photoExisted(this.photos[i])) {
+            let formData = new FormData();
+            formData.append("file", this.photos[i]);
+            axios.post("/Photos/upload", formData, {
+              headers: {
+                Authorization: "Bearer " + this.$store.getters.access_token,
+                "Content-type": "multipart/form-data"
+              },
+            })
+            .then((response) => {
+              let body = {id: id.data, photos: [response.data]}
+              axios.post("/RentalObjects/connectPhotosToRental", body,{
+                headers: {
+                  Authorization: "Bearer " + this.$store.getters.access_token,
+                },
+              }).then(() =>{
+                this.$notify( {
+                  title: "Successful update",
+                  text: "You have successfully updated the adventure.",
+                  position: "bottom right",
+                  type: "success"
+                });
+              })
+            })
+          }
+        }
+        toggleProcessing();
+      })
+      .catch(error => {
+        if (!error.response) {
+          this.$notify({
+            title: "Server error",
+            text: "Server is currently off. Please try again later...",
+            type: "error"
+          });
+        } else if (error.response.status === 500) {
+          this.$notify({
+            title: "Internal Server Error",
+            text: "Something went wrong on the server! Please try again later...",
+            position: "bottom right",
+            type: "error"
+          })
+        }
+        toggleProcessing();
       })
     },
     isDataEntered() {
@@ -523,6 +597,7 @@ export default {
           });
     },
     validateAddress() {
+      toggleProcessing();
       const apiKey = 'VrDrl5BjEA0Whvb-chHbFz96HV4qlCXB-yoiTRRLKno';
       const url = 'https://geocoder.ls.hereapi.com/6.2/geocode.json' +
           '?apiKey=' + apiKey +
@@ -546,11 +621,17 @@ export default {
               this.adventure.address.longitude = location.Longitude;
               this.adventure.address.latitude = location.Latitude;
               this.addressIsValid = true;
-              this.makeRequest();
+              if (this.adventure.id === null) {
+                this.createAdventure();
+              }
+              else {
+                this.updateAdventure();
+              }
             }
           })
           .catch(() => {
             this.addressIsValid = false;
+            toggleProcessing();
           });
     },
     transliterate(word) {
@@ -655,6 +736,14 @@ export default {
     },
     ruleExists(rule) {
       return this.getRuleIndex(rule) !== -1;
+    },
+    photoExisted(photo) {
+      for (let i = 0; i <this.primaryPhotos.length; i++) {
+        if (this.primaryPhotos[i] === photo) {
+          return true;
+        }
+      }
+      return false;
     }
   }
 }
@@ -724,5 +813,21 @@ export default {
 
   p {
     color: #e23c52;
+  }
+
+  .input-group-text {
+    background-color: transparent;
+    border-right: none;
+    color: #008970;
+    display: table;
+  }
+
+  .input-group-text font-awesome-icon {
+    display: table-cell;
+    vertical-align: middle;
+  }
+
+  .input-group {
+    max-width: 400px;
   }
 </style>
