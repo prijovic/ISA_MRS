@@ -18,9 +18,7 @@
                 <select class="form-control me-1" id="SubjectType" v-model="filterSubject" style="max-width: 400px; min-width: fit-content; width: 25vh" @change="filterActive=false">
                   <option v-if="filterAuthor!=='Client'" value="Client" id="subjectClient">Client</option>
                   <option v-if="filterAuthor!=='RentalObjectOwner'" value="RentalObjectOwner" id="subjectOwner">Owner</option>
-                  <option v-if="filterAuthor!=='RentalObjectOwner'" value="VacationRental">Rental House</option>
-                  <option v-if="filterAuthor!=='RentalObjectOwner'" value="Boat">Boat</option>
-                  <option v-if="filterAuthor!=='RentalObjectOwner'" value="Adventure">Adventure</option>
+                  <option v-if="filterAuthor!=='RentalObjectOwner'" value="RentalObject">Rental Object</option>
                 </select>
               </div>
               <div class="mt-auto p-0">
@@ -34,8 +32,8 @@
               <tr>
                 <th>Author</th>
                 <th>Author type</th>
-                <th>Grade</th>
                 <th>Comment</th>
+                <th>Grade</th>
                 <th>Subject</th>
                 <th></th>
                 <th></th>
@@ -50,10 +48,10 @@
                     {{this.userRole(review.author)}}
                   </td>
                   <td>
-                    {{review.grade + " ★"}}
+                    {{review.comment}}
                   </td>
                   <td>
-                    {{review.comment}}
+                    {{review.grade + " ★"}}
                   </td>
                   <td>
                     {{review.subjectName}}
@@ -142,10 +140,10 @@ export default {
         this.filterSubject = null;
         this.filterAuthor = null
         this.filterActive = !this.filterActive;
-        //this.refreshPage();
+        this.refreshPage();
       } else if (this.filterSubject !== null && this.filterAuthor !== null) {
         this.filterActive = !this.filterActive;
-        //this.refreshPage();
+        this.refreshPage();
       }
     },
     userRole(user) {
@@ -182,49 +180,38 @@ export default {
     refreshPage() {
       let params;
       let url;
-      if (this.filterType !== null) {
+      if (this.filterSubject !== null && this.filterAuthor !== null) {
         params = {
           page: this.currentPage,
           pageSize: this.pageSize,
-          filter: this.filterType
+          author: this.filterAuthor,
+          subject: this.filterSubject
         };
-        url = "/RentalObjects/getRentalObjectsFilterPage";
+        url = "/Reviews/getReviewsFilterPage";
       } else {
         params = {
           page: this.currentPage,
           pageSize: this.pageSize
         };
-        url = "/RentalObjects/getRentalObjectsPage";
+        url = "/Reviews/getReviewsPage";
       }
       axios.get(url, {headers: {
           Authorization: "Bearer " + this.$store.getters.access_token,
         },
         params
       })
-          .then(response => {
-            this.rentalObjects = response.data.content;
-            this.changedRentals.forEach(rentalObject =>
-            { this.rentalObjects.forEach( rentalObject1 =>
-            { if (rentalObject.id === rentalObject1.id && rentalObject.isActive !== rentalObject1.isActive)
-              rentalObject1.isActive = rentalObject.isActive;
-            });
-            });
-            this.currentPage = response.data.currentPage;
-            this.totalPages = response.data.pages;
-            this.rentalObjects.forEach(rentalObject => {
-              if (rentalObject.photos.length > 0) {
-                const index = this.rentalObjects.indexOf(rentalObject);
-                this.loadImage(rentalObject.photos[0].photo, index);
-              }
-            })
-          })
-          .catch(() =>{
-            this.$notify({
-              title: "Server error",
-              text: "Server is currently off. Please try again later...",
-              type: "error"
-            });
-          });
+      .then(response => {
+        this.reviews = response.data.content;
+        this.currentPage = response.data.currentPage;
+        this.totalPages = response.data.pages;
+      })
+      .catch(() =>{
+        this.$notify({
+          title: "Server error",
+          text: "Server is currently off. Please try again later...",
+          type: "error"
+        });
+      });
     }
   },
   computed: {
