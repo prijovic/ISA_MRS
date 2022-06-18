@@ -11,7 +11,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import rs.ac.uns.ftn.siit.isa_mrs.dto.AdventureDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.RentalProfileDtos.VacationRentalDtos.VacationRentalProfileDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.RentalProfileDtos.VacationRentalDtos.VacationRentalsForMenuDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.AddVacationRentalDto;
@@ -20,7 +19,6 @@ import rs.ac.uns.ftn.siit.isa_mrs.dto.PhotoDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.VacationRentalDto;
 import rs.ac.uns.ftn.siit.isa_mrs.model.*;
 import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.ConductType;
-import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.FeeType;
 import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.RentalObjectType;
 import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.UserType;
 import rs.ac.uns.ftn.siit.isa_mrs.repository.*;
@@ -229,18 +227,10 @@ public class VacationRentalServiceImpl implements VacationRentalService{
             roomRepo.save(vacationRentalRoom);
             rooms.add(vacationRentalRoom);
         });
-        CancellationFee cancellationFee = new CancellationFee();
-        cancellationFee.setValue(vacationRentalDto.getCancellationFee().getValue());
-        if (cancellationFee.getValue() == 0 ) {
-            cancellationFee.setFeeType(FeeType.Free);
-        } else {
-            cancellationFee.setFeeType(FeeType.Percentile);
-        }
-        cancellationFeeRepo.save(cancellationFee);
         Address address = modelMapper.map(vacationRentalDto.getAddress(), Address.class);
         addressRepo.save(address);
         vacationRental.setName(vacationRentalDto.getName());
-        vacationRental.setCancellationFee(cancellationFee);
+        vacationRental.setCancellationFee(vacationRentalDto.getCancellationFee());
         vacationRental.setAddress(address);
         vacationRental.setAdditionalServices(additionalServices);
         vacationRental.setRooms(rooms);
@@ -264,8 +254,6 @@ public class VacationRentalServiceImpl implements VacationRentalService{
             rule.setRentalObject(vacationRental);
             conductRuleRepo.save(rule);
         });
-        cancellationFee.setRentalObject(vacationRental);
-        cancellationFeeRepo.save(cancellationFee);
         return vacationRental;
     }
 

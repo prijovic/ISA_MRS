@@ -12,7 +12,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import rs.ac.uns.ftn.siit.isa_mrs.dto.AdventureDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.RentalProfileDtos.BoatDtos.BoatProfileDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.RentalProfileDtos.BoatDtos.BoatsForMenuDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BoatDto;
@@ -21,7 +20,6 @@ import rs.ac.uns.ftn.siit.isa_mrs.dto.PageDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.PhotoDto;
 import rs.ac.uns.ftn.siit.isa_mrs.model.*;
 import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.ConductType;
-import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.FeeType;
 import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.RentalObjectType;
 import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.UserType;
 import rs.ac.uns.ftn.siit.isa_mrs.repository.*;
@@ -238,18 +236,10 @@ public class BoatServiceImpl implements BoatService{
             navigationEquipmentRepo.save(navigationEquipment);
             navigationEquipments.add(navigationEquipment);
         });
-        CancellationFee cancellationFee = new CancellationFee();
-        cancellationFee.setValue(boatDto.getCancellationFee().getValue());
-        if (cancellationFee.getValue() == 0 ) {
-            cancellationFee.setFeeType(FeeType.Free);
-        } else {
-            cancellationFee.setFeeType(FeeType.Percentile);
-        }
-        cancellationFeeRepo.save(cancellationFee);
         Address address = modelMapper.map(boatDto.getAddress(), Address.class);
         addressRepo.save(address);
         boat.setName(boatDto.getName());
-        boat.setCancellationFee(cancellationFee);
+        boat.setCancellationFee(boatDto.getCancellationFee());
         boat.setAddress(address);
         boat.setAdditionalServices(additionalServices);
         boat.setFishingEquipment(fishingEquipments);
@@ -283,8 +273,6 @@ public class BoatServiceImpl implements BoatService{
             rule.setRentalObject(boat);
             conductRuleRepo.save(rule);
         });
-        cancellationFee.setRentalObject(boat);
-        cancellationFeeRepo.save(cancellationFee);
         return boat;
     }
 }

@@ -21,6 +21,7 @@ import rs.ac.uns.ftn.siit.isa_mrs.dto.PageDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.VacationRentalDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.*;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.IdListWrapperClass;
+import rs.ac.uns.ftn.siit.isa_mrs.model.Service;
 import rs.ac.uns.ftn.siit.isa_mrs.service.AdventureService;
 import rs.ac.uns.ftn.siit.isa_mrs.service.BoatService;
 import rs.ac.uns.ftn.siit.isa_mrs.service.RentalObjectService;
@@ -28,6 +29,7 @@ import rs.ac.uns.ftn.siit.isa_mrs.service.VacationRentalService;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
@@ -169,5 +171,12 @@ public class RentalObjectController {
     @PostMapping("/addBoat")
     public ResponseEntity<BoatDto> addBoat(@RequestBody AddBoatDto boat, HttpServletRequest request){
         return boatService.addBoat(boat, request.getHeader(AUTHORIZATION));
+    }
+
+    @PostMapping("/defineSpecialOffer")
+    public ResponseEntity<SpecialOfferDto> defineOffer(@RequestParam Long id, @RequestParam LocalDateTime initDate, @RequestParam LocalDateTime termDate,
+                                                       @RequestParam Integer capacity, @RequestParam Double discount, @RequestParam List<Service> includedServices){
+        log.info("Uslo u konroler");
+        return rentalObjectService.defineSpecialOffer(id, initDate, termDate, capacity, discount, includedServices);
     }
 }

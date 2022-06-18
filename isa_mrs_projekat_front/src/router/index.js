@@ -41,6 +41,7 @@ import VacationRentalAdditionForm
     from "@/components/VacationRentalOwner/VacationRentalOwnerPage/components/VacationRentalAdditionForm";
 import BoatAdditionForm from "@/components/BoatOwner/BoatOwnerPage/components/BoatAdditionForm";
 import InstructorProfile from "@/components/UnregisteredUser/components/Instructor/InstructorProfile";
+import DefineSpecialOffer from "@/components/RentalObjectOwner/DefineSpecialOffer";
 //import InstructorCardView from "@/components/UnregisteredUser/components/InstructorCardView";
 
 
@@ -307,6 +308,17 @@ const routes = [
         name: "AdventureUpdate",
         components: {
             default: AdventureCreationPage,
+            sidebar: TheFishingInstructorSidebar
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
+        path: "/fishingInstructor/defineSpecialOffer/:id",
+        name: "SpecialOfferDefine",
+        components: {
+            default: DefineSpecialOffer,
             sidebar: TheFishingInstructorSidebar
         },
         meta: {

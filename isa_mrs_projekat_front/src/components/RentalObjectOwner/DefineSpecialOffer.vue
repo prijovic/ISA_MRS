@@ -63,7 +63,7 @@
                   <div class="row justify-content-center">
                     <label for="capacity">Capacity</label>
                   </div>
-                  <input type="number" step="any" min="0"  id="capacity" class="form-control" placeholder="Max people" @input="capacityIsEntered=true">
+                  <input type="number" v-model="capacity" step="any" min="0"  id="capacity" class="form-control" placeholder="Max people" @input="capacityIsEntered=true">
                   <p v-if='!capacityIsEntered'>'Capacity' is a mandatory field.</p>
                 </div>
 
@@ -71,7 +71,7 @@
                   <div class="row justify-content-center">
                     <label for="discount">Discount</label>
                   </div>
-                  <input type="number" step="any" min="0"  id="discount" class="form-control" placeholder="Discount" @input="discountIsEntered=true">
+                  <input type="number" v-model="discount" step="any" min="0"  id="discount" class="form-control" placeholder="Discount" @input="discountIsEntered=true">
                   <p v-if='!discountIsEntered'>'Capacity' is a mandatory field.</p>
                 </div>
 
@@ -98,7 +98,7 @@
             </div>
           </div>
           <div class="d-flex pt-3 justify-content-center">
-            <button type="button" class="btn mt-3">Define</button>
+            <button type="button" class="btn mt-3" @click="submit">Define</button>
           </div>
         </div>
       </div>
@@ -281,11 +281,18 @@ export default {
       }
       return true;
     },
+    submit(){
+      if(this.isDataEntered()){
+        this.confirm();
+      }
+    },
     confirm() {
+      console.log(this.id);
       axios.post("/RentalObjects/defineSpecialOffer",
           {
-            id: this.getRentalObjectId,
-            dates: this.dates,
+            id: this.$route.params.id,
+            initDate: this.range.start,
+            termDate: this.range.end,
             capacity: this.capacity,
             discount: this.discount,
             includedServices: this.includedServices
@@ -293,6 +300,9 @@ export default {
           {
             headers: {
               Authorization: "Bearer " + this.accessToken,
+            },
+            params: {
+              id: this.$route.params.id
             }
           })
           .then(()=> {
@@ -349,7 +359,7 @@ h3 {
   text-align: center;
 }
 
-label, small, .tag-container {
+label, small, .tag-container, p {
   max-width: 400px;
 }
 

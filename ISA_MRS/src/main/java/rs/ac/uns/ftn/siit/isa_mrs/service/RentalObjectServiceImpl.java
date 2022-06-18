@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.PageDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.RentalObjectDto;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.SpecialOfferDto;
 import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.RentalObjectType;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.RentalProfileDtos.ReviewDtos.ReviewDto;
 import rs.ac.uns.ftn.siit.isa_mrs.model.*;
@@ -21,10 +22,12 @@ import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.ReviewType;
 import rs.ac.uns.ftn.siit.isa_mrs.repository.ClientRepo;
 import rs.ac.uns.ftn.siit.isa_mrs.repository.RentalObjectRepo;
 import rs.ac.uns.ftn.siit.isa_mrs.repository.ReviewRepo;
+import rs.ac.uns.ftn.siit.isa_mrs.repository.ServiceRepo;
 import rs.ac.uns.ftn.siit.isa_mrs.security.JwtDecoder;
 
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Slf4j
@@ -35,6 +38,7 @@ public class RentalObjectServiceImpl implements RentalObjectService {
     private final ClientRepo clientRepo;
     private final ModelMapper modelMapper;
     private final ReviewRepo reviewRepo;
+    private final ServiceRepo serviceRepo;
     private final JwtDecoder jwtDecoder;
 
 //    @Override
@@ -135,6 +139,41 @@ public class RentalObjectServiceImpl implements RentalObjectService {
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    public ResponseEntity<SpecialOfferDto> defineSpecialOffer(Long id, LocalDateTime initDate, LocalDateTime termDate, Integer capacity, Double discount, List<rs.ac.uns.ftn.siit.isa_mrs.model.Service> includedServices) {
+        try {
+            log.info("Uslo u servis");
+            log.info(String.valueOf(id));
+            Optional<RentalObject> rentalObjectOptional = rentalObjectRepo.findById(id);
+            if (rentalObjectOptional.isEmpty()) {
+                return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+            }
+            RentalObject rentalObject = rentalObjectOptional.get();
+            SpecialOffer specialOffer = new SpecialOffer();
+            specialOffer.setCapacity(capacity);
+            specialOffer.setDiscount(discount);
+            specialOffer.setInitDate(initDate);
+            specialOffer.setTermDate(termDate);
+
+            List<rs.ac.uns.ftn.siit.isa_mrs.model.Service> objectIncludedServices = new ArrayList<>();
+            includedServices.forEach(service ->{
+                rs.ac.uns.ftn.siit.isa_mrs.model.Service includedServices1 = modelMapper.map(service, rs.ac.uns.ftn.siit.isa_mrs.model.Service.class);
+                serviceRepo.save(includedServices1);
+                objectIncludedServices.add(includedServices1);
+            });
+            specialOffer.setIncludedServices(objectIncludedServices);
+            List<SpecialOffer> specialOffers = new ArrayList<>();
+            specialOffers.add(specialOffer);
+
+            rentalObject.setSpecialOffers(specialOffers);
+            rentalObjectRepo.save(rentalObject);
+            SpecialOfferDto specialOfferDto = modelMapper.map(specialOffer, SpecialOfferDto.class);
+            return new ResponseEntity<>(specialOfferDto, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

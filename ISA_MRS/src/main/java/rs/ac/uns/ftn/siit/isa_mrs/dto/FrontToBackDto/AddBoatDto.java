@@ -16,7 +16,7 @@ public class AddBoatDto implements Serializable {
     private Double price;
     private Collection<AdditionalServiceDto> additionalServices;
     private Collection<ConductRuleDto> conductRules;
-    private CancellationFeeDto cancellationFee;
+    private double cancellationFee;
     private AddressDto address;
     private String type;
     private Double length;
