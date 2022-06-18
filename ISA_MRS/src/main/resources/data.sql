@@ -465,8 +465,13 @@ INSERT INTO reservation (id, price, equipment_required, people, time_stamp, clie
 INSERT INTO income (id, fee, time_stamp, value, reservation_id) VALUES (17, 10, '2022-07-01 01:22:14', 76.5, 17);
 INSERT INTO reservation (id, price, equipment_required, people, time_stamp, client_id, rental_object_id, cancelled, init_date, term_date) VALUES (18, 75, true, 1, '2022-05-30 03:15:44', 3, 19, false, '2022-06-06 15:00:00', '2022-06-06 16:30:00');
 INSERT INTO income (id, fee, time_stamp, value, reservation_id) VALUES (18, 10, '2022-05-30 03:15:44', 67.5, 18);
+INSERT INTO report (id, comment, author_id, status, showed_Up, reservation_id) VALUES (2, '', 2, 1, false, 18);
 INSERT INTO reservation (id, price, equipment_required, people, time_stamp, client_id, rental_object_id, cancelled, init_date, term_date) VALUES (19, 88, true, 1, '2022-06-01 12:05:50', 3, 20, false, '2022-06-07 17:00:00', '2022-06-07 21:00:00');
 INSERT INTO income (id, fee, time_stamp, value, reservation_id) VALUES (19, 10, '2022-06-01 12:05:50', 79.2, 19);
+INSERT INTO review (id, status, comment, grade, review_type, time_stamp, author_id, reservation_id) VALUES (33, 1, 'Adventure went quite well. Client was great. They were vwry cooperative. Overall experience is good. ', 5, 2, '2022-01-09 8:06:00', 2, 19);
+INSERT INTO report (id, comment, author_id, status, showed_Up, reservation_id) VALUES (3, 'Client tried to drown me.', 2, 1, true, 19);
+INSERT INTO reservation (id, price, equipment_required, people, time_stamp, client_id, rental_object_id, cancelled, init_date, term_date) VALUES (20, 88, false, 1, '2022-06-01 12:05:50', 3, 20, false, '2022-07-03 17:00:00', '2022-07-03 21:00:00');
+INSERT INTO income (id, fee, time_stamp, value, reservation_id) VALUES (20, 10, '2022-06-01 12:05:50', 79.2, 20);
 INSERT INTO subscribed_client (rental_id, subscriber_id) VALUES (1, 3);
 INSERT INTO subscribed_client (rental_id, subscriber_id) VALUES (2, 3);
 INSERT INTO subscribed_client (rental_id, subscriber_id) VALUES (20, 3);

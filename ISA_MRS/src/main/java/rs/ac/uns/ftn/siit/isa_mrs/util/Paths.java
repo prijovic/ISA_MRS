@@ -31,5 +31,6 @@ public class Paths {
     public static final String ADD_REVIEW = "/addReview";
     public static final String ADD_REPORT = "/addReport";
     public static final String GET_INSTRUCTORS = "/getInstructors";
+    public static final String GET_INSTRUCTOR_FOR_CLIENT = "/getInstructorForClient";
     public static final String GET_INSTRUCTOR = "/getInstructor";
 }
