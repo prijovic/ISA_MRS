@@ -120,6 +120,11 @@ public class RentalObjectController {
         return adventureService.findAdventure(id);
     }
 
+    @PutMapping("/updateAdventure")
+    public ResponseEntity<Long> updateAdventure(@RequestBody rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.AdventureDto adventure) {
+        return adventureService.updateAdventure(adventure);
+    }
+
     @PostMapping("/addAdventure")
     public ResponseEntity<AdventureDto> addAdventure(@RequestBody rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.AdventureDto adventure, HttpServletRequest request) {
         return adventureService.addAdventure(adventure, request.getHeader(AUTHORIZATION));
@@ -129,11 +134,6 @@ public class RentalObjectController {
     public ResponseEntity<AdventureDto> connectPhotosToRental(@RequestBody RentalPhotosDto dto) {
         return adventureService.addAdventurePhotos(dto.getId(), dto.getPhotos());
     }
-
-//    @PostMapping(AVAILABILITY_PERIOD)
-//    public ResponseEntity<RentalObjectPeriodsDto> setPeriods(@RequestBody PeriodsSettingForm periodsSettingForm) {
-//        return rentalObjectService.setAvailabilityPeriods(periodsSettingForm.getId(), periodsSettingForm.getDates());
-//    }
 
     @PostMapping(ADD_SUBSCRIBER)
     public ResponseEntity<Void> addSubscriber(@RequestBody SubscriptionDto sd, HttpServletRequest request) {

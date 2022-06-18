@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.ConductType;
 import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.RentalObjectType;
 
 import javax.persistence.*;
@@ -51,4 +52,39 @@ public class RentalObject {
             joinColumns = @JoinColumn(name = "rental_id"),
             inverseJoinColumns = @JoinColumn(name = "subscriber_id"))
     private Collection<Client> subscribers = new LinkedHashSet<>();
+
+    public boolean hasRule(String rule, ConductType conductType) {
+        for (ConductRule conductRule: conductRules) {
+            if (conductRule.getRule().equals(rule) && conductRule.getType().equals(conductType)) {
+                return true;
+            }
+        }
+        return  false;
+    }
+
+    public boolean hasService(String service) {
+        for (AdditionalService additionalService: additionalServices) {
+            if (additionalService.getName().equals(service)) {
+                return true;
+            }
+        }
+        return  false;
+    }
+
+    public boolean hasService(String service, double price) {
+        for (AdditionalService additionalService: additionalServices) {
+            if (additionalService.getName().equals(service) && additionalService.getPrice().equals(price)) {
+                return true;
+            }
+        }
+        return  false;
+    }
+
+    public void setAdditionalServicePrice(String service, double price) {
+        for (AdditionalService additionalService: additionalServices) {
+            if (additionalService.getName().equals(service)) {
+                additionalService.setPrice(price);
+            }
+        }
+    }
 }

@@ -278,6 +278,7 @@ export default {
         start: null,
         end: null
       },
+      primaryPhotos: [],
       date: null,
       photos: [],
       imageUrls: [],
@@ -338,6 +339,7 @@ export default {
         }
         adventure.photos.forEach(photo => {
           this.photos.push(photo.photo);
+          this.primaryPhotos.push(photo.photo);
           this.loadImage(photo.photo, this.photos.indexOf(photo.photo));
         });
         this.adventure.id = adventure.id;
@@ -398,7 +400,7 @@ export default {
       return Boolean(this.adventure.capacity);
     },
     isCancellationFeeEntered() {
-      return Boolean(this.adventure.cancellationFee.value);
+      return Boolean(this.adventure.cancellationFee);
     },
     isPhotoEntered() {
       return this.photos.length > 0;
@@ -413,6 +415,8 @@ export default {
     },
     createAdventure() {
       let adventure = this.adventure;
+      this.range.start.setTime(this.range.start.getTime() + 2*60*60*1000);
+      this.range.end.setTime(this.range.end.getTime() + 2*60*60*1000);
       adventure.initDate = this.range.start;
       adventure.termDate = this.range.end;
       axios.post("/RentalObjects/addAdventure", adventure, {
@@ -444,9 +448,9 @@ export default {
                 type: "success"
               });
             })
-            toggleProcessing();
           })
         }
+        toggleProcessing();
       })
       .catch(error => {
         if (!error.response) {
@@ -468,38 +472,42 @@ export default {
     },
     updateAdventure() {
       let adventure = this.adventure;
+      this.range.start.setTime(this.range.start.getTime() + 2*60*60*1000);
+      this.range.end.setTime(this.range.end.getTime() + 2*60*60*1000);
       adventure.initDate = this.range.start;
       adventure.termDate = this.range.end;
-      axios.post("/RentalObjects/updateAdventure", adventure, {
+      axios.put("/RentalObjects/updateAdventure", adventure, {
         headers: {
           Authorization: "Bearer " + this.$store.getters.access_token,
         }
       })
       .then((id) => {
         for (let i = 0; i < this.photos.length; i++) {
-          let formData = new FormData();
-          formData.append("file", this.photos[i]);
-          axios.post("/Photos/upload", formData, {
-            headers: {
-              Authorization: "Bearer " + this.$store.getters.access_token,
-              "Content-type": "multipart/form-data"
-            },
-          })
-          .then((response) => {
-            let body = {id: id, photos: [response.data]}
-            axios.post("/RentalObjects/connectPhotosToRental", body,{
+          if (!this.photoExisted(this.photos[i])) {
+            let formData = new FormData();
+            formData.append("file", this.photos[i]);
+            axios.post("/Photos/upload", formData, {
               headers: {
                 Authorization: "Bearer " + this.$store.getters.access_token,
+                "Content-type": "multipart/form-data"
               },
-            }).then(() =>{
-              this.$notify( {
-                title: "Successful update",
-                text: "You have successfully updated the adventure.",
-                position: "bottom right",
-                type: "success"
-              });
             })
-          })
+            .then((response) => {
+              let body = {id: id.data, photos: [response.data]}
+              axios.post("/RentalObjects/connectPhotosToRental", body,{
+                headers: {
+                  Authorization: "Bearer " + this.$store.getters.access_token,
+                },
+              }).then(() =>{
+                this.$notify( {
+                  title: "Successful update",
+                  text: "You have successfully updated the adventure.",
+                  position: "bottom right",
+                  type: "success"
+                });
+              })
+            })
+          }
         }
         toggleProcessing();
       })
@@ -728,6 +736,14 @@ export default {
     },
     ruleExists(rule) {
       return this.getRuleIndex(rule) !== -1;
+    },
+    photoExisted(photo) {
+      for (let i = 0; i <this.primaryPhotos.length; i++) {
+        if (this.primaryPhotos[i] === photo) {
+          return true;
+        }
+      }
+      return false;
     }
   }
 }

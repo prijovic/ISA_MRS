@@ -22,6 +22,7 @@ public class AdventureDto implements Serializable {
     private AddressDto address;
     private Boolean isActive;
     private Boolean isDeletable;
+    private Double cancellationFee;
     private RentalObjectOwnerDto rentalObjectOwner;
     private Collection<ConductRuleDto> conductRules;
     private Collection<AdventureEquipmentDto> adventureEquipment;

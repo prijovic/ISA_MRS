@@ -21,4 +21,6 @@ public interface AdventureService {
 
     ResponseEntity<AdventureDto> addAdventure(rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.AdventureDto adventureDto, String token);
     ResponseEntity<AdventureDto> addAdventurePhotos(Long id, List<String> photos);
+
+    ResponseEntity<Long> updateAdventure(rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.AdventureDto adventure);
 }
