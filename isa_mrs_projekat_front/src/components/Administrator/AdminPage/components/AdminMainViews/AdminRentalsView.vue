@@ -55,7 +55,7 @@
               </tr>
               </thead>
               <tbody>
-              <tr class="p-1" v-for="(rentalObject, index) in this.rentalObjects" :key="index" :class="index%2!==0?'odd':'even'">
+              <tr class="p-1" v-for="(rentalObject, index) in this.rentalObjects" :key="index" :class="index%2!==0?'odd':'even'" @change="filterActive=false">
                 <td class="col-1">
                   <img v-if="rentalObject.photos.length !== 0" :src="imageUrls[index]" style="height: 6vh;width: 6vh; object-fit: cover; object-position: center;" class="img-fluid rounded border-1" alt="">
                   <font-awesome-icon v-else icon="user" class="img-fluid rounded border-1" style="height: 3vh"></font-awesome-icon>

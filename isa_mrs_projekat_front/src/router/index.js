@@ -38,6 +38,7 @@ import AllCottagesView
     from "@/components/VacationRentalOwner/VacationRentalOwnerPage/components/AllCottagesView/AllCottagesView";
 import AllBoatsView from "@/components/BoatOwner/BoatOwnerPage/components/AllBoatsView/AllBoatsView";
 import InstructorProfile from "@/components/UnregisteredUser/components/Instructor/InstructorProfile";
+import AdminReviewsView from "@/components/Administrator/AdminPage/components/AdminMainViews/AdminReviewsView";
 //import InstructorCardView from "@/components/UnregisteredUser/components/InstructorCardView";
 
 
@@ -183,6 +184,17 @@ const routes = [
         name: "AdminRequests",
         components: {
             default: AdminRequestsView,
+            sidebar: TheAdminSidebar,
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
+        path: "/admin/reviews",
+        name: "AdminReviews",
+        components: {
+            default: AdminReviewsView,
             sidebar: TheAdminSidebar,
         },
         meta: {
