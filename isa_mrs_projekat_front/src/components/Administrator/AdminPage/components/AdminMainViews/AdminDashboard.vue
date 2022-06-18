@@ -45,15 +45,15 @@
         </div>
         <div class="col d-table p-3 me-5 container rounded shadow mt-5">
           <p class="d-table-row text-center fs-5">Income last year</p>
-          <p class="d-table-row text-center fw-bold fs-3">{{ incomeLastYear }}</p>
+          <p class="d-table-row text-center fw-bold fs-3">{{ incomeLastYear.toFixed(1) }}$</p>
         </div>
         <div class="col d-table p-3 me-5 container rounded shadow mt-5">
           <p class="d-table-row text-center fs-5">Income last month</p>
-          <p class="d-table-row text-center fw-bold fs-3">{{ incomeLastMonth }}</p>
+          <p class="d-table-row text-center fw-bold fs-3">{{ incomeLastMonth.toFixed(1) }}$</p>
         </div>
         <div class="col d-table p-3 container rounded shadow mt-5">
           <p class="d-table-row text-center fs-5">Income last week</p>
-          <p class="d-table-row text-center fw-bold fs-3">{{ incomeLastWeek }}</p>
+          <p class="d-table-row text-center fw-bold fs-3">{{ incomeLastWeek.toFixed(1) }}$</p>
         </div>
       </div>
       <div class="row">
