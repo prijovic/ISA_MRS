@@ -1,5 +1,5 @@
 <template>
-  <div class="row">
+  <div class="row" :key="adventure.id">
     <div class="col-2"></div>
     <div class="col-8 pt-5 mb-5">
       <div class="container px-4 py-3 rounded form" spellcheck="false" >
@@ -88,7 +88,7 @@
                   <div class="row justify-content-center">
                     <label for="cancellation">Cancellation fee</label>
                   </div>
-                  <input v-model="adventure.cancellationFee.value" type="number" step="any" min="0" max="100"  id="cancellation" class="form-control" placeholder="Cancellation fee in %" @input="cancellationFeeIsEntered=true">
+                  <input v-model="adventure.cancellationFee" type="number" step="any" min="0" max="100"  id="cancellation" class="form-control" placeholder="Cancellation fee in %" @input="cancellationFeeIsEntered=true">
                   <p v-if='!cancellationFeeIsEntered'>'Cancellation fee' is a mandatory field.</p>
                 </div>
 
@@ -214,52 +214,9 @@
 
                 <div class="row justify-content-center mt-4">
                   <label class="ms-3">Availability Period</label>
-                  <div class="container p-0 m-0 mb-1 text-center">
-                    <calendar :attributes="attrs"></calendar>
-                  </div>
-                  <div class="container p-0 m-0">
-                    <form class="p-0 m-0" @submit.prevent>
-                      <date-picker v-model="range" mode="dateTime" :masks="masks" is-range is24hr>
-                        <template v-slot="{ inputValue, inputEvents, isDragging }">
-                          <div class="row p-0 m-0">
-                            <div class="form-inline d-flex justify-content-center p-0 m-0">
-                              <div class="row" style="max-width: 400px">
-                                <div class="col input-group">
-                                  <div class="input-group-prepend">
-                  <span class="input-group-text" id="start">
-                    From:
-                  </span>
-                                  </div>
-                                  <input
-                                      class="form-control maz-border-left-0"
-                                      :class="isDragging ? 'text-gray-600' : 'text-gray-900'"
-                                      :value="inputValue.start"
-                                      v-on="inputEvents.start"
-                                      />
-                                </div>
-                                <div class="col-1 p-0 m-0" style="display: table">
-                                  <div style="display: table-cell; vertical-align: middle; horiz-align: center">
-                                    <font-awesome-icon icon="arrow-right" style="color:#008970; height: 25px"></font-awesome-icon>
-                                  </div>
-                                </div>
-                                <div class="col input-group">
-                                  <div class="input-group-prepend">
-                  <span class="input-group-text" id="end">
-                    To:
-                  </span>
-                                  </div>
-                                  <input
-                                      class="form-control"
-                                      :class="isDragging ? 'text-gray-600' : 'text-gray-900'"
-                                      :value="inputValue.end"
-                                      v-on="inputEvents.end"/>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </template>
+                  <div class="container p-0 m-0 text-center" style="max-width: 400px">
+                      <date-picker v-model="range" mode="dateTime" is-range is24hr :firstDayOfWeek=2>
                       </date-picker>
-                    </form>
                   </div>
                 </div>
 
@@ -282,16 +239,16 @@
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import {library} from "@fortawesome/fontawesome-svg-core";
 import {faMinus, faPlus, faPlusCircle, faX, faArrowRight} from "@fortawesome/free-solid-svg-icons";
-import {DatePicker, Calendar} from "v-calendar"
+import {DatePicker} from "v-calendar"
 import axios from "axios";
-import {toggleLoading, /*toggleProcessing*/} from "@/components/state";
+import {toggleLoading, toggleProcessing} from "@/components/state";
 import store from "@/store";
 
 library.add(faPlus, faMinus, faX, faPlusCircle, faArrowRight);
 
 export default {
   name: "AdventureCreationPage",
-  components: {FontAwesomeIcon, DatePicker, Calendar},
+  components: {FontAwesomeIcon, DatePicker},
   data() {
     return {
       adventure: {
@@ -303,7 +260,7 @@ export default {
         duration: 0,
         additionalServices: [],
         conductRules: [],
-        cancellationFee: {value: null},
+        cancellationFee: null,
         address: {
           country: null,
           city: null,
@@ -313,29 +270,14 @@ export default {
           latitude: null
         },
         adventureEquipment: [],
-        availabilityPeriod: {
-          initDate: null,
-          termDate: null,
-        }
+        initDate: null,
+        termDate: null,
       },
       photo: null,
-      range: {
+      range:{
         start: null,
         end: null
       },
-      masks: {
-        input: 'YYYY-MM-DD hh:mm',
-      },
-      attrs: [
-        {
-          highlight: {
-            start: { fillMode: 'outline' },
-            base: { fillMode: 'light' },
-            end: { fillMode: 'outline' },
-          },
-          dates: { start: null, end: null },
-        },
-      ],
       date: null,
       photos: [],
       imageUrls: [],
@@ -377,7 +319,6 @@ export default {
       })
       .then((response) => {
         let adventure = response.data;
-        this.adventure.id = adventure.id;
         this.adventure.name = adventure.name;
         this.adventure.description = adventure.description;
         this.hours = Math.trunc(adventure.duration);
@@ -388,21 +329,18 @@ export default {
         this.adventure.adventureEquipment = adventure.adventureEquipment;
         this.adventure.additionalServices = adventure.additionalServices;
         this.adventure.conductRules = adventure.conductRules;
+        this.adventure.cancellationFee = adventure.cancellationFee;
+        if (adventure.initDate != null && adventure.termDate != null) {
+          this.adventure.initDate = new Date(adventure.initDate);
+          this.adventure.termDate = new Date(adventure.termDate);
+          this.range.start = this.adventure.initDate;
+          this.range.end = this.adventure.termDate;
+        }
         adventure.photos.forEach(photo => {
           this.photos.push(photo.photo);
           this.loadImage(photo.photo, this.photos.indexOf(photo.photo));
         });
-        if (adventure.availabilityPeriod !== null) {
-          this.adventure.availabilityPeriod.initDate = new Date(adventure.availabilityPeriod.initDate);
-          this.adventure.availabilityPeriod.termDate = new Date(adventure.availabilityPeriod.termDate);
-          this.range.start = new Date(this.adventure.availabilityPeriod.initDate);
-          this.range.end = new Date(this.adventure.availabilityPeriod.termDate);
-          this.attrs[0].dates.start = this.range.start.addDays(1);
-          this.attrs[0].dates.end = this.range.end.addDays(1);
-        }
-        console.log(adventure);
-        console.log(this.range);
-        console.log(this.adventure);
+        this.adventure.id = adventure.id;
         toggleLoading();
       })
       .catch(() => {
@@ -419,13 +357,6 @@ export default {
     }
   },
   computed: {
-    rentalPeriod() {
-      if (this.adventure.availabilityPeriod.initDate !== null) {
-        return {start: new Date(this.adventure.availabilityPeriod.initDate), end: new Date(this.adventure.availabilityPeriod.termDate)};
-      } else {
-        return null;
-      }
-    },
     rulesOfConduct() {
       let pairsOfRules = [];
       let positiveRules = this.positiveRules(this.adventure.conductRules);
@@ -480,21 +411,16 @@ export default {
         this.isDataCorrect();
       }
     },
-    makeRequest() {
+    createAdventure() {
       let adventure = this.adventure;
-      if (this.range.start == null || this.range.end == null) {
-        adventure.availabilityPeriod = null
-      } else {
-        adventure.availabilityPeriod.initDate = this.range.start;
-        adventure.availabilityPeriod.termDate = this.range.end;
-      }
+      adventure.initDate = this.range.start;
+      adventure.termDate = this.range.end;
       axios.post("/RentalObjects/addAdventure", adventure, {
         headers: {
           Authorization: "Bearer " + this.$store.getters.access_token,
         }
       })
       .then((adventure) => {
-        console.log("1");
         for (let i = 0; i < this.photos.length; i++) {
           let formData = new FormData();
           formData.append("file", this.photos[i]);
@@ -505,7 +431,6 @@ export default {
             },
           })
           .then((response) => {
-            console.log("2");
             let body = {id: adventure.data.id, photos: [response.data]}
             axios.post("/RentalObjects/connectPhotosToRental", body,{
               headers: {
@@ -519,6 +444,7 @@ export default {
                 type: "success"
               });
             })
+            toggleProcessing();
           })
         }
       })
@@ -537,6 +463,62 @@ export default {
             type: "error"
           })
         }
+        toggleProcessing();
+      })
+    },
+    updateAdventure() {
+      let adventure = this.adventure;
+      adventure.initDate = this.range.start;
+      adventure.termDate = this.range.end;
+      axios.post("/RentalObjects/updateAdventure", adventure, {
+        headers: {
+          Authorization: "Bearer " + this.$store.getters.access_token,
+        }
+      })
+      .then((id) => {
+        for (let i = 0; i < this.photos.length; i++) {
+          let formData = new FormData();
+          formData.append("file", this.photos[i]);
+          axios.post("/Photos/upload", formData, {
+            headers: {
+              Authorization: "Bearer " + this.$store.getters.access_token,
+              "Content-type": "multipart/form-data"
+            },
+          })
+          .then((response) => {
+            let body = {id: id, photos: [response.data]}
+            axios.post("/RentalObjects/connectPhotosToRental", body,{
+              headers: {
+                Authorization: "Bearer " + this.$store.getters.access_token,
+              },
+            }).then(() =>{
+              this.$notify( {
+                title: "Successful update",
+                text: "You have successfully updated the adventure.",
+                position: "bottom right",
+                type: "success"
+              });
+            })
+          })
+        }
+        toggleProcessing();
+      })
+      .catch(error => {
+        if (!error.response) {
+          this.$notify({
+            title: "Server error",
+            text: "Server is currently off. Please try again later...",
+            type: "error"
+          });
+        } else if (error.response.status === 500) {
+          this.$notify({
+            title: "Internal Server Error",
+            text: "Something went wrong on the server! Please try again later...",
+            position: "bottom right",
+            type: "error"
+          })
+        }
+        toggleProcessing();
       })
     },
     isDataEntered() {
@@ -607,6 +589,7 @@ export default {
           });
     },
     validateAddress() {
+      toggleProcessing();
       const apiKey = 'VrDrl5BjEA0Whvb-chHbFz96HV4qlCXB-yoiTRRLKno';
       const url = 'https://geocoder.ls.hereapi.com/6.2/geocode.json' +
           '?apiKey=' + apiKey +
@@ -630,12 +613,17 @@ export default {
               this.adventure.address.longitude = location.Longitude;
               this.adventure.address.latitude = location.Latitude;
               this.addressIsValid = true;
-              this.makeRequest();
+              if (this.adventure.id === null) {
+                this.createAdventure();
+              }
+              else {
+                this.updateAdventure();
+              }
             }
           })
           .catch(() => {
             this.addressIsValid = false;
-            //toggleProcessing();
+            toggleProcessing();
           });
     },
     transliterate(word) {
