@@ -23,4 +23,5 @@ public interface AdventureService {
     ResponseEntity<AdventureDto> addAdventurePhotos(Long id, List<String> photos);
 
     ResponseEntity<Long> updateAdventure(rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.AdventureDto adventure);
+    long countAdventure();
 }

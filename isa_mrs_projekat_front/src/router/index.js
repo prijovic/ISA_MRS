@@ -39,6 +39,7 @@ import AllCottagesView
 import AllBoatsView from "@/components/BoatOwner/BoatOwnerPage/components/AllBoatsView/AllBoatsView";
 import InstructorProfile from "@/components/UnregisteredUser/components/Instructor/InstructorProfile";
 import AdminReviewsView from "@/components/Administrator/AdminPage/components/AdminMainViews/AdminReviewsView";
+import AdminReportsView from "@/components/Administrator/AdminPage/components/AdminMainViews/AdminReportsView";
 //import InstructorCardView from "@/components/UnregisteredUser/components/InstructorCardView";
 
 
@@ -195,6 +196,17 @@ const routes = [
         name: "AdminReviews",
         components: {
             default: AdminReviewsView,
+            sidebar: TheAdminSidebar,
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
+        path: "/admin/reports",
+        name: "AdminReports",
+        components: {
+            default: AdminReportsView,
             sidebar: TheAdminSidebar,
         },
         meta: {

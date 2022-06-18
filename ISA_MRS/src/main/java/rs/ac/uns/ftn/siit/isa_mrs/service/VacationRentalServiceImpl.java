@@ -154,6 +154,11 @@ public class VacationRentalServiceImpl implements VacationRentalService{
         }
     }
 
+    @Override
+    public long countVacationRentals() {
+        return vacationRentalRepo.findAllByIsActive(true).size();
+    }
+
 //    @Override
 //    public ResponseEntity<VacationRentalDto> addNewVacationRental(AddVacationRentalDto vrd) {
 //        log.info("Uslo u kontroler");

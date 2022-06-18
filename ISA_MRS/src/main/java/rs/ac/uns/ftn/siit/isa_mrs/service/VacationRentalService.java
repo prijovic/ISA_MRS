@@ -15,5 +15,6 @@ public interface VacationRentalService {
     ResponseEntity<VacationRentalProfileDto> getVacationRental(Long id, int page, int pageSize, String token);
     ResponseEntity<PageDto<VacationRentalsForMenuDto>> findVacationRentalsWithPaginationSortedByField(int offset, int pageSize,
                                                                                                       String field);
+    long countVacationRentals();
 //    ResponseEntity<VacationRentalDto> addNewVacationRental(AddVacationRentalDto vacationRental);
 }

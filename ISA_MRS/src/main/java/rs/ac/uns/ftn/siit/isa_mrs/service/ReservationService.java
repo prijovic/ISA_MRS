@@ -11,6 +11,9 @@ public interface ReservationService {
     ResponseEntity<Void> cancelReservation(Long id);
     ResponseEntity<Collection<ReservationDto>> getFutureReservations(String token);
     ResponseEntity<Void> addReview(AddReviewDto srd, String token);
-
     ResponseEntity<Void> addReport(AddReportDto ard, String token);
+    long countReservationsLastYear();
+    long countReservationsLastMonth();
+    long countReservationsLastWeek();
+    long countReservations();
 }

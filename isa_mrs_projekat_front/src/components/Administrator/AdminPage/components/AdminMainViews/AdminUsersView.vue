@@ -294,11 +294,8 @@ export default {
       this.totalPages = response.data.pages;
       this.users.forEach(user => {
         if (user.photo) {
-          console.log(user)
           const index = this.users.indexOf(user);
-          console.log(index)
           this.loadImage(user.photo, index);
-          console.log(this.imageUrls)
         }
       });
       toggleLoading();

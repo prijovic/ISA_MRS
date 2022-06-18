@@ -55,6 +55,11 @@ public class ClientServiceImpl implements ClientService {
         return new ResponseEntity<>(null, HttpStatus.OK);
     }
 
+    @Override
+    public long countClients() {
+        return clientRepo.findAllByIsActive(true).size();
+    }
+
     private Collection<ClientReservationDto> setUpReservationDtos(Long clientId) {
         Collection<Reservation> reservations = reservationRepo.findAllByClientId(clientId);
         Collection<ClientReservationDto> reservationDtos = new ArrayList<>();

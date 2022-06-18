@@ -5,7 +5,7 @@
     <MenuLink to="/admin/users" icon="users">Users</MenuLink>
     <MenuLink to="/admin/rentals" icon="boxes-packing">Rental Objects</MenuLink>
     <MenuLink to="/admin/reviews" icon="comments">Reviews</MenuLink>
-    <MenuLink to="/#" icon="bullhorn">Reports</MenuLink>
+    <MenuLink to="/admin/reports" icon="bullhorn">Reports</MenuLink>
     <MenuLink to="/#" icon="coins">Finances</MenuLink>
     <MenuLink to="/#" icon="award">Loyalty Program</MenuLink>
     <span class="collapse-icon" :class="{'rotate-180': collapsed}" @click="toggleSidebar">

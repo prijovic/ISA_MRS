@@ -183,6 +183,11 @@ public class AdventureServiceImpl implements AdventureService{
         }
     }
 
+    @Override
+    public long countAdventure() {
+        return (long) adventureRepo.findAllByIsActive(true).size();
+    }
+
     private void alterAdventure(Adventure adventure, rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.AdventureDto adventureDto) {
         adventureDto.getAdditionalServices().forEach(service -> {
             if (adventure.hasService(service.getName(), service.getPrice())) {

@@ -129,6 +129,11 @@ public class BoatServiceImpl implements BoatService{
         }
     }
 
+    @Override
+    public long countBoat() {
+        return boatRepo.findAllByIsActive(true).size();
+    }
+
     private PageDto<BoatDto> packBoats(Page<Boat> boatsPage) {
         PageDto<BoatDto> result = new PageDto<>();
         Collection<BoatDto> boatDtos = new ArrayList<>();

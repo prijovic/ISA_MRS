@@ -172,4 +172,24 @@ public class ReservationServiceImpl implements ReservationService {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @Override
+    public long countReservationsLastYear() {
+        return reservationRepo.findAllByTimeStampBetween(LocalDateTime.now().minusYears(1), LocalDateTime.now()).size();
+    }
+
+    @Override
+    public long countReservationsLastMonth() {
+        return reservationRepo.findAllByTimeStampBetween(LocalDateTime.now().minusMonths(1), LocalDateTime.now()).size();
+    }
+
+    @Override
+    public long countReservationsLastWeek() {
+        return reservationRepo.findAllByTimeStampBetween(LocalDateTime.now().minusWeeks(1), LocalDateTime.now()).size();
+    }
+
+    @Override
+    public long countReservations() {
+        return reservationRepo.findAll().size();
+    }
 }
