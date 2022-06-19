@@ -19,6 +19,7 @@ public class InstructorReservationDto implements Serializable {
     private LocalDateTime termDate;
     private Collection<ReservationReviewDto> reviews;
     private Collection<ReservationReportDto> reports;
+    private Collection<ReservationAdditionalServiceDto> additionalServices;
     private ReservationRentalObjectDto rentalObject;
     private ReservationClientDto client;
     private ReservationIncomeDto income;

@@ -55,7 +55,7 @@ public class ReservationServiceImpl implements ReservationService {
                 Income i = income.get();
                 i.setTimeStamp(LocalDateTime.now());
                 if(feeAmount == 0) i.setValue(feeAmount);
-                else i.setValue(feeAmount - (feeAmount/100 * i.getFee()));
+                else i.setValue(feeAmount/100 * i.getFee());
                 incomeRepo.save(i);
                 reservationRepo.save(r);
                 return new ResponseEntity<>(HttpStatus.OK);

@@ -26,7 +26,9 @@
           </p>
         </div>
         <div class="row">
-          <p class="h4"><strong style="color:#008970;">Profit:</strong> ${{ (reservation.income.value).toFixed(2) }}</p>
+          <p class="h4"><strong style="color:#008970;">Profit:</strong>
+            ${{ (calculateTotal(reservation)-reservation.income.value).toFixed(2) }}
+          </p>
         </div>
       </div>
       <div class="col-md-4 p-5 d-flex flex-grow-1 justify-content-center align-items-center" style="height: 25vh;">
