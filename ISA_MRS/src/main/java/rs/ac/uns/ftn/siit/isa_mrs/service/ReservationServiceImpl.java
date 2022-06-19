@@ -7,7 +7,9 @@ import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.ReportDtos.AddInstructorReportDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.ReportDtos.AddReportDto;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.ReviewDtos.AddInstructorReviewDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.ReviewDtos.AddReviewDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.ReservationDto;
 import rs.ac.uns.ftn.siit.isa_mrs.model.*;
@@ -17,7 +19,6 @@ import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.UserType;
 import rs.ac.uns.ftn.siit.isa_mrs.repository.*;
 import rs.ac.uns.ftn.siit.isa_mrs.security.JwtDecoder;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.chrono.ChronoLocalDateTime;
 import java.util.ArrayList;
@@ -37,15 +38,25 @@ public class ReservationServiceImpl implements ReservationService {
     private final ReservationRepo reservationRepo;
     private final ReviewRepo reviewRepo;
     private final ReportRepo reportRepo;
+    private final ReportResponseRepo reportResponseRepo;
+    private final IncomeRepo incomeRepo;
     private final ModelMapper modelMapper;
 
+    // INSERT INTO income (id, fee, time_stamp, value, reservation_id) VALUES (1, 5, '2022-07-01 12:23:34', 731.5, 1);
     @Override
-    public ResponseEntity<Void> cancelReservation(Long id) {
+    public ResponseEntity<Void> cancelReservation(Long id, double feeAmount) {
         try {
             Optional<Reservation> reservation = reservationRepo.findById(id);
             if(reservation.isPresent()) {
                 Reservation r = reservation.get();
                 r.setCancelled(true);
+                Optional<Income> income = incomeRepo.findByReservationId(id);
+                if(income.isEmpty()) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+                Income i = income.get();
+                i.setTimeStamp(LocalDateTime.now());
+                if(feeAmount == 0) i.setValue(feeAmount);
+                else i.setValue(feeAmount/100 * i.getFee());
+                incomeRepo.save(i);
                 reservationRepo.save(r);
                 return new ResponseEntity<>(HttpStatus.OK);
             }
@@ -119,10 +130,10 @@ public class ReservationServiceImpl implements ReservationService {
             Reservation reservation = res.get();
             Client client = cli.get();
             Review ownerReview = setUpReviewData(ard.getOwnerReview().getGrade(), ard.getOwnerReview().getComment(),
-                    ReviewType.OwnerReview, reservation, client);
+                    ReviewType.OwnerReview, reservation, client, false);
             reservation.getReviews().add(ownerReview);
             Review rentalReview = setUpReviewData(ard.getRentalReview().getGrade(), ard.getRentalReview().getComment(),
-                    ReviewType.RentalReview, reservation, client);
+                    ReviewType.RentalReview, reservation, client, false);
             reservation.getReviews().add(rentalReview);
             reviewRepo.save(ownerReview);
             reviewRepo.save(rentalReview);
@@ -133,16 +144,42 @@ public class ReservationServiceImpl implements ReservationService {
         }
     }
 
+    @Override
+    public ResponseEntity<Void> addInstructorReview(AddInstructorReviewDto aird, String token) {
+        try {
+            JwtDecoder.DecodedToken decodedToken;
+            try {
+                decodedToken = jwtDecoder.decodeToken(token);
+            } catch (Exception e) {
+                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            }
+            Optional<Reservation> res = reservationRepo.findById(aird.getReservationId());
+            Optional<RentalObjectOwner> roo = rentalObjectOwnerRepo.findByEmail(decodedToken.getEmail());
+            if (res.isEmpty() || roo.isEmpty()) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            Reservation reservation = res.get();
+            RentalObjectOwner owner = roo.get();
+            Review clientReview = setUpReviewData(aird.getClientReview().getGrade(), aird.getClientReview().getComment(),
+                    ReviewType.ClientReview, reservation, owner, true);
+            reservation.getReviews().add(clientReview);
+            reviewRepo.save(clientReview);
+            reservationRepo.save(reservation);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     private @NotNull Review setUpReviewData(int grade, String comment, ReviewType type, Reservation reservation,
-                                            Client client) {
+                                            User user, Boolean isAccepted) {
         Review review = new Review();
         review.setGrade(grade);
         review.setComment(comment);
         review.setReviewType(type);
-        review.setStatus(RequestStatus.Pending);
+        if(isAccepted) review.setStatus(RequestStatus.Accepted);
+        else review.setStatus(RequestStatus.Pending);
         review.setReservation(reservation);
         review.setTimeStamp(LocalDateTime.now());
-        review.setAuthor(client);
+        review.setAuthor(user);
         return review;
     }
 
@@ -165,8 +202,49 @@ public class ReservationServiceImpl implements ReservationService {
             report.setTimeStamp(LocalDateTime.now());
             report.setReservation(reservation);
             report.setAuthor(client);
-            // pending
+            report.setStatus(RequestStatus.Pending);
             reportRepo.save(report);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    public ResponseEntity<Void> addInstructorReport(AddInstructorReportDto aird, String token) {
+        try {
+            JwtDecoder.DecodedToken decodedToken;
+            try {
+                decodedToken = jwtDecoder.decodeToken(token);
+            } catch (Exception e) {
+                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            }
+            Optional<Reservation> res = reservationRepo.findById(aird.getReservationId());
+            Optional<RentalObjectOwner> roo = rentalObjectOwnerRepo.findByEmail(decodedToken.getEmail());
+            if (res.isEmpty() || roo.isEmpty()) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            Reservation reservation = res.get();
+            RentalObjectOwner owner = roo.get();
+            Report report = new Report();
+            report.setComment(aird.getComment());
+            report.setTimeStamp(LocalDateTime.now());
+            report.setReservation(reservation);
+            report.setAuthor(owner);
+            report.setShowedUp(aird.getShowedUp());
+            if(aird.getShowedUp()) {
+                report.setStatus(RequestStatus.Pending);
+                reportRepo.save(report);
+            }
+            else {
+                report.setStatus(RequestStatus.Accepted);
+                reportRepo.save(report);
+                ReportResponse rr = new ReportResponse();
+                rr.setPenalty(RequestStatus.Accepted);
+                rr.setReport(report);
+                rr.setTimeStamp(LocalDateTime.now());
+                reportResponseRepo.save(rr);
+                report.setResponse(rr);
+                reportRepo.save(report);
+            }
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);

@@ -17,12 +17,12 @@
             <div class="row text-center pb-0 mb-0" style="border-bottom: 1px solid lightgray;">
               <h1 class="modal-title pb-1" style="color: #008970; font-weight: 700;">Cancel Reservation</h1>
             </div>
-            <div v-if="isFree" class="row mt-3 px-1" style="text-align: center">
+            <div v-if="!isPercentile" class="row mt-3 px-1" style="text-align: center">
               <p class="h5">{{ this.freeCancelText }}</p>
             </div>
-            <div v-if="isFixed" class="row mt-3 px-1" style="text-align: center">
-              <p class="h5">{{ this.fixedFeeCancelText }}</p>
-            </div>
+<!--            <div v-if="isFixed" class="row mt-3 px-1" style="text-align: center">-->
+<!--              <p class="h5">{{ this.fixedFeeCancelText }}</p>-->
+<!--            </div>-->
             <div v-if="isPercentile" class="row mt-3 px-1" style="text-align: center">
               <p class="h5">{{ this.percentileFeeCancelText }}</p>
             </div>
@@ -53,7 +53,6 @@ import axios from "axios/index";
 export default {
   name: "ReservationCancellation",
   props: ["id", "cancellationFee", "reservationStartDate", "reservationId", "total"],
-  emits: ["customChange"],
   data() {
     return {
       isCancelled: false,
@@ -61,26 +60,23 @@ export default {
       denyButtonTxt: "No",
       cantCancelText: "You can only cancel reservation up until 3 days before. We are sorry for the inconvenience.",
       freeCancelText: "Canceling this reservation is free.",
-      fixedFeeCancelText: "The fee for cancelling this reservation is $" + this.cancellationFee.value + ".",
+      fixedFeeCancelText: "The fee for cancelling this reservation is $" + this.cancellationFee + ".",
       percentileFeeCancelText: "The fee for cancelling this reservation is $"
-          + ((this.total/100)*this.cancellationFee.value).toFixed(2)
-          + " (" + this.cancellationFee.value + "%).",
+          + ((this.total/100)*this.cancellationFee).toFixed(2)
+          + " (" + this.cancellationFee + "%).",
       proceedText: "Would you like to proceed?",
     }
   },
   computed: {
-    calculateDeductedAmount() {
-      return (this.total/100)*this.cancellationFee.value;
-    },
-    isFixed() {
-      return this.cancellationFee.feeType === "Fixed";
-    },
+    // isFixed() {
+    //   return this.cancellationFee.feeType === "Fixed";
+    // },
     isPercentile() {
-      return this.cancellationFee.feeType === "Percentile";
+      return this.cancellationFee > 0;
     },
-    isFree() {
-      return this.cancellationFee.value === 0;
-    },
+    // isFree() {
+    //   return this.cancellationFee === 0;
+    // },
     isCancellable() {
       let today = new Date(), startDate = new Date(this.reservationStartDate);
       today.setHours(0, 0, 0);
@@ -92,20 +88,24 @@ export default {
     },
   },
   methods: {
-    cancelReservation(event) {
+    getFeeAmount() {
+      return ((this.total/100)*this.cancellationFee).toFixed(2);
+    },
+    cancelReservation() {
+      // console.log(this.getFeeAmount());
       axios.put("/Reservations/cancelReservation", null, {
         headers: {
           Authorization: "Bearer " + this.$store.getters.access_token
         },
         params: {
           id: this.reservationId,
+          feeAmount: this.getFeeAmount(),
         }
       })
       .then(() => {
         this.confirmButtonTxt = "Cancelled!";
         this.isCancelled = true;
         this.denyButtonTxt = "Close";
-        this.$emit("customChange", event.target.value);
       })
       .catch(error => {
         if (error.response.status === 404) {

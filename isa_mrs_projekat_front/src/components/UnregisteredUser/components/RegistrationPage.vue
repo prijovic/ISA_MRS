@@ -415,7 +415,7 @@ export default {
       return Boolean(this.user.phoneNumber);
     },
     validateAddress() {
-      toggleProcessing();
+      //toggleProcessing();
       const apiKey = 'VrDrl5BjEA0Whvb-chHbFz96HV4qlCXB-yoiTRRLKno';
       const url = 'https://geocoder.ls.hereapi.com/6.2/geocode.json' +
           '?apiKey=' + apiKey +
@@ -439,7 +439,8 @@ export default {
               this.user.address.longitude = location.Longitude;
               this.user.address.latitude = location.Latitude;
               this.addressIsValid = true;
-              this.makeRequest();
+              console.log(this.user.address);
+              //this.makeRequest();
             }
           })
           .catch(() => {

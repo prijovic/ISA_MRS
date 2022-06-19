@@ -1,16 +1,19 @@
 <template>
-  <div v-if="instructor" class="page-holder ps-1">
+  <div class="page-holder ps-1">
     <div class="container-fluid px-lg-4 px-xl-5 p-0 m-0 pt-5 contentDiv">
       <section class="p-0 m-0">
-        <div class="row">
+        <div v-if="this.instructor" class="row">
           <div class="col-lg-4" style="height: fit-content; display:block; min-width: 18rem;">
             <div class="card card-profile mb-4" >
               <!--              <div class="card-header"></div>-->
               <div class="card-body text-center">
                 <img v-if="this.profilePic" class="card-profile-img" :src="this.profilePic" alt=""/>
-                <img v-else class="card-profile-img" src="../../../Images/instructorNoProfilePic.png" alt=""/>
+                <img v-else class="card-profile-img" src="../../../../../Images/instructorNoProfilePic.png" alt=""/>
                 <div class="d-flex justify-content-center">
                   <p class="h3">{{ fullName }}</p>
+                  <router-link class="btn btn-default ms-2" to="" style="height: fit-content;">
+                    <font-awesome-icon class="h5" icon="pencil" style="color: #008970"></font-awesome-icon>
+                  </router-link>
                 </div>
                 <hr>
                 <div class="row text-start px-3">
@@ -21,10 +24,7 @@
                     <p class="h6">Phone:&emsp;{{ this.instructor.phone }}</p>
                   </div>
                   <div class="row mt-3 text-center">
-                    <p class="h4">
-                      <font-awesome-icon class="me-1" icon="location-dot" style="color: #008970"></font-awesome-icon>
-                      <small>{{ getAddress }}</small>
-                    </p>
+                    <RentalAddress v-if="this.instructor.address" :address="this.instructor.address"/>
                   </div>
                 </div>
               </div>
@@ -36,27 +36,27 @@
                 <ul class="nav justify-content-center">
                   <li class="nav-item">
                     <p class="h5">
-                      <button class="px-3" v-bind:style="{fontWeight:(adventuresBtnClicked)?700:400}"
-                              @click="showAdventures">Adventures</button>
+                      <button class="px-3" v-bind:style="{fontWeight:(reviewsBtnClicked)?700:400}"
+                              @click="showReviews">Reviews</button>
                     </p>
                   </li>
                   <li class="nav-item">
                     <p class="h5">
-                      <button class="px-3" v-bind:style="{fontWeight:(reviewsBtnClicked)?700:400}"
-                              @click="showReviews">Reviews</button>
+                      <button class="px-3" v-bind:style="{fontWeight:(subscribersBtnClicked)?700:400}"
+                              @click="showSubscribers">Subscribers</button>
                     </p>
                   </li>
                 </ul>
               </div>
             </div>
             <div class="row px-3 pb-5" style="overflow: hidden; overflow-y: scroll; max-height: 85vh;">
-              <div class="m-0 p-0" v-if="adventuresBtnClicked">
+              <div  class="m-0 p-0" v-if="subscribersBtnClicked">
                 <div class="card px-0 mb-2">
                   <div class="card-header py-2">
-                    <h4 class="card-heading">Adventures</h4>
+                    <h4 class="card-heading">Subscribers</h4>
                   </div>
                   <div class="card-body row text-align: center; justify-content: space-around;">
-                    <InstructorProfileAdventures :adventures="instructor.rentalObjects"/>
+                    <SubscribedClient v-for="(subscriber, i) in instructor.subscribers" :key="i" :client="subscriber"/>
                   </div>
                 </div>
               </div>
@@ -81,29 +81,30 @@
 
 <script>
 import axios from "axios";
-import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
-import { library } from "@fortawesome/fontawesome-svg-core";
-import { faLocationDot } from "@fortawesome/free-solid-svg-icons";
-import InstructorProfileAdventures
-  from "@/components/UnregisteredUser/components/Instructor/InstructorProfileAdventures";
+import RentalAddress from "@/components/UnregisteredUser/components/Rental/RentalAddress";
 import InstructorProfileReviews from "@/components/UnregisteredUser/components/Instructor/InstructorProfileReviews";
+import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
+import {library} from "@fortawesome/fontawesome-svg-core";
+import {faPencil} from "@fortawesome/free-solid-svg-icons";
+import SubscribedClient
+  from "@/components/FishingInstructor/FishingInstructorPage/components/InstructorMainViews/InstructorProfile/Subscribers/SubscribedClient";
 
-library.add(faLocationDot);
+library.add(faPencil);
 
 export default {
   name: "InstructorProfile",
-  components: {InstructorProfileAdventures, FontAwesomeIcon, InstructorProfileReviews},
+  components: {SubscribedClient, FontAwesomeIcon, RentalAddress, InstructorProfileReviews},
   data() {
     return {
       instructor: null,
-      adventuresBtnClicked: true,
-      reviewsBtnClicked: false,
+      subscribersBtnClicked: false,
+      reviewsBtnClicked: true,
       profilePic: null,
     }
   },
   mounted() {
-    // this.$route.params.id
-    axios.get("/RentalOwners/getInstructorForClient", {
+    // console.log(this.$store.getters.access_token);
+    axios.get("/RentalOwners/getInstructor", {
       headers: {
         Authorization: "Bearer " + this.$store.getters.access_token
       },
@@ -122,9 +123,6 @@ export default {
   computed: {
     fullName() {
       return this.instructor.name + " " + this.instructor.surname;
-    },
-    getAddress() {
-      return this.instructor.address.city + ', ' + this.instructor.address.country;
     },
   },
   methods: {
@@ -147,18 +145,18 @@ export default {
           });
     },
     resetTabButtons() {
-      this.adventuresBtnClicked = false;
+      this.subscribersBtnClicked = false;
       this.reviewsBtnClicked = false;
     },
-    showAdventures() {
+    showSubscribers() {
       this.resetTabButtons();
-      this.adventuresBtnClicked = true;
+      this.subscribersBtnClicked = true;
     },
     showReviews() {
       this.resetTabButtons();
       this.reviewsBtnClicked = true;
     },
-  }
+  },
 }
 </script>
 

@@ -1,20 +1,19 @@
 <template>
-  <div class="card col-xl-3 col-lg-4 col-md-6 col-sm-10 col-xs-12 p-0 m-0 mb-5 align-items-center" style="">
-      <div :id="'imgDiv' + instructor.id" class="card-body p-0 m-0 " style="width: 90%;
+  <div class="card col-xl-6 col-lg-6 col-md-6 col-sm-10 col-xs-12 p-0 m-0 mb-5 align-items-center"
+       style="background-color: transparent; box-shadow: none;">
+    <div :id="'imgDiv' + client.id" class="card-body p-0 m-0 " style="width: 90%;
               background-size: cover; background-position: center; color: black; height: 45vh; ">
-        <div :id="'overlay' + instructor.id" class="overlay col-12" style="width: inherit;">
-          <router-link :to="getPath">
-            <p class="h1 cut-text" :title="getFullName" style="cursor: pointer;"><strong>{{ getFullName }}</strong></p>
-          </router-link>
-          <p class="h5 cut-text" style="cursor: pointer;" :title="getAddress">
-            <font-awesome-icon class="me-1" icon="location-dot" style="color: #008970"></font-awesome-icon>
-            <small>{{ getAddress }}</small>
-          </p>
-          <p class="h4">Grade: {{ getGrade }}</p>
-        </div>
+      <div :id="'overlay' + client.id" class="overlay col-12 text-center" style="width: inherit;">
+        <p class="h1 cut-text" :title="getFullName" style="cursor: pointer;"><strong>{{ getFullName }}</strong></p>
+        <p class="h6 cut-text">{{ this.client.email }}</p>
+        <p class="h6 cut-text">{{ this.client.phone }}</p>
+        <p class="h5 cut-text" style="cursor: pointer;" :title="getAddress">
+          <font-awesome-icon class="me-1" icon="location-dot" style="color: #008970"></font-awesome-icon>
+          <small>{{ getAddress }}</small>
+        </p>
       </div>
+    </div>
   </div>
-<!--  <img src="../../Images/instructorNoProfilePic.png" alt="">-->
 </template>
 
 <script>
@@ -22,26 +21,27 @@ import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faLocationDot } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
+// import axios from "axios";
 
 library.add(faLocationDot);
 
 export default {
-  name: "InstructorCardView",
+  name: "SubscribedClients",
   components: {FontAwesomeIcon},
-  props: ["instructor"],
+  props: ["client"],
   data() {
     return {
       photo: null,
     }
   },
   mounted() {
-    if(!this.instructor.photo) { this.setUpProfilePic(); return; }
+    if(!this.client.photo) { this.setUpProfilePic(); return; }
     axios.get("/Photos/", {
       headers: {
         Authorization: "Bearer " + this.$store.getters.access_token,
       },
       params: {
-        path: this.instructor.photo,
+        path: this.client.photo,
       },
       responseType: "blob"
     })
@@ -55,9 +55,9 @@ export default {
   },
   methods: {
     setUpProfilePic() {
-      let picDiv = document.getElementById('imgDiv' + this.instructor.id);
+      let picDiv = document.getElementById('imgDiv' + this.client.id);
       if(!this.photo) {
-        picDiv.style.backgroundImage = "url('" + require('../../../Images/instructorNoProfilePic.png') + "')";
+        picDiv.style.backgroundImage = "url('" + require('../../../../../../Images/noProfilePic.png') + "')";
       }
       else {
         picDiv.style.backgroundImage="url('" + this.photo + "')";
@@ -66,18 +66,11 @@ export default {
   },
   computed: {
     getFullName() {
-      return this.instructor.name + ' ' + this.instructor.surname;
+      return this.client.name + ' ' + this.client.surname;
     },
     getAddress() {
-      return this.instructor.address.city + ', ' + this.instructor.address.country;
+      return this.client.address.city + ', ' + this.client.address.country;
     },
-    getGrade() {
-      if (this.instructor.grade === "0" || !this.instructor.grade) return "/";
-      return this.instructor.grade + "★";
-    },
-    getPath() {
-      return '/client/InstructorProfile/' + this.instructor.id;
-    }
   }
 }
 </script>
@@ -112,7 +105,7 @@ div.card {
     align-items: center;
     flex-direction: column;
     width: 100%;
-    height: 40%;
+    height: 50%;
     padding-top: 1rem;
     padding-left: 1rem;
     padding-right: 1rem;

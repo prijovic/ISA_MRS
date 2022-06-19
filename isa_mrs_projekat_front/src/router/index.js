@@ -39,6 +39,10 @@ import AllCottagesView
 import AllBoatsView from "@/components/BoatOwner/BoatOwnerPage/components/AllBoatsView/AllBoatsView";
 import InstructorProfile from "@/components/UnregisteredUser/components/Instructor/InstructorProfile";
 import AdminReviewsView from "@/components/Administrator/AdminPage/components/AdminMainViews/AdminReviewsView";
+import InstructorProfilePage
+    from "@/components/FishingInstructor/FishingInstructorPage/components/InstructorMainViews/InstructorProfile/InstructorProfilePage";
+import InstructorReservations
+    from "@/components/FishingInstructor/FishingInstructorPage/components/InstructorMainViews/InstructorReservations/InstructorReservations";
 //import InstructorCardView from "@/components/UnregisteredUser/components/InstructorCardView";
 
 
@@ -260,7 +264,7 @@ const routes = [
         path: "/fishingInstructor/profile",
         name: "FishingInstructorView",
         components: {
-            default: ProfileView,
+            default: InstructorProfilePage,
             sidebar: TheFishingInstructorSidebar,
         },
         meta: {
@@ -316,6 +320,17 @@ const routes = [
         name: "AdventureUpdate",
         components: {
             default: AdventureCreationPage,
+            sidebar: TheFishingInstructorSidebar
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
+        path: "/fishingInstructor/Reservations",
+        name: "InstructorReservations",
+        components: {
+            default: InstructorReservations,
             sidebar: TheFishingInstructorSidebar
         },
         meta: {

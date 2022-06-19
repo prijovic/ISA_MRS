@@ -1,5 +1,5 @@
 <template>
-  <div v-for="(adventure, i) in adventures" :key="i" class="card col-xl-6 col-lg-6 col-md-6 col-sm-10 col-xs-12 px-3 mb-5">
+  <div v-for="(adventure, i) in adventures" :key="i" class="card col-xl-6 col-lg-12 col-md-12 col-sm-12 col-xs-12 px-3 mb-5">
     <router-link :to="getPath(adventure)" class="link" @click="setRentalIdAndType">
       <img v-if="adventure.displayPhoto.photo" class="card-img-top" alt="" :src="images[i]"/>
       <div class="card-body pt-1 pb-0" style="color: black">
