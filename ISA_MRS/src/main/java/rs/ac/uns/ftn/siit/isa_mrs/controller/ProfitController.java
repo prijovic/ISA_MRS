@@ -7,11 +7,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.AdminDtos.DashboardDto;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.AdminDtos.IncomeDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.ProfitFeeDto;
 import rs.ac.uns.ftn.siit.isa_mrs.model.VacationRental;
 import rs.ac.uns.ftn.siit.isa_mrs.repository.RentalObjectOwnerRepo;
 import rs.ac.uns.ftn.siit.isa_mrs.service.*;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
@@ -65,6 +67,11 @@ public class ProfitController {
             log.error(e.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @GetMapping("/adminReport")
+    public ResponseEntity<Collection<IncomeDto>> getAdminReportData(@RequestParam LocalDateTime start, @RequestParam LocalDateTime end) {
+        return incomeService.getAdminReportData(start, end);
     }
 
     @Data

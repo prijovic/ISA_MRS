@@ -2,16 +2,16 @@ package rs.ac.uns.ftn.siit.isa_mrs.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.AdminDtos.GraphDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.AdminDtos.GraphNodeDto;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.AdminDtos.IncomeDto;
 import rs.ac.uns.ftn.siit.isa_mrs.model.Income;
 import rs.ac.uns.ftn.siit.isa_mrs.repository.IncomeRepo;
 
-import java.sql.Date;
-import java.sql.Time;
-import java.text.SimpleDateFormat;
-import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -25,6 +25,7 @@ import java.util.concurrent.atomic.AtomicReference;
 @RequiredArgsConstructor
 public class IncomeServiceImpl implements IncomeService{
     private final IncomeRepo incomeRepo;
+    private final ModelMapper modelMapper;
 
     @Override
     public double getIncomeLastYear() {
@@ -81,6 +82,21 @@ public class IncomeServiceImpl implements IncomeService{
             currentMonth--;
         }
         return graph;
+    }
+
+    @Override
+    public ResponseEntity<Collection<IncomeDto>> getAdminReportData(LocalDateTime start, LocalDateTime end) {
+        try {
+            Collection<IncomeDto> reportData = new ArrayList<>();
+            incomeRepo.findAllByTimeStampBetween(start, end).forEach(income -> {
+                IncomeDto dto = modelMapper.map(income, IncomeDto.class);
+                dto.setType(income.getReservation().getCancelled()?"cancellation":"reservation");
+            });
+            return new ResponseEntity<>(reportData, HttpStatus.OK);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     private double sumIncome(Collection<Income> incomes) {
