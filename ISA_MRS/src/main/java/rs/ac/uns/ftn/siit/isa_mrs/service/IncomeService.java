@@ -13,5 +13,5 @@ public interface IncomeService {
     double getIncomeLastWeek();
     GraphDto getYearlyReservationIncomeData();
     GraphDto getYearlyCancellationIncomeData();
-    ResponseEntity<Collection<IncomeDto>> getAdminReportData(LocalDateTime start, LocalDateTime end);
+    ResponseEntity<Collection<IncomeDto>> getAdminReportData(String start, String end);
 }

@@ -85,12 +85,16 @@ public class IncomeServiceImpl implements IncomeService{
     }
 
     @Override
-    public ResponseEntity<Collection<IncomeDto>> getAdminReportData(LocalDateTime start, LocalDateTime end) {
+    public ResponseEntity<Collection<IncomeDto>> getAdminReportData(String start, String end) {
         try {
             Collection<IncomeDto> reportData = new ArrayList<>();
-            incomeRepo.findAllByTimeStampBetween(start, end).forEach(income -> {
+            LocalDateTime startDate = LocalDateTime.parse(start);
+            LocalDateTime endDate = LocalDateTime.parse(end);
+            Collection<Income> incomes = incomeRepo.findAllByTimeStampBetweenOrderByTimeStamp(startDate, endDate);
+            incomes.forEach(income -> {
                 IncomeDto dto = modelMapper.map(income, IncomeDto.class);
                 dto.setType(income.getReservation().getCancelled()?"cancellation":"reservation");
+                reportData.add(dto);
             });
             return new ResponseEntity<>(reportData, HttpStatus.OK);
         } catch (Exception e) {

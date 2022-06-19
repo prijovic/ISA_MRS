@@ -9,5 +9,6 @@ import java.util.Collection;
 
 public interface IncomeRepo  extends JpaRepository<Income, Long> {
     Collection<Income> findAllByTimeStampBetween(LocalDateTime start, LocalDateTime end);
+    Collection<Income> findAllByTimeStampBetweenOrderByTimeStamp(LocalDateTime start, LocalDateTime end);
     Optional<Income> findByReservationId(Long id);
 }

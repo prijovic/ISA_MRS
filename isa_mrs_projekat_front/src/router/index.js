@@ -44,6 +44,7 @@ import InstructorProfilePage
     from "@/components/FishingInstructor/FishingInstructorPage/components/InstructorMainViews/InstructorProfile/InstructorProfilePage";
 import InstructorReservations
     from "@/components/FishingInstructor/FishingInstructorPage/components/InstructorMainViews/InstructorReservations/InstructorReservations";
+import AdminFinancesView from "@/components/Administrator/AdminPage/components/AdminMainViews/AdminFinancesView";
 //import InstructorCardView from "@/components/UnregisteredUser/components/InstructorCardView";
 
 
@@ -211,6 +212,17 @@ const routes = [
         name: "AdminReports",
         components: {
             default: AdminReportsView,
+            sidebar: TheAdminSidebar,
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
+        path: "/admin/finances",
+        name: "AdminFinances",
+        components: {
+            default: AdminFinancesView,
             sidebar: TheAdminSidebar,
         },
         meta: {

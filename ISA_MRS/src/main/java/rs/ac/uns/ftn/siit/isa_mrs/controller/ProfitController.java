@@ -9,8 +9,6 @@ import org.springframework.web.bind.annotation.*;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.AdminDtos.DashboardDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.AdminDtos.IncomeDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.ProfitFeeDto;
-import rs.ac.uns.ftn.siit.isa_mrs.model.VacationRental;
-import rs.ac.uns.ftn.siit.isa_mrs.repository.RentalObjectOwnerRepo;
 import rs.ac.uns.ftn.siit.isa_mrs.service.*;
 
 import java.time.LocalDateTime;
@@ -70,7 +68,7 @@ public class ProfitController {
     }
 
     @GetMapping("/adminReport")
-    public ResponseEntity<Collection<IncomeDto>> getAdminReportData(@RequestParam LocalDateTime start, @RequestParam LocalDateTime end) {
+    public ResponseEntity<Collection<IncomeDto>> getAdminReportData(@RequestParam String start, @RequestParam String end) {
         return incomeService.getAdminReportData(start, end);
     }
 
