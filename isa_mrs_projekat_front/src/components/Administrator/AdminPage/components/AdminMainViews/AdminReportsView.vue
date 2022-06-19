@@ -45,9 +45,9 @@
                   {{report.subjectName}}
                 </td>
                 <td v-if="report.author.userType==='Client'" colspan="2">
-                  <button class="btn">Reply</button>
+                  <button class="btn"><font-awesome-icon icon="paper-plane"></font-awesome-icon>Reply</button>
                 </td>
-                <td v-else>
+                <td v-if="report.author.userType!=='Client'" class="text-end">
                   <button class="btn" data-bs-toggle="modal" data-bs-target="#confirmationDialog">
                     <font-awesome-icon icon="check"></font-awesome-icon>
                   </button>
@@ -55,21 +55,21 @@
                     <div class="modal-dialog">
                       <div class="modal-content">
                         <div class="modal-header">
-                          <h5 class="modal-title" id="exampleModalLabel">Users' Status Change</h5>
+                          <h5 class="modal-title" id="exampleModalLabel">Report Management</h5>
                           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                          Do you want to accept {{review.author.name + " " + review.author.surname}}'s review for {{review.subjectName}}?
+                          Do you want to accept {{report.author.name + " " + report.author.surname}}'s review for {{report.subjectName}}?
                         </div>
                         <div class="modal-footer">
                           <button type="button" class="btn btn-red" style="margin-right: 2vh;" data-bs-dismiss="modal">No</button>
-                          <button type="button" class="btn" @click="manageReview(review.id, true)" data-bs-dismiss="modal">Yes</button>
+                          <button type="button" class="btn" @click="manageReport(report.id, true)" data-bs-dismiss="modal">Yes</button>
                         </div>
                       </div>
                     </div>
                   </div>
                 </td>
-                <td>
+                <td v-if="report.author.userType!=='Client'" class="text-start">
                   <button class="btn btn-red" data-bs-toggle="modal" data-bs-target="#confirmationDialogReject">
                     <font-awesome-icon icon="ban"></font-awesome-icon>
                   </button>
@@ -77,15 +77,15 @@
                     <div class="modal-dialog">
                       <div class="modal-content">
                         <div class="modal-header">
-                          <h5 class="modal-title" id="RejectDialog">Users' Status Change</h5>
+                          <h5 class="modal-title" id="RejectDialog">Report Management</h5>
                           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                          Do you want to reject {{review.author.name + " " + review.author.surname}}'s review for {{review.subjectName}}?
+                          Do you want to reject {{report.author.name + " " + report.author.surname}}'s review for {{report.subjectName}}?
                         </div>
                         <div class="modal-footer">
                           <button type="button" class="btn btn-red" style="margin-right: 2vh;" data-bs-dismiss="modal">No</button>
-                          <button type="button" class="btn" @click="manageReview(review.id, false)" data-bs-dismiss="modal">Yes</button>
+                          <button type="button" class="btn" @click="manageReport(report.id, false)" data-bs-dismiss="modal">Yes</button>
                         </div>
                       </div>
                     </div>
@@ -116,12 +116,12 @@
 <script>
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import { library } from "@fortawesome/fontawesome-svg-core";
-import {faFilter, faX, faCheck, faBan} from "@fortawesome/free-solid-svg-icons";
+import {faFilter, faX, faCheck, faBan, faPaperPlane} from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
 import {useStore} from "vuex";
 // import {toggleProcessing} from "@/components/state";
 
-library.add(faFilter, faX, faCheck, faBan);
+library.add(faFilter, faX, faCheck, faBan, faPaperPlane);
 
 export default {
   name: "AdminReportsView",
@@ -138,7 +138,7 @@ export default {
   },
   mounted() {
     const store = useStore();
-    axios.get("/Reviews/getReviewsPage", {headers: {
+    axios.get("/Reports/getReports", {headers: {
         Authorization: "Bearer " + store.getters.access_token,
       },
       params: {
@@ -147,7 +147,7 @@ export default {
       }
     })
         .then(response => {
-          this.reviews = response.data.content;
+          this.reports = response.data.content;
           this.currentPage = response.data.currentPage;
           this.totalPages = response.data.pages;
         })
@@ -238,15 +238,15 @@ export default {
         params = {
           page: this.currentPage,
           pageSize: this.pageSize,
-          author: this.filterAuthor,
+          userType: this.filterAuthor,
         };
-        url = "/Reviews/getReviewsFilterPage";
+        url = "/Reports/getReportsFilter";
       } else {
         params = {
           page: this.currentPage,
           pageSize: this.pageSize
         };
-        url = "/Reviews/getReviewsPage";
+        url = "/Reports/getReports";
       }
       axios.get(url, {headers: {
           Authorization: "Bearer " + this.$store.getters.access_token,
@@ -254,7 +254,7 @@ export default {
         params
       })
           .then(response => {
-            this.reviews = response.data.content;
+            this.reports = response.data.content;
             this.currentPage = response.data.currentPage;
             this.totalPages = response.data.pages;
           })
