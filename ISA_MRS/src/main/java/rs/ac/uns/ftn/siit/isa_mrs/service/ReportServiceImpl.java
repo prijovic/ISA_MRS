@@ -11,9 +11,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.AdminDtos.ReportDto;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.AdminDtos.ReviewDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.PageDto;
 import rs.ac.uns.ftn.siit.isa_mrs.model.*;
 import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.RequestStatus;
+import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.ReviewType;
 import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.UserType;
 import rs.ac.uns.ftn.siit.isa_mrs.repository.ReportRepo;
 import rs.ac.uns.ftn.siit.isa_mrs.repository.ReservationRepo;
@@ -28,6 +30,7 @@ public class ReportServiceImpl implements ReportService{
     private final ReportRepo reportRepo;
     private final ModelMapper modelMapper;
     private final ReservationRepo reservationRepo;
+    private final EmailSenderService emailSenderService;
 
     @Override
     public ResponseEntity<PageDto<ReportDto>> getReports(int page, int pageSize) {
@@ -56,6 +59,34 @@ public class ReportServiceImpl implements ReportService{
                 reportPage = reportRepo.findAllByStatusAndShowedUpAndAuthorUserTypeOrAuthorUserTypeOrAuthorUserType(RequestStatus.Pending, true, UserType.Instructor, UserType.BoatOwner, UserType.VacationRentalOwner, pageable);
             }
             return new ResponseEntity<>(reportPageToDto(reportPage), HttpStatus.OK);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    public ResponseEntity<ReportDto> changeReportStatus(Long id, boolean accepted, String response) {
+        try {
+            Report report = reportRepo.getById(id);
+            Reservation reservation = reservationRepo.findByReportsIsContaining(report);
+            Client client = reservation.getClient();
+            if (accepted) {
+                report.setStatus(RequestStatus.Accepted);
+                if (report.getAuthor().getUserType().equals(UserType.Client)) {
+                    emailSenderService.sendReportResponseNotificationEmailClient(report, response);
+                    emailSenderService.sendReportResponseNotificationEmailOwner(report, response);
+                } else {
+                    emailSenderService.sendPenaltyResponseNotificationEmailClient(report);
+                    emailSenderService.sendPenaltyResponseNotificationEmailOwner(report, client.getName() + " " + client.getSurname());
+                }
+            } else {
+                report.setStatus(RequestStatus.Rejected);
+                emailSenderService.sendPenaltyResponseNotificationEmailClient(report);
+                emailSenderService.sendPenaltyResponseNotificationEmailOwner(report, client.getName() + " " + client.getSurname());
+            }
+            reportRepo.save(report);
+            return new ResponseEntity<>(modelMapper.map(report, ReportDto.class), HttpStatus.OK);
         } catch (Exception e) {
             log.error(e.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
