@@ -52,7 +52,7 @@ public class ReviewServiceImpl implements ReviewService{
         try {
             Pageable pageable = PageRequest.of(page, pageSize).withSort(Sort.by(Sort.Order.asc("timeStamp")));
             ReviewType reviewType = getReviewType(author, subject);
-            reviewPage = reviewRepo.findAllByStatusAndReviewType(RequestStatus.Pending, reviewType,pageable);
+            reviewPage = reviewRepo.findAllByStatusAndReviewType(RequestStatus.Pending, reviewType, pageable);
             return new ResponseEntity<>(reviewPageToDto(reviewPage), HttpStatus.OK);
         } catch (Exception e) {
             log.error(e.getMessage());

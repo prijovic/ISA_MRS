@@ -38,7 +38,6 @@ public class ReservationServiceImpl implements ReservationService {
     private final ReservationRepo reservationRepo;
     private final ReviewRepo reviewRepo;
     private final ReportRepo reportRepo;
-    private final ReportResponseRepo reportResponseRepo;
     private final IncomeRepo incomeRepo;
     private final ModelMapper modelMapper;
 
@@ -251,19 +250,11 @@ public class ReservationServiceImpl implements ReservationService {
             report.setShowedUp(aird.getShowedUp());
             if(aird.getShowedUp()) {
                 report.setStatus(RequestStatus.Pending);
-                reportRepo.save(report);
             }
             else {
                 report.setStatus(RequestStatus.Accepted);
-                reportRepo.save(report);
-                ReportResponse rr = new ReportResponse();
-                rr.setPenalty(RequestStatus.Accepted);
-                rr.setReport(report);
-                rr.setTimeStamp(LocalDateTime.now());
-                reportResponseRepo.save(rr);
-                report.setResponse(rr);
-                reportRepo.save(report);
             }
+            reportRepo.save(report);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);

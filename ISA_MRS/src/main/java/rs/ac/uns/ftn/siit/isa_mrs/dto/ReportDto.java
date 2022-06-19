@@ -10,6 +10,4 @@ public class ReportDto implements Serializable {
     private final Long id;
     private final String comment;
     private final LocalDateTime timeStamp;
-    //private final ReservationDto reservation;
-    private final ReportResponseDto response;
 }

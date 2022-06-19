@@ -24,6 +24,5 @@ public class Report {
     private Reservation reservation;
     @ManyToOne
     private User author;
-    @OneToOne(cascade = CascadeType.ALL)
-    private ReportResponse response;
+
 }
