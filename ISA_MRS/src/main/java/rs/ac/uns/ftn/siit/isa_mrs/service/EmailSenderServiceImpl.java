@@ -158,7 +158,7 @@ public class EmailSenderServiceImpl implements EmailSenderService{
         final String subject = "Report Response";
         Map<String, Object> model = new HashMap<>();
         model.put("status", report.getStatus().equals(RequestStatus.Accepted) ? "Accepted":"Rejected");
-        model.put("get", report.getStatus().equals(RequestStatus.Accepted) ? "to give":"not to give");
+        model.put("give", report.getStatus().equals(RequestStatus.Accepted) ? "to give":"not to give");
         model.put("date", report.getTimeStamp().format(DateTimeFormatter.ofPattern("dd.MM.yyyy. hh:mm")));
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper messageHelper = new MimeMessageHelper(message, MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED);

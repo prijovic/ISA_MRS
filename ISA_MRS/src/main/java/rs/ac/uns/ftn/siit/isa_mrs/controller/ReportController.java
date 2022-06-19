@@ -25,7 +25,7 @@ public class ReportController {
         return reportService.getReportsFilter(page, pageSize, userType);
     }
 
-    @PutMapping("/changeReportStatus")
+    @PutMapping("/manageReport")
     public ResponseEntity<ReportDto> changeReportStatus(@RequestParam Long id, @RequestParam boolean accepted, @RequestParam String response) {
         return reportService.changeReportStatus(id, accepted, response);
     }

@@ -45,7 +45,28 @@
                   {{report.subjectName}}
                 </td>
                 <td v-if="report.author.userType==='Client'" colspan="2">
-                  <button class="btn"><font-awesome-icon icon="paper-plane"></font-awesome-icon>Reply</button>
+                  <div class="dropdown d-flex justify-content-start">
+                    <button class="btn dropdown" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                      <font-awesome-icon icon="paper-plane"></font-awesome-icon>Reply
+                    </button>
+                    <div class="dropdown-menu form">
+                      <div class="container-fluid" style="background-color: #f7f7f2">
+                        <div class="row">
+                          <p>Please enter the response (50-200 characters):</p>
+                        </div>
+                        <div class="row">
+                          <form>
+                            <div class="form-group">
+                              <textarea class="form-control" style="resize: none" rows="3" maxlength="200" v-model="response"></textarea>
+                            </div>
+                            <div class="form-group text-center mt-1">
+                              <button class="btn" :class="response!==null?null:'disabled'" @click.prevent="manageReport(report.id, true, response)">Confirm</button>
+                            </div>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </td>
                 <td v-if="report.author.userType!=='Client'" class="text-end">
                   <button class="btn" data-bs-toggle="modal" data-bs-target="#confirmationDialog">
@@ -59,7 +80,7 @@
                           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                          Do you want to accept {{report.author.name + " " + report.author.surname}}'s review for {{report.subjectName}}?
+                          Do you want to accept {{report.author.name + " " + report.author.surname}}'s report for {{report.subjectName}}?
                         </div>
                         <div class="modal-footer">
                           <button type="button" class="btn btn-red" style="margin-right: 2vh;" data-bs-dismiss="modal">No</button>
@@ -81,7 +102,7 @@
                           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                          Do you want to reject {{report.author.name + " " + report.author.surname}}'s review for {{report.subjectName}}?
+                          Do you want to reject {{report.author.name + " " + report.author.surname}}'s report for {{report.subjectName}}?
                         </div>
                         <div class="modal-footer">
                           <button type="button" class="btn btn-red" style="margin-right: 2vh;" data-bs-dismiss="modal">No</button>
@@ -119,7 +140,7 @@ import { library } from "@fortawesome/fontawesome-svg-core";
 import {faFilter, faX, faCheck, faBan, faPaperPlane} from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
 import {useStore} from "vuex";
-// import {toggleProcessing} from "@/components/state";
+import {toggleProcessing} from "@/components/state";
 
 library.add(faFilter, faX, faCheck, faBan, faPaperPlane);
 
@@ -134,6 +155,7 @@ export default {
       pageSize: 10,
       filterAuthor: null,
       filterActive: false,
+      response: null
     }
   },
   mounted() {
@@ -160,36 +182,39 @@ export default {
         });
   },
   methods: {
-    // manageReview(reviewId, accepted) {
-    //   toggleProcessing();
-    //   axios.put("/Reviews/manageReview", null,{
-    //     headers: {
-    //       Authorization: "Bearer " + this.$store.getters.access_token,
-    //     },
-    //     params: {
-    //       id: reviewId,
-    //       accepted: accepted
-    //     }
-    //   })
-    //       .then((response) => {
-    //         this.$notify( {
-    //           title: "Successfully managed",
-    //           text: "You have successfully" + (accepted?"accepted":"rejected") + " the review with id " + response.data.id + ".",
-    //           position: "bottom right",
-    //           type: "success"
-    //         });
-    //         this.refreshPage();
-    //         toggleProcessing();
-    //       })
-    //       .catch(() => {
-    //         this.$notify({
-    //           title: "Server error",
-    //           text: "Server is currently off. Please try again later...",
-    //           type: "error"
-    //         });
-    //         toggleProcessing();
-    //       })
-    // },
+    manageReport(reportId, accepted, response) {
+      toggleProcessing();
+      response = response===undefined?"":response;
+      console.log("response: '" + response +"'");
+      axios.put("/Reports/manageReport", null,{
+        headers: {
+          Authorization: "Bearer " + this.$store.getters.access_token,
+        },
+        params: {
+          id: reportId,
+          accepted: accepted,
+          response: response
+        }
+      })
+          .then((response) => {
+            this.$notify( {
+              title: "Successfully managed",
+              text: "You have successfully" + (accepted?"accepted":"rejected") + " the report with id " + response.data.id + ".",
+              position: "bottom right",
+              type: "success"
+            });
+            this.refreshPage();
+            toggleProcessing();
+          })
+          .catch(() => {
+            this.$notify({
+              title: "Server error",
+              text: "Server is currently off. Please try again later...",
+              type: "error"
+            });
+            toggleProcessing();
+          })
+    },
     filterButtonClicked() {
       if (this.filterActive) {
         this.filterAuthor = null
