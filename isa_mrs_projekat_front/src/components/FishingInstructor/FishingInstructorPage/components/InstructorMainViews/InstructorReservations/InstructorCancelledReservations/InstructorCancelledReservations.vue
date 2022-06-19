@@ -19,7 +19,8 @@
           <p class="h4" ><strong style="color:#008970;">Date:</strong> {{  getDateSpan(reservation) }}</p>
         </div>
         <div class="row">
-          <p class="h4"><strong style="color:#008970;">Profit:</strong> ${{ (reservation.income.value).toFixed(2) }}</p>
+          <p class="h4"><strong style="color:#008970;">Profit:</strong> ${{
+              (calculateCancellationInstructorIncome(reservation)).toFixed(2) }}</p>
         </div>
         <div class="row mt-1">
           <p class="h3" style="color:#e23c52;">
@@ -67,8 +68,15 @@ export default {
       // images: [],
     }
   },
-
   methods: {
+    calculateCancellationInstructorIncome(reservation) {
+      let total = this.calculateTotal(reservation);
+      let cancellationPercentage = reservation.rentalObject.cancellationFee;
+      if(cancellationPercentage === 0) return 0;
+      let feeAmount = total/100 * cancellationPercentage;
+      let systemIncome = feeAmount/100 * reservation.income.fee;
+      return feeAmount - systemIncome;
+    },
     setRentalIdAndType(reservation) {
       this.$store.dispatch("rentalId", reservation.rentalObject.id);
       this.$store.dispatch("rentalType", reservation.rentalObject.rentalObjectType);
