@@ -74,8 +74,6 @@ import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import {DatePicker} from "v-calendar"
 import axios from "axios";
 import store from "@/store";
-import {toggleProcessing} from "@/components/state";
-
 library.add(faCalendarDay, faArrowRight)
 
 export default {
@@ -169,7 +167,6 @@ export default {
               type: "success"
             });
             this.$emit("requestManaged");
-            toggleProcessing();
           })
           .catch((error) =>{
             if (error.response.status===404) {
@@ -185,7 +182,6 @@ export default {
                 type: "error"
               })
             }
-            toggleProcessing();
           })
     }
   }

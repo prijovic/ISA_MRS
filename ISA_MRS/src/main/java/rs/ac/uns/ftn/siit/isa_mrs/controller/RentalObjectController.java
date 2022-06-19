@@ -175,7 +175,7 @@ public class RentalObjectController {
     }
 
     @PostMapping("/defineSpecialOffer")
-    public ResponseEntity<Void> defineOffer(@RequestBody rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.SpecialOfferDto specialOfferDto){
+    public ResponseEntity<SpecialOfferDto> defineOffer(@RequestBody rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.SpecialOfferDto specialOfferDto){
         return rentalObjectService.defineSpecialOffer(specialOfferDto);
     }
 }

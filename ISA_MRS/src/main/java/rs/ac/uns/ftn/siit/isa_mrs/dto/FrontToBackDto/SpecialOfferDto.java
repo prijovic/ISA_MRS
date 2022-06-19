@@ -9,10 +9,10 @@ import java.util.Collection;
 
 @Data
 public class SpecialOfferDto implements Serializable {
-    private Long rentalObjectId;
+    private final Long rentalObjectId;
     private LocalDateTime initDate;
     private LocalDateTime termDate;
-    private Integer capacity;
-    private Double discount;
-    private Collection<ServiceDto> includedServices;
+    private final Integer capacity;
+    private final Double discount;
+    private final Collection<ServiceDto> includedServices;
 }

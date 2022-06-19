@@ -141,7 +141,7 @@ public class RentalObjectServiceImpl implements RentalObjectService {
     }
 
     @Override
-    public ResponseEntity<Void> defineSpecialOffer(rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.SpecialOfferDto specialOfferDto) {
+    public ResponseEntity<SpecialOfferDto> defineSpecialOffer(rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.SpecialOfferDto specialOfferDto) {
         try {
             Optional<RentalObject> rentalObjectOptional = rentalObjectRepo.findById(specialOfferDto.getRentalObjectId());
             if (rentalObjectOptional.isEmpty()) {
@@ -168,8 +168,8 @@ public class RentalObjectServiceImpl implements RentalObjectService {
                 service.setSpecialOffer(specialOffer);
                 serviceRepo.save(service);
             });
-
-            return new ResponseEntity<>(HttpStatus.OK);
+            SpecialOfferDto specialOfferDto1 = modelMapper.map(specialOffer, SpecialOfferDto.class);
+            return new ResponseEntity<>(specialOfferDto1, HttpStatus.OK);
         } catch (Exception e) {
             log.error(e.getMessage());
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
