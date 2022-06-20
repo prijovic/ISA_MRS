@@ -489,52 +489,52 @@ export default {
           Authorization: "Bearer " + this.$store.getters.access_token,
         }
       })
-          .then((boat) => {
-            for (let i = 0; i < this.photos.length; i++) {
-              let formData = new FormData();
-              formData.append("file", this.photos[i]);
-              axios.post("/Photos/upload", formData, {
-                headers: {
-                  Authorization: "Bearer " + this.$store.getters.access_token,
-                  "Content-type": "multipart/form-data"
-                },
-              })
-                  .then((response) => {
-                    let body = {id: boat.data.id, photos: [response.data]}
-                    console.log(body);
-                    axios.post("/RentalObjects/connectPhotosToBoat", body,{
-                      headers: {
-                        Authorization: "Bearer " + this.$store.getters.access_token,
-                      },
-                    }).then(() =>{
-                      this.$notify( {
-                        title: "Successful adding",
-                        text: "You have successfully added a new boat.",
-                        position: "bottom right",
-                        type: "success"
-                      });
-                    })
-                  })
-            }
-            toggleProcessing();
+      .then((boat) => {
+        for (let i = 0; i < this.photos.length; i++) {
+          let formData = new FormData();
+          formData.append("file", this.photos[i]);
+          axios.post("/Photos/upload", formData, {
+            headers: {
+              Authorization: "Bearer " + this.$store.getters.access_token,
+              "Content-type": "multipart/form-data"
+            },
           })
-          .catch(error => {
-            if (!error.response) {
-              this.$notify({
-                title: "Server error",
-                text: "Server is currently off. Please try again later...",
-                type: "error"
-              });
-            } else if (error.response.status === 500) {
-              this.$notify({
-                title: "Internal Server Error",
-                text: "Something went wrong on the server! Please try again later...",
+          .then((response) => {
+            let body = {id: boat.data.id, photos: [response.data]}
+            console.log(body);
+            axios.post("/RentalObjects/connectPhotosToBoat", body,{
+              headers: {
+                Authorization: "Bearer " + this.$store.getters.access_token,
+              },
+            }).then(() =>{
+              this.$notify( {
+                title: "Successful adding",
+                text: "You have successfully added a new boat.",
                 position: "bottom right",
-                type: "error"
+                type: "success"
               });
-            }
-            toggleProcessing();
+            })
           })
+        }
+        toggleProcessing();
+      })
+      .catch(error => {
+        if (!error.response) {
+          this.$notify({
+            title: "Server error",
+            text: "Server is currently off. Please try again later...",
+            type: "error"
+          });
+        } else if (error.response.status === 500) {
+          this.$notify({
+            title: "Internal Server Error",
+            text: "Something went wrong on the server! Please try again later...",
+            position: "bottom right",
+            type: "error"
+          });
+        }
+        toggleProcessing();
+      })
     },
     updateBoat() {
       let boat = this.boat;
@@ -679,6 +679,7 @@ export default {
           });
     },
     validateAddress() {
+      toggleProcessing();
       const apiKey = 'VrDrl5BjEA0Whvb-chHbFz96HV4qlCXB-yoiTRRLKno';
       const url = 'https://geocoder.ls.hereapi.com/6.2/geocode.json' +
           '?apiKey=' + apiKey +
@@ -712,6 +713,7 @@ export default {
           })
           .catch(() => {
             this.addressIsValid = false;
+            toggleProcessing();
           });
     },
     transliterate(word) {
@@ -831,6 +833,14 @@ export default {
     },
     ruleExists(rule) {
       return this.getRuleIndex(rule) !== -1;
+    },
+    photoExisted(photo) {
+      for (let i = 0; i <this.primaryPhotos.length; i++) {
+        if (this.primaryPhotos[i] === photo) {
+          return true;
+        }
+      }
+      return false;
     }
   }
 }
