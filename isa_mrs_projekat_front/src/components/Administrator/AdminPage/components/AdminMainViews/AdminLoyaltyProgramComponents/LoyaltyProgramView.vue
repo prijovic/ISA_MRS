@@ -10,13 +10,31 @@
             <input v-model="clientPoints" type="number" :min=0 id="client" class="form-control mb-2">
             <label for="owner" style="color: #008970">Owner Points Per Reservation</label>
             <input v-model="ownerPoints" type="number" :min=0 id="owner" class="form-control">
+            <button type="button" :disabled="primaryValue1===clientPoints&&primaryValue2===ownerPoints" class="btn mt-2" data-bs-toggle="modal" data-bs-target="#confirmationDialog1">Update</button>
+            <div class="modal fade" id="confirmationDialog1" tabindex="-1" aria-labelledby="exampleModalLabel1" aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel1">Loyalty Program Update</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    Do you want to change loyalty program?
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-red" style="margin-right: 2vh;" data-bs-dismiss="modal">No</button>
+                    <button type="button" class="btn" @click.prevent="updateProgram" data-bs-dismiss="modal">Yes</button>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
         <div class="col-8">
           <div class="align-items-center">
             <div class="row main-col">
               <div class="col d-flex justify-content-end pe-0 me-0">
-                <router-link to="/admin/newUser" class="btn btn-default mb-1 d-flex my-auto">
+                <router-link to="/admin/loyaltyProgram/newCategory" class="btn btn-default mb-1 d-flex my-auto">
                   <font-awesome-icon class="my-auto pe-2" icon="plus"></font-awesome-icon>
                   Add Category
                 </router-link>
@@ -44,7 +62,24 @@
                   <td>{{category.clientDiscount.toFixed(2)}}%</td>
                   <td>{{category.ownerBenefit.toFixed(2)}}%</td>
                   <td>
-                    <button class="btn btn-red"><font-awesome-icon icon="trash"></font-awesome-icon></button>
+                    <button class="btn btn-red" data-bs-toggle="modal" :data-bs-target="'#confirmationDialog'+category.id" ><font-awesome-icon icon="trash"></font-awesome-icon></button>
+                    <div class="modal fade" :id="'confirmationDialog'+category.id" tabindex="-1" :aria-labelledby="'exampleModalLabel'+category.id" aria-hidden="true">
+                      <div class="modal-dialog">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <h5 class="modal-title" :id="'exampleModalLabel'+category.id">Category Deletion</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+                          <div class="modal-body">
+                            Do you want to delete user category '{{category.name}}'?
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-red" style="margin-right: 2vh;" data-bs-dismiss="modal">No</button>
+                            <button type="button" class="btn" @click="deleteCategory(category.id)" data-bs-dismiss="modal">Yes</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </td>
                 </tr>
                 </tbody>
@@ -64,6 +99,7 @@ import { library } from "@fortawesome/fontawesome-svg-core";
 import { faPlus, faTrash } from "@fortawesome/free-solid-svg-icons";
 import {useStore} from "vuex";
 import axios from "axios";
+import {toggleLoading, toggleProcessing} from "@/components/state";
 
 library.add(faPlus, faTrash);
 
@@ -72,6 +108,8 @@ export default {
   components: {FontAwesomeIcon},
   data() {
     return {
+      primaryValue1: null,
+      primaryValue2: null,
       categories: [],
       clientPoints: null,
       ownerPoints: null,
@@ -79,6 +117,7 @@ export default {
     }
   },
   mounted() {
+    toggleLoading();
     const store = useStore();
     axios.get("/LoyaltyProgram/getProgram", {headers: {
         Authorization: "Bearer " + store.getters.access_token,
@@ -88,9 +127,12 @@ export default {
       this.categories = response.data.loyaltyCategories;
       this.clientPoints = response.data.clientPointsPerReservation;
       this.ownerPoints = response.data.ownerPointsPerReservation;
+      this.primaryValue1 = response.data.clientPointsPerReservation;
+      this.primaryValue2 = response.data.ownerPointsPerReservation;
       this.categories.forEach(category => {
         this.loadImage(category.icon, this.categories.indexOf(category));
       });
+      toggleLoading();
     })
     .catch(() =>{
       this.$notify({
@@ -98,6 +140,7 @@ export default {
         text: "Server is currently off. Please try again later...",
         type: "error"
       });
+      toggleLoading();
     });
   },
   methods: {
@@ -115,6 +158,69 @@ export default {
       })
       .catch((error) =>{
         console.log(error);
+      });
+    },
+    deleteCategory(categoryId) {
+      axios.delete("/LoyaltyProgram/deleteCategory", {headers: {
+          Authorization: "Bearer " + this.$store.getters.access_token,
+        },
+        params: {
+          id: categoryId
+        }
+      })
+      .then((response) => {
+        this.categories = response.data.loyaltyCategories;
+        this.clientPoints = response.data.clientPointsPerReservation;
+        this.ownerPoints = response.data.ownerPointsPerReservation;
+        this.categories.forEach(category => {
+          this.loadImage(category.icon, this.categories.indexOf(category));
+        });
+      })
+      .catch(() =>{
+        this.$notify({
+          title: "Server error",
+          text: "Server is currently off. Please try again later...",
+          type: "error"
+        });
+      })
+    },
+    updateProgram() {
+      toggleProcessing();
+      const cp = this.clientPoints;
+      const op = this.ownerPoints;
+      axios.put("/LoyaltyProgram/updateProgram", null, {
+        headers: {
+          Authorization: "Bearer " + this.$store.getters.access_token,
+        },
+        params: {
+          clientPointsPerReservation: cp,
+          ownerPointsPerReservation: op
+        }
+      })
+      .then(response => {
+        this.categories = response.data.loyaltyCategories;
+        this.clientPoints = response.data.clientPointsPerReservation;
+        this.ownerPoints = response.data.ownerPointsPerReservation;
+        this.primaryValue1 = response.data.clientPointsPerReservation;
+        this.primaryValue2 = response.data.ownerPointsPerReservation;
+        this.categories.forEach(category => {
+          this.loadImage(category.icon, this.categories.indexOf(category));
+        });
+        this.$notify( {
+          title: "Successful update",
+          text: "You have successfully updated the loyalty program.",
+          position: "bottom right",
+          type: "success"
+        });
+        toggleProcessing();
+      })
+      .catch(() =>{
+        this.$notify({
+          title: "Server error",
+          text: "Server is currently off. Please try again later...",
+          type: "error"
+        });
+        toggleProcessing()
       });
     },
   }

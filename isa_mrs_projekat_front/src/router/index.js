@@ -47,6 +47,8 @@ import InstructorReservations
 import AdminFinancesView from "@/components/Administrator/AdminPage/components/AdminMainViews/AdminFinancesView";
 import LoyaltyProgramView
     from "@/components/Administrator/AdminPage/components/AdminMainViews/AdminLoyaltyProgramComponents/LoyaltyProgramView";
+import LoyaltyCategoryCreationPage
+    from "@/components/Administrator/AdminPage/components/AdminMainViews/AdminLoyaltyProgramComponents/LoyaltyCategoryCreationPage";
 //import InstructorCardView from "@/components/UnregisteredUser/components/InstructorCardView";
 
 
@@ -236,6 +238,17 @@ const routes = [
         name: "AdminLoyaltyProgram",
         components: {
             default: LoyaltyProgramView,
+            sidebar: TheAdminSidebar,
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
+        path: "/admin/loyaltyProgram/newCategory",
+        name: "AdminNewLoyaltyCategory",
+        components: {
+            default: LoyaltyCategoryCreationPage,
             sidebar: TheAdminSidebar,
         },
         meta: {

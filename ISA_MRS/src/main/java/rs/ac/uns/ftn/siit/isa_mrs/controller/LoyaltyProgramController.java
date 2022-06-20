@@ -3,12 +3,10 @@ package rs.ac.uns.ftn.siit.isa_mrs.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.AdminDtos.LoyaltyCategoryDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.AdminDtos.LoyaltyProgramDto;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.RentalPhotosDto;
 import rs.ac.uns.ftn.siit.isa_mrs.service.LoyaltyProgramService;
 
 import java.util.Collection;
@@ -31,5 +29,25 @@ public class LoyaltyProgramController {
     @GetMapping("/getProgram")
     public ResponseEntity<LoyaltyProgramDto> getProgram() {
         return loyaltyProgramService.getLoyaltyProgram();
+    }
+
+    @DeleteMapping("/deleteCategory")
+    public ResponseEntity<LoyaltyProgramDto> deleteCategory(@RequestParam Long id) {
+        return loyaltyProgramService.deleteCategory(id);
+    }
+
+    @PostMapping("/addCategory")
+    public ResponseEntity<LoyaltyCategoryDto> addCategory(@RequestBody rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.LoyaltyCategoryDto category) {
+        return loyaltyProgramService.addCategory(category);
+    }
+
+    @PostMapping("/connectPhotoToCategory")
+    public ResponseEntity<Void> connectPhotosToRental(@RequestBody RentalPhotosDto dto) {
+        return loyaltyProgramService.addCategoryPhoto(dto.getId(), dto.getPhotos().get(0));
+    }
+
+    @PutMapping("/updateProgram")
+    public ResponseEntity<LoyaltyProgramDto> updateProgram(@RequestParam long clientPointsPerReservation, @RequestParam long ownerPointsPerReservation) {
+        return loyaltyProgramService.updateProgram(clientPointsPerReservation, ownerPointsPerReservation);
     }
 }
