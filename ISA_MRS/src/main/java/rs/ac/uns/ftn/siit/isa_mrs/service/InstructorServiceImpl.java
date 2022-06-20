@@ -18,7 +18,6 @@ import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.InstructorDtos.InstructorDt
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.InstructorDtos.InstructorReservationsDtos.InstructorReservationDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.RentalProfileDtos.AdventureDtos.AdventuresForMenuDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.RentalProfileDtos.ReviewDtos.ReviewDto;
-import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.ReservationDtos.ReservationClientDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.ReservationDtos.ReservationIncomeDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.ReservationDtos.ReservationRentalObjectDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.ReservationDtos.ReservationReportDto;
@@ -31,7 +30,6 @@ import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.UserType;
 import rs.ac.uns.ftn.siit.isa_mrs.repository.IncomeRepo;
 import rs.ac.uns.ftn.siit.isa_mrs.repository.RentalObjectOwnerRepo;
 import rs.ac.uns.ftn.siit.isa_mrs.repository.RentalObjectRepo;
-import rs.ac.uns.ftn.siit.isa_mrs.repository.ReservationRepo;
 import rs.ac.uns.ftn.siit.isa_mrs.security.JwtDecoder;
 
 import java.time.LocalDateTime;
@@ -45,7 +43,6 @@ public class InstructorServiceImpl implements InstructorService{
     private final RentalObjectRepo rentalRepo;
     private final AdventureServiceImpl adventureService;
     private final RentalObjectServiceImpl rosi;
-    private final ReservationRepo reservationRepo;
     private final IncomeRepo incomeRepo;
     private final ModelMapper modelMapper;
     private final JwtDecoder jwtDecoder;
@@ -62,7 +59,7 @@ public class InstructorServiceImpl implements InstructorService{
             Optional<RentalObjectOwner> owner = ownerRepo.findByEmail(decodedToken.getEmail());
             if(owner.isEmpty()) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             RentalObjectOwner instructor = owner.get();
-            Collection<InstructorReservationDto> reservationDtos = new ArrayList<>();
+            Collection<InstructorReservationDto> reservationDtos;
             reservationDtos = setUpReservationDtos(instructor.getRentalObjects());
             return new ResponseEntity<>(reservationDtos, HttpStatus.OK);
         }
@@ -208,6 +205,29 @@ public class InstructorServiceImpl implements InstructorService{
             }
         } catch (Exception e) {
             return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @Override
+    public ResponseEntity<InstructorProfileDto> updateInstructorPeriod(String start, String end, String token) {
+        try{
+            JwtDecoder.DecodedToken decodedToken;
+            try {
+                decodedToken = jwtDecoder.decodeToken(token);
+            } catch (Exception e) {
+                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            }
+            Optional<RentalObjectOwner> owner = ownerRepo.findByEmail(decodedToken.getEmail());
+            if(owner.isEmpty()) return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+            RentalObjectOwner instructor = owner.get();
+            instructor.setInitDate(LocalDateTime.parse(start));
+            instructor.setTermDate(LocalDateTime.parse(end));
+            ownerRepo.save(instructor);
+            return new ResponseEntity<>(modelMapper.map(instructor, InstructorProfileDto.class), HttpStatus.OK);
+        }
+        catch (Exception e) {
+            log.error(e.getMessage());
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

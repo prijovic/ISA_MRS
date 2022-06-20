@@ -7,6 +7,7 @@ import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.InstructorDtos.InstructorDt
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.InstructorDtos.InstructorReservationsDtos.InstructorReservationDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.PageDto;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 
 public interface InstructorService {
@@ -18,4 +19,5 @@ public interface InstructorService {
 
     ResponseEntity<PageDto<InstructorsForMenuDto>> findInstructorsWithPaginationSortedByField(
             int offset, int pageSize, String field);
+    ResponseEntity<InstructorProfileDto> updateInstructorPeriod(String start, String end, String token);
 }

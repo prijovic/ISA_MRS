@@ -32,7 +32,7 @@
                     <date-picker :key="instructor.id" v-model="range" is-range :first-day-of-week=2 @drag="rangeChanged=true"></date-picker>
                   </div>
                   <div v-if="rangeChanged" class="row mt-1 justify-content-center">
-                    <button class="btn btn-red" style="max-width: fit-content">Save Changes</button>
+                    <button class="btn btn-red" style="max-width: fit-content" @click="updatePeriod">Save Changes</button>
                   </div>
                 </div>
               </div>
@@ -97,6 +97,7 @@ import {faPencil} from "@fortawesome/free-solid-svg-icons";
 import {DatePicker} from "v-calendar";
 import SubscribedClient
   from "@/components/FishingInstructor/FishingInstructorPage/components/InstructorMainViews/InstructorProfile/Subscribers/SubscribedClient";
+import {toggleProcessing} from "@/components/state";
 
 library.add(faPencil);
 
@@ -141,6 +142,52 @@ export default {
     },
   },
   methods: {
+    updatePeriod() {
+      toggleProcessing();
+      const start = this.range.start.toISOString().slice(0, 19);
+      const end = this.range.end.toISOString().slice(0, 19);
+      console.log(start);
+      console.log(end);
+      axios.put("/RentalOwners/updateInstructorPeriod", null, {
+        headers: {
+          Authorization: "Bearer " + this.$store.getters.access_token
+        },
+        params: {
+          start: start,
+          end: end
+        }
+      })
+      .then(response => {
+        this.range.start = response.data.initDate;
+        this.range.end = response.data.termDate;
+        this.getProfilePic();
+        toggleProcessing();
+        this.$notify( {
+          title: "Successful update",
+          text: "You have successfully set unavailability period.",
+          position: "bottom right",
+          type: "success"
+        });
+      })
+      .catch((error) => {
+        toggleProcessing();
+        if (!error.response) {
+          this.$notify({
+            title: "Server error",
+            text: "Server is currently off. Please try again later...",
+            type: "error"
+          });
+        } else if (error.response.status === 500) {
+          this.$notify({
+            title: "Internal Server Error",
+            text: "Something went wrong on the server! Please try again later...",
+            position: "bottom right",
+            type: "error"
+          })
+        }
+        console.log(error);
+      });
+    },
     getProfilePic() {
       if(!this.instructor.photo) { this.profilePic = null; return; }
       axios.get("/Photos/", {
