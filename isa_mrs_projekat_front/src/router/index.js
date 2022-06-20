@@ -53,6 +53,10 @@ import LoyaltyProgramView
     from "@/components/Administrator/AdminPage/components/AdminMainViews/AdminLoyaltyProgramComponents/LoyaltyProgramView";
 import LoyaltyCategoryCreationPage
     from "@/components/Administrator/AdminPage/components/AdminMainViews/AdminLoyaltyProgramComponents/LoyaltyCategoryCreationPage";
+import BoatOwnerProfilePage
+    from "@/components/BoatOwner/BoatOwnerPage/components/BoatOwnerMainView/BoatOwnerProfile/BoatOwnerProfilePage";
+import VacationRentalOwnerProfilPage
+    from "@/components/VacationRentalOwner/VacationRentalOwnerPage/components/VacationRentalOwnerProfile/VacationRentalOwnerProfilPage";
 //import InstructorCardView from "@/components/UnregisteredUser/components/InstructorCardView";
 
 
@@ -425,6 +429,17 @@ const routes = [
         }
     },
     {
+        path: "/vacationRentalOwner/profile",
+        name: "VacationRentalOwnerView",
+        components: {
+            default: VacationRentalOwnerProfilPage,
+            sidebar: TheOwnerSidebar,
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
         path: "/vacationRentalOwner/cottages",
         name: "ViewCottages",
         components: {
@@ -506,6 +521,17 @@ const routes = [
         name: "BoatOwnerChangePassword",
         components: {
             default: PasswordChangeForm,
+            sidebar: TheBoatOwnerSidebar,
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
+        path: "/boatOwner/profile",
+        name: "BoatOwnerView",
+        components: {
+            default: BoatOwnerProfilePage,
             sidebar: TheBoatOwnerSidebar,
         },
         meta: {

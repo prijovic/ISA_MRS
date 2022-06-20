@@ -33,4 +33,6 @@ public class Paths {
     public static final String GET_INSTRUCTORS = "/getInstructors";
     public static final String GET_INSTRUCTOR_FOR_CLIENT = "/getInstructorForClient";
     public static final String GET_INSTRUCTOR = "/getInstructor";
+    public static final String GET_BOAT_OWNER = "/getBoatOwner";
+    public static final String GET_VACATION_RENTAL_OWNER = "/getVacationRentalOwner";
 }

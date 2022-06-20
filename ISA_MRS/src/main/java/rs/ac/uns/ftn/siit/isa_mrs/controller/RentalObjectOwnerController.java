@@ -7,11 +7,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.BoatOwnerDtos.BoatOwnerProfileDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.InstructorDtos.ClientPerspectiveInstructorDtos.InstructorMenu.InstructorsForMenuDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.InstructorDtos.ClientPerspectiveInstructorDtos.InstructorProfile.ClientInstructorProfileDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.InstructorDtos.InstructorDtos.InstructorProfileDto;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.VacationRentalOwnerDtos.VacationRentalOwnerProfileDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.PageDto;
 import rs.ac.uns.ftn.siit.isa_mrs.service.InstructorService;
+import rs.ac.uns.ftn.siit.isa_mrs.service.RentalObjectOwnerService;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -25,6 +28,7 @@ import static rs.ac.uns.ftn.siit.isa_mrs.util.Paths.*;
 public class RentalObjectOwnerController {
 
     private final InstructorService instructorService;
+    private final RentalObjectOwnerService rentalObjectOwnerService;
 
     @GetMapping(GET_INSTRUCTORS)
     public ResponseEntity<PageDto<InstructorsForMenuDto>> getInstructorsWithPaginationAndSort(
@@ -42,4 +46,13 @@ public class RentalObjectOwnerController {
         return instructorService.getInstructor(request.getHeader(AUTHORIZATION));
     }
 
+    @GetMapping(GET_BOAT_OWNER)
+    public ResponseEntity<BoatOwnerProfileDto> getBoatOwner(HttpServletRequest request) {
+        return rentalObjectOwnerService.getBoatOwner(request.getHeader(AUTHORIZATION));
+    }
+
+    @GetMapping(GET_VACATION_RENTAL_OWNER)
+    public ResponseEntity<VacationRentalOwnerProfileDto> getVacationRentalOwner(HttpServletRequest request) {
+        return rentalObjectOwnerService.getVacationRentalOwner(request.getHeader(AUTHORIZATION));
+    }
 }
