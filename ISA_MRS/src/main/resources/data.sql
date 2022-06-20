@@ -479,3 +479,7 @@ INSERT INTO income (id, fee, time_stamp, value, reservation_id) VALUES (20, 10, 
 INSERT INTO subscribed_client (rental_id, subscriber_id) VALUES (1, 3);
 INSERT INTO subscribed_client (rental_id, subscriber_id) VALUES (2, 3);
 INSERT INTO subscribed_client (rental_id, subscriber_id) VALUES (20, 3);
+INSERT INTO loyalty_program (id, client_points_per_reservation, owner_points_per_reservation) VALUES (1, 5, 2);
+INSERT INTO loyalty_category (id, client_discount, icon, last_edited, name, owner_benefit, required_points, loyalty_program_id) VALUES (1, 15, 'golden-category', '2022-06-17 03:39:00', 'Gold', 10, 200, 1);
+INSERT INTO loyalty_category (id, client_discount, icon, last_edited, name, owner_benefit, required_points, loyalty_program_id) VALUES (2, 10, 'silver-category', '2022-06-17 03:39:00', 'Silver', 5, 100, 1);
+INSERT INTO loyalty_category (id, client_discount, icon, last_edited, name, owner_benefit, required_points, loyalty_program_id) VALUES (3, 5, 'bronze-category', '2022-06-17 03:39:00', 'Bronze', 3, 50, 1);
