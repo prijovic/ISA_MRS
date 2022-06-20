@@ -111,7 +111,7 @@ export default {
       this.formAttributes();
       this.colorsLoaded = true;
     })
-    .catch((error) =>{
+    .catch(() =>{
       this.$notify({
         title: "Server error",
         text: "Server is currently off. Please try again later...",
