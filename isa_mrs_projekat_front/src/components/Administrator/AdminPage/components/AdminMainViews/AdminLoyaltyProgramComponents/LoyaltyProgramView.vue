@@ -41,8 +41,8 @@
                   </td>
                   <td>{{category.name}}</td>
                   <td>{{category.requiredPoints}}</td>
-                  <td>{{category.clientDiscount.toFixed(2)}}$</td>
-                  <td>{{category.ownerBenefit.toFixed(2)}}$</td>
+                  <td>{{category.clientDiscount.toFixed(2)}}%</td>
+                  <td>{{category.ownerBenefit.toFixed(2)}}%</td>
                   <td>
                     <button class="btn btn-red"><font-awesome-icon icon="trash"></font-awesome-icon></button>
                   </td>
@@ -62,6 +62,8 @@
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faPlus, faTrash } from "@fortawesome/free-solid-svg-icons";
+import {useStore} from "vuex";
+import axios from "axios";
 
 library.add(faPlus, faTrash);
 
@@ -75,6 +77,46 @@ export default {
       ownerPoints: null,
       imageUrls: []
     }
+  },
+  mounted() {
+    const store = useStore();
+    axios.get("/LoyaltyProgram/getProgram", {headers: {
+        Authorization: "Bearer " + store.getters.access_token,
+      }
+    })
+    .then(response => {
+      this.categories = response.data.loyaltyCategories;
+      this.clientPoints = response.data.clientPointsPerReservation;
+      this.ownerPoints = response.data.ownerPointsPerReservation;
+      this.categories.forEach(category => {
+        this.loadImage(category.icon, this.categories.indexOf(category));
+      });
+    })
+    .catch(() =>{
+      this.$notify({
+        title: "Server error",
+        text: "Server is currently off. Please try again later...",
+        type: "error"
+      });
+    });
+  },
+  methods: {
+    loadImage(name, index) {
+      axios.get("/Photos/", {headers: {
+          Authorization: "Bearer " + this.$store.getters.access_token,
+        },
+        params: {
+          path: name,
+        },
+        responseType: "blob"
+      })
+      .then(response => {
+        this.imageUrls[index] = URL.createObjectURL(response.data);
+      })
+      .catch((error) =>{
+        console.log(error);
+      });
+    },
   }
 }
 </script>
