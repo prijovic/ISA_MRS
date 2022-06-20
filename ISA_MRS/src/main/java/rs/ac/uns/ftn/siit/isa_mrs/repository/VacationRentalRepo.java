@@ -6,10 +6,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import rs.ac.uns.ftn.siit.isa_mrs.model.VacationRental;
 import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.RentalObjectType;
 
+import java.util.Collection;
 import java.util.Optional;
 
 public interface VacationRentalRepo extends JpaRepository<VacationRental, Long> {
-    Optional<VacationRental> findById(Long id);
     Page<VacationRental> findAllByRentalObjectType(RentalObjectType rentalObjectType, Pageable pageable);
     Page<VacationRental> findAllByRentalObjectTypeAndRentalObjectOwnerEmail(RentalObjectType rentalObjectType, String rentalObjectOwnerEmail, Pageable pageable);
+    Collection<VacationRental> findAllByIsActive(boolean isActive);
 }

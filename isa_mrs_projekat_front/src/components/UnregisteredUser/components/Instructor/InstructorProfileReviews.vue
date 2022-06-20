@@ -1,5 +1,5 @@
 <template>
-  <div class="row">
+  <div v-if="reviews" class="row">
     <div class="col-12 d-flex justify-content-center align-items-center">
       <star-rating class="mb-5" text-class="h1 my-0 font-weight-normal" :round-start-rating="false"
                    :glow="5" glow-color="#ffd055" :star-size="75" :read-only="true" :rating="grade">

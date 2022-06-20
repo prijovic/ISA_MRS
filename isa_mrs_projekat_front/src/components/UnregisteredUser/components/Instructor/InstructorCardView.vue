@@ -101,7 +101,6 @@ a:hover {
 }
 
 div.card {
-
   background-color: transparent;
   border-radius: 40px;
   border: none;

@@ -7,10 +7,11 @@ import rs.ac.uns.ftn.siit.isa_mrs.model.RentalObjectOwner;
 import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.UserType;
 
 
+import java.util.Collection;
 import java.util.Optional;
 
 public interface RentalObjectOwnerRepo extends JpaRepository<RentalObjectOwner, Long> {
-    Optional<RentalObjectOwner> findById(Long id);
     Optional<RentalObjectOwner> findByEmail(String email);
     Page<RentalObjectOwner> findAllByUserType(UserType type, Pageable pageable);
+    Collection<RentalObjectOwner> findAllByIsActive(Boolean isActive);
 }

@@ -307,6 +307,10 @@ public class VacationRentalServiceImpl implements VacationRentalService{
         return vacationRental;
     }
 
+    public long countVacationRentals() {
+        return vacationRentalRepo.findAllByIsActive(true).size();
+    }
+
     private @NotNull VacationRentalsForMenuDto setUpMenuDto(VacationRental rental) {
         VacationRentalsForMenuDto rentalDto = modelMapper.map(rental, VacationRentalsForMenuDto.class);
         rentalDto.setGrade(rentalService.calculateRentalRating(rental));

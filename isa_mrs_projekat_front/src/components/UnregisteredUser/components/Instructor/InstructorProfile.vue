@@ -66,7 +66,7 @@
                     <h4 class="card-heading">Reviews</h4>
                   </div>
                   <div class="card-body">
-                    <InstructorProfileReviews :reviews="instructor.reviews"
+                    <InstructorProfileReviews :reviews="instructor.clientReviews"
                                               :grade="instructor.grade"/>
                   </div>
                 </div>
@@ -103,7 +103,7 @@ export default {
   },
   mounted() {
     // this.$route.params.id
-    axios.get("/RentalOwners/getInstructor", {
+    axios.get("/RentalOwners/getInstructorForClient", {
       headers: {
         Authorization: "Bearer " + this.$store.getters.access_token
       },

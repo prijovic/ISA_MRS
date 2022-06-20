@@ -9,8 +9,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.ClientDtos.ClientProfileDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.ClientDtos.ClientReservationDtos.ClientReservationDto;
-import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.ClientDtos.ClientReservationDtos.ReservationRentalObjectDto;
-import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.ClientDtos.ClientReservationDtos.ReservationReportDto;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.ReservationDtos.ReservationRentalObjectDto;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.ReservationDtos.ReservationReportDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.PhotoDto;
 import rs.ac.uns.ftn.siit.isa_mrs.model.Client;
 import rs.ac.uns.ftn.siit.isa_mrs.model.Photo;
@@ -53,6 +53,11 @@ public class ClientServiceImpl implements ClientService {
             return new ResponseEntity<>(clientProfileDto, HttpStatus.OK);
         }
         return new ResponseEntity<>(null, HttpStatus.OK);
+    }
+
+    @Override
+    public long countClients() {
+        return clientRepo.findAllByIsActive(true).size();
     }
 
     private Collection<ClientReservationDto> setUpReservationDtos(Long clientId) {

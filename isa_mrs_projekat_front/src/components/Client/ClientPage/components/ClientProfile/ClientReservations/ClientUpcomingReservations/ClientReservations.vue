@@ -1,5 +1,5 @@
 <template>
-  <div v-for="(reservation, i) in reservations" :key="i" class="card reservation mb-3">
+  <div v-for="(reservation, i) in this.sortedReservations" :key="i" class="card reservation mb-3">
     <div class="row">
       <div class="col-md-4" >
         <router-link :to="getPath(reservation)" class="link" @click="setRentalIdAndType(reservation)">
@@ -40,13 +40,11 @@
                     data-bs-toggle="modal" :data-bs-target="'#cancel-'+reservation.id">
               Cancel Reservation
             </button>
-            <ReservationCancellation v-if="reservation.rentalObject.cancellationFee"
-                                     :id="reservation.id"
+            <ReservationCancellation :id="reservation.id"
                                      :cancellationFee="reservation.rentalObject.cancellationFee"
-                                     :reservationStartDate="reservation.reservationTime.initDate"
+                                     :reservationStartDate="reservation.initDate"
                                      :reservationId="reservation.id"
-                                     :total="calculateTotal(reservation)"
-                                     @customChange="removeReservation"/>
+                                     :total="calculateTotal(reservation)"/>
           </div>
         </div>
 
@@ -73,13 +71,15 @@ export default {
   data() {
     return {
       images: [],
+      sortedReservations: [],
     }
   },
   computed: {
+
   },
   methods: {
-    removeReservation(/*event*/) {
-
+    isFeeNull(reservation) {
+      return reservation.rentalObject.cancellationFee !== null;
     },
     calculateTotal(reservation) {
       let days = this.getNumberOfDays(reservation);
@@ -88,8 +88,10 @@ export default {
       return days*price+services;
     },
     getNumberOfDays(reservation) {
-      let initDate = reservation.reservationTime.initDate, termDate = reservation.reservationTime.termDate;
+      let initDate = reservation.initDate, termDate = reservation.termDate;
       let date1 = new Date(initDate), date2 = new Date(termDate);
+      date1.setHours(0, 0, 0);
+      date2.setHours(0, 0, 0);
       let timeDiff = date2.getTime() - date1.getTime();
       let daysDiff = timeDiff / (1000 * 3600 * 24);
       return daysDiff + 1;
@@ -100,10 +102,12 @@ export default {
       return totalServices;
     },
     getDateSpan(reservation) {
-      let initDate = reservation.reservationTime.initDate, termDate = reservation.reservationTime.termDate;
+      let initDate = reservation.initDate, termDate = reservation.termDate;
       let date1 = new Date(initDate), date2 = new Date(termDate);
+      // date1.setHours(0, 0, 0);
+      // date2.setHours(0, 0, 0);
       let dateDisplay = date1.getDate() + '.' + (date1.getMonth() + 1) + '.' +  date1.getFullYear() + '.';
-      if(initDate !== termDate)
+      if(date1.getFullYear() !== date2.getFullYear() || date1.getMonth() !== date2.getMonth() || date1.getDate() !== date2.getDate())
         dateDisplay += ' - ' + date2.getDate() + '.' + (date2.getMonth() + 1) + '.' +  date2.getFullYear() + '.';
       return dateDisplay;
     },
@@ -117,6 +121,8 @@ export default {
     },
   },
   mounted() {
+    this.sortedReservations = this.reservations;
+    this.sortedReservations = this.sortedReservations.sort((a, b) => new Date(b.initDate) < new Date(a.initDate) ? 1: -1);
     //if(!this.reservations) return;
     for (let i=0; i < this.reservations.length; i++) {
       if(!this.reservations[i].rentalObject.displayPhoto.photo) { this.images[i] = null; continue; }

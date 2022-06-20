@@ -11,4 +11,6 @@ import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.ReviewType;
 public interface ReviewRepo extends JpaRepository<Review, Long> {
     Page<Review> findAllByReservationRentalObjectAndAuthorIsActiveAndReviewTypeAndStatus(RentalObject rentalObject,
                      Boolean isActive, ReviewType reviewType, Pageable pageable, RequestStatus status);
+    Page<Review> findAllByStatus(RequestStatus status, Pageable pageable);
+    Page<Review> findAllByStatusAndReviewType(RequestStatus status, ReviewType type, Pageable pageable);
 }
