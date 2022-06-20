@@ -45,6 +45,8 @@ import InstructorProfilePage
 import InstructorReservations
     from "@/components/FishingInstructor/FishingInstructorPage/components/InstructorMainViews/InstructorReservations/InstructorReservations";
 import AdminFinancesView from "@/components/Administrator/AdminPage/components/AdminMainViews/AdminFinancesView";
+import LoyaltyProgramView
+    from "@/components/Administrator/AdminPage/components/AdminMainViews/AdminLoyaltyProgramComponents/LoyaltyProgramView";
 //import InstructorCardView from "@/components/UnregisteredUser/components/InstructorCardView";
 
 
@@ -223,6 +225,17 @@ const routes = [
         name: "AdminFinances",
         components: {
             default: AdminFinancesView,
+            sidebar: TheAdminSidebar,
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
+        path: "/admin/loyaltyProgram",
+        name: "AdminLoyaltyProgram",
+        components: {
+            default: LoyaltyProgramView,
             sidebar: TheAdminSidebar,
         },
         meta: {

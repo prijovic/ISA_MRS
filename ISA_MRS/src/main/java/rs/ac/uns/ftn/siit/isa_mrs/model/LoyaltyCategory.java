@@ -21,4 +21,6 @@ public class LoyaltyCategory {
     private Double ownerBenefit;
     private LocalDateTime lastEdited;
     private String icon;
+    @ManyToOne
+    private LoyaltyProgram loyaltyProgram;
 }

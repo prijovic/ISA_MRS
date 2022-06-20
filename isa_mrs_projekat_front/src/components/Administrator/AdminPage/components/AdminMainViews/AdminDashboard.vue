@@ -57,18 +57,13 @@
         </div>
       </div>
       <div class="row">
-        <div class="container d-flex justify-content-center p-3 rounded shadow mt-5">
-          <Line :chart-data="chartData" :key="chartData.datasets[0].data"></Line>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-3 mt-5 mb-5">
-          <income-rate-view></income-rate-view>
-        </div>
-        <div class="col-9 mt-5">
-          <div class="container rounded" style="border: #008970 solid 1px">
-            <p>USER CATEGORIES</p>
+        <div class="container d-flex justify-content-center p-3 rounded shadow mt-5 mb-5">
+          <div class="row">
+            <div class="my-auto mx-auto">
+              <income-rate-view></income-rate-view>
+            </div>
           </div>
+          <Line :chart-data="chartData" :key="chartData.datasets[0].data"></Line>
         </div>
       </div>
     </div>
