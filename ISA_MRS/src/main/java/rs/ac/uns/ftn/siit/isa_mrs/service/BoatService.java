@@ -17,4 +17,5 @@ public interface BoatService {
     ResponseEntity<BoatDto> findBoat(Long id);
     ResponseEntity<BoatDto> addBoat(AddBoatDto boatDto, String token);
     ResponseEntity<BoatDto> addBoatPhotos(Long id, List<String> photos);
+    ResponseEntity<Long> updateBoat(AddBoatDto boat);
 }

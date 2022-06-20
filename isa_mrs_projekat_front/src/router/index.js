@@ -381,6 +381,28 @@ const routes = [
         }
     },
     {
+        path: "/vacationRentalOwner/updateVacationRental/:id",
+        name: "VacationRentalUpdate",
+        components: {
+            default: VacationRentalAdditionForm,
+            sidebar: TheOwnerSidebar
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
+        path: "/vacationRentalOwner/defineSpecialOffer/:id",
+        name: "DefineSpecialOffer",
+        components: {
+            default: DefineSpecialOffer,
+            sidebar: TheOwnerSidebar,
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
         path: "/vacationRentalOwner/calendar",
         name: "VacationRentalOwnerReservations",
         components: {
@@ -441,6 +463,39 @@ const routes = [
         components:{
             default: BoatAdditionForm,
             sidebar: TheBoatOwnerSidebar
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
+        path: "/boatOwner/updateBoat/:id",
+        name: "BoatUpdate",
+        components: {
+            default: BoatAdditionForm,
+            sidebar: TheBoatOwnerSidebar
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
+        path: "/boatOwner/defineSpecialOffer/:id",
+        name: "SpecialOfferDefine",
+        components: {
+            default: DefineSpecialOffer,
+            sidebar: TheBoatOwnerSidebar
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
+        path: "/boatOwner/calendar",
+        name: "BoatOwnerReservations",
+        components: {
+            default: ReservationsCalendarView,
+            sidebar: TheBoatOwnerSidebar,
         },
         meta: {
             public: false

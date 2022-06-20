@@ -80,6 +80,11 @@ public class RentalObjectController {
         return vacationRentalService.findVacationRentalsWithPaginationSortedByFieldAndFilteredByOwner(page, pageSize, field, request.getHeader(AUTHORIZATION));
     }
 
+    @GetMapping(GET_VACATION_RENTAL + "Owner")
+    public ResponseEntity<VacationRentalDto> getVacationRental(@RequestParam Long id){
+        return vacationRentalService.findVacationRental(id);
+    }
+
     @GetMapping(GET_BOAT)
     public ResponseEntity<BoatProfileDto> getBoat(@RequestParam Long id, @RequestParam int page,
                                                   @RequestParam int pageSize, HttpServletRequest request) {
@@ -95,8 +100,12 @@ public class RentalObjectController {
     @GetMapping(GET_BOATS + "Owner")
     public ResponseEntity<PageDto<BoatDto>> getBoatsForOwner(
             @RequestParam Integer page, @RequestParam Integer pageSize, @RequestParam String field, HttpServletRequest request) {
-        log.info("Uslo u kontroler");
         return boatService.findBoatsWithPaginationSortedByFieldAndFilteredByOwner(page, pageSize, field, request.getHeader(AUTHORIZATION));
+    }
+
+    @GetMapping(GET_BOAT + "Owner")
+    public ResponseEntity<BoatDto> getBoat(@RequestParam Long id){
+        return boatService.findBoat(id);
     }
 
     @GetMapping(GET_ADVENTURE)
@@ -169,9 +178,19 @@ public class RentalObjectController {
         return vacationRentalService.addVacationRental(vacationRental, request.getHeader(AUTHORIZATION));
     }
 
+    @PutMapping("/updateVacationRental")
+    public ResponseEntity<Long> updateVacationRental(@RequestBody AddVacationRentalDto vacationRental) {
+        return vacationRentalService.updateVacationRental(vacationRental);
+    }
+
     @PostMapping("/addBoat")
     public ResponseEntity<BoatDto> addBoat(@RequestBody AddBoatDto boat, HttpServletRequest request){
         return boatService.addBoat(boat, request.getHeader(AUTHORIZATION));
+    }
+
+    @PutMapping("/updateBoat")
+    public ResponseEntity<Long> updateBoat(@RequestBody AddBoatDto boat) {
+        return boatService.updateBoat(boat);
     }
 
     @PostMapping("/defineSpecialOffer")

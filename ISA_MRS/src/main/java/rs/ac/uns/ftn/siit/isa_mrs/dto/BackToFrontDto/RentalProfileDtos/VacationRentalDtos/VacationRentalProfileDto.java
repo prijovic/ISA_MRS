@@ -10,6 +10,7 @@ import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.PhotoDto;
 import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.RentalObjectType;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Collection;
 
@@ -34,4 +35,7 @@ public class VacationRentalProfileDto implements Serializable {
     private PageDto<ReviewDto> reviews;
     private String grade = null;
     private String ownerGrade = null;
+    private Boolean isDeletable;
+    private LocalDateTime initDate;
+    private LocalDateTime termDate;
 }

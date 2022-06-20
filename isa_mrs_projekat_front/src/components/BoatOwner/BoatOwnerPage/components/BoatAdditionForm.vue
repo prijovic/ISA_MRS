@@ -1,10 +1,11 @@
 <template>
-  <div class="row">
+  <div class="row" :key="boat.id">
     <div class="col-2"></div>
     <div class="col-8 pt-5 mb-5">
       <div class="container px-4 py-3 rounded form" spellcheck="false" >
         <div class="container-fluid">
-          <h3>New Boat</h3>
+          <h3 v-if="boat.id === null">New Boat</h3>
+          <h3 v-else>Boat</h3>
           <div class="row main justify-content-center">
             <div class="row main">
               <div class="col-2"></div>
@@ -111,7 +112,7 @@
                   <div class="row justify-content-center">
                     <label for="cancellation">Cancellation fee</label>
                   </div>
-                  <input v-model="boat.cancellationFee.value" type="number" step="any" min="0" max="100"  id="cancellation" class="form-control" placeholder="Cancellation fee in %" @input="cancellationFeeIsEntered=true">
+                  <input v-model="boat.cancellationFee" type="number" step="any" min="0" max="100"  id="cancellation" class="form-control" placeholder="Cancellation fee in %" @input="cancellationFeeIsEntered=true">
                   <p v-if='!cancellationFeeIsEntered'>'Cancellation fee' is a mandatory field.</p>
                 </div>
 
@@ -251,6 +252,15 @@
                     </div>
                   </div>
                 </div>
+
+                <div class="row justify-content-center mt-4">
+                  <label class="ms-3">Availability Period</label>
+                  <div class="container p-0 m-0 text-center" style="max-width: 400px">
+                    <date-picker v-model="range" mode="dateTime" is-range is24hr :firstDayOfWeek=2>
+                    </date-picker>
+                  </div>
+                </div>
+
               </div>
               <div class="col-2"></div>
             </div>
@@ -271,16 +281,19 @@ import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import {library} from "@fortawesome/fontawesome-svg-core";
 import {faPlus, faMinus, faX, faPlusCircle} from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
-import {toggleProcessing} from "@/components/state";
+import {toggleLoading, toggleProcessing} from "@/components/state";
+import store from "@/store";
+import {DatePicker} from "v-calendar";
 
 library.add(faPlus, faMinus, faX, faPlusCircle);
 
 export default {
   name: "AdventureCreationPage",
-  components: {FontAwesomeIcon},
+  components: {FontAwesomeIcon, DatePicker},
   data() {
     return {
       boat: {
+        id: null,
         name: null,
         description: null,
         type: null,
@@ -292,7 +305,7 @@ export default {
         price: null,
         additionalServices: [],
         conductRules: [],
-        cancellationFee: {value: null},
+        cancellationFee: null,
         address: {
           country: null,
           city: null,
@@ -302,9 +315,17 @@ export default {
           latitude: null
         },
         fishingEquipment: [],
-        navigationEquipment: []
+        navigationEquipment: [],
+        initDate: null,
+        termDate: null
       },
       photo: null,
+      range: {
+        start: null,
+        end: null
+      },
+      primaryPhotos: [],
+      date: null,
       photos: [],
       imageUrls: [],
       fishingEquipmentPiece: {name:""},
@@ -334,6 +355,61 @@ export default {
       cancellationFeeIsEntered: true,
       photoIsEntered: true,
       addressIsValid: true
+    }
+  },
+  mounted() {
+    toggleLoading();
+    if (this.$route.params.id !== undefined) {
+      axios.get("/RentalObjects/getBoatOwner", {
+        headers: {
+          Authorization: "Bearer " + store.getters.access_token,
+        },
+        params: {
+          id: this.$route.params.id
+        }
+      })
+      .then((response) => {
+        let boat = response.data;
+        this.boat.name = boat.name;
+        this.boat.description = boat.description;
+        this.boat.address = boat.address;
+        this.boat.price = boat.price;
+        this.boat.capacity = boat.capacity;
+        this.boat.type = boat.type;
+        this.boat.length = boat.length;
+        this.boat.enginePower = boat.enginePower;
+        this.boat.engineNumber = boat.engineNumber;
+        this.boat.maxSpeed = boat.maxSpeed;
+        this.boat.additionalServices = boat.additionalServices;
+        this.boat.conductRules = boat.conductRules;
+        this.boat.cancellationFee = boat.cancellationFee;
+        this.boat.fishingEquipment = boat.fishingEquipment;
+        this.boat.navigationEquipment = boat.navigationEquipment;
+        if(boat.initDate != null && boat.termDate != null) {
+          this.boat.initDate = new Date(boat.initDate);
+          this.boat.termDate = new Date(boat.termDate);
+          this.range.start = this.boat.initDate;
+          this.range.end = this.boat.termDate;
+        }
+        boat.photos.forEach(photo => {
+          this.photos.push(photo.photo);
+          this.primaryPhotos.push(photo.photo);
+          this.loadImage(photo.photo, this.photos.indexOf(photo.photo));
+        });
+        this.boat.id = boat.id;
+        toggleLoading();
+      })
+      .catch(() => {
+        this.$notify({
+          title: "Server error",
+          text: "Server is currently off. Please try again later...",
+          type: "error"
+        });
+        toggleLoading();
+      })
+    }
+    else {
+      toggleLoading();
     }
   },
   computed: {
@@ -390,7 +466,7 @@ export default {
       return Boolean(this.boat.capacity);
     },
     isCancellationFeeEntered() {
-      return Boolean(this.boat.cancellationFee.value);
+      return Boolean(this.boat.cancellationFee);
     },
     isPhotoEntered() {
       return this.photos.length > 0;
@@ -403,13 +479,17 @@ export default {
       }
     },
     makeRequest() {
-      toggleProcessing();
-      axios.post("/RentalObjects/addBoat", this.boat, {
+      let boat = this.boat;
+      this.range.start.setTime(this.range.start.getTime() + 2*60*60*1000);
+      this.range.end.setTime(this.range.end.getTime() + 2*60*60*1000);
+      boat.initDate = this.range.start;
+      boat.termDate = this.range.end;
+      axios.post("/RentalObjects/addBoat", boat, {
         headers: {
           Authorization: "Bearer " + this.$store.getters.access_token,
         }
       })
-          .then((adventure) => {
+          .then((boat) => {
             for (let i = 0; i < this.photos.length; i++) {
               let formData = new FormData();
               formData.append("file", this.photos[i]);
@@ -420,7 +500,7 @@ export default {
                 },
               })
                   .then((response) => {
-                    let body = {id: adventure.data.id, photos: [response.data]}
+                    let body = {id: boat.data.id, photos: [response.data]}
                     console.log(body);
                     axios.post("/RentalObjects/connectPhotosToBoat", body,{
                       headers: {
@@ -433,10 +513,10 @@ export default {
                         position: "bottom right",
                         type: "success"
                       });
-                      toggleProcessing();
                     })
                   })
             }
+            toggleProcessing();
           })
           .catch(error => {
             if (!error.response) {
@@ -445,7 +525,6 @@ export default {
                 text: "Server is currently off. Please try again later...",
                 type: "error"
               });
-              toggleProcessing();
             } else if (error.response.status === 500) {
               this.$notify({
                 title: "Internal Server Error",
@@ -453,9 +532,68 @@ export default {
                 position: "bottom right",
                 type: "error"
               });
-              toggleProcessing();
             }
+            toggleProcessing();
           })
+    },
+    updateBoat() {
+      let boat = this.boat;
+      this.range.start.setTime(this.range.start.getTime() + 2*60*60*1000);
+      this.range.end.setTime(this.range.end.getTime() + 2*60*60*1000);
+      boat.initDate = this.range.start;
+      boat.termDate = this.range.end;
+      axios.put("/RentalObjects/updateBoat", boat, {
+        headers: {
+          Authorization: "Bearer " + this.$store.getters.access_token,
+        }
+      })
+      .then((id) => {
+        for (let i = 0; i < this.photos.length; i++) {
+          if (!this.photoExisted(this.photos[i])) {
+            let formData = new FormData();
+            formData.append("file", this.photos[i]);
+            axios.post("/Photos/upload", formData, {
+              headers: {
+                Authorization: "Bearer " + this.$store.getters.access_token,
+                "Content-type": "multipart/form-data"
+              },
+            })
+            .then((response) => {
+              let body = {id: id.data, photos: [response.data]}
+              axios.post("/RentalObjects/connectPhotosToBoat", body,{
+                headers: {
+                  Authorization: "Bearer " + this.$store.getters.access_token,
+                },
+              }).then(() =>{
+                this.$notify( {
+                  title: "Successful update",
+                  text: "You have successfully updated the boat.",
+                  position: "bottom right",
+                  type: "success"
+                });
+              })
+            })
+          }
+        }
+        toggleProcessing();
+      })
+      .catch(error => {
+        if (!error.response) {
+          this.$notify({
+            title: "Server error",
+            text: "Server is currently off. Please try again later...",
+            type: "error"
+          });
+        } else if (error.response.status === 500) {
+          this.$notify({
+            title: "Internal Server Error",
+            text: "Something went wrong on the server! Please try again later...",
+            position: "bottom right",
+            type: "error"
+          })
+        }
+        toggleProcessing();
+      })
     },
     isDataEntered() {
       if (!this.isNameEntered) {
@@ -524,6 +662,22 @@ export default {
       this.addressIsValid = false;
       this.validateAddress();
     },
+    loadImage(name, index) {
+      axios.get("/Photos/", {headers: {
+          Authorization: "Bearer " + this.$store.getters.access_token,
+        },
+        params: {
+          path: name,
+        },
+        responseType: "blob"
+      })
+          .then(response => {
+            this.imageUrls[index] = URL.createObjectURL(response.data);
+          })
+          .catch((error) =>{
+            console.log(error);
+          });
+    },
     validateAddress() {
       const apiKey = 'VrDrl5BjEA0Whvb-chHbFz96HV4qlCXB-yoiTRRLKno';
       const url = 'https://geocoder.ls.hereapi.com/6.2/geocode.json' +
@@ -548,7 +702,12 @@ export default {
               this.boat.address.longitude = location.Longitude;
               this.boat.address.latitude = location.Latitude;
               this.addressIsValid = true;
-              this.makeRequest();
+              if(this.boat.id === null) {
+                this.makeRequest();
+              }
+              else {
+                this.updateBoat();
+              }
             }
           })
           .catch(() => {

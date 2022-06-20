@@ -5,24 +5,27 @@ import rs.ac.uns.ftn.siit.isa_mrs.dto.FishingEquipmentDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.NavigationEquipmentDto;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Collection;
 
 @Data
 public class AddBoatDto implements Serializable {
-    private String name;
-    private String boatOwnerEmail;
-    private String description;
-    private Integer capacity;
-    private Double price;
-    private Collection<AdditionalServiceDto> additionalServices;
-    private Collection<ConductRuleDto> conductRules;
-    private double cancellationFee;
-    private AddressDto address;
-    private String type;
-    private Double length;
-    private String engineNumber;
-    private Double enginePower;
-    private Double maxSpeed;
-    private Collection<NavigationEquipmentDto> navigationEquipment;
-    private Collection<FishingEquipmentDto> fishingEquipment;
+    private final Long id;
+    private final String name;
+    private final String description;
+    private final Integer capacity;
+    private final Double price;
+    private final Collection<AdditionalServiceDto> additionalServices;
+    private final Collection<ConductRuleDto> conductRules;
+    private final double cancellationFee;
+    private final AddressDto address;
+    private final String type;
+    private final Double length;
+    private final String engineNumber;
+    private final Double enginePower;
+    private final Double maxSpeed;
+    private final Collection<NavigationEquipmentDto> navigationEquipment;
+    private final Collection<FishingEquipmentDto> fishingEquipment;
+    private LocalDateTime initDate;
+    private LocalDateTime termDate;
 }

@@ -20,5 +20,5 @@ public interface VacationRentalService {
 
     ResponseEntity<VacationRentalDto> addVacationRental(AddVacationRentalDto vacationRental, String token);
     ResponseEntity<VacationRentalDto> addVacationRentalPhotos(Long id, List<String> photos);
-//    ResponseEntity<VacationRentalDto> addNewVacationRental(AddVacationRentalDto vacationRental);
+    ResponseEntity<Long> updateVacationRental(AddVacationRentalDto vacationRental);
 }

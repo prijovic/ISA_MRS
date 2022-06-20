@@ -1,10 +1,11 @@
 <template>
-  <div class="row">
+  <div class="row" :key="vacationRental.id">
     <div class="col-2"></div>
     <div class="col-8 pt-5 mb-5">
       <div class="container px-4 py-3 rounded form" spellcheck="false" >
         <div class="container-fluid">
-          <h3>New Vacation Rental</h3>
+          <h3 v-if="vacationRental.id === null">New Vacation Rental</h3>
+          <h3 v-else>Vacation Rental</h3>
           <div class="row main justify-content-center">
             <div class="row main">
               <div class="col-2"></div>
@@ -76,7 +77,7 @@
                   <div class="row justify-content-center">
                     <label for="cancellation">Cancellation fee</label>
                   </div>
-                  <input v-model="vacationRental.cancellationFee.value" type="number" step="any" min="0" max="100"  id="cancellation" class="form-control" placeholder="Cancellation fee in %" @input="cancellationFeeIsEntered=true">
+                  <input v-model="vacationRental.cancellationFee" type="number" step="any" min="0" max="100"  id="cancellation" class="form-control" placeholder="Cancellation fee in %" @input="cancellationFeeIsEntered=true">
                   <p v-if='!cancellationFeeIsEntered'>'Cancellation fee' is a mandatory field.</p>
                 </div>
 
@@ -196,6 +197,15 @@
                     </div>
                   </div>
                 </div>
+
+                <div class="row justify-content-center mt-4">
+                  <label class="ms-3">Availability Period</label>
+                  <div class="container p-0 m-0 text-center" style="max-width: 400px">
+                    <date-picker v-model="range" mode="dateTime" is-range is24hr :firstDayOfWeek=2>
+                    </date-picker>
+                  </div>
+                </div>
+
               </div>
               <div class="col-2"></div>
             </div>
@@ -215,24 +225,27 @@
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import {library} from "@fortawesome/fontawesome-svg-core";
 import {faPlus, faMinus, faX, faPlusCircle} from "@fortawesome/free-solid-svg-icons";
+import {DatePicker} from "v-calendar"
 import axios from "axios";
-import {toggleProcessing} from "@/components/state";
+import {toggleLoading, toggleProcessing} from "@/components/state";
+import store from "@/store";
 
 library.add(faPlus, faMinus, faX, faPlusCircle);
 
 export default {
   name: "AdventureCreationPage",
-  components: {FontAwesomeIcon},
+  components: {FontAwesomeIcon, DatePicker},
   data() {
     return {
       vacationRental: {
+        id: null,
         name: null,
         description: null,
         capacity: null,
         price: null,
         additionalServices: [],
         conductRules: [],
-        cancellationFee: {value: null},
+        cancellationFee: null,
         address: {
           country: null,
           city: null,
@@ -241,9 +254,17 @@ export default {
           longitude: null,
           latitude: null
         },
-        rooms: []
+        rooms: [],
+        initDate: null,
+        termDate: null,
       },
       photo: null,
+      range:{
+        start: null,
+        end: null
+      },
+      primaryPhotos: [],
+      date: null,
       photos: [],
       imageUrls: [],
       bedPerRoom: {bed: ""},
@@ -265,6 +286,54 @@ export default {
       cancellationFeeIsEntered: true,
       photoIsEntered: true,
       addressIsValid: true
+    }
+  },
+  mounted(){
+    toggleLoading();
+    if(this.$route.params.id !== undefined){
+      axios.get("/RentalObjects/getVacationRentalOwner",{
+        headers:{
+          Authorization: "Bearer " + store.getters.access_token,
+        },
+        params: {
+          id: this.$route.params.id
+        }
+      })
+      .then((response) => {
+        let vacationRental = response.data;
+        this.vacationRental.name = vacationRental.name;
+        this.vacationRental.description = vacationRental.description;
+        this.vacationRental.address = vacationRental.address;
+        this.vacationRental.price = vacationRental.price;
+        this.vacationRental.capacity = vacationRental.capacity;
+        this.vacationRental.additionalServices = vacationRental.additionalServices;
+        this.vacationRental.conductRules = vacationRental.conductRules;
+        this.vacationRental.cancellationFee = vacationRental.cancellationFee;
+        if(vacationRental.initDate != null && vacationRental.termDate != null) {
+          this.vacationRental.initDate = new Date(vacationRental.initDate);
+          this.vacationRental.termDate = new Date(vacationRental.termDate);
+          this.range.start = this.vacationRental.initDate;
+          this.range.end = this. vacationRental.termDate;
+        }
+        vacationRental.photos.forEach(photo => {
+          this.photos.push(photo.photo);
+          this.primaryPhotos.push(photo.photo);
+          this.loadImage(photo.photo, this.photos.indexOf(photo.photo));
+        });
+        this.vacationRental.id = vacationRental.id;
+        toggleLoading();
+      })
+      .catch(() => {
+        this.$notify({
+          title: "Server error",
+          text: "Server is currently off. Please try again later...",
+          type: "error"
+        });
+        toggleLoading();
+      })
+    }
+    else{
+      toggleLoading();
     }
   },
   computed: {
@@ -306,7 +375,7 @@ export default {
       return Boolean(this.vacationRental.capacity);
     },
     isCancellationFeeEntered() {
-      return Boolean(this.vacationRental.cancellationFee.value);
+      return Boolean(this.vacationRental.cancellationFee);
     },
     isPhotoEntered() {
       return this.photos.length > 0;
@@ -319,9 +388,12 @@ export default {
       }
     },
     makeRequest() {
-      toggleProcessing();
-      console.log(this.bedPerRoom.bed);
-      axios.post("/RentalObjects/addVacationRental", this.vacationRental, {
+      let vacationRental = this.vacationRental;
+      this.range.start.setTime(this.range.start.getTime() + 2*60*60*1000);
+      this.range.end.setTime(this.range.end.getTime() + 2*60*60*1000);
+      vacationRental.initDate = this.range.start;
+      vacationRental.termDate = this.range.end;
+      axios.post("/RentalObjects/addVacationRental", vacationRental, {
         headers: {
           Authorization: "Bearer " + this.$store.getters.access_token,
         }
@@ -336,24 +408,24 @@ export default {
                   "Content-type": "multipart/form-data"
                 },
               })
-                  .then((response) => {
-                    let body = {id: vacationRental.data.id, photos: [response.data]}
-                    console.log(body);
-                    axios.post("/RentalObjects/connectPhotosToVacationRental", body,{
-                      headers: {
-                        Authorization: "Bearer " + this.$store.getters.access_token,
-                      },
-                    }).then(() =>{
-                      this.$notify( {
-                        title: "Successful adding",
-                        text: "You have successfully added a new vacation rental.",
-                        position: "bottom right",
-                        type: "success"
-                      });
-                      toggleProcessing();
-                    })
-                  })
+              .then((response) => {
+                let body = {id: vacationRental.data.id, photos: [response.data]}
+                console.log(body);
+                axios.post("/RentalObjects/connectPhotosToVacationRental", body,{
+                  headers: {
+                    Authorization: "Bearer " + this.$store.getters.access_token,
+                  },
+                }).then(() =>{
+                  this.$notify( {
+                    title: "Successful adding",
+                    text: "You have successfully added a new vacation rental.",
+                    position: "bottom right",
+                    type: "success"
+                  });
+                })
+              })
             }
+            toggleProcessing();
           })
           .catch(error => {
             if (!error.response) {
@@ -362,7 +434,6 @@ export default {
                 text: "Server is currently off. Please try again later...",
                 type: "error"
               });
-              toggleProcessing();
             } else if (error.response.status === 500) {
               this.$notify({
                 title: "Internal Server Error",
@@ -370,9 +441,68 @@ export default {
                 position: "bottom right",
                 type: "error"
               });
-              toggleProcessing();
             }
+            toggleProcessing();
           })
+    },
+    updateVacationRental() {
+      let vacationRental = this.vacationRental;
+      this.range.start.setTime(this.range.start.getTime() + 2*60*60*1000);
+      this.range.end.setTime(this.range.end.getTime() + 2*60*60*1000);
+      vacationRental.initDate = this.range.start;
+      vacationRental.termDate = this.range.end;
+      axios.put("/RentalObjects/updateVacationRental", vacationRental, {
+        headers: {
+          Authorization: "Bearer " + this.$store.getters.access_token,
+        }
+      })
+      .then((id) => {
+        for(let i = 0; i < this.photos.length; i++) {
+          if(!this.photoExisted(this.photos[i])) {
+            let formData = new formData();
+            formData.append("file", this.photos[i]);
+            axios.post("/Photos/upload", formData, {
+              headers: {
+                Authorization: "Bearer " + this.$store.getters.access_token,
+                "Content-type": "multipart/form-data"
+              }
+            })
+            .then((response) => {
+              let body = {id:  id.data, photos: [response.data]}
+              axios.post("/RentalObjects/connectPhotosToVacationRental", body, {
+                headers: {
+                  Authorization: "Bearer " + this.$store.getters.access_token,
+                }
+              }).then(() => {
+                this.$notify({
+                  title: "Successful update",
+                  text: "You have successfully updated the adventure.",
+                  position: "bottom right",
+                  type: "success"
+                });
+              })
+            })
+          }
+        }
+        toggleProcessing();
+      })
+      .catch(error => {
+        if (!error.response) {
+          this.$notify({
+            title: "Server error",
+            text: "Server is currently off. Please try again later...",
+            type: "error"
+          });
+        } else if (error.response.status === 500) {
+          this.$notify({
+            title: "Internal Server Error",
+            text: "Something went wrong on the server! Please try again later...",
+            position: "bottom right",
+            type: "error"
+          })
+        }
+        toggleProcessing();
+      })
     },
     isDataEntered() {
       if (!this.isNameEntered) {
@@ -421,6 +551,23 @@ export default {
       this.addressIsValid = false;
       this.validateAddress();
     },
+    loadImage(name, index){
+      axios.get("/Photos/", {
+        headers: {
+          Authorization: "Bearer " + this.$store.getters.access_token,
+        },
+        params: {
+          path: name
+        },
+        responseType: "blob"
+      })
+      .then(response => {
+        this.imageUrls[index] = URL.createObjectURL(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    },
     validateAddress() {
       const apiKey = 'VrDrl5BjEA0Whvb-chHbFz96HV4qlCXB-yoiTRRLKno';
       const url = 'https://geocoder.ls.hereapi.com/6.2/geocode.json' +
@@ -445,7 +592,12 @@ export default {
               this.vacationRental.address.longitude = location.Longitude;
               this.vacationRental.address.latitude = location.Latitude;
               this.addressIsValid = true;
-              this.makeRequest();
+              if(this.vacationRental.id === null) {
+                this.makeRequest();
+              }
+              else {
+                this.updateVacationRental();
+              }
             }
           })
           .catch(() => {

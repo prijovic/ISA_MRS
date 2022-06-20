@@ -24,10 +24,13 @@ import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.UserType;
 import rs.ac.uns.ftn.siit.isa_mrs.repository.*;
 import rs.ac.uns.ftn.siit.isa_mrs.security.JwtDecoder;
 
+import java.time.LocalDateTime;
+import java.time.chrono.ChronoLocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @Service
 @RequiredArgsConstructor
@@ -62,6 +65,7 @@ public class VacationRentalServiceImpl implements VacationRentalService{
             rentalDto.setReviews(rentalService.getRentalReviews(vacationRental, page, pageSize));
             rentalDto.setGrade(rentalService.calculateRentalRating(vacationRental));
             rentalDto.setOwnerGrade(rentalService.calculateOwnerRating(vacationRental.getRentalObjectOwner()));
+            rentalDto.setIsDeletable(isVacationRentalDeletable(vacationRental));
             Optional<Client> optionalClient = clientRepo.findByEmail(decodedToken.getEmail());
             if(optionalClient.isPresent()){
                 Client client = optionalClient.get();
@@ -204,6 +208,51 @@ public class VacationRentalServiceImpl implements VacationRentalService{
         }
     }
 
+    @Override
+    public ResponseEntity<Long> updateVacationRental(AddVacationRentalDto vacationRentalDto) {
+        try {
+            VacationRental vacationRental = vacationRentalRepo.getById(vacationRentalDto.getId());
+            alterVacationRental(vacationRental, vacationRentalDto);
+            return new ResponseEntity<>(vacationRental.getId(), HttpStatus.OK);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    private void alterVacationRental(VacationRental vacationRental, AddVacationRentalDto vacationRentalDto) {
+        vacationRentalDto.getAdditionalServices().forEach(service -> {
+            if(vacationRental.hasService(service.getName(), service.getPrice())) {
+
+            } else if(vacationRental.hasService(service.getName())) {
+                vacationRental.setAdditionalServicePrice(service.getName(), service.getPrice());
+            } else {
+                AdditionalService additionalService = modelMapper.map(service, AdditionalService.class);
+                additionalService.setRentalObject(vacationRental);
+                additionalServiceRepo.save(additionalService);
+                vacationRental.getAdditionalServices().add(additionalService);
+            }
+        });
+        vacationRentalDto.getConductRules().forEach(rule -> {
+            if(!vacationRental.hasRule(rule.getRule(), ConductType.valueOf(rule.getType()))) {
+                ConductRule conductRule = new ConductRule();
+                conductRule.setRule(rule.getRule());
+                conductRule.setType(ConductType.valueOf(rule.getType()));
+                conductRule.setRentalObject(vacationRental);
+                conductRuleRepo.save(conductRule);
+                vacationRental.getConductRules().add(conductRule);
+            }
+        });
+        vacationRental.setInitDate(vacationRentalDto.getInitDate());
+        vacationRental.setTermDate(vacationRentalDto.getTermDate());
+        vacationRental.setName(vacationRentalDto.getName());
+        vacationRental.setDescription(vacationRentalDto.getDescription());
+        vacationRental.setCancellationFee(vacationRentalDto.getCancellationFee());
+        vacationRental.setCapacity(vacationRentalDto.getCapacity());
+        vacationRental.setPrice(vacationRentalDto.getPrice());
+        vacationRentalRepo.save(vacationRental);
+    }
+
     private VacationRental vacationRentalDtoToVacationRental(AddVacationRentalDto vacationRentalDto, RentalObjectOwner owner) {
         VacationRental vacationRental = new VacationRental();
         List<AdditionalService> additionalServices = new ArrayList<>();
@@ -229,6 +278,8 @@ public class VacationRentalServiceImpl implements VacationRentalService{
         });
         Address address = modelMapper.map(vacationRentalDto.getAddress(), Address.class);
         addressRepo.save(address);
+        vacationRental.setInitDate(vacationRentalDto.getInitDate());
+        vacationRental.setTermDate(vacationRentalDto.getTermDate());
         vacationRental.setName(vacationRentalDto.getName());
         vacationRental.setCancellationFee(vacationRentalDto.getCancellationFee());
         vacationRental.setAddress(address);
@@ -241,7 +292,6 @@ public class VacationRentalServiceImpl implements VacationRentalService{
         vacationRental.setCapacity(vacationRentalDto.getCapacity());
         vacationRental.setPrice(vacationRentalDto.getPrice());
         vacationRentalRepo.save(vacationRental);
-
         rooms.forEach(room -> {
             room.setVacationRental(vacationRental);
             roomRepo.save(room);
@@ -265,5 +315,15 @@ public class VacationRentalServiceImpl implements VacationRentalService{
             photo.ifPresent(value -> rentalDto.setDisplayPhoto(modelMapper.map(value, PhotoDto.class)));
         }
         return rentalDto;
+    }
+
+    private Boolean isVacationRentalDeletable(VacationRental vacationRental) {
+        AtomicBoolean isDeletable = new AtomicBoolean(true);
+        vacationRental.getReservations().forEach(reservation -> {
+            if (reservation.getInitDate().isAfter(ChronoLocalDateTime.from(LocalDateTime.now()))) {
+                isDeletable.set(false);
+            }
+        });
+        return isDeletable.get();
     }
 }
