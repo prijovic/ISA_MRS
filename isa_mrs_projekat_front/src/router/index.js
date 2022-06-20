@@ -3,7 +3,6 @@ import ProfileView from "@/components/GeneralComponents/UserAccountForms/Profile
 import TheAdminSidebar from "@/components/Administrator/AdminPage/TheAdminSidebar/TheAdminSidebar";
 import AdminDashboard from "@/components/Administrator/AdminPage/components/AdminMainViews/AdminDashboard";
 import PasswordChangeForm from "@/components/GeneralComponents/UserAccountForms/PasswordChangeForm";
-import FishingInstructorPage from "@/components/FishingInstructor/FishingInstructorPage/components/InstructorMainViews/FishingInstructorPage";
 import AccountDeletionForm from "@/components/GeneralComponents/UserAccountForms/AccountDeletionForm";
 import TheUnregisteredUserSidebar from "@/components/UnregisteredUser/TheUnregisteredUserSidebar";
 import store from "@/store";
@@ -281,7 +280,7 @@ const routes = [
         path: "/fishingInstructor",
         name: "FishingInstructorHome",
         components: {
-            default: FishingInstructorPage,
+            default: InstructorReservations,
             sidebar: TheFishingInstructorSidebar
         },
         meta: {
@@ -370,17 +369,6 @@ const routes = [
         name: "AdventureUpdate",
         components: {
             default: AdventureCreationPage,
-            sidebar: TheFishingInstructorSidebar
-        },
-        meta: {
-            public: false
-        }
-    },
-    {
-        path: "/fishingInstructor/Reservations",
-        name: "InstructorReservations",
-        components: {
-            default: InstructorReservations,
             sidebar: TheFishingInstructorSidebar
         },
         meta: {
