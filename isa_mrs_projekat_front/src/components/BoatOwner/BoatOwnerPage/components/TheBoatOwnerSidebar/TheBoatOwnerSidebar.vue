@@ -1,10 +1,8 @@
 <template>
   <div class="sidebar rounded-right" :style="{width:sidebarWidth}">
-    <MenuLink to="/boatOwner/Profile" icon="id-card">Profile</MenuLink>
-    <hr>
     <MenuLink to="/#" icon="home">Home</MenuLink>
     <MenuLink to="/boatOwner/boats" icon="ship">Boats</MenuLink>
-    <MenuLink to="/#" icon="circle-check">Reservations</MenuLink>
+    <MenuLink to="/boatOwner/Reservations" icon="circle-check">Reservations</MenuLink>
     <MenuLink to="/boatOwner/calendar" icon="calendar-days">Calendar</MenuLink>
     <span class="collapse-icon" :class="{'rotate-180': collapsed}" @click="toggleSidebar">
       <font-awesome-icon icon="angle-double-left"></font-awesome-icon>

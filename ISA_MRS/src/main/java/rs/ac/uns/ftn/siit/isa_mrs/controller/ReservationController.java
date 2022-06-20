@@ -4,13 +4,16 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.BoatOwnerDtos.BoatOwnerReservationDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.InstructorDtos.InstructorReservationsDtos.InstructorReservationDto;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.VacationRentalOwnerDtos.VacationRentalOwnerReservationDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.ReportDtos.AddInstructorReportDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.ReportDtos.AddReportDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.ReviewDtos.AddInstructorReviewDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.ReviewDtos.AddReviewDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.ReservationDto;
 import rs.ac.uns.ftn.siit.isa_mrs.service.InstructorService;
+import rs.ac.uns.ftn.siit.isa_mrs.service.RentalObjectOwnerService;
 import rs.ac.uns.ftn.siit.isa_mrs.service.ReservationService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -26,6 +29,7 @@ import static rs.ac.uns.ftn.siit.isa_mrs.util.Paths.*;
 public class ReservationController {
     private final ReservationService reservationService;
     private final InstructorService instructorService;
+    private final RentalObjectOwnerService rentalObjectOwnerService;
 
     @GetMapping("/getReservations")
     public ResponseEntity<Collection<ReservationDto>> getFutureReservations(HttpServletRequest request) {
@@ -63,4 +67,13 @@ public class ReservationController {
         return reservationService.addReport(ard, request.getHeader(AUTHORIZATION));
     }
 
+    @GetMapping("/getBoatOwnerReservations")
+    public ResponseEntity<Collection<BoatOwnerReservationDto>> getAllBoatOwnerReservations(HttpServletRequest request) {
+        return rentalObjectOwnerService.getAllBoatOwnerReservations(request.getHeader(AUTHORIZATION));
+    }
+
+    @GetMapping("/getVacationRentalOwnerReservations")
+    public ResponseEntity<Collection<VacationRentalOwnerReservationDto>> getAllVacationRentalOwnerReservations(HttpServletRequest request) {
+        return rentalObjectOwnerService.getAllVacationRentalOwnerReservations(request.getHeader(AUTHORIZATION));
+    }
 }

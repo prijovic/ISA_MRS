@@ -7,14 +7,20 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.BoatOwnerDtos.BoatOwnerProfileDto;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.BoatOwnerDtos.BoatOwnerReservationDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.InstructorDtos.InstructorDtos.SubscriberDto;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.InstructorDtos.InstructorReservationsDtos.InstructorReservationDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.RentalProfileDtos.ReviewDtos.ReviewDto;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.ReservationDtos.ReservationIncomeDto;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.ReservationDtos.ReservationRentalObjectDto;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.ReservationDtos.ReservationReportDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.VacationRentalOwnerDtos.VacationRentalOwnerProfileDto;
-import rs.ac.uns.ftn.siit.isa_mrs.model.Client;
-import rs.ac.uns.ftn.siit.isa_mrs.model.RentalObject;
-import rs.ac.uns.ftn.siit.isa_mrs.model.RentalObjectOwner;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.VacationRentalOwnerDtos.VacationRentalOwnerReservationDto;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.PhotoDto;
+import rs.ac.uns.ftn.siit.isa_mrs.model.*;
 import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.RequestStatus;
 import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.ReviewType;
+import rs.ac.uns.ftn.siit.isa_mrs.repository.IncomeRepo;
 import rs.ac.uns.ftn.siit.isa_mrs.repository.RentalObjectOwnerRepo;
 import rs.ac.uns.ftn.siit.isa_mrs.repository.RentalObjectRepo;
 import rs.ac.uns.ftn.siit.isa_mrs.security.JwtDecoder;
@@ -29,6 +35,7 @@ public class RentalObjectOwnerServiceImpl implements RentalObjectOwnerService{
 
     private final RentalObjectOwnerRepo ownerRepo;
     private final RentalObjectRepo rentalRepo;
+    private final IncomeRepo incomeRepo;
     private final RentalObjectServiceImpl rosi;
     private final ModelMapper modelMapper;
     private final JwtDecoder jwtDecoder;
@@ -84,6 +91,106 @@ public class RentalObjectOwnerServiceImpl implements RentalObjectOwnerService{
             log.error(e.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @Override
+    public ResponseEntity<Collection<BoatOwnerReservationDto>> getAllBoatOwnerReservations(String token) {
+        try{
+            JwtDecoder.DecodedToken decodedToken;
+            try {
+                decodedToken = jwtDecoder.decodeToken(token);
+            } catch (Exception e) {
+                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            }
+            Optional<RentalObjectOwner> owner = ownerRepo.findByEmail(decodedToken.getEmail());
+            if(owner.isEmpty()) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            RentalObjectOwner boatOwner = owner.get();
+            Collection<BoatOwnerReservationDto> reservationDtos = new ArrayList<>();
+            reservationDtos = setUpReservationDtos(boatOwner.getRentalObjects());
+            return new ResponseEntity<>(reservationDtos, HttpStatus.OK);
+        }
+        catch (Exception e) {
+            log.error(e.getMessage());
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    public ResponseEntity<Collection<VacationRentalOwnerReservationDto>> getAllVacationRentalOwnerReservations(String token) {
+        try{
+            JwtDecoder.DecodedToken decodedToken;
+            try {
+                decodedToken = jwtDecoder.decodeToken(token);
+            } catch (Exception e) {
+                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            }
+            Optional<RentalObjectOwner> owner = ownerRepo.findByEmail(decodedToken.getEmail());
+            if(owner.isEmpty()) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            RentalObjectOwner vacationRentalOwner = owner.get();
+            Collection<VacationRentalOwnerReservationDto> reservationDtos = new ArrayList<>();
+            reservationDtos = setUpVacationRentalReservationDtos(vacationRentalOwner.getRentalObjects());
+            return new ResponseEntity<>(reservationDtos, HttpStatus.OK);
+        }
+        catch (Exception e) {
+            log.error(e.getMessage());
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    private Collection<BoatOwnerReservationDto> setUpReservationDtos(Collection<RentalObject> boats) {
+        Collection<BoatOwnerReservationDto> reservationDtos = new ArrayList<>();
+        for(var a : boats) {
+            for(var reservation : a.getReservations()) {
+                BoatOwnerReservationDto reservationDto = modelMapper.map(reservation, BoatOwnerReservationDto.class);
+                reservationDto.setReports(setUpReservationReports(reservation));
+                reservationDto.setRentalObject(setUpReservationRentalObjectDto(reservation.getRentalObject()));
+                reservationDto.setIncome(setUpIncomeDto(reservation.getId()));
+                reservationDtos.add(reservationDto);
+            }
+        }
+        return reservationDtos;
+    }
+
+    private Collection<VacationRentalOwnerReservationDto> setUpVacationRentalReservationDtos(Collection<RentalObject> vacationRentals) {
+        Collection<VacationRentalOwnerReservationDto> reservationDtos = new ArrayList<>();
+        for(var a : vacationRentals) {
+            for(var reservation : a.getReservations()) {
+                VacationRentalOwnerReservationDto reservationDto = modelMapper.map(reservation, VacationRentalOwnerReservationDto.class);
+                reservationDto.setReports(setUpReservationReports(reservation));
+                reservationDto.setRentalObject(setUpReservationRentalObjectDto(reservation.getRentalObject()));
+                reservationDto.setIncome(setUpIncomeDto(reservation.getId()));
+                reservationDtos.add(reservationDto);
+            }
+        }
+        return reservationDtos;
+    }
+
+    private Collection<ReservationReportDto> setUpReservationReports(Reservation reservation) {
+        Collection<ReservationReportDto> reports = new ArrayList<>();
+        for(var report : reservation.getReports()) {
+            ReservationReportDto r = modelMapper.map(report, ReservationReportDto.class);
+            r.setUser(report.getAuthor().getUserType());
+            reports.add(r);
+        }
+        return reports;
+    }
+
+    private ReservationRentalObjectDto setUpReservationRentalObjectDto(RentalObject rental) {
+        ReservationRentalObjectDto rentalDto = modelMapper.map(rental, ReservationRentalObjectDto.class);
+        if(rental.getPhotos().size() != 0) {
+            Optional<Photo> photo = rental.getPhotos().stream().findFirst();
+            if(photo.isPresent()) {
+                PhotoDto photoDto = modelMapper.map(photo, PhotoDto.class);
+                rentalDto.setDisplayPhoto(photoDto);
+            }
+        }
+        return rentalDto;
+    }
+
+    private ReservationIncomeDto setUpIncomeDto(Long id) {
+        Optional<Income> income = incomeRepo.findByReservationId(id);
+        if(income.isEmpty()) return null;
+        return modelMapper.map(income.get(), ReservationIncomeDto.class);
     }
 
     private Collection<ReviewDto> getOwnerReviews(RentalObjectOwner owner) {

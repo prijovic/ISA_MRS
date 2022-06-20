@@ -1,10 +1,8 @@
 <template>
   <div class="sidebar rounded-right" :style="{width:sidebarWidth}">
-    <MenuLink to="/vacationRentalOwner/Profile" icon="id-card">Profile</MenuLink>
-    <hr>
     <MenuLink to="/#" icon="home">Home</MenuLink>
     <MenuLink to="/vacationRentalOwner/cottages" icon="house-chimney-window">Rental Houses</MenuLink>
-    <MenuLink to="/#" icon="circle-check">Reservations</MenuLink>
+    <MenuLink to="/vacationRentalOwner/Reservations" icon="circle-check">Reservations</MenuLink>
     <MenuLink to="/vacationRentalOwner/calendar" icon="calendar-days">Calendar</MenuLink>
     <span class="collapse-icon" :class="{'rotate-180': collapsed}" @click="toggleSidebar">
       <font-awesome-icon icon="angle-double-left"></font-awesome-icon>
