@@ -1,7 +1,5 @@
 <template>
   <div class="sidebar rounded-right" :style="{width:sidebarWidth}">
-    <MenuLink to="/fishingInstructor/Profile" icon="id-card">Profile</MenuLink>
-    <hr>
     <MenuLink to="/fishingInstructor" icon="home">Home</MenuLink>
     <MenuLink to="/fishingInstructor/adventures" icon="mountain-sun">Adventures</MenuLink>
     <MenuLink to="/fishingInstructor/Reservations" icon="book">Reservatios</MenuLink>

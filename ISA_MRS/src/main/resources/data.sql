@@ -7,7 +7,7 @@ INSERT INTO admin (id) VALUES (1);
 INSERT INTO address (id, country, city, street, number, latitude, longitude) VALUES (2, 'Srbija', 'Subotica', 'Ulicа Prаškа', 12, 46.10781, 19.6516);
 INSERT INTO users (id, email, is_active, name, password, phone, surname, address_id, user_type, first_login, photo) VALUES (2, 'prijovicu318@gmail.com', true, 'Uros', 'a', '+381485928220', 'Prijovic', 2, 0, false, 'pecaros');
 INSERT INTO sale_participant (points, id) VALUES (0, 2);
-INSERT INTO rental_object_owner (id) VALUES (2);
+INSERT INTO rental_object_owner (id, init_date, term_date) VALUES (2, '2023-04-01 23:00:00', '2023-04-25 23:00:00');
 INSERT INTO address (id, country, city, street, number, latitude, longitude) VALUES (3, 'Magyarország', 'Budapest', 'Kossuth Lajos tér', 1, 47.507, 19.04675);
 INSERT INTO users (id, email, is_active, name, password, phone, surname, address_id, user_type, first_login, photo) VALUES (3, 'volastamara@gmail.com', 1, 'Tamara', 'kljucko', '+381629673333', 'Volan', 3, 3, false, 'kaoTamara');
 INSERT INTO sale_participant (points, id) VALUES (0, 3);

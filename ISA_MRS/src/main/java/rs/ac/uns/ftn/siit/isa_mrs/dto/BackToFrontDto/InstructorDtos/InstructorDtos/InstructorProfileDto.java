@@ -5,6 +5,7 @@ import rs.ac.uns.ftn.siit.isa_mrs.dto.AddressDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.RentalProfileDtos.ReviewDtos.ReviewDto;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Collection;
 
 @Data
@@ -20,4 +21,6 @@ public class InstructorProfileDto implements Serializable {
     private String grade;
     private Collection<ReviewDto> clientReviews;
     private Collection<SubscriberDto> subscribers;
+    private LocalDateTime initDate;
+    private LocalDateTime termDate;
 }

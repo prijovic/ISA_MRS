@@ -41,7 +41,6 @@ import java.util.*;
 @RequiredArgsConstructor
 @Slf4j
 public class InstructorServiceImpl implements InstructorService{
-
     private final RentalObjectOwnerRepo ownerRepo;
     private final RentalObjectRepo rentalRepo;
     private final AdventureServiceImpl adventureService;

@@ -3,9 +3,8 @@
     <div class="container-fluid px-lg-4 px-xl-5 p-0 m-0 pt-5 contentDiv">
       <section class="p-0 m-0">
         <div v-if="this.instructor" class="row">
-          <div class="col-lg-4" style="height: fit-content; display:block; min-width: 18rem;">
+          <div class="col-5" style="height: fit-content; display:block; min-width: 18rem;">
             <div class="card card-profile mb-4" >
-              <!--              <div class="card-header"></div>-->
               <div class="card-body text-center">
                 <img v-if="this.profilePic" class="card-profile-img" :src="this.profilePic" alt=""/>
                 <img v-else class="card-profile-img" src="../../../../../Images/instructorNoProfilePic.png" alt=""/>
@@ -26,11 +25,20 @@
                   <div class="row mt-3 text-center">
                     <RentalAddress v-if="this.instructor.address" :address="this.instructor.address"/>
                   </div>
+                  <div class="row mt-3 text-center">
+                    <p class="h3">Unavailability Period</p>
+                  </div>
+                  <div class="row justify-content-center">
+                    <date-picker :key="instructor.id" v-model="range" is-range :first-day-of-week=2 @drag="rangeChanged=true"></date-picker>
+                  </div>
+                  <div v-if="rangeChanged" class="row mt-1 justify-content-center">
+                    <button class="btn btn-red" style="max-width: fit-content">Save Changes</button>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-          <div class="col-lg-8">
+          <div class="col-7">
             <div class="row px-3 mb-2">
               <div class="card tabs pt-2 pb-1">
                 <ul class="nav justify-content-center">
@@ -86,6 +94,7 @@ import InstructorProfileReviews from "@/components/UnregisteredUser/components/I
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import {library} from "@fortawesome/fontawesome-svg-core";
 import {faPencil} from "@fortawesome/free-solid-svg-icons";
+import {DatePicker} from "v-calendar";
 import SubscribedClient
   from "@/components/FishingInstructor/FishingInstructorPage/components/InstructorMainViews/InstructorProfile/Subscribers/SubscribedClient";
 
@@ -93,17 +102,21 @@ library.add(faPencil);
 
 export default {
   name: "InstructorProfile",
-  components: {SubscribedClient, FontAwesomeIcon, RentalAddress, InstructorProfileReviews},
+  components: {DatePicker, SubscribedClient, FontAwesomeIcon, RentalAddress, InstructorProfileReviews},
   data() {
     return {
       instructor: null,
       subscribersBtnClicked: false,
       reviewsBtnClicked: true,
       profilePic: null,
+      range: {
+        start: null,
+        end: null
+      },
+      rangeChanged: false
     }
   },
   mounted() {
-    // console.log(this.$store.getters.access_token);
     axios.get("/RentalOwners/getInstructor", {
       headers: {
         Authorization: "Bearer " + this.$store.getters.access_token
@@ -113,6 +126,8 @@ export default {
       }
     })
         .then((response) => {
+          this.range.start = response.data.initDate;
+          this.range.end = response.data.termDate;
           this.instructor = response.data;
           this.getProfilePic();
         })
