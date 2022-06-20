@@ -35,6 +35,14 @@
         <div style="width: 100%;">
           <div class="row">
             <button class="w-100 btn mb-2" style="font-weight: 500; color: white;" data-bs-toggle="modal"
+                    :data-bs-target="'#addServices-'+reservation.id">
+              Services
+            </button>
+            <InstructorReservationServices :additionalServices="reservation.additionalServices"
+                                           :resId="reservation.id"/>
+          </div>
+          <div class="row">
+            <button class="w-100 btn mb-2" style="font-weight: 500; color: white;" data-bs-toggle="modal"
                     :data-bs-target="'#clientProfile-'+reservation.id">
               Client Preview
             </button>
@@ -57,9 +65,11 @@ library.add(faCheck, faX);
 
 import InstructorClientPreview
   from "@/components/FishingInstructor/FishingInstructorPage/components/InstructorMainViews/InstructorReservations/InstructorClientPreview";
+import InstructorReservationServices
+  from "@/components/FishingInstructor/FishingInstructorPage/components/InstructorMainViews/InstructorReservations/InstructorReservationServices";
 export default {
   name: "InstructorUpcomingReservations",
-  components: {FontAwesomeIcon, InstructorClientPreview},
+  components: {FontAwesomeIcon, InstructorClientPreview, InstructorReservationServices},
   props: ["reservations", "images"],
   data() {
     return {
