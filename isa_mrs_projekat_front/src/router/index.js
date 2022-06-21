@@ -7,9 +7,7 @@ import AccountDeletionForm from "@/components/GeneralComponents/UserAccountForms
 import TheUnregisteredUserSidebar from "@/components/UnregisteredUser/TheUnregisteredUserSidebar";
 import store from "@/store";
 import TheFishingInstructorSidebar from "@/components/FishingInstructor/FishingInstructorPage/components/TheFishingInstructorSidebar";
-import OwnerContentPage from "@/components/VacationRentalOwner/VacationRentalOwnerPage/components/OwnerContentPage/OwnerContentPage";
 import TheOwnerSidebar from "@/components/VacationRentalOwner/VacationRentalOwnerPage/components/TheOwnerSidebar/TheOwnerSidebar";
-import BoatOwnerContentPage from "@/components/BoatOwner/BoatOwnerPage/components/BoatOwnerMainView/BoatOwnerContentPage";
 import TheBoatOwnerSidebar from "@/components/BoatOwner/BoatOwnerPage/components/TheBoatOwnerSidebar/TheBoatOwnerSidebar";
 import AdminRequestsView from "@/components/Administrator/AdminPage/components/AdminMainViews/AdminRequestsView/AdminRequestsView";
 import InitView from "@/components/UnregisteredUser/InitView";
@@ -425,7 +423,7 @@ const routes = [
         path: "/vacationRentalOwner",
         name: "VacationRentalOwnerHome",
         components: {
-            default: OwnerContentPage,
+            default: VacationRentalOwnerReservations,
             sidebar: TheOwnerSidebar,
         },
         meta: {
@@ -448,6 +446,17 @@ const routes = [
         name: "VacationRentalOwnerView",
         components: {
             default: VacationRentalOwnerProfilPage,
+            sidebar: TheOwnerSidebar,
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
+        path: "/vacationRentalOwner/finances",
+        name: "VacationRentalOwnerReports",
+        components: {
+            default: InstructorBusinessReports,
             sidebar: TheOwnerSidebar,
         },
         meta: {
@@ -481,28 +490,6 @@ const routes = [
         name: "AddNewVacationRental",
         components:{
             default: VacationRentalAdditionForm,
-            sidebar: TheOwnerSidebar
-        },
-        meta: {
-            public: false
-        }
-    },
-    {
-        path: "/vacationRentalOwner/Reservations",
-        name: "VacationRentalUpdate",
-        components: {
-            default: InstructorReservations,
-            sidebar: TheOwnerSidebar
-        },
-        meta: {
-            public: false
-        }
-    },
-    {
-        path: "/vacationRentalOwner/Reservations",
-        name: "VacationRentalOwnerReservations",
-        components: {
-            default: VacationRentalOwnerReservations,
             sidebar: TheOwnerSidebar
         },
         meta: {
@@ -546,7 +533,7 @@ const routes = [
         path: "/boatOwner",
         name: "BoatOwnerHome",
         components: {
-            default: BoatOwnerContentPage,
+            default: BoatOwnerReservations,
             sidebar: TheBoatOwnerSidebar,
         },
         meta: {
@@ -569,6 +556,17 @@ const routes = [
         name: "BoatOwnerView",
         components: {
             default: BoatOwnerProfilePage,
+            sidebar: TheBoatOwnerSidebar,
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
+        path: "/boatOwner/finances",
+        name: "BoatOwnerReports",
+        components: {
+            default: InstructorBusinessReports,
             sidebar: TheBoatOwnerSidebar,
         },
         meta: {
@@ -635,17 +633,6 @@ const routes = [
         name: "SpecialOfferDefine",
         components: {
             default: DefineSpecialOffer,
-            sidebar: TheBoatOwnerSidebar
-        },
-        meta: {
-            public: false
-        }
-    },
-    {
-        path: "/boatOwner/Reservations",
-        name: BoatOwnerReservations,
-        components: {
-            default: BoatOwnerReservations,
             sidebar: TheBoatOwnerSidebar
         },
         meta: {
