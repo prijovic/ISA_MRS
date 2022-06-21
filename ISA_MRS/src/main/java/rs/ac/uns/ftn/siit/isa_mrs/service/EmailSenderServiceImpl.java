@@ -9,12 +9,10 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
-import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.AdminDtos.ReviewDto;
-import rs.ac.uns.ftn.siit.isa_mrs.model.Report;
-import rs.ac.uns.ftn.siit.isa_mrs.model.Request;
-import rs.ac.uns.ftn.siit.isa_mrs.model.Review;
-import rs.ac.uns.ftn.siit.isa_mrs.model.User;
+import rs.ac.uns.ftn.siit.isa_mrs.model.*;
+import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.RentalObjectType;
 import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.RequestStatus;
+import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.UserType;
 import rs.ac.uns.ftn.siit.isa_mrs.security.JwtGenerator;
 
 import javax.mail.MessagingException;
@@ -168,6 +166,35 @@ public class EmailSenderServiceImpl implements EmailSenderService{
         messageHelper.setText(html, true);
         messageHelper.setSubject(subject);
         mailSender.send(message);
+    }
+
+    @Override
+    public void sendSuccessfulReservationEmail(Reservation reservation) throws MessagingException, IOException, TemplateException {
+        final String email = reservation.getClient().getEmail();
+        final String subject = "Successful Reservation";
+        Map<String, Object> model = new HashMap<>();
+        model.put("rental", reservation.getRentalObject().getName());
+        model.put("appointment", getSuccessfulReservationAppointment(reservation));
+        MimeMessage message = mailSender.createMimeMessage();
+        MimeMessageHelper messageHelper = new MimeMessageHelper(message, MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED);
+        Template template = configuration.getTemplate("client-successful-reservation-email.ftl");
+        String html = FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
+        messageHelper.setTo(email);
+        messageHelper.setText(html, true);
+        messageHelper.setSubject(subject);
+        mailSender.send(message);
+    }
+
+    private String getSuccessfulReservationAppointment(Reservation reservation) {
+        String initDate = reservation.getInitDate().format(DateTimeFormatter.ofPattern("dd.MM.yyyy."));
+        String initTime = reservation.getInitDate().format(DateTimeFormatter.ofPattern("HH:mm"));
+        String termDate = reservation.getTermDate().format(DateTimeFormatter.ofPattern("dd.MM.yyyy."));
+        String termTime = reservation.getTermDate().format(DateTimeFormatter.ofPattern("HH:mm"));
+        if(reservation.getRentalObject().getRentalObjectType() == RentalObjectType.Adventure)
+            return initDate + " from " + initTime + " to " + termTime;
+        if(initDate.equals(termDate))
+            return initDate;
+        return initDate + '-' + termDate;
     }
 
 }

@@ -41,6 +41,7 @@ public class ReservationServiceImpl implements ReservationService {
     private final IncomeRepo incomeRepo;
     private final SpecialOfferRepo specialOfferRepo;
     private final ProfitFeeRepo profitFeeRepo;
+    private final EmailSenderService emailSenderService;
     private final ModelMapper modelMapper;
 
     @Override
@@ -84,6 +85,8 @@ public class ReservationServiceImpl implements ReservationService {
             income.setReservation(reservation);
 
             incomeRepo.save(income);
+
+            emailSenderService.sendSuccessfulReservationEmail(reservation);
 
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (Exception e) {
