@@ -483,3 +483,5 @@ INSERT INTO loyalty_program (id, client_points_per_reservation, owner_points_per
 INSERT INTO loyalty_category (id, client_discount, icon, last_edited, name, owner_benefit, required_points, loyalty_program_id) VALUES (1, 15, 'golden-category', '2022-06-17 03:39:00', 'Gold', 10, 200, 1);
 INSERT INTO loyalty_category (id, client_discount, icon, last_edited, name, owner_benefit, required_points, loyalty_program_id) VALUES (2, 10, 'silver-category', '2022-06-17 03:39:00', 'Silver', 5, 100, 1);
 INSERT INTO loyalty_category (id, client_discount, icon, last_edited, name, owner_benefit, required_points, loyalty_program_id) VALUES (3, 5, 'bronze-category', '2022-06-17 03:39:00', 'Bronze', 3, 50, 1);
+INSERT INTO users (id, email, is_active, name, password, phone, surname, address_id, user_type, first_login) VALUES (8, 'prijovic.sw79.2019@uns.ac.rs', true, 'Uros', 'Uros12345', '+381653977974', 'Prijovic', 1, 5, false);
+INSERT INTO admin (id) VALUES (8);

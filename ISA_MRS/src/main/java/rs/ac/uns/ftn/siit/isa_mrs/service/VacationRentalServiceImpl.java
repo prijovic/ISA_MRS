@@ -11,9 +11,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.RentalProfileDtos.VacationRentalDtos.VacationRentalProfileDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.RentalProfileDtos.VacationRentalDtos.VacationRentalsForMenuDto;
-import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.AddVacationRentalDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.PageDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.PhotoDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.VacationRentalDto;
@@ -26,11 +26,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class VacationRentalServiceImpl implements VacationRentalService{
-
     private final VacationRentalRepo vacationRentalRepo;
     private final ModelMapper modelMapper;
     private final RentalObjectOwnerRepo ownerRepo;

@@ -10,6 +10,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.AdminDtos.ReviewDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.PageDto;
 import rs.ac.uns.ftn.siit.isa_mrs.model.Client;
@@ -27,6 +29,7 @@ import java.util.Collection;
 
 @Slf4j
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class ReviewServiceImpl implements ReviewService{
     private final ReviewRepo reviewRepo;
@@ -64,8 +67,12 @@ public class ReviewServiceImpl implements ReviewService{
     public ResponseEntity<ReviewDto> changeReviewStatus(Long id, boolean accepted) {
         try {
             Review review = reviewRepo.getById(id);
+            if (!review.getStatus().equals(RequestStatus.Pending)) {
+                return new ResponseEntity<>(HttpStatus.CONFLICT);
+            }
+            review.setStatus(accepted?RequestStatus.Accepted:RequestStatus.Rejected);
+            reviewRepo.save(review);
             if (accepted) {
-                review.setStatus(RequestStatus.Accepted);
                 String commentedObject;
                 Reservation reservation = reservationRepo.findByReviewsIsContaining(review);
                 if (review.getReviewType().equals(ReviewType.RentalReview)) {
@@ -78,10 +85,7 @@ public class ReviewServiceImpl implements ReviewService{
                     commentedObject = client.getName() + " " + client.getSurname();
                 }
                 emailSenderService.sendReviewStatusNotificationEmail(review, commentedObject);
-            } else {
-                review.setStatus(RequestStatus.Rejected);
             }
-            reviewRepo.save(review);
             return new ResponseEntity<>(modelMapper.map(review, ReviewDto.class), HttpStatus.OK);
         } catch (Exception e) {
             log.error(e.getMessage());
