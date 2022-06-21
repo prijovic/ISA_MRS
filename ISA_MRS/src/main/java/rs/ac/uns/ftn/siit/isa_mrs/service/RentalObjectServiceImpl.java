@@ -11,6 +11,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.InstructorDtos.RentalGradeDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.PageDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.RentalObjectDto;
 import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.RentalObjectType;
@@ -18,9 +19,7 @@ import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.RentalProfileDtos.ReviewDto
 import rs.ac.uns.ftn.siit.isa_mrs.model.*;
 import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.RequestStatus;
 import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.ReviewType;
-import rs.ac.uns.ftn.siit.isa_mrs.repository.ClientRepo;
-import rs.ac.uns.ftn.siit.isa_mrs.repository.RentalObjectRepo;
-import rs.ac.uns.ftn.siit.isa_mrs.repository.ReviewRepo;
+import rs.ac.uns.ftn.siit.isa_mrs.repository.*;
 import rs.ac.uns.ftn.siit.isa_mrs.security.JwtDecoder;
 
 import java.math.RoundingMode;
@@ -36,6 +35,7 @@ public class RentalObjectServiceImpl implements RentalObjectService {
     private final ModelMapper modelMapper;
     private final ReviewRepo reviewRepo;
     private final JwtDecoder jwtDecoder;
+    private final RentalObjectOwnerRepo rentalObjectOwnerRepo;
 
 //    @Override
 //    public ResponseEntity<RentalObjectPeriodsDto> setAvailabilityPeriods(Long id, List<LocalDate> dates) {
@@ -135,6 +135,33 @@ public class RentalObjectServiceImpl implements RentalObjectService {
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    public Collection<RentalGradeDto> getRentalsGrades(String token) {
+        Collection<RentalGradeDto> result = new ArrayList<RentalGradeDto>();
+        try {
+            JwtDecoder.DecodedToken decodedToken;
+            try {
+                decodedToken = jwtDecoder.decodeToken(token);
+            } catch (Exception e) {
+                return result;
+            }
+            Optional<RentalObjectOwner> user = rentalObjectOwnerRepo.findByEmail(decodedToken.getEmail());
+            if (user.isPresent()) {
+                RentalObjectOwner owner = user.get();
+                Collection<RentalObject> rentalObjects = rentalObjectRepo.findAllByRentalObjectOwner(owner);
+                rentalObjects.forEach(rentalObject -> {
+                    RentalGradeDto dto = new RentalGradeDto();
+                    dto.setRentalObject(modelMapper.map(rentalObject, RentalObjectDto.class));
+                    dto.setGrade(calculateRentalRating(rentalObject));
+                    result.add(dto);
+                });
+            }
+            return result;
+        } catch (Exception e) {
+            return new ArrayList<RentalGradeDto>();
         }
     }
 

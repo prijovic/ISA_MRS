@@ -8,12 +8,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.AdminDtos.DashboardDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.AdminDtos.IncomeDto;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.InstructorDtos.DashboardInstructorDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.ProfitFeeDto;
 import rs.ac.uns.ftn.siit.isa_mrs.service.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
 import java.util.List;
 
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static rs.ac.uns.ftn.siit.isa_mrs.util.Paths.INCOME_FEES;
 import static rs.ac.uns.ftn.siit.isa_mrs.util.Paths.PROFITS;
 
@@ -30,6 +33,7 @@ public class ProfitController {
     private final RentalObjectOwnerService rentalObjectOwnerService;
     private final ReservationService reservationService;
     private final IncomeService incomeService;
+    private final RentalObjectService rentalObjectService;
 
     @GetMapping(INCOME_FEES)
     public ResponseEntity<Collection<ProfitFeeDto>> getProfitFees() {
@@ -60,6 +64,18 @@ public class ProfitController {
             dashboardDto.setReservationIncomeGraph(incomeService.getYearlyReservationIncomeData());
             dashboardDto.setCancellationIncomeGraph(incomeService.getYearlyCancellationIncomeData());
             return new ResponseEntity<>(dashboardDto, HttpStatus.OK);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/instructorDashboard")
+    public ResponseEntity<DashboardInstructorDto> getInstructorDashboard(HttpServletRequest request) {
+        try {
+            DashboardInstructorDto dashboardInstructorDto = new DashboardInstructorDto();
+            dashboardInstructorDto.setRentalGrades(rentalObjectService.getRentalsGrades(request.getHeader(AUTHORIZATION)));
+            return new ResponseEntity<>(dashboardInstructorDto, HttpStatus.OK);
         } catch (Exception e) {
             log.error(e.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
