@@ -80,7 +80,7 @@
 
           <div class="row ps-1" style="text-align: center;">
 <!--              <i><strong>{{ "Price: $" + this.rentalObject.price }}</strong></i>-->
-            <button :disabled="clientCantReserve" class="w-100 btn" style="font-weight: 500; color: white;">
+            <button :disabled="clientCantReserve || isOwner" class="w-100 btn" style="font-weight: 500; color: white;">
               <span class="h4">
                 <i><strong>{{ "Book: $" + this.rentalObject.price }}</strong></i>
               </span>
@@ -240,7 +240,10 @@
           </div>
         </div>
 
-        <RentalSpecialOffers :specialOffers="[]"/>
+        <RentalSpecialOffers :specialOffers="this.rentalObject.specialOffers"
+                             :rentalType="this.rentalObject.rentalObjectType"
+                             :price="this.rentalObject.price"
+                             :clientCantReserve="clientCantReserve"/>
 
       </div>
     </div>

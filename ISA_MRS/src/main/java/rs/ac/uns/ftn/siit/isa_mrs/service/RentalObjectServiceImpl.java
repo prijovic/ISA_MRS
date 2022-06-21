@@ -11,6 +11,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.RentalProfileDtos.SpecialOfferDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.PageDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.RentalObjectDto;
 import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.RentalObjectType;
@@ -25,6 +26,8 @@ import rs.ac.uns.ftn.siit.isa_mrs.security.JwtDecoder;
 
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
+import java.time.LocalDateTime;
+import java.time.chrono.ChronoLocalDateTime;
 import java.util.*;
 
 @Slf4j
@@ -58,6 +61,20 @@ public class RentalObjectServiceImpl implements RentalObjectService {
 //            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 //        }
 //    }
+
+    public Collection<SpecialOfferDto> getFutureSpecialOffers(Collection<SpecialOffer> specialOffers) {
+        Collection<SpecialOfferDto> result = new ArrayList<>();
+        for(var offer : specialOffers) {
+            if(offer.getInitDate().isBefore(ChronoLocalDateTime.from(LocalDateTime.now()))) continue;
+            if(offer.getReservations().size() == 0) {result.add(modelMapper.map(offer, SpecialOfferDto.class)); continue;}
+            int i=0;
+            for(var reservation : offer.getReservations()) {
+                if(reservation.getCancelled()) i++;
+            }
+            if(i == offer.getReservations().size()) result.add(modelMapper.map(offer, SpecialOfferDto.class));
+        }
+        return result;
+    }
 
     @Override
     public ResponseEntity<PageDto<RentalObjectDto>> getRentalObjects(int page, int pageSize) {

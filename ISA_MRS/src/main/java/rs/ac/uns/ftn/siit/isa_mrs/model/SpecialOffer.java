@@ -25,4 +25,6 @@ public class SpecialOffer {
     private Collection<Service> includedServices = new LinkedHashSet<>();
     @ManyToOne
     private RentalObject rentalObject;
+    @OneToMany(mappedBy = "specialOffer")
+    private Collection<Reservation> reservations;
 }

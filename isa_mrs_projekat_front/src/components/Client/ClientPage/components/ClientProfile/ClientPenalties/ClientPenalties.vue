@@ -100,6 +100,10 @@ div.penalty:hover {
   background-color:#e23c52;
 }
 
+/*div.penalty:hover p {*/
+/*  color:white;*/
+/*}*/
+
 div.penalty {
   background-color: white
 }

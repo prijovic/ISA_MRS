@@ -492,6 +492,17 @@ INSERT INTO reservation_additional_services (additional_service_id, reservation_
 INSERT INTO income (id, fee, time_stamp, value, reservation_id) VALUES (22, 10, '2022-06-08 21:55:50', 13, 22);
 INSERT INTO report (id, author_id, status, showed_up, reservation_id, time_stamp) VALUES (5, 2, 1, false, 22, '2022-06-11 20:41:02');
 
-INSERT INTO reservation (id, price, equipment_required, people, time_stamp, client_id, rental_object_id, cancelled, init_date, term_date) VALUES (23, 40, false, 1, '2022-06-13 15:26:41', 3, 19, false, '2022-06-17 13:00:00', '2022-06-17 14:30:00');
-INSERT INTO income (id, fee, time_stamp, value, reservation_id) VALUES (23, 10, '2022-06-13 15:26:41', 4, 23);
-INSERT INTO report (id, comment, author_id, status, showed_up, reservation_id, time_stamp) VALUES (6, 'Not the first time this happened with this client.', 2, 1, false, 23, '2022-06-18 21:00:56');
+-- INSERT INTO reservation (id, price, equipment_required, people, time_stamp, client_id, rental_object_id, cancelled, init_date, term_date) VALUES (23, 40, false, 1, '2022-06-13 15:26:41', 3, 19, false, '2022-06-17 13:00:00', '2022-06-17 14:30:00');
+-- INSERT INTO income (id, fee, time_stamp, value, reservation_id) VALUES (23, 10, '2022-06-13 15:26:41', 4, 23);
+-- INSERT INTO report (id, comment, author_id, status, showed_up, reservation_id, time_stamp) VALUES (6, 'Not the first time this happened with this client.', 2, 1, false, 23, '2022-06-18 21:00:56');
+
+INSERT INTO special_offer (id, capacity, discount, init_date, term_date, rental_object_id) VALUES (1, 10, 20, '2022-07-20 14:00:00', '2022-07-21 12:00:00', 1);
+INSERT INTO reservation (id, price, equipment_required, people, time_stamp, client_id, rental_object_id, cancelled, init_date, term_date, special_offer_id) VALUES (24, 250, false, 1, '2022-06-13 15:26:41', 3, 1, true, '2022-07-20 14:00:00', '2022-07-21 12:00:00', 1);
+INSERT INTO income (id, fee, time_stamp, value, reservation_id) VALUES (24, 10, '2022-06-13 15:26:41', 4, 24);
+
+INSERT INTO service (id, name, special_offer_id) VALUES (1, 'Private chef', 1);
+INSERT INTO service (id, name, special_offer_id) VALUES (2, 'Jacuzzi', 1);
+INSERT INTO service (id, name, special_offer_id) VALUES (3, 'Sauna', 1);
+
+INSERT INTO special_offer (id, capacity, discount, init_date, term_date, rental_object_id) VALUES (2, 10, 50, '2022-08-20 14:00:00', '2022-08-21 12:00:00', 1);
+
