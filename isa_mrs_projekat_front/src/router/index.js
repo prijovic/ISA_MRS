@@ -52,6 +52,8 @@ import InstructorBusinessReports
     from "@/components/FishingInstructor/FishingInstructorPage/components/InstructorMainViews/InstructorBusinessReports";
 import SpecialOfferCreationPage
     from "@/components/FishingInstructor/FishingInstructorPage/components/InstructorMainViews/SpecialOfferCreationPage";
+import ReservationCreationPage
+    from "@/components/FishingInstructor/FishingInstructorPage/components/InstructorMainViews/ReservationCreationPage";
 //import InstructorCardView from "@/components/UnregisteredUser/components/InstructorCardView";
 
 
@@ -340,6 +342,17 @@ const routes = [
         name: "FishingInstructorSpecialOffer",
         components: {
             default: SpecialOfferCreationPage,
+            sidebar: TheFishingInstructorSidebar,
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
+        path: "/fishingInstructor/reservation/:id",
+        name: "FishingInstructorReservationCreation",
+        components: {
+            default: ReservationCreationPage,
             sidebar: TheFishingInstructorSidebar,
         },
         meta: {
