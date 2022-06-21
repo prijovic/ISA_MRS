@@ -23,4 +23,10 @@ public class LoyaltyProgram {
     private Long ownerPointsPerReservation;
     @OneToMany(mappedBy = "loyaltyProgram", cascade = CascadeType.ALL)
     private Collection<LoyaltyCategory> loyaltyCategories = new LinkedHashSet<>();
+
+    public LoyaltyCategory getUserCategory(int points) {
+        for (LoyaltyCategory category : loyaltyCategories) {
+
+        }
+    }
 }

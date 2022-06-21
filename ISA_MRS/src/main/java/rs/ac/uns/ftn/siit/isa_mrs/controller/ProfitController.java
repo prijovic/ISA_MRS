@@ -75,11 +75,19 @@ public class ProfitController {
         try {
             DashboardInstructorDto dashboardInstructorDto = new DashboardInstructorDto();
             dashboardInstructorDto.setRentalGrades(rentalObjectService.getRentalsGrades(request.getHeader(AUTHORIZATION)));
+            dashboardInstructorDto.setYearlyGraph(rentalObjectService.getLastYearRentalReservationsGraph(request.getHeader(AUTHORIZATION)));
+            dashboardInstructorDto.setMonthlyGraph(rentalObjectService.getLastMonthRentalReservationsGraph(request.getHeader(AUTHORIZATION)));
+            dashboardInstructorDto.setWeeklyGraph(rentalObjectService.getLastWeekRentalReservationsGraph(request.getHeader(AUTHORIZATION)));
             return new ResponseEntity<>(dashboardInstructorDto, HttpStatus.OK);
         } catch (Exception e) {
             log.error(e.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @GetMapping("/instructorReport")
+    public ResponseEntity<Collection<IncomeDto>> getInstructorReportData(@RequestParam String start, @RequestParam String end, HttpServletRequest request) {
+        return incomeService.getInstructorReportData(start, end, request.getHeader(AUTHORIZATION));
     }
 
     @GetMapping("/adminReport")

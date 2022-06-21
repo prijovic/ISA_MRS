@@ -10,7 +10,10 @@ import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.AdminDtos.GraphDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.AdminDtos.GraphNodeDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.AdminDtos.IncomeDto;
 import rs.ac.uns.ftn.siit.isa_mrs.model.Income;
+import rs.ac.uns.ftn.siit.isa_mrs.model.RentalObjectOwner;
 import rs.ac.uns.ftn.siit.isa_mrs.repository.IncomeRepo;
+import rs.ac.uns.ftn.siit.isa_mrs.repository.RentalObjectOwnerRepo;
+import rs.ac.uns.ftn.siit.isa_mrs.security.JwtDecoder;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -26,6 +29,8 @@ import java.util.concurrent.atomic.AtomicReference;
 public class IncomeServiceImpl implements IncomeService{
     private final IncomeRepo incomeRepo;
     private final ModelMapper modelMapper;
+    private final JwtDecoder jwtDecoder;
+    private final RentalObjectOwnerRepo rentalObjectOwnerRepo;
 
     @Override
     public double getIncomeLastYear() {
@@ -101,6 +106,46 @@ public class IncomeServiceImpl implements IncomeService{
             log.error(e.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @Override
+    public ResponseEntity<Collection<IncomeDto>> getInstructorReportData(String start, String end, String token) {
+        try {
+            Collection<IncomeDto> reportData = new ArrayList<>();
+            JwtDecoder.DecodedToken decodedToken;
+            GraphDto graph = new GraphDto();
+            try {
+                decodedToken = jwtDecoder.decodeToken(token);
+            } catch (Exception e) {
+                return null;
+            }
+            Optional<RentalObjectOwner> user = rentalObjectOwnerRepo.findByEmail(decodedToken.getEmail());
+            if (user.isPresent()) {
+                RentalObjectOwner owner = user.get();
+                LocalDateTime startDate = LocalDateTime.parse(start);
+                LocalDateTime endDate = LocalDateTime.parse(end);
+                Collection<Income> incomes = incomeRepo.findAllByTimeStampBetweenAndReservationRentalObjectRentalObjectOwnerOrderByTimeStamp(startDate, endDate, owner);
+                incomes.forEach(income -> {
+                    IncomeDto dto = modelMapper.map(income, IncomeDto.class);
+                    dto.setValue(calculateInstructorIncome(income));
+                    dto.setType(income.getReservation().getCancelled()?"cancellation":"reservation");
+                    reportData.add(dto);
+                });
+            }
+            return new ResponseEntity<>(reportData, HttpStatus.OK);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    private double calculateInstructorIncome(Income income) {
+        AtomicReference<Double> instructorIncome = new AtomicReference<>(income.getReservation().getRentalObject().getPrice());
+        income.getReservation().getAdditionalServices().forEach(additionalService ->  {
+            instructorIncome.updateAndGet(v -> (double) (v + additionalService.getPrice()));
+        });
+        income.getReservation().getRentalObject().getRentalObjectOwner()
+        return instructorIncome.get() - income.getValue();
     }
 
     private double sumIncome(Collection<Income> incomes) {

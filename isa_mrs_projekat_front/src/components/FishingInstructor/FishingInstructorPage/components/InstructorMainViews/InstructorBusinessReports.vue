@@ -99,6 +99,27 @@ export default {
         .then((response) => {
           const dashboardData = response.data;
           this.grades = dashboardData.rentalGrades;
+          const nodes1 = dashboardData.yearlyGraph.nodes;
+          const nodes2 = dashboardData.monthlyGraph.nodes;
+          const nodes3 = dashboardData.weeklyGraph.nodes;
+          let dataset1 = [];
+          let dataset2 = [];
+          let dataset3 = [];
+          for (let i = 0; i < nodes1.length; i++) {
+            this.chartData1.labels.push(nodes1[i].month);
+            dataset1.push(nodes1[i].value);
+          }
+          for (let i = 0; i < nodes2.length; i++) {
+            this.chartData2.labels.push(nodes2[i].month);
+            dataset2.push(nodes2[i].value);
+          }
+          for (let i = 0; i < nodes3.length; i++) {
+            this.chartData3.labels.push(nodes3[i].month);
+            dataset3.push(nodes3[i].value);
+          }
+          this.chartData1.datasets[0].data = dataset1;
+          this.chartData2.datasets[0].data = dataset2;
+          this.chartData3.datasets[0].data = dataset3;
         })
         .catch((e) => {
           console.log(e);
@@ -120,7 +141,7 @@ export default {
         labels: [],
         datasets: [
           {
-            label: 'Income last year',
+            label: 'Reservations last year',
             backgroundColor: '#4650dd',
             borderColor: 'rgb(70, 80, 221, 0.4)',
             data: []
@@ -131,7 +152,7 @@ export default {
         labels: [],
         datasets: [
           {
-            label: 'Income last month',
+            label: 'Reservations last month',
             backgroundColor: '#4650dd',
             borderColor: 'rgb(70, 80, 221, 0.4)',
             data: []
@@ -142,7 +163,7 @@ export default {
         labels: [],
         datasets: [
           {
-            label: 'Income last week',
+            label: 'Reservations last week',
             backgroundColor: '#4650dd',
             borderColor: 'rgb(70, 80, 221, 0.4)',
             data: []

@@ -1,6 +1,7 @@
 package rs.ac.uns.ftn.siit.isa_mrs.service;
 
 import org.springframework.http.ResponseEntity;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.AdminDtos.GraphDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.InstructorDtos.RentalGradeDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.PageDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.RentalObjectDto;
@@ -20,4 +21,7 @@ public interface RentalObjectService {
     String calculateOwnerRating(RentalObjectOwner owner);
     ResponseEntity<Void> cancelSubscription(Long rentalId, String token);
     Collection<RentalGradeDto> getRentalsGrades(String token);
+    GraphDto getLastYearRentalReservationsGraph(String token);
+    GraphDto getLastMonthRentalReservationsGraph(String token);
+    GraphDto getLastWeekRentalReservationsGraph(String token);
 }
