@@ -483,3 +483,30 @@ INSERT INTO loyalty_program (id, client_points_per_reservation, owner_points_per
 INSERT INTO loyalty_category (id, client_discount, icon, last_edited, name, owner_benefit, required_points, loyalty_program_id) VALUES (1, 15, 'golden-category', '2022-06-17 03:39:00', 'Gold', 10, 200, 1);
 INSERT INTO loyalty_category (id, client_discount, icon, last_edited, name, owner_benefit, required_points, loyalty_program_id) VALUES (2, 10, 'silver-category', '2022-06-17 03:39:00', 'Silver', 5, 100, 1);
 INSERT INTO loyalty_category (id, client_discount, icon, last_edited, name, owner_benefit, required_points, loyalty_program_id) VALUES (3, 5, 'bronze-category', '2022-06-17 03:39:00', 'Bronze', 3, 50, 1);
+
+INSERT INTO reservation (id, price, equipment_required, people, time_stamp, client_id, rental_object_id, cancelled, init_date, term_date) VALUES (21, 80, false, 1, '2022-06-01 12:05:50', 3, 20, false, '2022-06-03 17:00:00', '2022-06-03 21:00:00');
+INSERT INTO reservation_additional_services (additional_service_id, reservation_id) VALUES (10, 21);
+INSERT INTO reservation_additional_services (additional_service_id, reservation_id) VALUES (11, 21);
+INSERT INTO income (id, fee, time_stamp, value, reservation_id) VALUES (21, 10, '2022-06-01 12:05:50', 14, 21);
+INSERT INTO report (id, comment, author_id, status, showed_up, reservation_id, time_stamp) VALUES (4, 'Client refused to return the fishing equipment at the end of adventure.', 2, 1, true, 21, '2022-06-04 08:45:12');
+
+INSERT INTO reservation (id, price, equipment_required, people, time_stamp, client_id, rental_object_id, cancelled, init_date, term_date) VALUES (22, 70, false, 1, '2022-06-08 21:55:50', 3, 3, false, '2022-06-10 08:00:00', '2022-06-10 10:30:00');
+INSERT INTO reservation_additional_services (additional_service_id, reservation_id) VALUES (10, 22);
+INSERT INTO reservation_additional_services (additional_service_id, reservation_id) VALUES (11, 22);
+INSERT INTO income (id, fee, time_stamp, value, reservation_id) VALUES (22, 10, '2022-06-08 21:55:50', 13, 22);
+INSERT INTO report (id, author_id, status, showed_up, reservation_id, time_stamp) VALUES (5, 2, 1, false, 22, '2022-06-11 20:41:02');
+
+-- INSERT INTO reservation (id, price, equipment_required, people, time_stamp, client_id, rental_object_id, cancelled, init_date, term_date) VALUES (23, 40, false, 1, '2022-06-13 15:26:41', 3, 19, false, '2022-06-17 13:00:00', '2022-06-17 14:30:00');
+-- INSERT INTO income (id, fee, time_stamp, value, reservation_id) VALUES (23, 10, '2022-06-13 15:26:41', 4, 23);
+-- INSERT INTO report (id, comment, author_id, status, showed_up, reservation_id, time_stamp) VALUES (6, 'Not the first time this happened with this client.', 2, 1, false, 23, '2022-06-18 21:00:56');
+
+INSERT INTO special_offer (id, capacity, discount, init_date, term_date, rental_object_id) VALUES (1, 10, 20, '2022-07-20 14:00:00', '2022-07-21 12:00:00', 1);
+INSERT INTO reservation (id, price, equipment_required, people, time_stamp, client_id, rental_object_id, cancelled, init_date, term_date, special_offer_id) VALUES (24, 250, false, 1, '2022-06-13 15:26:41', 3, 1, true, '2022-07-20 14:00:00', '2022-07-21 12:00:00', 1);
+INSERT INTO income (id, fee, time_stamp, value, reservation_id) VALUES (24, 10, '2022-06-13 15:26:41', 4, 24);
+
+INSERT INTO service (id, name, special_offer_id) VALUES (1, 'Private chef', 1);
+INSERT INTO service (id, name, special_offer_id) VALUES (2, 'Jacuzzi', 1);
+INSERT INTO service (id, name, special_offer_id) VALUES (3, 'Sauna', 1);
+
+INSERT INTO special_offer (id, capacity, discount, init_date, term_date, rental_object_id) VALUES (2, 10, 50, '2022-08-20 14:00:00', '2022-08-21 12:00:00', 1);
+

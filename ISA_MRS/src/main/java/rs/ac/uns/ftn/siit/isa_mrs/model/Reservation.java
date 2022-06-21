@@ -17,7 +17,7 @@ public class Reservation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
-    private Integer price;
+    private double price;
     private Integer people;
     private Boolean cancelled;
     private Boolean equipmentRequired;
@@ -36,4 +36,6 @@ public class Reservation {
     private Collection<AdditionalService> additionalServices = new LinkedHashSet<>();
     @OneToOne
     private Income income;
+    @ManyToOne
+    private SpecialOffer specialOffer;
 }

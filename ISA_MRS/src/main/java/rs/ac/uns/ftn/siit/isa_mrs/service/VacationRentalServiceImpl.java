@@ -11,6 +11,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.RentalProfileDtos.SpecialOfferDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.RentalProfileDtos.VacationRentalDtos.VacationRentalProfileDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.RentalProfileDtos.VacationRentalDtos.VacationRentalsForMenuDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.AddVacationRentalDto;
@@ -22,6 +23,9 @@ import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.RentalObjectType;
 import rs.ac.uns.ftn.siit.isa_mrs.repository.*;
 import rs.ac.uns.ftn.siit.isa_mrs.security.JwtDecoder;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.chrono.ChronoLocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
@@ -39,6 +43,7 @@ public class VacationRentalServiceImpl implements VacationRentalService{
     private final ConductRuleRepo conductRuleRepo;
     private final RoomRepo roomRepo;
     private final ClientRepo clientRepo;
+    private final ClientServiceImpl clientService;
     private final RentalObjectServiceImpl rentalService;
     private final JwtDecoder jwtDecoder;
 
@@ -58,10 +63,12 @@ public class VacationRentalServiceImpl implements VacationRentalService{
             rentalDto.setReviews(rentalService.getRentalReviews(vacationRental, page, pageSize));
             rentalDto.setGrade(rentalService.calculateRentalRating(vacationRental));
             rentalDto.setOwnerGrade(rentalService.calculateOwnerRating(vacationRental.getRentalObjectOwner()));
+            rentalDto.setSpecialOffers(rentalService.getFutureSpecialOffers(vacationRental.getSpecialOffers()));
             Optional<Client> optionalClient = clientRepo.findByEmail(decodedToken.getEmail());
             if(optionalClient.isPresent()){
                 Client client = optionalClient.get();
                 if(vacationRental.getSubscribers().contains(client)) rentalDto.setIsUserSubscribed(true);
+                rentalDto.setPenalties((clientService.setUpPenalties(client)).size());
             }
             return new ResponseEntity<>(rentalDto, HttpStatus.OK);
         }

@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.InstructorDtos.InstructorReservationsDtos.InstructorReservationDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.ReportDtos.AddInstructorReportDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.ReportDtos.AddReportDto;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.ReservationDtos.ReserveSpecialOfferDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.ReviewDtos.AddInstructorReviewDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.ReviewDtos.AddReviewDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.ReservationDto;
@@ -26,6 +27,11 @@ import static rs.ac.uns.ftn.siit.isa_mrs.util.Paths.*;
 public class ReservationController {
     private final ReservationService reservationService;
     private final InstructorService instructorService;
+
+    @PostMapping("/bookSpecialOffer")
+    public ResponseEntity<Void> bookSpecialOffer(@RequestBody ReserveSpecialOfferDto rsod, HttpServletRequest request) {
+        return reservationService.bookSpecialOffer(request.getHeader(AUTHORIZATION), rsod.getOfferId(), rsod.getTotal());
+    }
 
     @GetMapping("/getReservations")
     public ResponseEntity<Collection<ReservationDto>> getFutureReservations(HttpServletRequest request) {

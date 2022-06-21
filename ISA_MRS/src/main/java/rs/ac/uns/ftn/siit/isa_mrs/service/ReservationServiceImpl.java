@@ -39,7 +39,57 @@ public class ReservationServiceImpl implements ReservationService {
     private final ReviewRepo reviewRepo;
     private final ReportRepo reportRepo;
     private final IncomeRepo incomeRepo;
+    private final SpecialOfferRepo specialOfferRepo;
+    private final ProfitFeeRepo profitFeeRepo;
     private final ModelMapper modelMapper;
+
+    @Override
+    public ResponseEntity<Void> bookSpecialOffer(String token, Long offerId, double total) {
+        try {
+            JwtDecoder.DecodedToken decodedToken;
+            try {
+                decodedToken = jwtDecoder.decodeToken(token);
+            } catch (Exception e) {
+                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            }
+            Optional<Client> cli = clientRepo.findByEmail(decodedToken.getEmail());
+            Optional<SpecialOffer> specialOffer = specialOfferRepo.findById(offerId);
+            if(specialOffer.isEmpty() || cli.isEmpty()) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            Client client = cli.get();
+            SpecialOffer offer = specialOffer.get();
+            Reservation reservation = new Reservation();
+            reservation.setPrice(offer.getRentalObject().getPrice());
+            reservation.setPeople(offer.getCapacity());
+            reservation.setCancelled(false);
+            reservation.setEquipmentRequired(false);
+            LocalDateTime time = LocalDateTime.now();
+            reservation.setTimeStamp(time);
+            reservation.setInitDate(offer.getInitDate());
+            reservation.setTermDate(offer.getTermDate());
+            reservation.setRentalObject(offer.getRentalObject());
+            reservation.setClient(client);
+            reservation.setSpecialOffer(offer);
+
+            reservationRepo.save(reservation);
+            offer.getReservations().add(reservation);
+            specialOfferRepo.save(offer);
+
+            Optional<ProfitFee> proFee = profitFeeRepo.findProfitFeeByRentalObjectType(offer.getRentalObject().getRentalObjectType());
+            if(proFee.isEmpty()) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            ProfitFee profitFee = proFee.get();
+            Income income = new Income();
+            income.setTimeStamp(time);
+            income.setFee(profitFee.getValue());
+            income.setValue(total/100 * profitFee.getValue());
+            income.setReservation(reservation);
+
+            incomeRepo.save(income);
+
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
     // INSERT INTO income (id, fee, time_stamp, value, reservation_id) VALUES (1, 5, '2022-07-01 12:23:34', 731.5, 1);
     @Override

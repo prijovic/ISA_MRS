@@ -3,6 +3,7 @@ package rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.RentalProfileDtos.BoatDtos
 import lombok.Data;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.*;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.RentalProfileDtos.ReviewDtos.ReviewDto;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.RentalProfileDtos.SpecialOfferDto;
 import rs.ac.uns.ftn.siit.isa_mrs.model.AdditionalService;
 import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.RentalObjectType;
 
@@ -18,7 +19,7 @@ public class BoatProfileDto implements Serializable {
     private Collection<PhotoDto> photos;
     private Integer capacity;
     private Double price;
-    private Collection<AdditionalService> additionalServices;
+    private Collection<AdditionalServiceDto> additionalServices;
     private Collection<ConductRuleDto> conductRules;
     private Collection<SpecialOfferDto> specialOffers;
     private RentalObjectOwnerDto rentalObjectOwner;
@@ -34,4 +35,5 @@ public class BoatProfileDto implements Serializable {
     private PageDto<ReviewDto> reviews;
     private String grade = null;
     private String ownerGrade = null;
+    private Integer penalties;
 }
