@@ -57,7 +57,7 @@
               <div class="col-2"></div>
               <div class="d-flex pt-3 justify-content-center">
                 <router-link to="/fishingInstructor/adventures" class="btn btn-red mt-3 me-1">Cancel</router-link>
-                <button type="button" class="btn mt-3">Submit</button>
+                <button type="button" class="btn mt-3" @click.prevent="submit">Submit</button>
               </div>
           </div>
         </div>
@@ -73,6 +73,8 @@ import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import {library} from "@fortawesome/fontawesome-svg-core";
 import {faMinus, faPlus, faPlusCircle, faX, faArrowRight} from "@fortawesome/free-solid-svg-icons";
 import {DatePicker} from "v-calendar"
+import axios from "axios";
+import store from "@/store";
 
 library.add(faPlus, faMinus, faX, faPlusCircle, faArrowRight);
 
@@ -92,6 +94,29 @@ export default {
     }
   },
   methods: {
+    submit() {
+      axios.post("/RentalObjects/addSpecialOffer", {rentalId: this.$route.params.id, initDate: this.date, capacity: this.capacity, discount: this.discount, includedServices: this.services}, {
+        headers: {
+          Authorization: "Bearer " + store.getters.access_token,
+        }
+      })
+      .then(() => {
+        this.$notify( {
+          title: "Successful creation",
+          text: "You have successfully added a special offer.",
+          position: "bottom right",
+          type: "success"
+        });
+      })
+      .catch(() => {
+        this.$notify({
+          title: "Server error",
+          text: "Server is currently off. Please try again later...",
+          type: "error"
+        });
+      })
+
+    },
     addService() {
       if (this.service.name.trim() !== "") {
         if (this.services.indexOf(this.service.name.trim()) === -1) {
