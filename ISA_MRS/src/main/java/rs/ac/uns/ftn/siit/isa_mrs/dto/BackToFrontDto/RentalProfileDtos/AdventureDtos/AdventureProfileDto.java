@@ -32,4 +32,5 @@ public class AdventureProfileDto implements Serializable {
     private Boolean isDeletable;
     private LocalDateTime initDate;
     private LocalDateTime termDate;
+    private Integer penalties;
 }

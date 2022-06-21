@@ -34,4 +34,5 @@ public class VacationRentalProfileDto implements Serializable {
     private PageDto<ReviewDto> reviews;
     private String grade = null;
     private String ownerGrade = null;
+    private Integer penalties;
 }

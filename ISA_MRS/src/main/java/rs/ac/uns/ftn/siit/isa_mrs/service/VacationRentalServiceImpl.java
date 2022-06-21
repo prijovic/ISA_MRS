@@ -39,6 +39,7 @@ public class VacationRentalServiceImpl implements VacationRentalService{
     private final ConductRuleRepo conductRuleRepo;
     private final RoomRepo roomRepo;
     private final ClientRepo clientRepo;
+    private final ClientServiceImpl clientService;
     private final RentalObjectServiceImpl rentalService;
     private final JwtDecoder jwtDecoder;
 
@@ -62,6 +63,7 @@ public class VacationRentalServiceImpl implements VacationRentalService{
             if(optionalClient.isPresent()){
                 Client client = optionalClient.get();
                 if(vacationRental.getSubscribers().contains(client)) rentalDto.setIsUserSubscribed(true);
+                rentalDto.setPenalties((clientService.setUpPenalties(client)).size());
             }
             return new ResponseEntity<>(rentalDto, HttpStatus.OK);
         }

@@ -79,9 +79,12 @@
 <!--          </div>-->
 
           <div class="row ps-1" style="text-align: center;">
-            <p class="h3">
-              <i><strong>{{ "Price: $" + this.rentalObject.price }}</strong></i>
-            </p>
+<!--              <i><strong>{{ "Price: $" + this.rentalObject.price }}</strong></i>-->
+            <button :disabled="clientCantReserve" class="w-100 btn" style="font-weight: 500; color: white;">
+              <span class="h4">
+                <i><strong>{{ "Book: $" + this.rentalObject.price }}</strong></i>
+              </span>
+            </button>
           </div>
 
           <div v-if="isOwner" class="row">
@@ -237,6 +240,8 @@
           </div>
         </div>
 
+        <RentalSpecialOffers :specialOffers="[]"/>
+
       </div>
     </div>
 
@@ -277,6 +282,7 @@ import { faBed, faCircleCheck, faCircleXmark, faClock, faDoorOpen, faLocationDot
 import axios from "axios/index";
 import {useStore} from "vuex";
 import store from "@/store";
+import RentalSpecialOffers from "@/components/UnregisteredUser/components/Rental/RentalSpecialOffers";
 
 
 library.add(faUser, faDoorOpen, faBed, faClock, faLocationDot, faCircleCheck, faCircleXmark, faUserTie, faPencil, faTrash, faTag);
@@ -284,6 +290,7 @@ library.add(faUser, faDoorOpen, faBed, faClock, faLocationDot, faCircleCheck, fa
 export default {
   name: "RentalProfile",
   components: {
+    RentalSpecialOffers,
     RentalRules, RentalAddress, RentalTags, RentalDescription, ImageSlider, FontAwesomeIcon, StarRating},
   data() {
     return {
@@ -296,6 +303,9 @@ export default {
     }
   },
   computed: {
+    clientCantReserve() {
+      return this.rentalObject.penalties === 3;
+    },
     ownerOrInstructor() {
       if(this.rentalObject.rentalObjectType === "Adventure") return "Instructor";
       return "Owner";
@@ -632,11 +642,11 @@ div.rentalBasicInfo {
 
 div.review {
   border-radius: 25px;
-  border: 1px solid darkgray;
+  border: 2px solid darkgray;
 }
 
 div.review:hover {
-  border: 3px solid black;
+  border: 2px solid black;
 }
 
 div.accordion-body {

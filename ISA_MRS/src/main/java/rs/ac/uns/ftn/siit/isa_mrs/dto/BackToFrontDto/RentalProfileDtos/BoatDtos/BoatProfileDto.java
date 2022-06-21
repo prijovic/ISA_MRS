@@ -18,7 +18,7 @@ public class BoatProfileDto implements Serializable {
     private Collection<PhotoDto> photos;
     private Integer capacity;
     private Double price;
-    private Collection<AdditionalService> additionalServices;
+    private Collection<AdditionalServiceDto> additionalServices;
     private Collection<ConductRuleDto> conductRules;
     private Collection<SpecialOfferDto> specialOffers;
     private RentalObjectOwnerDto rentalObjectOwner;
@@ -34,4 +34,5 @@ public class BoatProfileDto implements Serializable {
     private PageDto<ReviewDto> reviews;
     private String grade = null;
     private String ownerGrade = null;
+    private Integer penalties;
 }

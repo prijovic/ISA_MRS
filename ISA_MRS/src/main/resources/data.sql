@@ -479,3 +479,19 @@ INSERT INTO income (id, fee, time_stamp, value, reservation_id) VALUES (20, 10, 
 INSERT INTO subscribed_client (rental_id, subscriber_id) VALUES (1, 3);
 INSERT INTO subscribed_client (rental_id, subscriber_id) VALUES (2, 3);
 INSERT INTO subscribed_client (rental_id, subscriber_id) VALUES (20, 3);
+
+INSERT INTO reservation (id, price, equipment_required, people, time_stamp, client_id, rental_object_id, cancelled, init_date, term_date) VALUES (21, 80, false, 1, '2022-06-01 12:05:50', 3, 20, false, '2022-06-03 17:00:00', '2022-06-03 21:00:00');
+INSERT INTO reservation_additional_services (additional_service_id, reservation_id) VALUES (10, 21);
+INSERT INTO reservation_additional_services (additional_service_id, reservation_id) VALUES (11, 21);
+INSERT INTO income (id, fee, time_stamp, value, reservation_id) VALUES (21, 10, '2022-06-01 12:05:50', 14, 21);
+INSERT INTO report (id, comment, author_id, status, showed_up, reservation_id, time_stamp) VALUES (4, 'Client refused to return the fishing equipment at the end of adventure.', 2, 1, true, 21, '2022-06-04 08:45:12');
+
+INSERT INTO reservation (id, price, equipment_required, people, time_stamp, client_id, rental_object_id, cancelled, init_date, term_date) VALUES (22, 70, false, 1, '2022-06-08 21:55:50', 3, 3, false, '2022-06-10 08:00:00', '2022-06-10 10:30:00');
+INSERT INTO reservation_additional_services (additional_service_id, reservation_id) VALUES (10, 22);
+INSERT INTO reservation_additional_services (additional_service_id, reservation_id) VALUES (11, 22);
+INSERT INTO income (id, fee, time_stamp, value, reservation_id) VALUES (22, 10, '2022-06-08 21:55:50', 13, 22);
+INSERT INTO report (id, author_id, status, showed_up, reservation_id, time_stamp) VALUES (5, 2, 1, false, 22, '2022-06-11 20:41:02');
+
+INSERT INTO reservation (id, price, equipment_required, people, time_stamp, client_id, rental_object_id, cancelled, init_date, term_date) VALUES (23, 40, false, 1, '2022-06-13 15:26:41', 3, 19, false, '2022-06-17 13:00:00', '2022-06-17 14:30:00');
+INSERT INTO income (id, fee, time_stamp, value, reservation_id) VALUES (23, 10, '2022-06-13 15:26:41', 4, 23);
+INSERT INTO report (id, comment, author_id, status, showed_up, reservation_id, time_stamp) VALUES (6, 'Not the first time this happened with this client.', 2, 1, false, 23, '2022-06-18 21:00:56');

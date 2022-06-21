@@ -44,6 +44,7 @@ public class BoatServiceImpl implements BoatService{
     private final AddressRepo addressRepo;
     private final AdditionalServiceRepo additionalServiceRepo;
     private final ConductRuleRepo conductRuleRepo;
+    private final ClientServiceImpl clientService;
     private final JwtDecoder jwtDecoder;
 
     @Override
@@ -66,6 +67,7 @@ public class BoatServiceImpl implements BoatService{
             if(optionalClient.isPresent()){
                 Client client = optionalClient.get();
                 if(boat.getSubscribers().contains(client)) boatDto.setIsUserSubscribed(true);
+                boatDto.setPenalties((clientService.setUpPenalties(client)).size());
             }
             return new ResponseEntity<>(boatDto, HttpStatus.OK);
         }

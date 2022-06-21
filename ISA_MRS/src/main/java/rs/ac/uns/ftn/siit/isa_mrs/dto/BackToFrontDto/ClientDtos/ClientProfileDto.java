@@ -21,4 +21,5 @@ public class ClientProfileDto implements Serializable {
     private Integer points;
     private Collection<ClientReservationDto> reservations;
     private Collection<RentalObjectDto> subscriptions;
+    private Collection<ClientPenaltyDto> penalties;
 }
