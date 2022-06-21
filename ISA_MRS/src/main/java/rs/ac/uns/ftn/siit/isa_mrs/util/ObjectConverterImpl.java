@@ -67,7 +67,7 @@ public class ObjectConverterImpl implements ObjectConverter {
         user.setName(newUserInfo.getName());
         user.setSurname(newUserInfo.getSurname());
         user.setEmail(newUserInfo.getEmail());
-        user.setPhone(newUserInfo.getPhoneNumber());
+        user.setPhone(newUserInfo.getPhone());
         user.setAddress(address);
         user.setIsActive(true);
         return user;

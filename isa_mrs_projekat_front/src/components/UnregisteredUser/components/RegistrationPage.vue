@@ -4,15 +4,16 @@
     <div class="col-8 pt-5 mb-5">
       <div class="container px-4 py-3 rounded form" spellcheck="false" >
         <div class="container-fluid">
-          <h3 v-if="!isAdmin">Sign Up</h3>
-          <h3 v-else>New User</h3>
+          <h3 v-if="isAdmin">New User</h3>
+          <h3 v-else-if="isUpdate">Profile Update</h3>
+          <h3 v-else>Sign Up</h3>
           <div class="row main justify-content-center">
             <div class="row main">
               <div class="col main">
                 <div class="row">
                   <div class="col-4"></div>
                   <div class="col-6">
-                    <div class="row">
+                    <div v-if="!isUpdate" class="row">
                       <label for="userType">User type</label>
                       <select class="form-control" v-model="user.userType" id="userType">
                         <option value="Client" selected="selected">Client</option>
@@ -34,12 +35,12 @@
                     </div>
                     <div class="row">
                       <label for="email">Email</label>
-                      <input class="form-control" type="email" id="email" v-model="user.email" placeholder="E.g. john@email.com" @input="emailChanged">
+                      <input class="form-control" :disabled="isUpdate" type="email" id="email" v-model="user.email" placeholder="E.g. john@email.com" @input="emailChanged">
                       <p v-if='!emailIsEntered'>'Email' is a mandatory field.</p>
                       <p v-else-if='!emailValidation'>Invalid email format.</p>
                       <p v-else-if='!emailIsUnique'>Email is already taken.</p>
                     </div>
-                    <div v-if="!isAdmin" class="row">
+                    <div v-if="!isAdmin&&!isUpdate" class="row">
                       <label for="inputPassword2">Password</label>
                       <input type="password" id="inputPassword2" v-model="user.password" class="form-control col-sm-auto col-lg-4" aria-describedby="passwordHelpBlock" placeholder="New password" @input="passwordISEntered=true">
                       <p v-if="!passwordISEntered">'Password' is a mandatory field.</p>
@@ -48,7 +49,7 @@
                         Your password must be 8-20 characters long, contain letters and numbers, and must not contain spaces, special characters, or emoji.
                       </small>
                     </div>
-                    <div v-if="!isAdmin" class="row">
+                    <div v-if="!isAdmin&&!isUpdate" class="row">
                       <label for="inputPassword3">Confirm Password</label>
                       <input type="password" id="inputPassword3" v-model.lazy="checkPassword" class="form-control col-sm-auto col-lg-4" aria-describedby="passwordHelpBlock" placeholder="Confirm password" @input="confirmationPasswordIsEntered=true">
                       <p v-if="!confirmationPasswordIsEntered">'Confirmation Password' is a mandatory field.</p>
@@ -88,10 +89,10 @@
                     </div>
                     <div class="row">
                       <label for="phone">Phone</label>
-                      <vue-tel-input v-model="phoneInput" id="phone" mode="international" defaultCountry="RS" :onlyCountries=onlyCountries @input="onTelephoneInput"></vue-tel-input>
+                      <vue-tel-input v-model="phoneInput" :placeholder="this.user.phone" id="phone" mode="international" defaultCountry="RS" :onlyCountries=onlyCountries @input="onTelephoneInput"></vue-tel-input>
                       <p v-if='!phoneIsValid'>Invalid phone number.</p>
                     </div>
-                    <div class="row" v-if="isRentalObjectOwner && !isAdmin">
+                    <div class="row" v-if="isRentalObjectOwner && !isAdmin && !isUpdate">
                       <label for="motivationLetter">Motivation Letter</label>
                       <textarea v-model="user.reason" class="form-control" rows="10" maxlength="300" placeholder="Please describe why you want to join our community in 50-500 characters." id="motivationLetter" @input="reasonIsEntered=true"></textarea>
                       <p v-if='!reasonIsEntered'>'Motivation Letter' is a mandatory field.</p>
@@ -106,7 +107,7 @@
           </div>
           <div class="d-flex pt-3 justify-content-center">
             <router-link v-if="isAdmin" to="/admin/users" class="btn btn-red mt-3 me-1">Cancel</router-link>
-            <button type="button" class="btn mt-3" @click="submit">Submit</button>
+            <button type="button" class="btn mt-3" @click="!isUpdate?submit:update">Submit</button>
           </div>
         </div>
       </div>
@@ -133,6 +134,7 @@ export default {
         { message:"8-20 characters required.", regex:/.{8,20}/ },
         { message:"One number required.", regex:/[0-9]+/ }
       ],
+      options: null,
       checkPassword:'',
       onlyCountries: ['RS', 'BA', 'HR', 'ME', 'SI', 'MK'],
       phoneInput: null,
@@ -140,7 +142,7 @@ export default {
         userType: "Client",
         name: null,
         surname: null,
-        phoneNumber: null,
+        phone: null,
         email: null,
         password: '',
         reason: null,
@@ -167,7 +169,25 @@ export default {
       addressIsValid: true,
       phoneIsValid: true,
       reasonIsValid: true,
-      emailIsUnique: true
+      emailIsUnique: true,
+      isUpdate: false,
+    }
+  },
+  mounted() {
+    this.isUpdate = this.$route.params.id !== undefined;
+    if (this.isUpdate) {
+      axios.get("/Users/getUser", {
+        headers: {
+          Authorization: "Bearer " + this.$store.getters.access_token
+        }
+      })
+      .then((response) => {
+        this.user = response.data;
+        this.phoneInput = this.user.phone;
+      })
+      .catch(() => {
+
+      });
     }
   },
   computed: {
@@ -244,6 +264,49 @@ export default {
     }
   },
   methods: {
+    update() {
+      toggleProcessing();
+      if (this.isDataEntered()) {
+        if (!this.isPhoneValid()){
+          this.phoneIsValid = false;
+          return false;
+        }
+        else if (this.isRentalObjectOwner && this.isReasonValid() && !this.isAdmin && !this.isUpdate) {
+          this.reasonIsValid = false;
+          return false;
+        } else {
+          const apiKey = 'VrDrl5BjEA0Whvb-chHbFz96HV4qlCXB-yoiTRRLKno';
+          const url = 'https://geocoder.ls.hereapi.com/6.2/geocode.json' +
+              '?apiKey=' + apiKey +
+              '&housenumber=' + this.user.address.number +
+              '&street=' + this.user.address.street +
+              '&city=' + this.user.address.city +
+              '&country=' + this.user.address.country;
+          fetch(url)
+              .then(response => response.json())
+              .then(data => {
+                const responseView = data.Response.View;
+                if (responseView.length === 0) {
+                  this.addressIsValid = false;
+                }
+                else {
+                  const location = responseView[0].Result[0].Location.DisplayPosition;
+                  const address = responseView[0].Result[0].Location.Address;
+                  this.user.address.city = this.transliterate(address.City);
+                  this.user.address.country = this.transliterate(address.AdditionalData[0].value);
+                  this.user.address.street = this.transliterate(address.Street);
+                  this.user.address.longitude = location.Longitude;
+                  this.user.address.latitude = location.Latitude;
+                  this.addressIsValid = true;
+                  
+                }
+              })
+              .catch(() => {
+                this.addressIsValid = false;
+              });
+        }
+      }
+    },
     emailChanged() {
       this.emailIsEntered = true;
       this.emailIsUnique = true;
@@ -293,7 +356,11 @@ export default {
             toggleProcessing();
           }
         })
-      } else {
+      }
+      else if (this.accessToken !== null) {
+        this.isUpdate = true;
+      }
+      else {
         axios.post("/Requests/signUp", this.user, {
           headers: {
             Authorization: "Bearer " + this.accessToken,
@@ -357,11 +424,11 @@ export default {
         this.emailIsEntered = false;
         return false;
       }
-      if (!this.isPasswordEntered && !this.isAdmin) {
+      if (!this.isPasswordEntered && !this.isAdmin && !this.isUpdate) {
         this.passwordISEntered = false;
         return false;
       }
-      if (!this.isConfirmationPasswordEntered  && !this.isAdmin) {
+      if (!this.isConfirmationPasswordEntered  && !this.isAdmin && !this.isUpdate) {
         this.confirmationPasswordIsEntered = false;
         return false;
       }
@@ -381,7 +448,7 @@ export default {
         this.numberIsEntered = false;
         return false;
       }
-      if (this.isRentalObjectOwner && !this.isReasonEntered && !this.isAdmin) {
+      if (this.isRentalObjectOwner && !this.isReasonEntered && !this.isAdmin && !this.isUpdate) {
         this.reasonIsEntered = false;
         return false;
       }
@@ -392,7 +459,7 @@ export default {
         this.phoneIsValid = false;
         return false;
       }
-      else if (this.isRentalObjectOwner && this.isReasonValid() && !this.isAdmin) {
+      else if (this.isRentalObjectOwner && this.isReasonValid() && !this.isAdmin && !this.isUpdate) {
         this.reasonIsValid = false;
         return false;
       } else {
@@ -403,19 +470,19 @@ export default {
       this.phoneIsEntered = true;
       if (phoneObject?.valid) {
         this.phoneIsValid = true;
-        this.user.phoneNumber = phoneObject.number;
+        this.user.phone = phoneObject.number;
       } else if (phoneObject) {
-        this.user.phoneNumber = null;
+        this.user.phone = null;
       }
     },
     isReasonValid() {
       return this.user.reason.length >= 50;
     },
     isPhoneValid() {
-      return Boolean(this.user.phoneNumber);
+      return Boolean(this.user.phone);
     },
     validateAddress() {
-      //toggleProcessing();
+      toggleProcessing();
       const apiKey = 'VrDrl5BjEA0Whvb-chHbFz96HV4qlCXB-yoiTRRLKno';
       const url = 'https://geocoder.ls.hereapi.com/6.2/geocode.json' +
           '?apiKey=' + apiKey +

@@ -46,6 +46,11 @@ public class UserController {
         return userService.createUser(newUserBasicInfoDto);
     }
 
+    @GetMapping("/getUser")
+    public ResponseEntity<NewUserBasicInfoDto> addUser(HttpServletRequest request) {
+        return userService.getUser(request.getHeader(AUTHORIZATION));
+    }
+
     @PutMapping(PASSWORD_CHANGE)
     public ResponseEntity<UserDto> updateUserPassword(@RequestBody PasswordChangeForm form) {
         return userService.updateUserPassword(form.getEmail(), form.getOldPassword(), form.getNewPassword());
