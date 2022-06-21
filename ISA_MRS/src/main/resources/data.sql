@@ -512,3 +512,7 @@ INSERT INTO service (id, name, special_offer_id) VALUES (3, 'Sauna', 1);
 
 INSERT INTO special_offer (id, capacity, discount, init_date, term_date, rental_object_id) VALUES (2, 10, 50, '2022-08-20 14:00:00', '2022-08-21 12:00:00', 1);
 
+
+INSERT INTO special_offer (id, capacity, discount, init_date, term_date, rental_object_id) VALUES (3, 10, 50, '2022-08-20 12:00:00', '2022-08-20 14:00:00', 3);
+INSERT INTO reservation (id, price, equipment_required, people, time_stamp, client_id, rental_object_id, cancelled, init_date, term_date, special_offer_id) VALUES (25, 70, false, 1, '2022-06-13 15:26:41', 3, 3, true, '2022-08-20 12:00:00', '2022-08-20 14:00:00', 3);
+INSERT INTO income (id, fee, time_stamp, value, reservation_id) VALUES (25, 10, '2022-06-13 15:26:41', 3.5, 25);

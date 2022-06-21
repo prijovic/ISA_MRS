@@ -27,7 +27,7 @@ public class RentalObject {
     private String name;
     private RentalObjectType rentalObjectType;
     private String description;
-    private double cancellationFee;
+    private Double cancellationFee;
     private LocalDateTime initDate;
     private LocalDateTime termDate;
     @OneToMany(mappedBy = "rentalObject", cascade = CascadeType.ALL)

@@ -1,6 +1,7 @@
 package rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.ClientDtos.ClientReservationDtos;
 
 import lombok.Data;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.RentalProfileDtos.SpecialOfferDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.ReservationDtos.ReservationAdditionalServiceDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.ReservationDtos.ReservationRentalObjectDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.ReservationDtos.ReservationReportDto;
@@ -13,7 +14,7 @@ import java.util.Collection;
 @Data
 public class ClientReservationDto implements Serializable {
     private Long id;
-    private Integer price;
+    private Double price;
     private Integer people;
     private Boolean equipmentRequired;
     private LocalDateTime timeStamp;
@@ -23,4 +24,5 @@ public class ClientReservationDto implements Serializable {
     private Collection<ReservationReportDto> reports;
     private ReservationRentalObjectDto rentalObject;
     private Collection<ReservationAdditionalServiceDto> additionalServices;
+    private SpecialOfferDto specialOffer;
 }

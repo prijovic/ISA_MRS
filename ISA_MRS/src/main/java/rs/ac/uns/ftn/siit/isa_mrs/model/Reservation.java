@@ -17,7 +17,7 @@ public class Reservation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
-    private double price;
+    private Double price;
     private Integer people;
     private Boolean cancelled;
     private Boolean equipmentRequired;
