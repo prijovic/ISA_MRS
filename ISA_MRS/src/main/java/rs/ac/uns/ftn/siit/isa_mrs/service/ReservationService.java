@@ -10,6 +10,8 @@ import rs.ac.uns.ftn.siit.isa_mrs.dto.ReservationDto;
 import java.util.Collection;
 
 public interface ReservationService {
+    ResponseEntity<Void> bookSpecialOffer(String token, Long offerId, double total);
+
     ResponseEntity<Void> cancelReservation(Long id, double feeAmount);
     ResponseEntity<Collection<ReservationDto>> getFutureReservations(String token);
     ResponseEntity<Void> addReview(AddReviewDto srd, String token);

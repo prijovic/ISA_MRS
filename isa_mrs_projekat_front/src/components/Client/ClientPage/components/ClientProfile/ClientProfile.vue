@@ -46,6 +46,12 @@
                       @click="showSubscriptions">Subscriptions</button>
                     </p>
                   </li>
+                  <li class="nav-item">
+                    <p class="h5">
+                      <button class="px-3" v-bind:style="{fontWeight:(penaltiesBtnClicked)?700:400}"
+                              @click="showPenalties">Penalties</button>
+                    </p>
+                  </li>
                 </ul>
               </div>
             </div>
@@ -70,6 +76,20 @@
                   </div>
                 </div>
               </div>
+
+
+              <div class="m-0 p-0" v-if="penaltiesBtnClicked">
+                <div class="card px-0 mb-2">
+                  <div class="card-header py-2">
+                    <h4 class="card-heading">Penalties</h4>
+                  </div>
+                  <div class="card-body">
+                    <ClientPenalties v-if="this.clientInfo.penalties" :penalties="this.clientInfo.penalties"/>
+                  </div>
+                </div>
+              </div>
+
+
             </div>
           </div>
         </div>
@@ -87,6 +107,7 @@ import axios from "axios";
 import RentalAddress from "@/components/UnregisteredUser/components/Rental/RentalAddress";
 import ClientSubscription
   from "@/components/Client/ClientPage/components/ClientProfile/ClientSubscriptions/ClientSubscription";
+import ClientPenalties from "@/components/Client/ClientPage/components/ClientProfile/ClientPenalties/ClientPenalties";
 
 library.add(faPencil);
 
@@ -94,13 +115,14 @@ export default {
   name: "ClientProfile",
   data() {
     return {
+      penaltiesBtnClicked: false,
       subscriptionsBtnClicked: false,
       upcomingBtnClicked: true,
       clientInfo: [],
       profilePic: null,
     }
   },
-  components: {RentalAddress, ClientReservations, FontAwesomeIcon, ClientSubscription},
+  components: {ClientPenalties, RentalAddress, ClientReservations, FontAwesomeIcon, ClientSubscription},
   mounted() {
     // console.log(this.$store.getters.access_token);
     axios.get("/Users/getClientProfile", {
@@ -157,6 +179,7 @@ export default {
     resetTabButtons() {
       this.subscriptionsBtnClicked = false;
       this.upcomingBtnClicked = false;
+      this.penaltiesBtnClicked = false;
     },
     showSubscriptions() {
       this.resetTabButtons();
@@ -165,6 +188,10 @@ export default {
     showUpcomingReservations() {
       this.resetTabButtons();
       this.upcomingBtnClicked = true;
+    },
+    showPenalties() {
+      this.resetTabButtons();
+      this.penaltiesBtnClicked = true;
     },
   }
 }

@@ -510,6 +510,17 @@ const routes = [
         }
     },
     {
+        path: "/client/delAcc",
+        name: "ClientAccountDeletion",
+        components: {
+            default: AccountDeletionForm,
+            sidebar: ClientSidebar,
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
         path: "/client/:type/all",
         name: "ClientRentals",
         components: {

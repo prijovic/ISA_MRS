@@ -439,8 +439,7 @@ export default {
               this.user.address.longitude = location.Longitude;
               this.user.address.latitude = location.Latitude;
               this.addressIsValid = true;
-              console.log(this.user.address);
-              //this.makeRequest();
+              this.makeRequest();
             }
           })
           .catch(() => {
