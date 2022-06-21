@@ -107,7 +107,7 @@
           </div>
           <div class="d-flex pt-3 justify-content-center">
             <router-link v-if="isAdmin" to="/admin/users" class="btn btn-red mt-3 me-1">Cancel</router-link>
-            <button type="button" class="btn mt-3" @click="!isUpdate?submit:update">Submit</button>
+            <button type="button" class="btn mt-3" @click="submit">Submit</button>
           </div>
         </div>
       </div>
@@ -270,10 +270,6 @@ export default {
         if (!this.isPhoneValid()){
           this.phoneIsValid = false;
           return false;
-        }
-        else if (this.isRentalObjectOwner && this.isReasonValid() && !this.isAdmin && !this.isUpdate) {
-          this.reasonIsValid = false;
-          return false;
         } else {
           const apiKey = 'VrDrl5BjEA0Whvb-chHbFz96HV4qlCXB-yoiTRRLKno';
           const url = 'https://geocoder.ls.hereapi.com/6.2/geocode.json' +
@@ -298,7 +294,38 @@ export default {
                   this.user.address.longitude = location.Longitude;
                   this.user.address.latitude = location.Latitude;
                   this.addressIsValid = true;
-                  
+                  axios.put("/Users/updateUser", this.user, {
+                    headers: {
+                      Authorization: "Bearer " + this.accessToken,
+                    }
+                  })
+                  .then(() => {
+                    this.$notify({
+                      title: "Successful update",
+                      text: "You have successfully updated your profile.",
+                      position: "bottom right",
+                      type: "success"
+                    });
+                    toggleProcessing();
+                  })
+                  .catch(error => {
+                    if (!error.response) {
+                      this.$notify({
+                        title: "Server error",
+                        text: "Server is currently off. Please try again later...",
+                        type: "error"
+                      });
+                      toggleProcessing();
+                    } else if (error.response.status === 500) {
+                      this.$notify({
+                        title: "Internal Server Error",
+                        text: "Something went wrong on the server! Please try again later...",
+                        position: "bottom right",
+                        type: "error"
+                      });
+                      toggleProcessing();
+                    }
+                  })
                 }
               })
               .catch(() => {
@@ -312,9 +339,14 @@ export default {
       this.emailIsUnique = true;
     },
     submit() {
-      if (this.passwordValidation.valid && !this.notSamePasswords) {
-        if (this.isDataEntered()) {
-          this.isDataCorrect();
+      if (this.isUpdate) {
+        this.update();
+      }
+      else {
+        if (this.passwordValidation.valid && !this.notSamePasswords) {
+          if (this.isDataEntered()) {
+            this.isDataCorrect();
+          }
         }
       }
     },

@@ -283,6 +283,27 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    @Override
+    public ResponseEntity<NewUserBasicInfoDto> updateUser(NewUserBasicInfoDto newUserBasicInfoDto) {
+        try {
+            Optional<User> user = userRepo.findByEmail(newUserBasicInfoDto.getEmail());
+            if (user.isEmpty()) {
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+            User u = user.get();
+            u.setName(newUserBasicInfoDto.getName());
+            u.setSurname(newUserBasicInfoDto.getSurname());
+            Address address = modelMapper.map(newUserBasicInfoDto.getAddress(), Address.class);
+            addressRepo.save(address);
+            u.setAddress(address);
+            u.setPhone(newUserBasicInfoDto.getPhone());
+            userRepo.save(u);
+            return new ResponseEntity<>(modelMapper.map(u, NewUserBasicInfoDto.class), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     public String generatePassayPassword() {
         String upperCaseLetters = RandomStringUtils.random(2, 65, 90, true, true);
         String lowerCaseLetters = RandomStringUtils.random(2, 97, 122, true, true);
