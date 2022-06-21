@@ -323,6 +323,17 @@ const routes = [
         }
     },
     {
+        path: "/fishingInstructor/profile/:id",
+        name: "FishingInstructorProfileUpdate",
+        components: {
+            default: RegistrationPage,
+            sidebar: TheFishingInstructorSidebar,
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
         path: "/fishingInstructor/finances",
         name: "FishingInstructorReports",
         components: {

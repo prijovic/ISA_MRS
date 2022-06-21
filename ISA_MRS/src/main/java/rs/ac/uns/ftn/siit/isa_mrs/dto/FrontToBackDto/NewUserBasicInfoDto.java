@@ -11,7 +11,7 @@ public class NewUserBasicInfoDto implements Serializable {
     private UserType userType;
     private String name;
     private String surname;
-    private String phoneNumber;
+    private String phone;
     private String email;
     private SignUpAddressDto address;
 }
