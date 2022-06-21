@@ -131,7 +131,7 @@ public class LoyaltyProgramServiceImpl implements LoyaltyProgramService{
             if (loyaltyPrograms.isEmpty()) {
                 return 0;
             }
-            return loyaltyPrograms.iterator().next().getLoyaltyCategories();
+            return loyaltyPrograms.iterator().next().getUserCategory(owner.getPoints()).getOwnerBenefit();
         } catch (Exception e) {
             log.error(e.getMessage());
             return 0;

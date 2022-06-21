@@ -57,16 +57,16 @@
                 </tr>
                 </thead>
                 <tbody>
-<!--                <tr v-for="(income, index) in this.incomes" :key="index" :class="index%2!==0?'odd':'even'">-->
-<!--                  <td>{{income.id}}</td>-->
-<!--                  <td>{{income.type}}</td>-->
-<!--                  <td>{{income.timeStamp.replace('T', ' ')}}</td>-->
-<!--                  <td class="text-end pe-5">{{income.value}}$</td>-->
-<!--                </tr>-->
-<!--                <tr style="background-color: #6c757d; color: white">-->
-<!--                  <td class="fw-bolder text-start">Total:</td>-->
-<!--                  <td colspan="3" class="fw-bolder text-end pe-5">{{totalIncome.toFixed(1)}}$</td>-->
-<!--                </tr>-->
+                <tr v-for="(income, index) in this.incomes" :key="index" :class="index%2!==0?'odd':'even'">
+                  <td>{{income.id}}</td>
+                  <td>{{income.type}}</td>
+                  <td>{{income.timeStamp.replace('T', ' ')}}</td>
+                  <td class="text-end pe-5">{{income.value}}$</td>
+                </tr>
+                <tr style="background-color: #6c757d; color: white">
+                  <td class="fw-bolder text-start">Total:</td>
+                  <td colspan="3" class="fw-bolder text-end pe-5">{{totalIncome.toFixed(1)}}$</td>
+                </tr>
                 </tbody>
               </table>
             </div>
@@ -84,57 +84,20 @@ import { Line } from 'vue-chartjs';
 import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale, LineElement, PointElement, LineController } from 'chart.js';
 import {useStore} from "vuex";
 import axios from "axios";
+import {toggleLoading} from "@/components/state";
+import store from "@/store";
 
 ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale, LineElement, PointElement, LineController)
 
 export default {
   name: "InstructorBusinessReports",
   components: {DatePicker, Line},
-  mounted() {
-    const store = useStore();
-    axios.get("/Profits/instructorDashboard", {headers: {
-        Authorization: "Bearer " + store.getters.access_token,
-      }
-    })
-        .then((response) => {
-          const dashboardData = response.data;
-          this.grades = dashboardData.rentalGrades;
-          const nodes1 = dashboardData.yearlyGraph.nodes;
-          const nodes2 = dashboardData.monthlyGraph.nodes;
-          const nodes3 = dashboardData.weeklyGraph.nodes;
-          let dataset1 = [];
-          let dataset2 = [];
-          let dataset3 = [];
-          for (let i = 0; i < nodes1.length; i++) {
-            this.chartData1.labels.push(nodes1[i].month);
-            dataset1.push(nodes1[i].value);
-          }
-          for (let i = 0; i < nodes2.length; i++) {
-            this.chartData2.labels.push(nodes2[i].month);
-            dataset2.push(nodes2[i].value);
-          }
-          for (let i = 0; i < nodes3.length; i++) {
-            this.chartData3.labels.push(nodes3[i].month);
-            dataset3.push(nodes3[i].value);
-          }
-          this.chartData1.datasets[0].data = dataset1;
-          this.chartData2.datasets[0].data = dataset2;
-          this.chartData3.datasets[0].data = dataset3;
-        })
-        .catch((e) => {
-          console.log(e);
-          this.$notify({
-            title: "Server error",
-            text: "Server is currently off. Please try again later...",
-            type: "error"
-          });
-        })
-  },
   data() {
     return {
+      incomes: [],
       range: {
-        start: null,
-        end: null,
+        start: new Date(new Date().setFullYear(new Date().getFullYear() - 1)),
+        end: new Date()
       },
       grades: [],
       chartData1: {
@@ -172,6 +135,77 @@ export default {
       }
     }
   },
+  mounted() {
+    toggleLoading();
+    const store = useStore();
+    axios.get("/Profits/instructorDashboard", {headers: {
+        Authorization: "Bearer " + store.getters.access_token,
+      }
+    })
+    .then((response) => {
+      const dashboardData = response.data;
+      this.grades = dashboardData.rentalGrades;
+      const nodes1 = dashboardData.yearlyGraph.nodes;
+      const nodes2 = dashboardData.monthlyGraph.nodes;
+      const nodes3 = dashboardData.weeklyGraph.nodes;
+      let dataset1 = [];
+      let dataset2 = [];
+      let dataset3 = [];
+      for (let i = 0; i < nodes1.length; i++) {
+        this.chartData1.labels.push(nodes1[i].month);
+        dataset1.push(nodes1[i].value);
+      }
+      for (let i = 0; i < nodes2.length; i++) {
+        this.chartData2.labels.push(nodes2[i].month);
+        dataset2.push(nodes2[i].value);
+      }
+      for (let i = 0; i < nodes3.length; i++) {
+        this.chartData3.labels.push(nodes3[i].month);
+        dataset3.push(nodes3[i].value);
+      }
+      this.chartData1.datasets[0].data = dataset1;
+      this.chartData2.datasets[0].data = dataset2;
+      this.chartData3.datasets[0].data = dataset3;
+      this.generateReport();
+      toggleLoading();
+    })
+    .catch((e) => {
+      console.log(e);
+      this.$notify({
+        title: "Server error",
+        text: "Server is currently off. Please try again later...",
+        type: "error"
+      });
+      toggleLoading();
+    })
+  },
+  methods: {
+    generateReport() {
+      toggleLoading();
+      const start = this.range.start.toISOString().slice(0, 19);
+      const end = this.range.end.toISOString().slice(0, 19);
+      axios.get("/Profits/instructorReport", {headers: {
+          Authorization: "Bearer " + store.getters.access_token,
+        },
+        params: {
+          start: start,
+          end: end
+        }
+      })
+          .then((response) => {
+            this.incomes = response.data;
+            toggleLoading();
+          })
+          .catch(() => {
+            this.$notify({
+              title: "Server error",
+              text: "Server is currently off. Please try again later...",
+              type: "error"
+            });
+            toggleLoading();
+          });
+    }
+  },
   computed: {
     averageGrade() {
       let gradeTotal = 0;
@@ -183,6 +217,13 @@ export default {
         }
       })
       return count===0?count:gradeTotal/count;
+    },
+    totalIncome() {
+      let income = 0;
+      this.incomes.forEach(i => {
+        income += i.value;
+      })
+      return income;
     }
   }
 }

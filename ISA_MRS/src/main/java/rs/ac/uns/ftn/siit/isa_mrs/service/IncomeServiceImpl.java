@@ -31,6 +31,7 @@ public class IncomeServiceImpl implements IncomeService{
     private final ModelMapper modelMapper;
     private final JwtDecoder jwtDecoder;
     private final RentalObjectOwnerRepo rentalObjectOwnerRepo;
+    private final LoyaltyProgramService loyaltyProgramService;
 
     @Override
     public double getIncomeLastYear() {
@@ -144,8 +145,7 @@ public class IncomeServiceImpl implements IncomeService{
         income.getReservation().getAdditionalServices().forEach(additionalService ->  {
             instructorIncome.updateAndGet(v -> (double) (v + additionalService.getPrice()));
         });
-        income.getReservation().getRentalObject().getRentalObjectOwner()
-        return instructorIncome.get() - income.getValue();
+        return (instructorIncome.get() - income.getValue()) + (instructorIncome.get() - income.getValue()) * loyaltyProgramService.getOwnersBenefit(income.getReservation().getRentalObject().getRentalObjectOwner())/100;
     }
 
     private double sumIncome(Collection<Income> incomes) {
