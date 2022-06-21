@@ -61,6 +61,7 @@ import BoatOwnerReservations
     from "@/components/BoatOwner/BoatOwnerPage/components/BoatOwnerMainView/BoatOwnerReservations/BoatOwnerReservations";
 import VacationRentalOwnerReservations
     from "@/components/VacationRentalOwner/VacationRentalOwnerPage/components/VacationRentalOwnerReservations/VacationRentalOwnerReservations";
+import EditPersonalData from "@/components/GeneralComponents/EditPersonalData";
 //import InstructorCardView from "@/components/UnregisteredUser/components/InstructorCardView";
 
 
@@ -521,6 +522,17 @@ const routes = [
         }
     },
     {
+        path: "/vacationRentalOwner/editPersonalData/:id",
+        name: "VacationRentalOwnerEditPersonalData",
+        components: {
+            default: EditPersonalData,
+            sidebar: TheOwnerSidebar,
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
         path: "/boatOwner",
         name: "BoatOwnerHome",
         components: {
@@ -548,6 +560,17 @@ const routes = [
         components: {
             default: BoatOwnerProfilePage,
             sidebar: TheBoatOwnerSidebar,
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
+        path: "/boatOwner/editPersonalData/:id",
+        name: "BoatOwnerEditPersonalData",
+        components: {
+            default: EditPersonalData,
+            sidebar: TheBoatOwnerSidebar
         },
         meta: {
             public: false

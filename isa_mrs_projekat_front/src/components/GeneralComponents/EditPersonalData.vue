@@ -28,7 +28,7 @@
                     </div>
                     <div class="row">
                       <label for="phone">Phone</label>
-                      <vue-tel-input v-model="user.phone" id="phone" mode="international" defaultCountry="RS" :onlyCountries=onlyCountries @input="onTelephoneInput"></vue-tel-input>
+                      <vue-tel-input :key="user.phone" v-model="phoneInput" id="phone" mode="international" defaultCountry="RS" :onlyCountries=onlyCountries @input="onTelephoneInput"></vue-tel-input>
                       <p v-if='!phoneIsValid'>Invalid phone number.</p>
                     </div>
                   </div>
@@ -71,7 +71,7 @@
             </div>
           </div>
           <div class="d-flex pt-3 justify-content-center">
-            <router-link to="/#" class="btn btn-red mt-3 me-1">Cancel</router-link>
+            <router-link to="../" class="btn btn-red mt-3 me-1">Cancel</router-link>
             <button type="button" class="btn mt-3" @click="submit">Submit</button>
           </div>
         </div>
