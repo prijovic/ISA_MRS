@@ -11,6 +11,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.AdminDtos.GraphDto;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.AdminDtos.GraphNodeDto;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.InstructorDtos.RentalGradeDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.PageDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.RentalObjectDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.SpecialOfferDto;
@@ -24,7 +27,12 @@ import rs.ac.uns.ftn.siit.isa_mrs.security.JwtDecoder;
 
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.TextStyle;
+import java.time.temporal.TemporalAdjusters;
 import java.util.*;
 
 @Slf4j
@@ -38,6 +46,8 @@ public class RentalObjectServiceImpl implements RentalObjectService {
     private final ServiceRepo serviceRepo;
     private final SpecialOfferRepo specialOfferRepo;
     private final JwtDecoder jwtDecoder;
+    private final RentalObjectOwnerRepo rentalObjectOwnerRepo;
+    private final ReservationRepo reservationRepo;
 
 //    @Override
 //    public ResponseEntity<RentalObjectPeriodsDto> setAvailabilityPeriods(Long id, List<LocalDate> dates) {
@@ -155,7 +165,7 @@ public class RentalObjectServiceImpl implements RentalObjectService {
             specialOffer.setTermDate(specialOfferDto.getTermDate());
 
             List<rs.ac.uns.ftn.siit.isa_mrs.model.Service> objectIncludedServices = new ArrayList<>();
-            specialOfferDto.getIncludedServices().forEach(service ->{
+            specialOfferDto.getIncludedServices().forEach(service -> {
                 rs.ac.uns.ftn.siit.isa_mrs.model.Service includedServices1 = modelMapper.map(service, rs.ac.uns.ftn.siit.isa_mrs.model.Service.class);
                 serviceRepo.save(includedServices1);
                 objectIncludedServices.add(includedServices1);
@@ -174,6 +184,116 @@ public class RentalObjectServiceImpl implements RentalObjectService {
             log.error(e.getMessage());
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @Override
+    public Collection<RentalGradeDto> getRentalsGrades(String token) {
+        Collection<RentalGradeDto> result = new ArrayList<RentalGradeDto>();
+        try {
+            JwtDecoder.DecodedToken decodedToken;
+            try {
+                decodedToken = jwtDecoder.decodeToken(token);
+            } catch (Exception e) {
+                return result;
+            }
+            Optional<RentalObjectOwner> user = rentalObjectOwnerRepo.findByEmail(decodedToken.getEmail());
+            if (user.isPresent()) {
+                RentalObjectOwner owner = user.get();
+                Collection<RentalObject> rentalObjects = rentalObjectRepo.findAllByRentalObjectOwner(owner);
+                rentalObjects.forEach(rentalObject -> {
+                    RentalGradeDto dto = new RentalGradeDto();
+                    dto.setRentalObject(modelMapper.map(rentalObject, RentalObjectDto.class));
+                    dto.setGrade(calculateRentalRating(rentalObject));
+                    result.add(dto);
+                });
+            }
+            return result;
+        } catch (Exception e) {
+            return new ArrayList<RentalGradeDto>();
+        }
+    }
+
+    @Override
+    public GraphDto getLastYearRentalReservationsGraph(String token) {
+        JwtDecoder.DecodedToken decodedToken;
+        GraphDto graph = new GraphDto();
+        try {
+            decodedToken = jwtDecoder.decodeToken(token);
+        } catch (Exception e) {
+            return null;
+        }
+        Optional<RentalObjectOwner> user = rentalObjectOwnerRepo.findByEmail(decodedToken.getEmail());
+        if (user.isPresent()) {
+            RentalObjectOwner owner = user.get();
+            LocalDate date = LocalDate.now();
+            int currentMonth = date.getMonthValue();
+            for (int i = 0; i < 12; i++) {
+                int calculatedMonth = ((currentMonth < 1) ? 12 + currentMonth : currentMonth);
+                date = date.withMonth(calculatedMonth);
+                LocalDate firstDay = date.withDayOfMonth(1);
+                LocalDate lastDay = date.with(TemporalAdjusters.lastDayOfMonth());
+                GraphNodeDto node = new GraphNodeDto();
+                LocalDateTime start = LocalDateTime.of(firstDay, LocalTime.parse("00:00:00"));
+                LocalDateTime end = LocalDateTime.of(lastDay, LocalTime.parse("00:00:00"));
+                node.setValue(reservationRepo.findAllByTimeStampBetweenAndRentalObjectRentalObjectOwner(start, end, owner).size());
+                node.setMonth(date.getMonth().getDisplayName(TextStyle.FULL, Locale.US));
+                graph.getNodes().add(node);
+                currentMonth--;
+            }
+        }
+        return graph;
+    }
+
+    @Override
+    public GraphDto getLastMonthRentalReservationsGraph(String token) {
+        JwtDecoder.DecodedToken decodedToken;
+        GraphDto graph = new GraphDto();
+        try {
+            decodedToken = jwtDecoder.decodeToken(token);
+        } catch (Exception e) {
+            return null;
+        }
+        Optional<RentalObjectOwner> user = rentalObjectOwnerRepo.findByEmail(decodedToken.getEmail());
+        if (user.isPresent()) {
+            RentalObjectOwner owner = user.get();
+            LocalDate date = LocalDate.now();
+            for (int i = 0; i < 31; i++) {
+                GraphNodeDto node = new GraphNodeDto();
+                LocalDateTime start = LocalDateTime.of(date, LocalTime.parse("00:00:00"));
+                LocalDateTime end = LocalDateTime.of(date, LocalTime.parse("23:59:59"));
+                node.setValue(reservationRepo.findAllByTimeStampBetweenAndRentalObjectRentalObjectOwner(start, end, owner).size());
+                node.setMonth(date.format(DateTimeFormatter.ofPattern("dd.MM.yyyy.")));
+                graph.getNodes().add(node);
+                date = date.minusDays(1);
+            }
+        }
+        return graph;
+    }
+
+    @Override
+    public GraphDto getLastWeekRentalReservationsGraph(String token) {
+        JwtDecoder.DecodedToken decodedToken;
+        GraphDto graph = new GraphDto();
+        try {
+            decodedToken = jwtDecoder.decodeToken(token);
+        } catch (Exception e) {
+            return null;
+        }
+        Optional<RentalObjectOwner> user = rentalObjectOwnerRepo.findByEmail(decodedToken.getEmail());
+        if (user.isPresent()) {
+            RentalObjectOwner owner = user.get();
+            LocalDate date = LocalDate.now();
+            for (int i = 0; i < 7; i++) {
+                GraphNodeDto node = new GraphNodeDto();
+                LocalDateTime start = LocalDateTime.of(date, LocalTime.parse("00:00:00"));
+                LocalDateTime end = LocalDateTime.of(date, LocalTime.parse("23:59:59"));
+                node.setValue(reservationRepo.findAllByTimeStampBetweenAndRentalObjectRentalObjectOwner(start, end, owner).size());
+                node.setMonth(date.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.US));
+                graph.getNodes().add(node);
+                date = date.minusDays(1);
+            }
+        }
+        return graph;
     }
 
     @Override

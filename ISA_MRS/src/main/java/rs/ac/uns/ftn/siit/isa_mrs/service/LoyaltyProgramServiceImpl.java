@@ -10,6 +10,7 @@ import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.AdminDtos.LoyaltyCategoryDt
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.AdminDtos.LoyaltyProgramDto;
 import rs.ac.uns.ftn.siit.isa_mrs.model.LoyaltyCategory;
 import rs.ac.uns.ftn.siit.isa_mrs.model.LoyaltyProgram;
+import rs.ac.uns.ftn.siit.isa_mrs.model.RentalObjectOwner;
 import rs.ac.uns.ftn.siit.isa_mrs.repository.LoyaltyProgramCategoryRepo;
 import rs.ac.uns.ftn.siit.isa_mrs.repository.LoyaltyProgramRepo;
 
@@ -120,6 +121,20 @@ public class LoyaltyProgramServiceImpl implements LoyaltyProgramService{
         } catch (Exception e) {
             log.error(e.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    public double getOwnersBenefit(RentalObjectOwner owner) {
+        try {
+            Collection<LoyaltyProgram> loyaltyPrograms = loyaltyProgramRepo.findAll();
+            if (loyaltyPrograms.isEmpty()) {
+                return 0;
+            }
+            return loyaltyPrograms.iterator().next().getUserCategory(owner.getPoints()).getOwnerBenefit();
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return 0;
         }
     }
 }

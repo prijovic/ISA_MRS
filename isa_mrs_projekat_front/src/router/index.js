@@ -61,8 +61,8 @@ import BoatOwnerReservations
 import VacationRentalOwnerReservations
     from "@/components/VacationRentalOwner/VacationRentalOwnerPage/components/VacationRentalOwnerReservations/VacationRentalOwnerReservations";
 import EditPersonalData from "@/components/GeneralComponents/EditPersonalData";
-//import InstructorCardView from "@/components/UnregisteredUser/components/InstructorCardView";
-
+import InstructorBusinessReports
+    from "@/components/FishingInstructor/FishingInstructorPage/components/InstructorMainViews/InstructorBusinessReports";
 
 
 const routes = [
@@ -327,6 +327,17 @@ const routes = [
         name: "FishingInstructorView",
         components: {
             default: InstructorProfilePage,
+            sidebar: TheFishingInstructorSidebar,
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
+        path: "/fishingInstructor/finances",
+        name: "FishingInstructorReports",
+        components: {
+            default: InstructorBusinessReports,
             sidebar: TheFishingInstructorSidebar,
         },
         meta: {

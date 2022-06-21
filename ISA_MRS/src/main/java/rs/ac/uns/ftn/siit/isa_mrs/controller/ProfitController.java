@@ -8,12 +8,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.AdminDtos.DashboardDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.AdminDtos.IncomeDto;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.InstructorDtos.DashboardInstructorDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.ProfitFeeDto;
 import rs.ac.uns.ftn.siit.isa_mrs.service.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
 import java.util.List;
 
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static rs.ac.uns.ftn.siit.isa_mrs.util.Paths.INCOME_FEES;
 import static rs.ac.uns.ftn.siit.isa_mrs.util.Paths.PROFITS;
 
@@ -30,6 +33,7 @@ public class ProfitController {
     private final RentalObjectOwnerService rentalObjectOwnerService;
     private final ReservationService reservationService;
     private final IncomeService incomeService;
+    private final RentalObjectService rentalObjectService;
 
     @GetMapping(INCOME_FEES)
     public ResponseEntity<Collection<ProfitFeeDto>> getProfitFees() {
@@ -64,6 +68,26 @@ public class ProfitController {
             log.error(e.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @GetMapping("/instructorDashboard")
+    public ResponseEntity<DashboardInstructorDto> getInstructorDashboard(HttpServletRequest request) {
+        try {
+            DashboardInstructorDto dashboardInstructorDto = new DashboardInstructorDto();
+            dashboardInstructorDto.setRentalGrades(rentalObjectService.getRentalsGrades(request.getHeader(AUTHORIZATION)));
+            dashboardInstructorDto.setYearlyGraph(rentalObjectService.getLastYearRentalReservationsGraph(request.getHeader(AUTHORIZATION)));
+            dashboardInstructorDto.setMonthlyGraph(rentalObjectService.getLastMonthRentalReservationsGraph(request.getHeader(AUTHORIZATION)));
+            dashboardInstructorDto.setWeeklyGraph(rentalObjectService.getLastWeekRentalReservationsGraph(request.getHeader(AUTHORIZATION)));
+            return new ResponseEntity<>(dashboardInstructorDto, HttpStatus.OK);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/instructorReport")
+    public ResponseEntity<Collection<IncomeDto>> getInstructorReportData(@RequestParam String start, @RequestParam String end, HttpServletRequest request) {
+        return incomeService.getInstructorReportData(start, end, request.getHeader(AUTHORIZATION));
     }
 
     @GetMapping("/adminReport")
