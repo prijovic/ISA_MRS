@@ -95,6 +95,9 @@ export default {
       let days = this.getNumberOfDays(reservation);
       let services = this.calculateAdditionalServices(reservation);
       let price = reservation.price;
+      if(reservation.specialOffer !== null) {
+        return (days*price)/100 * (100-reservation.specialOffer.discount);
+      }
       return days*price+services;
     },
     getNumberOfDays(reservation) {

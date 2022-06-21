@@ -65,6 +65,8 @@ public class RentalObjectServiceImpl implements RentalObjectService {
     public Collection<SpecialOfferDto> getFutureSpecialOffers(Collection<SpecialOffer> specialOffers) {
         Collection<SpecialOfferDto> result = new ArrayList<>();
         for(var offer : specialOffers) {
+            log.info(offer.getId()+"");
+            log.info(offer.getInitDate()+"");
             if(offer.getInitDate().isBefore(ChronoLocalDateTime.from(LocalDateTime.now()))) continue;
             if(offer.getReservations().size() == 0) {result.add(modelMapper.map(offer, SpecialOfferDto.class)); continue;}
             int i=0;

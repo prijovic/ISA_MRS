@@ -33,7 +33,8 @@
                                 :days="getNumberOfDays(reservation)"
                                 :price="reservation.price"
                                 :total="calculateTotal(reservation)"
-                                :id="reservation.id"/>
+                                :id="reservation.id"
+                                :specialOffer="reservation.specialOffer"/>
           </div>
           <div class="row">
             <button class="w-100 btn" style="background-color:#e23c52; font-weight: 500; color: white;"
@@ -85,6 +86,9 @@ export default {
       let days = this.getNumberOfDays(reservation);
       let services = this.calculateAdditionalServices(reservation);
       let price = reservation.price;
+      if(reservation.specialOffer !== null) {
+        return (days*price)/100 * (100-reservation.specialOffer.discount);
+      }
       return days*price+services;
     },
     getNumberOfDays(reservation) {
