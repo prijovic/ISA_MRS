@@ -50,6 +50,8 @@ import LoyaltyCategoryCreationPage
     from "@/components/Administrator/AdminPage/components/AdminMainViews/AdminLoyaltyProgramComponents/LoyaltyCategoryCreationPage";
 import InstructorBusinessReports
     from "@/components/FishingInstructor/FishingInstructorPage/components/InstructorMainViews/InstructorBusinessReports";
+import SpecialOfferCreationPage
+    from "@/components/FishingInstructor/FishingInstructorPage/components/InstructorMainViews/SpecialOfferCreationPage";
 //import InstructorCardView from "@/components/UnregisteredUser/components/InstructorCardView";
 
 
@@ -327,6 +329,17 @@ const routes = [
         name: "FishingInstructorProfileUpdate",
         components: {
             default: RegistrationPage,
+            sidebar: TheFishingInstructorSidebar,
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
+        path: "/fishingInstructor/specialOffer/:id",
+        name: "FishingInstructorSpecialOffer",
+        components: {
+            default: SpecialOfferCreationPage,
             sidebar: TheFishingInstructorSidebar,
         },
         meta: {

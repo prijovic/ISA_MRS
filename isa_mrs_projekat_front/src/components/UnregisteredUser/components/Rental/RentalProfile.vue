@@ -96,7 +96,7 @@
 
           <div v-if="isOwner" class="row">
             <div class="d-flex justify-content-center">
-              <router-link :to="'/#' + this.$route.params.id" class="btn mt-3 me-1"><font-awesome-icon style="margin-right: 10px" icon="tag"></font-awesome-icon>Special Offer</router-link>
+              <router-link :to="'/fishingInstructor/specialOffer/' + this.$route.params.id" class="btn mt-3 me-1"><font-awesome-icon style="margin-right: 10px" icon="tag"></font-awesome-icon>Special Offer</router-link>
             </div>
           </div>
         </div>
