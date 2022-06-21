@@ -37,15 +37,15 @@
               <div v-for="(reservation, index) in reservationsToShow" :key="index">
                 <div class="container rounded mb-1 p-0 shadow" style="color: black; background-color: white" :style="{'border-left': '5px solid ' + colorsAndRentals[reservation.rentalObject.id]}">
                   <div class="row">
-                    <div class="col text-start mt-3 ms-3">Rental Object: <router-link class="link" to="/#">{{reservation.rentalObject.name}}</router-link></div>
+                    <div class="col text-start mt-3 ms-3">Rental Object: <router-link class="link" :to="'/fishingInstructor/Adventure/' + reservation.rentalObject.id">{{reservation.rentalObject.name}}</router-link></div>
                     <div class="col text-end mt-3 me-3">{{formatDateTime(reservation.timeStamp)}}</div>
                   </div>
                   <hr>
                   <div class="row ms-3">
-                    <div class="col text-start m-0 p-0">Client: <router-link class="link" to="/#">{{reservation.client.name + " " + reservation.client.surname + " (" + reservation.client.email + ")"}}</router-link></div>
+                    <div class="col text-start m-0 p-0">Client: {{reservation.client.name + " " + reservation.client.surname + " (" + reservation.client.email + ")"}}</div>
                   </div>
                   <div class="row ms-3">
-                    Period: {{formatDate(reservation.reservationTime.initDate) + "-" + formatDate(reservation.reservationTime.termDate)}}
+                    Period: {{formatDateTime(reservation.initDate) + "-" + formatDateTime(reservation.termDate)}}
                   </div>
                   <div class="row ms-3 mb-3">
                     People: {{reservation.people}}
@@ -104,27 +104,27 @@ export default {
         Authorization: "Bearer " + store.getters.access_token,
       }
     })
-        .then(response => {
-          this.reservations = response.data;
-          this.assignColors();
-          this.createDescriptions();
-          this.formAttributes();
-          this.colorsLoaded = true;
-        })
-        .catch(() =>{
-          this.$notify({
-            title: "Server error",
-            text: "Server is currently off. Please try again later...",
-            type: "error"
-          });
-        });
+    .then(response => {
+      this.reservations = response.data;
+      this.assignColors();
+      this.createDescriptions();
+      this.formAttributes();
+      this.colorsLoaded = true;
+    })
+    .catch(() =>{
+      this.$notify({
+        title: "Server error",
+        text: "Server is currently off. Please try again later...",
+        type: "error"
+      });
+    });
   },
   methods: {
     viewDay(day) {
       this.reservationsToShow = [];
       this.selectedDate = {id:day.id, date:Date.parse(day.id)}
       this.reservations.forEach(reservation => {
-        if (reservation.reservationTime.initDate === day.id) {
+        if (reservation.initDate.split("T")[0] === day.id) {
           this.reservationsToShow.push(reservation);
         }
       })
@@ -145,7 +145,7 @@ export default {
         let description = "Client ";
         description += reservation.client.name + " " + reservation.client.surname;
         description += " has booked '" + reservation.rentalObject.name + "' to ";
-        description += reservation.reservationTime.termDate + ".";
+        description += reservation.termDate + ".";
         this.descriptionsAndReservations[reservation.id] = description;
       })
     },
@@ -198,7 +198,7 @@ export default {
     reservationInitDates() {
       let initDates = {};
       this.reservations.forEach(reservation => {
-        initDates[reservation.id] = Date.parse(reservation.reservationTime.initDate);
+        initDates[reservation.id] = Date.parse(reservation.initDate);
       })
       return initDates;
     }
