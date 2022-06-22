@@ -79,6 +79,7 @@ public class BoatServiceImpl implements BoatService{
                 Client client = optionalClient.get();
                 if(boat.getSubscribers().contains(client)) boatDto.setIsUserSubscribed(true);
                 boatDto.setPenalties((clientService.setUpPenalties(client)).size());
+                boatDto.setCanClientReserve(rentalService.canClientReserve(client, boat));
             }
             return new ResponseEntity<>(boatDto, HttpStatus.OK);
         }

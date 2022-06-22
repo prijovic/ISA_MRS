@@ -71,6 +71,7 @@ public class AdventureServiceImpl implements AdventureService{
                 Client client = optionalClient.get();
                 if(adventure.getSubscribers().contains(client)) adventureDto.setIsUserSubscribed(true);
                 adventureDto.setPenalties((clientService.setUpPenalties(client)).size());
+                adventureDto.setCanClientReserve(rentalService.canClientReserve(client, adventure));
             }
             return new ResponseEntity<>(adventureDto, HttpStatus.OK);
         }

@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.BoatOwnerDtos.BoatOwnerProfileDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.BoatOwnerDtos.BoatOwnerReservationDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.InstructorDtos.InstructorDtos.SubscriberDto;
-import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.InstructorDtos.InstructorReservationsDtos.InstructorReservationDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.RentalProfileDtos.ReviewDtos.ReviewDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.ReservationDtos.ReservationIncomeDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.ReservationDtos.ReservationRentalObjectDto;
@@ -24,21 +23,27 @@ import rs.ac.uns.ftn.siit.isa_mrs.repository.IncomeRepo;
 import rs.ac.uns.ftn.siit.isa_mrs.repository.RentalObjectOwnerRepo;
 import rs.ac.uns.ftn.siit.isa_mrs.repository.RentalObjectRepo;
 import rs.ac.uns.ftn.siit.isa_mrs.security.JwtDecoder;
-
 import java.util.*;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.AdditionalServiceDto;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.ClientDtos.ClientReservationLimitsDto;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.InstructorDtos.TimePeriodDto;
+import rs.ac.uns.ftn.siit.isa_mrs.model.RentalObject;
+import rs.ac.uns.ftn.siit.isa_mrs.model.RentalObjectOwner;
+import rs.ac.uns.ftn.siit.isa_mrs.repository.ReservationRepo;
+
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class RentalObjectOwnerServiceImpl implements RentalObjectOwnerService{
-    private final RentalObjectOwnerRepo rentalObjectOwnerRepo;
 
+    private final RentalObjectOwnerRepo rentalObjectOwnerRepo;
     private final RentalObjectOwnerRepo ownerRepo;
     private final RentalObjectRepo rentalRepo;
+    private final JwtDecoder jwtDecoder;
+    private final ModelMapper modelMapper;
     private final IncomeRepo incomeRepo;
     private final RentalObjectServiceImpl rosi;
-    private final ModelMapper modelMapper;
-    private final JwtDecoder jwtDecoder;
 
     @Override
     public long countRentalObjectOwners() {
@@ -62,6 +67,40 @@ public class RentalObjectOwnerServiceImpl implements RentalObjectOwnerService{
             ownerDto.setClientReviews(getOwnerReviews(boatOwner));
             ownerDto.setSubscribers(setUpSubscribers(boatOwner.getRentalObjects()));
             return new ResponseEntity<>(ownerDto, HttpStatus.OK);
+        }
+        catch (Exception e) {
+            log.error(e.getMessage());
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    public ResponseEntity<ClientReservationLimitsDto> getReservationLimits(long rentalId, long ownerId) {
+        try{
+            Optional<RentalObjectOwner> roo = ownerRepo.findById(ownerId);
+            if(roo.isEmpty()) return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+            RentalObjectOwner owner = roo.get();
+            ClientReservationLimitsDto result = new ClientReservationLimitsDto();
+            result.setOwnerInitDate(owner.getInitDate());
+            result.setOwnerTermDate(owner.getTermDate());
+            Optional<RentalObject> rentalObject = rentalRepo.findById(rentalId);
+            if(rentalObject.isEmpty()) return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+            result.setRentalInitDate(rentalObject.get().getInitDate());
+            result.setRentalTermDate(rentalObject.get().getTermDate());
+            Collection<TimePeriodDto> timePeriodDtos = new ArrayList<>();
+            rentalObject.get().getReservations().forEach(reservation -> {
+                timePeriodDtos.add(new TimePeriodDto(reservation.getInitDate(), reservation.getTermDate()));
+            });
+            result.setReservationsPeriods(timePeriodDtos);
+
+            Collection<AdditionalServiceDto> addServDto = new ArrayList<>();
+            rentalObject.get().getAdditionalServices().forEach(service ->
+                addServDto.add(modelMapper.map(service, AdditionalServiceDto.class)));
+
+            result.setAdditionalServices(addServDto);
+            result.setPrice(rentalObject.get().getPrice());
+
+            return new ResponseEntity<>(result, HttpStatus.OK);
         }
         catch (Exception e) {
             log.error(e.getMessage());

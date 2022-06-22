@@ -64,6 +64,8 @@ import VacationRentalSpecialOffer
 import BoatSpecialOffer from "@/components/BoatOwner/BoatOwnerPage/components/BoatOwnerMainView/BoatSpecialOffer";
 import OwnerReservationCreationPage
     from "@/components/BoatOwner/BoatOwnerPage/components/BoatOwnerMainView/OwnerReservationCreationPage";
+import ClientReservationPage
+    from "@/components/Client/ClientPage/components/ClientReservationPage/ClientReservationPage";
 //import InstructorCardView from "@/components/UnregisteredUser/components/InstructorCardView";
 
 
@@ -775,6 +777,17 @@ const routes = [
         meta: {
             public: false
         },
+    },
+    {
+        path: "/client/reservation/:id-:type-:ownerId",
+        name: "ClientReservationPage",
+        components: {
+            default: ClientReservationPage,
+            sidebar: ClientSidebar,
+        },
+        meta: {
+            public: false
+        }
     },
     {
         path: "/client/InstructorProfile/:id",

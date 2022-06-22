@@ -5,6 +5,7 @@ import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.BoatOwnerDtos.BoatOwnerProf
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.BoatOwnerDtos.BoatOwnerReservationDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.VacationRentalOwnerDtos.VacationRentalOwnerProfileDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.VacationRentalOwnerDtos.VacationRentalOwnerReservationDto;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.ClientDtos.ClientReservationLimitsDto;
 
 import java.util.Collection;
 
@@ -14,4 +15,5 @@ public interface RentalObjectOwnerService {
     ResponseEntity<VacationRentalOwnerProfileDto> getVacationRentalOwner(String token);
     ResponseEntity<Collection<BoatOwnerReservationDto>> getAllBoatOwnerReservations(String token);
     ResponseEntity<Collection<VacationRentalOwnerReservationDto>> getAllVacationRentalOwnerReservations(String token);
+    ResponseEntity<ClientReservationLimitsDto> getReservationLimits(long rentalId, long ownerId);
 }
