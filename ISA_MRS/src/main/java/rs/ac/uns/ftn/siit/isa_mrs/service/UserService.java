@@ -24,6 +24,4 @@ public interface UserService {
     ResponseEntity<String> resendVerificationMail(String email);
     ResponseEntity<PageDto<UserByTypeDto>> findUsersByTypeWithPaginationSortedByField(int offset, int pageSize,
                                                                                       String field, UserType type);
-    ResponseEntity<UserDto> getUser(String token);
-    ResponseEntity<UserDto> updateUserData(UpdateUserDto updateUserDto, String token);
 }

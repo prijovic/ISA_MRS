@@ -24,7 +24,6 @@ public interface RentalObjectService {
     PageDto<ReviewDto> getRentalReviews(RentalObject rental, int page, int pageSize);
     String calculateOwnerRating(RentalObjectOwner owner);
     ResponseEntity<Void> cancelSubscription(Long rentalId, String token);
-    public ResponseEntity<SpecialOfferDto> defineSpecialOffer(rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.SpecialOfferDto specialOfferDto);
     Collection<RentalGradeDto> getRentalsGrades(String token);
     GraphDto getLastYearRentalReservationsGraph(String token);
     GraphDto getLastMonthRentalReservationsGraph(String token);

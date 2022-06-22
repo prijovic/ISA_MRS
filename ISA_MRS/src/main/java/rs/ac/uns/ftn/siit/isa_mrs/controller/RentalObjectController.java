@@ -192,9 +192,4 @@ public class RentalObjectController {
     public ResponseEntity<Long> updateBoat(@RequestBody AddBoatDto boat) {
         return boatService.updateBoat(boat);
     }
-
-    @PostMapping("/defineSpecialOffer")
-    public ResponseEntity<SpecialOfferDto> defineOffer(@RequestBody rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.SpecialOfferDto specialOfferDto){
-        return rentalObjectService.defineSpecialOffer(specialOfferDto);
-    }
 }

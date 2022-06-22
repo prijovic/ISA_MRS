@@ -16,7 +16,6 @@ import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.AdminDtos.GraphNodeDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.InstructorDtos.RentalGradeDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.PageDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.RentalObjectDto;
-import rs.ac.uns.ftn.siit.isa_mrs.dto.SpecialOfferDto;
 import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.RentalObjectType;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.RentalProfileDtos.ReviewDtos.ReviewDto;
 import rs.ac.uns.ftn.siit.isa_mrs.model.*;
@@ -44,7 +43,6 @@ public class RentalObjectServiceImpl implements RentalObjectService {
     private final ModelMapper modelMapper;
     private final ReviewRepo reviewRepo;
     private final ServiceRepo serviceRepo;
-    private final SpecialOfferRepo specialOfferRepo;
     private final JwtDecoder jwtDecoder;
     private final RentalObjectOwnerRepo rentalObjectOwnerRepo;
     private final ReservationRepo reservationRepo;
@@ -147,42 +145,6 @@ public class RentalObjectServiceImpl implements RentalObjectService {
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    @Override
-    public ResponseEntity<SpecialOfferDto> defineSpecialOffer(rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.SpecialOfferDto specialOfferDto) {
-        try {
-            Optional<RentalObject> rentalObjectOptional = rentalObjectRepo.findById(specialOfferDto.getRentalObjectId());
-            if (rentalObjectOptional.isEmpty()) {
-                return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-            }
-            RentalObject rentalObject = rentalObjectOptional.get();
-            SpecialOffer specialOffer = new SpecialOffer();
-            specialOffer.setCapacity(specialOfferDto.getCapacity());
-            specialOffer.setDiscount(specialOfferDto.getDiscount());
-            specialOffer.setInitDate(specialOfferDto.getInitDate());
-            specialOffer.setTermDate(specialOfferDto.getTermDate());
-
-            List<rs.ac.uns.ftn.siit.isa_mrs.model.Service> objectIncludedServices = new ArrayList<>();
-            specialOfferDto.getIncludedServices().forEach(service -> {
-                rs.ac.uns.ftn.siit.isa_mrs.model.Service includedServices1 = modelMapper.map(service, rs.ac.uns.ftn.siit.isa_mrs.model.Service.class);
-                serviceRepo.save(includedServices1);
-                objectIncludedServices.add(includedServices1);
-            });
-            specialOffer.setIncludedServices(objectIncludedServices);
-            specialOffer.setRentalObject(rentalObject);
-            specialOfferRepo.save(specialOffer);
-
-            objectIncludedServices.forEach(service -> {
-                service.setSpecialOffer(specialOffer);
-                serviceRepo.save(service);
-            });
-            SpecialOfferDto specialOfferDto1 = modelMapper.map(specialOffer, SpecialOfferDto.class);
-            return new ResponseEntity<>(specialOfferDto1, HttpStatus.OK);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

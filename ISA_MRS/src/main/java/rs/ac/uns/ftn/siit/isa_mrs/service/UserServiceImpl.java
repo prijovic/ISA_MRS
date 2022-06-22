@@ -330,45 +330,4 @@ public class UserServiceImpl implements UserService {
         }
         return clientIsDeletable;
     }
-
-    @Override
-    public ResponseEntity<UserDto> getUser(String token) {
-        JwtDecoder.DecodedToken decodedToken;
-        try {
-            decodedToken = jwtDecoder.decodeToken(token);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
-        Optional<User> optionalUser = userRepo.findByEmail(decodedToken.getEmail());
-        if(optionalUser.isPresent()) {
-            User user = optionalUser.get();
-            UserDto userDto = modelMapper.map(user, UserDto.class);
-            return new ResponseEntity<>(userDto, HttpStatus.OK);
-        }
-        return new ResponseEntity<>(null, HttpStatus.OK);
-    }
-
-    @Override
-    public ResponseEntity<UserDto> updateUserData(UpdateUserDto updateUserDto, String token) {
-        JwtDecoder.DecodedToken decodedToken;
-        try {
-            decodedToken = jwtDecoder.decodeToken(token);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
-        Optional<User> optionalUser = userRepo.findByEmail(decodedToken.getEmail());
-        if(optionalUser.isPresent()) {
-            User user = optionalUser.get();
-            user.setName(updateUserDto.getName());
-            user.setSurname(updateUserDto.getSurname());
-            user.setPhone(updateUserDto.getPhone());
-            Address address = modelMapper.map(updateUserDto.getAddress(), Address.class);
-            addressRepo.save(address);
-            user.setAddress(address);
-            userRepo.save(user);
-            UserDto userDto = modelMapper.map(user, UserDto.class);
-            return new ResponseEntity<>(userDto, HttpStatus.OK);
-        }
-        return new ResponseEntity<>(null, HttpStatus.OK);
-    }
 }
