@@ -12,7 +12,6 @@ import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 import rs.ac.uns.ftn.siit.isa_mrs.model.*;
 import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.RentalObjectType;
 import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.RequestStatus;
-import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.UserType;
 import rs.ac.uns.ftn.siit.isa_mrs.security.JwtGenerator;
 
 import javax.mail.MessagingException;
@@ -180,6 +179,21 @@ public class EmailSenderServiceImpl implements EmailSenderService{
         Template template = configuration.getTemplate("client-successful-reservation-email.ftl");
         String html = FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
         messageHelper.setTo(email);
+        messageHelper.setText(html, true);
+        messageHelper.setSubject(subject);
+        mailSender.send(message);
+    }
+
+    @Override
+    public void sendNewOfferEmail(String clientMail, String rentalName) throws MessagingException, IOException, TemplateException {
+        final String subject = "New Offer";
+        Map<String, Object> model = new HashMap<>();
+        model.put("rental", rentalName);
+        MimeMessage message = mailSender.createMimeMessage();
+        MimeMessageHelper messageHelper = new MimeMessageHelper(message, MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED);
+        Template template = configuration.getTemplate("new-offer-email.ftl");
+        String html = FreeMarkerTemplateUtils.processTemplateIntoString(template, model);
+        messageHelper.setTo(clientMail);
         messageHelper.setText(html, true);
         messageHelper.setSubject(subject);
         mailSender.send(message);

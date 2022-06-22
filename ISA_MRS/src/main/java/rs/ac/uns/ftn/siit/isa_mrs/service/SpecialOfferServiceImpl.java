@@ -9,10 +9,7 @@ import org.springframework.stereotype.Service;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.SpecialOfferDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.SpecialOfferRentalDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.RentalObjectDto;
-import rs.ac.uns.ftn.siit.isa_mrs.model.Adventure;
-import rs.ac.uns.ftn.siit.isa_mrs.model.Boat;
-import rs.ac.uns.ftn.siit.isa_mrs.model.SpecialOffer;
-import rs.ac.uns.ftn.siit.isa_mrs.model.VacationRental;
+import rs.ac.uns.ftn.siit.isa_mrs.model.*;
 import rs.ac.uns.ftn.siit.isa_mrs.repository.*;
 
 import java.time.LocalDateTime;
@@ -32,6 +29,7 @@ public class SpecialOfferServiceImpl implements SpecialOfferService {
     private final AdventureRepo adventureRepo;
     private final VacationRentalRepo vacationRentalRepo;
     private final BoatRepo boatRepo;
+    private final EmailSenderService emailSenderService;
 
     @Override
     public ResponseEntity<RentalObjectDto> addSpecialOffer(SpecialOfferDto dto) {
@@ -63,6 +61,10 @@ public class SpecialOfferServiceImpl implements SpecialOfferService {
                 service.setSpecialOffer(specialOffer);
                 serviceRepo.save(service);
             });
+            Collection<Client> subscribers = rentalObject.get().getSubscribers();
+            for (Client client: subscribers) {
+                emailSenderService.sendNewOfferEmail(client.getEmail(), specialOffer.getRentalObject().getName());
+            }
             return new ResponseEntity<>(modelMapper.map(rentalObject, RentalObjectDto.class), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);

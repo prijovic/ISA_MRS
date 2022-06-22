@@ -18,4 +18,6 @@ public interface EmailSenderService {
     void sendReportResponseNotificationEmailOwner(Report report, String response) throws MessagingException, IOException, TemplateException;
     void sendPenaltyResponseNotificationEmailClient(Report report) throws MessagingException, IOException, TemplateException;
     void sendSuccessfulReservationEmail(Reservation reservation) throws MessagingException, IOException, TemplateException;
+
+    void sendNewOfferEmail(String clientMail, String rentalName) throws MessagingException, IOException, TemplateException;
 }
