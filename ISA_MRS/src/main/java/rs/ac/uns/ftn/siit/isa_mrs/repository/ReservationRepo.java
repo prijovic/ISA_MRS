@@ -11,6 +11,7 @@ public interface ReservationRepo extends JpaRepository<Reservation, Long> {
     Collection<Reservation> findAllByClientId(Long id);
     Reservation findByReviewsIsContaining(Review review);
     Reservation findByReportsIsContaining(Report report);
+    Collection<Reservation> findAllByRentalObjectRentalObjectOwner(RentalObjectOwner rentalObjectOwner);
     Collection<Reservation> findAllByTimeStampBetween(LocalDateTime start, LocalDateTime end);
     Collection<Reservation> findAllByTimeStampBetweenAndRentalObjectRentalObjectOwner(LocalDateTime start, LocalDateTime end, RentalObjectOwner owner);
 }

@@ -51,7 +51,7 @@ public class SpecialOfferServiceImpl implements SpecialOfferService {
             specialOffer.setDiscount(dto.getDiscount());
             specialOffer.setIncludedServices(services);
             double duration = adventure.getDuration() * 60;
-            LocalDateTime termDate = dto.getInitDate().plusMinutes((long) duration);
+            LocalDateTime termDate = dto.getInitDate().plusHours(2).plusMinutes((long) duration);
             specialOffer.setTermDate(termDate);
             specialOffer.setRentalObject(adventure);
             specialOfferRepo.save(specialOffer);

@@ -57,6 +57,8 @@ import VacationRentalAdditionForm
 import BoatAdditionForm from "@/components/BoatOwner/BoatOwnerPage/components/BoatAdditionForm";
 import BoatOwnerProfilePage
     from "@/components/BoatOwner/BoatOwnerPage/components/BoatOwnerMainView/BoatOwnerProfile/BoatOwnerProfilePage";
+import ReservationCreationPage
+    from "@/components/FishingInstructor/FishingInstructorPage/components/InstructorMainViews/ReservationCreationPage";
 //import InstructorCardView from "@/components/UnregisteredUser/components/InstructorCardView";
 
 
@@ -345,6 +347,17 @@ const routes = [
         name: "FishingInstructorSpecialOffer",
         components: {
             default: SpecialOfferCreationPage,
+            sidebar: TheFishingInstructorSidebar,
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
+        path: "/fishingInstructor/reservation/:id",
+        name: "FishingInstructorReservationCreation",
+        components: {
+            default: ReservationCreationPage,
             sidebar: TheFishingInstructorSidebar,
         },
         meta: {

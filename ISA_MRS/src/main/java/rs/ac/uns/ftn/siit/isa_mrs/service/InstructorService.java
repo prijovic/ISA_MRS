@@ -5,6 +5,7 @@ import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.InstructorDtos.ClientPerspe
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.InstructorDtos.ClientPerspectiveInstructorDtos.InstructorProfile.ClientInstructorProfileDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.InstructorDtos.InstructorDtos.InstructorProfileDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.InstructorDtos.InstructorReservationsDtos.InstructorReservationDto;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.InstructorDtos.ReservationLimitsDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.PageDto;
 
 import java.time.LocalDateTime;
@@ -20,4 +21,6 @@ public interface InstructorService {
     ResponseEntity<PageDto<InstructorsForMenuDto>> findInstructorsWithPaginationSortedByField(
             int offset, int pageSize, String field);
     ResponseEntity<InstructorProfileDto> updateInstructorPeriod(String start, String end, String token);
+
+    ResponseEntity<ReservationLimitsDto> getReservationLimits(long rentalId, String token);
 }

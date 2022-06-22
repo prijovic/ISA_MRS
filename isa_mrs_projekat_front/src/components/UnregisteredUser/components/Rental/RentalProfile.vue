@@ -97,6 +97,7 @@
           <div v-if="isOwner" class="row">
             <div class="d-flex justify-content-center">
               <router-link :to="'/fishingInstructor/specialOffer/' + this.$route.params.id" class="btn mt-3 me-1"><font-awesome-icon style="margin-right: 10px" icon="tag"></font-awesome-icon>Special Offer</router-link>
+              <router-link :to="'/fishingInstructor/reservation/' + this.$route.params.id" class="btn mt-3 me-1"><font-awesome-icon style="margin-right: 10px" icon="bookmark"></font-awesome-icon>Book</router-link>
             </div>
           </div>
 
@@ -309,14 +310,14 @@ import RentalRules from "@/components/UnregisteredUser/components/Rental/RentalR
 import StarRating from 'vue-star-rating';
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import {library} from "@fortawesome/fontawesome-svg-core";
-import { faBed, faCircleCheck, faCircleXmark, faClock, faDoorOpen, faLocationDot, faUser, faUserTie, faPencil, faTrash, faTag } from "@fortawesome/free-solid-svg-icons";
+import { faBed, faCircleCheck, faCircleXmark, faClock, faDoorOpen, faLocationDot, faUser, faUserTie, faPencil, faTrash, faTag, faBookmark } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios/index";
 import {useStore} from "vuex";
 import store from "@/store";
 import RentalSpecialOffers from "@/components/UnregisteredUser/components/Rental/RentalSpecialOffers";
 
 
-library.add(faUser, faDoorOpen, faBed, faClock, faLocationDot, faCircleCheck, faCircleXmark, faUserTie, faPencil, faTrash, faTag);
+library.add(faUser, faDoorOpen, faBed, faClock, faLocationDot, faCircleCheck, faCircleXmark, faUserTie, faPencil, faTrash, faTag, faBookmark);
 
 export default {
   name: "RentalProfile",
