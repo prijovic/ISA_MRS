@@ -255,6 +255,7 @@ public class ReservationServiceImpl implements ReservationService {
             report.setReservation(reservation);
             report.setAuthor(client);
             report.setStatus(RequestStatus.Pending);
+            report.setShowedUp(true);
             reportRepo.save(report);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (Exception e) {

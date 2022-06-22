@@ -243,7 +243,8 @@
         <RentalSpecialOffers :specialOffers="this.rentalObject.specialOffers"
                              :rentalType="this.rentalObject.rentalObjectType"
                              :price="this.rentalObject.price"
-                             :clientCantReserve="clientCantReserve"/>
+                             :clientCantReserve="clientCantReserve"
+                             :isOwner="this.isOwner"/>
 
       </div>
     </div>
