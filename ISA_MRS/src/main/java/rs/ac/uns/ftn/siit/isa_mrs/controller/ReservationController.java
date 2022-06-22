@@ -2,9 +2,11 @@ package rs.ac.uns.ftn.siit.isa_mrs.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.http.auth.AUTH;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.InstructorDtos.InstructorReservationsDtos.InstructorReservationDto;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.InstructorDtos.ReservationLimitsDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.ReportDtos.AddInstructorReportDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.ReportDtos.AddReportDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.ReservationDtos.ReserveSpecialOfferDto;
@@ -50,8 +52,17 @@ public class ReservationController {
 
     @PostMapping("/addInstructorReport")
     public ResponseEntity<Void> addInstructorReport(@RequestBody AddInstructorReportDto aird, HttpServletRequest request) {
-
         return reservationService.addInstructorReport(aird, request.getHeader(AUTHORIZATION));
+    }
+
+    @PostMapping("/bookForClient")
+    public ResponseEntity<Void> bookForClient(@RequestBody rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.InstructorReservationDto dto) {
+        return reservationService.bookForClient(dto);
+    }
+
+    @GetMapping("/instructorReservationLimits")
+    public ResponseEntity<ReservationLimitsDto> getInstructorReservationLimits(@RequestParam long id, HttpServletRequest request) {
+        return instructorService.getReservationLimits(id, request.getHeader(AUTHORIZATION));
     }
 
     @PutMapping(CANCEL_RESERVATION)

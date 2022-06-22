@@ -16,11 +16,14 @@ import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.InstructorDtos.ClientPerspe
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.InstructorDtos.InstructorDtos.InstructorProfileDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.InstructorDtos.InstructorDtos.SubscriberDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.InstructorDtos.InstructorReservationsDtos.InstructorReservationDto;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.InstructorDtos.ReservationLimitsDto;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.InstructorDtos.TimePeriodDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.RentalProfileDtos.AdventureDtos.AdventuresForMenuDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.RentalProfileDtos.ReviewDtos.ReviewDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.ReservationDtos.ReservationIncomeDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.ReservationDtos.ReservationRentalObjectDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.ReservationDtos.ReservationReportDto;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.ClientDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.PageDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.PhotoDto;
 import rs.ac.uns.ftn.siit.isa_mrs.model.*;
@@ -30,6 +33,7 @@ import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.UserType;
 import rs.ac.uns.ftn.siit.isa_mrs.repository.IncomeRepo;
 import rs.ac.uns.ftn.siit.isa_mrs.repository.RentalObjectOwnerRepo;
 import rs.ac.uns.ftn.siit.isa_mrs.repository.RentalObjectRepo;
+import rs.ac.uns.ftn.siit.isa_mrs.repository.ReservationRepo;
 import rs.ac.uns.ftn.siit.isa_mrs.security.JwtDecoder;
 
 import java.time.LocalDateTime;
@@ -46,6 +50,7 @@ public class InstructorServiceImpl implements InstructorService{
     private final IncomeRepo incomeRepo;
     private final ModelMapper modelMapper;
     private final JwtDecoder jwtDecoder;
+    private final ReservationRepo reservationRepo;
 
     @Override
     public ResponseEntity<Collection<InstructorReservationDto>> getAllInstructrorReservations(String token) {
@@ -224,6 +229,46 @@ public class InstructorServiceImpl implements InstructorService{
             instructor.setTermDate(LocalDateTime.parse(end));
             ownerRepo.save(instructor);
             return new ResponseEntity<>(modelMapper.map(instructor, InstructorProfileDto.class), HttpStatus.OK);
+        }
+        catch (Exception e) {
+            log.error(e.getMessage());
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    public ResponseEntity<ReservationLimitsDto> getReservationLimits(long rentalId, String token) {
+        try{
+            JwtDecoder.DecodedToken decodedToken;
+            try {
+                decodedToken = jwtDecoder.decodeToken(token);
+            } catch (Exception e) {
+                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            }
+            Optional<RentalObjectOwner> owner = ownerRepo.findByEmail(decodedToken.getEmail());
+            if(owner.isEmpty()) return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+            RentalObjectOwner instructor = owner.get();
+            ReservationLimitsDto result = new ReservationLimitsDto();
+            result.setOwnerInitDate(instructor.getInitDate());
+            result.setOwnerTermDate(instructor.getTermDate());
+            Optional<RentalObject> rentalObject = rentalRepo.findById(rentalId);
+            if(rentalObject.isEmpty()) return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+            result.setRentalInitDate(rentalObject.get().getInitDate());
+            result.setRentalTermDate(rentalObject.get().getTermDate());
+            Collection<TimePeriodDto> timePeriodDtos = new ArrayList<>();
+            Collection<ClientDto> clients = new ArrayList<>();
+            rentalObject.get().getReservations().forEach(reservation -> {
+                timePeriodDtos.add(new TimePeriodDto(reservation.getInitDate(), reservation.getTermDate()));
+            });
+            reservationRepo.findAllByRentalObjectRentalObjectOwner(instructor).forEach(reservation -> {
+                LocalDateTime now = LocalDateTime.now();
+                if (reservation.getInitDate().isBefore(now) && reservation.getTermDate().isAfter(now)) {
+                    clients.add(modelMapper.map(reservation.getClient(), ClientDto.class));
+                }
+            });
+            result.setClients(clients);
+            result.setReservationsPeriods(timePeriodDtos);
+            return new ResponseEntity<>(result, HttpStatus.OK);
         }
         catch (Exception e) {
             log.error(e.getMessage());
