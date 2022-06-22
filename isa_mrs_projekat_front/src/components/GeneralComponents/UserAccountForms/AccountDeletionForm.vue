@@ -1,39 +1,53 @@
 <template>
-  <form class="px-4 py-3 rounded content-center">
-    <div class="form-text">
-      <font-awesome-icon class="d-inline-block" icon="user-slash" style="color:#3f5b25; height: 28px"></font-awesome-icon>
-      <h3 class="d-inline-block" style="color: #3f5b25">Account Deletion</h3>
-    </div>
-
-    <div class="form-group">
-      <textarea id="enteredRequest" v-model="enteredRequest" class="form-control" placeholder="Please enter a request..." maxlength="255"></textarea>
-      <p style="color: red; font-size: small" v-if="enteredRequest.length === 255">Oops! The maximum number of characters is 255.</p>
-    </div>
-
-    <button type="button" class="btn btn-default" :disabled='isDisabled' data-bs-toggle="modal" data-bs-target="#staticBackdrop">
-      Submit
-    </button>
-
-    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="Label" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="Label" style="color: #3f5b25">Password confirmation</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+  <div class="row">
+    <div class="col-2"></div>
+    <div class="col-8 pt-5 mb-5">
+      <div class="container px-4 py-3 rounded form" spellcheck="false" >
+        <div class="container-fluid">
+          <div class="form-text">
+            <font-awesome-icon class="d-inline-block" icon="user-slash" style="color:#008970; height: 28px"></font-awesome-icon>
+            <h3 class="d-inline-block" style="color: #008970">Account Deletion</h3>
           </div>
-          <div class="modal-body">
-            <input type="password" id="inputPassword" v-model="passwordConfirmation" placeholder="Please enter password...">
-            <p style="color: red; font-size: small" v-if="!isFilled">You must enter a password.</p>
-          </div>
-          <div class="modal-footer">
-            <button class="btn btn-default" id="button" @click.prevent="submitRequest" :disabled='!isFilled' style="color: #378220">
-              Submit
-            </button>
+          <div class="row main justify-content-center">
+            <div class="row main">
+              <div class="col-2"></div>
+              <div class="col-8">
+
+                <div class="form-group">
+                  <textarea id="enteredRequest" v-model="enteredRequest" class="form-control" placeholder="Please enter a request..." maxlength="255"></textarea>
+                  <p style="color: red; font-size: small" v-if="enteredRequest.length === 255">Oops! The maximum number of characters is 255.</p>
+                </div>
+
+                <button type="button" class="btn btn-default" :disabled='isDisabled' data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                  Submit
+                </button>
+
+                <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="Label" aria-hidden="true">
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="Label" style="color: #008970">Password confirmation</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <div class="modal-body">
+                        <input type="password" id="inputPassword" v-model="passwordConfirmation" placeholder="Please enter password...">
+                        <p style="color: red; font-size: small" v-if="!isFilled">You must enter a password.</p>
+                      </div>
+                      <div class="modal-footer">
+                        <button class="btn btn-default" id="button" @click.prevent="submitRequest" :disabled='!isFilled'>
+                          Submit
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </form>
+  </div>
 </template>
 
 <script>
@@ -124,9 +138,9 @@ export default {
 <style scoped>
 form {
   background-color: #fcfcfc;
-  outline: solid 2px #3f5b25;
+  outline: solid 2px #008970;
   margin-top: 40px;
-  color: #3f5b25;
+  color: #008970;
 }
 
 textarea {

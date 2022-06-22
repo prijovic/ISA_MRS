@@ -656,6 +656,17 @@ const routes = [
         }
     },
     {
+        path: "/boatOwner/calendar",
+        name: "BoatOwnerReservations",
+        components: {
+            default: ReservationsCalendarView,
+            sidebar: TheBoatOwnerSidebar,
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
         path: "/boatOwner/specialOfferBoat/:id",
         name: "BoatOwnerSpecialOffer",
         components: {
