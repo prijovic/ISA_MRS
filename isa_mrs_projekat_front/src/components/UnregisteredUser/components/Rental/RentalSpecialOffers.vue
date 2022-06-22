@@ -60,7 +60,7 @@
                     </p>
                   </div>
                   <div class="row mt-3 d-flex justify-content-center align-items-center">
-                    <button v-if="!isOwner" :id="'button-'+offer.id" :disabled="clientCantReserve" class="btn mb-2"
+                    <button v-if="!isOwner" :id="'button-'+offer.id" :disabled="clientCantReserve || !canClientReserve" class="btn mb-2"
                             style="font-weight: 500; color: white; width: 80%" @click="book(offer)">
                       Book
                     </button>
@@ -96,7 +96,7 @@ library.add(faPercent, faClock, faUser);
 
 export default {
   name: "RentalSpecialOffers",
-  props: ["specialOffers", "rentalType", "price", "clientCantReserve", "isOwner"],
+  props: ["specialOffers", "rentalType", "price", "clientCantReserve", "isOwner", "canClientReserve"],
   components: {FontAwesomeIcon},
   data() {
     return {

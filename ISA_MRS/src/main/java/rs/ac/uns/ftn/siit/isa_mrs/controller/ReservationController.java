@@ -5,15 +5,18 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.http.auth.AUTH;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.ClientDtos.ClientReservationLimitsDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.InstructorDtos.InstructorReservationsDtos.InstructorReservationDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.InstructorDtos.ReservationLimitsDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.ReportDtos.AddInstructorReportDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.ReportDtos.AddReportDto;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.ReservationDtos.ClientBookDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.ReservationDtos.ReserveSpecialOfferDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.ReviewDtos.AddInstructorReviewDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.ReviewDtos.AddReviewDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.ReservationDto;
 import rs.ac.uns.ftn.siit.isa_mrs.service.InstructorService;
+import rs.ac.uns.ftn.siit.isa_mrs.service.RentalObjectOwnerService;
 import rs.ac.uns.ftn.siit.isa_mrs.service.ReservationService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -29,6 +32,7 @@ import static rs.ac.uns.ftn.siit.isa_mrs.util.Paths.*;
 public class ReservationController {
     private final ReservationService reservationService;
     private final InstructorService instructorService;
+    private final RentalObjectOwnerService rentalObjectOwnerService;
 
     @PostMapping("/bookSpecialOffer")
     public ResponseEntity<Void> bookSpecialOffer(@RequestBody ReserveSpecialOfferDto rsod, HttpServletRequest request) {
@@ -60,9 +64,19 @@ public class ReservationController {
         return reservationService.bookForClient(dto);
     }
 
+    @PostMapping("/book")
+    public ResponseEntity<Void> book(@RequestBody ClientBookDto cbd, HttpServletRequest request) {
+        return reservationService.book(cbd, request.getHeader(AUTHORIZATION));
+    }
+
     @GetMapping("/instructorReservationLimits")
     public ResponseEntity<ReservationLimitsDto> getInstructorReservationLimits(@RequestParam long id, HttpServletRequest request) {
         return instructorService.getReservationLimits(id, request.getHeader(AUTHORIZATION));
+    }
+
+    @GetMapping("/getLimits")
+    public ResponseEntity<ClientReservationLimitsDto> getReservationLimits(@RequestParam long rentalId, @RequestParam long ownerId) {
+        return rentalObjectOwnerService.getReservationLimits(rentalId, ownerId);
     }
 
     @PutMapping(CANCEL_RESERVATION)

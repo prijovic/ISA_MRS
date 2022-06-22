@@ -36,4 +36,5 @@ public class VacationRentalProfileDto implements Serializable {
     private String grade = null;
     private String ownerGrade = null;
     private Integer penalties;
+    private Boolean canClientReserve;
 }

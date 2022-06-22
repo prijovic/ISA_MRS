@@ -10,10 +10,12 @@ import org.springframework.stereotype.Service;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.InstructorReservationDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.ReportDtos.AddInstructorReportDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.ReportDtos.AddReportDto;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.ReservationDtos.ClientBookDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.ReviewDtos.AddInstructorReviewDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.ReviewDtos.AddReviewDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.ReservationDto;
 import rs.ac.uns.ftn.siit.isa_mrs.model.*;
+import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.RentalObjectType;
 import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.RequestStatus;
 import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.ReviewType;
 import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.UserType;
@@ -42,6 +44,7 @@ public class ReservationServiceImpl implements ReservationService {
     private final IncomeRepo incomeRepo;
     private final SpecialOfferRepo specialOfferRepo;
     private final ProfitFeeRepo profitFeeRepo;
+    private final AdditionalServiceRepo additionalServiceRepo;
     private final EmailSenderService emailSenderService;
     private final ModelMapper modelMapper;
 
@@ -312,6 +315,65 @@ public class ReservationServiceImpl implements ReservationService {
             reportRepo.save(report);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    public ResponseEntity<Void> book(ClientBookDto cbd, String token) {
+        try {
+            JwtDecoder.DecodedToken decodedToken;
+            try {
+                decodedToken = jwtDecoder.decodeToken(token);
+            } catch (Exception e) {
+                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            }
+            Optional<Client> cli = clientRepo.findByEmail(decodedToken.getEmail());
+            Optional<RentalObject> rentalObject = rentalObjectRepo.findById(cbd.getRentalId());
+            if(cli.isEmpty() || rentalObject.isEmpty()) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            Client client = cli.get();
+            RentalObject rental = rentalObject.get();
+            Reservation reservation = new Reservation();
+            reservation.setPrice(rental.getPrice());
+            reservation.setPeople(rental.getCapacity());
+            reservation.setCancelled(false);
+            reservation.setEquipmentRequired(cbd.getIsEquipmentNeeded());
+            LocalDateTime time = LocalDateTime.now();
+            reservation.setTimeStamp(time);
+            reservation.setInitDate(cbd.getStartDate().plusHours(2));
+            if(rental.getRentalObjectType() == RentalObjectType.Adventure)
+                reservation.setTermDate(reservation.getInitDate().plusMinutes((long) (((Adventure)rental).getDuration() * 60)));
+            else reservation.setTermDate(cbd.getEndDate().plusHours(2));
+            reservation.setRentalObject(rental);
+            reservation.setClient(client);
+            reservationRepo.save(reservation);
+            for(var addServ : cbd.getAdditionalServices()) {
+                Optional<AdditionalService> service = additionalServiceRepo.findById(addServ.getId());
+                if(service.isEmpty()) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+                AdditionalService s = service.get();
+                s.getReservation().add(reservation);
+                additionalServiceRepo.save(s);
+                reservation.getAdditionalServices().add(s);
+                reservationRepo.save(reservation);
+            }
+            rental.getReservations().add(reservation);
+            rentalObjectRepo.save(rental);
+            client.getReservations().add(reservation);
+            clientRepo.save(client);
+            Optional<ProfitFee> proFee = profitFeeRepo.findProfitFeeByRentalObjectType(rental.getRentalObjectType());
+            if(proFee.isPresent()) {
+                ProfitFee profitFee = proFee.get();
+                Income income = new Income();
+                income.setTimeStamp(time);
+                income.setFee(profitFee.getValue());
+                income.setValue(cbd.getTotal()/100 * profitFee.getValue());
+                income.setReservation(reservation);
+                incomeRepo.save(income);
+                emailSenderService.sendSuccessfulReservationEmail(reservation);
+            }
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (Exception e) {
+            log.info(""+e);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

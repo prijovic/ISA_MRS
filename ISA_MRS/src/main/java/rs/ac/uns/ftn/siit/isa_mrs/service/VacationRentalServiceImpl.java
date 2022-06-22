@@ -69,6 +69,7 @@ public class VacationRentalServiceImpl implements VacationRentalService{
                 Client client = optionalClient.get();
                 if(vacationRental.getSubscribers().contains(client)) rentalDto.setIsUserSubscribed(true);
                 rentalDto.setPenalties((clientService.setUpPenalties(client)).size());
+                rentalDto.setCanClientReserve(rentalService.canClientReserve(client, vacationRental));
             }
             return new ResponseEntity<>(rentalDto, HttpStatus.OK);
         }

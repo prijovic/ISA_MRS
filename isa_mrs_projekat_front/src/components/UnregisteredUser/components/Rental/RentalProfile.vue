@@ -80,11 +80,19 @@
 
           <div class="row ps-1" style="text-align: center;">
 <!--              <i><strong>{{ "Price: $" + this.rentalObject.price }}</strong></i>-->
-            <button :disabled="clientCantReserve || isOwner" class="w-100 btn" style="font-weight: 500; color: white;">
-              <span class="h4">
-                <i><strong>{{ "Book: $" + this.rentalObject.price }}</strong></i>
-              </span>
-            </button>
+
+            <router-link :to="this.rentalObject.canClientReserve ? '/client/reservation/' + this.$route.params.id + '-' + this.$route.params.type
+            + '-' +this.rentalObject.rentalObjectOwner.id : ''" class="p-0 m-0">
+              <button :disabled="clientCantReserve || isOwner || !this.rentalObject.canClientReserve"
+                      class="w-100 btn m-0" style="font-weight: 500; color: white;">
+
+                <span class="h4">
+                  <i><strong>{{ "Book: $" + this.rentalObject.price }}</strong></i>
+                </span>
+
+              </button>
+            </router-link>
+
           </div>
 
           <div v-if="isOwner" class="row">
@@ -245,7 +253,8 @@
                              :rentalType="this.rentalObject.rentalObjectType"
                              :price="this.rentalObject.price"
                              :clientCantReserve="clientCantReserve"
-                             :isOwner="this.isOwner"/>
+                             :isOwner="this.isOwner"
+                             :canClientReserve="this.rentalObject.canClientReserve"/>
 
       </div>
     </div>
@@ -263,6 +272,7 @@
         </p>
       </div>
     </div>
+
     <!--
     <div class="row align-items-start mt-4">
         <div class="col-md-7">

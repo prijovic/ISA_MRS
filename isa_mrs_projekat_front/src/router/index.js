@@ -54,6 +54,8 @@ import SpecialOfferCreationPage
     from "@/components/FishingInstructor/FishingInstructorPage/components/InstructorMainViews/SpecialOfferCreationPage";
 import ReservationCreationPage
     from "@/components/FishingInstructor/FishingInstructorPage/components/InstructorMainViews/ReservationCreationPage";
+import ClientReservationPage
+    from "@/components/Client/ClientPage/components/ClientReservationPage/ClientReservationPage";
 //import InstructorCardView from "@/components/UnregisteredUser/components/InstructorCardView";
 
 
@@ -578,6 +580,17 @@ const routes = [
         meta: {
             public: false
         },
+    },
+    {
+        path: "/client/reservation/:id-:type-:ownerId",
+        name: "ClientReservationPage",
+        components: {
+            default: ClientReservationPage,
+            sidebar: ClientSidebar,
+        },
+        meta: {
+            public: false
+        }
     },
     {
         path: "/client/InstructorProfile/:id",

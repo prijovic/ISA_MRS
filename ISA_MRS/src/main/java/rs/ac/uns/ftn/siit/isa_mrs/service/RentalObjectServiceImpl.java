@@ -362,4 +362,13 @@ public class RentalObjectServiceImpl implements RentalObjectService {
         return result;
     }
 
+    public Boolean canClientReserve(Client client, RentalObject rental) {
+        for(var reservation : client.getReservations()) {
+            if(reservation.getCancelled()) continue;
+            if(reservation.getInitDate().isBefore(ChronoLocalDateTime.from(LocalDateTime.now()))) continue;
+            if(reservation.getRentalObject() == rental) return false;
+        }
+        return true;
+    }
+
 }

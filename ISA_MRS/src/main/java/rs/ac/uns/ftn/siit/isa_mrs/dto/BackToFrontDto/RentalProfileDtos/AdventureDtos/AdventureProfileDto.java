@@ -34,4 +34,5 @@ public class AdventureProfileDto implements Serializable {
     private LocalDateTime initDate;
     private LocalDateTime termDate;
     private Integer penalties;
+    private Boolean canClientReserve;
 }
