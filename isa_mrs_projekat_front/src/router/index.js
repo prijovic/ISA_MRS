@@ -59,6 +59,9 @@ import BoatOwnerProfilePage
     from "@/components/BoatOwner/BoatOwnerPage/components/BoatOwnerMainView/BoatOwnerProfile/BoatOwnerProfilePage";
 import ReservationCreationPage
     from "@/components/FishingInstructor/FishingInstructorPage/components/InstructorMainViews/ReservationCreationPage";
+import VacationRentalSpecialOffer
+    from "@/components/VacationRentalOwner/VacationRentalOwnerPage/components/VacationRentalSpecialOffer";
+import BoatSpecialOffer from "@/components/BoatOwner/BoatOwnerPage/components/BoatOwnerMainView/BoatSpecialOffer";
 //import InstructorCardView from "@/components/UnregisteredUser/components/InstructorCardView";
 
 
@@ -464,6 +467,17 @@ const routes = [
         }
     },
     {
+        path: "/vacationRentalOwner/:type/:id",
+        name: "OwnerVacationRentalProfile",
+        components: {
+            default: RentalProfile,
+            sidebar: TheOwnerSidebar
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
         path: "/vacationRentalOwner/calendar",
         name: "VacationRentalOwnerReservations",
         components: {
@@ -519,10 +533,10 @@ const routes = [
         }
     },
     {
-        path: "/vacationRentalOwner/specialOffer/:id",
+        path: "/vacationRentalOwner/specialOfferVacationRental/:id",
         name: "VacationRentalOwnerSpecialOffer",
         components: {
-            default: SpecialOfferCreationPage,
+            default: VacationRentalSpecialOffer,
             sidebar: TheOwnerSidebar,
         },
         meta: {
@@ -574,6 +588,17 @@ const routes = [
         }
     },
     {
+        path: "/boatOwner/:type/:id",
+        name: "OwnerBoatProfile",
+        components: {
+            default: RentalProfile,
+            sidebar: TheBoatOwnerSidebar
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
         path: "/boatOwner/newBoat",
         name: "BoatAdding",
         components: {
@@ -618,10 +643,10 @@ const routes = [
         }
     },
     {
-        path: "/boatOwner/specialOffer/:id",
+        path: "/boatOwner/specialOfferBoat/:id",
         name: "BoatOwnerSpecialOffer",
         components: {
-            default: SpecialOfferCreationPage,
+            default: BoatSpecialOffer,
             sidebar: TheBoatOwnerSidebar,
         },
         meta: {

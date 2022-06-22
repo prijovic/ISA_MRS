@@ -14,15 +14,11 @@ import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.RentalProfileDtos.BoatDtos.
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.RentalProfileDtos.VacationRentalDtos.VacationRentalProfileDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.RentalProfileDtos.VacationRentalDtos.VacationRentalsForMenuDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BoatDto;
-import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.AddBoatDto;
-import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.AddVacationRentalDto;
-import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.RentalPhotosDto;
-import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.SpecialOfferDto;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.*;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.SubscribingDtos.SubscriptionDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.PageDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.VacationRentalDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.*;
-import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.IdListWrapperClass;
 import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.UserType;
 import rs.ac.uns.ftn.siit.isa_mrs.service.*;
 
@@ -195,5 +191,15 @@ public class RentalObjectController {
     @PutMapping("/updateBoat")
     public ResponseEntity<Long> updateBoat(@RequestBody AddBoatDto boat) {
         return boatService.updateBoat(boat);
+    }
+
+    @PostMapping("/addSpecialOfferVacationRental")
+    public ResponseEntity<RentalObjectDto> addSpecialOfferVacationRental(@RequestBody SpecialOfferRentalDto dto) {
+        return specialOfferService.addSpecialOfferVacationRental(dto);
+    }
+
+    @PostMapping("/addSpecialOfferBoat")
+    public ResponseEntity<RentalObjectDto> addSpecialOfferBoat(@RequestBody SpecialOfferRentalDto dto) {
+        return specialOfferService.addSpecialOfferBoat(dto);
     }
 }

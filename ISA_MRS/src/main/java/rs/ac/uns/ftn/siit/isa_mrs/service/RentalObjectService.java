@@ -6,7 +6,6 @@ import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.InstructorDtos.RentalGradeD
 import rs.ac.uns.ftn.siit.isa_mrs.dto.PageDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.RentalObjectDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.RentalProfileDtos.ReviewDtos.ReviewDto;
-import rs.ac.uns.ftn.siit.isa_mrs.dto.SpecialOfferDto;
 import rs.ac.uns.ftn.siit.isa_mrs.model.RentalObject;
 import rs.ac.uns.ftn.siit.isa_mrs.model.RentalObjectOwner;
 import rs.ac.uns.ftn.siit.isa_mrs.model.Service;

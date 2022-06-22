@@ -80,7 +80,7 @@
 
           <div class="row ps-1" style="text-align: center;">
 <!--              <i><strong>{{ "Price: $" + this.rentalObject.price }}</strong></i>-->
-            <button :disabled="clientCantReserve || isOwner" class="w-100 btn" style="font-weight: 500; color: white;">
+            <button :disabled="clientCantReserve || isOwner || isVacationRentalOwner || isBoatOwner" class="w-100 btn" style="font-weight: 500; color: white;">
               <span class="h4">
                 <i><strong>{{ "Book: $" + this.rentalObject.price }}</strong></i>
               </span>
@@ -110,7 +110,7 @@
 
           <div v-if="isVacationRentalOwner" class="row">
             <div class="d-flex justify-content-center">
-              <router-link :to="'/vacationRentalOwner/specialOffer/' + this.$route.params.id" class="btn mt-3 me-1"><font-awesome-icon style="margin-right: 10px" icon="tag"></font-awesome-icon>Special Offer</router-link>
+              <router-link :to="'/vacationRentalOwner/specialOfferVacationRental/' + this.$route.params.id" class="btn mt-3 me-1"><font-awesome-icon style="margin-right: 10px" icon="tag"></font-awesome-icon>Special Offer</router-link>
             </div>
           </div>
 
@@ -123,7 +123,7 @@
 
           <div v-if="isBoatOwner" class="row">
             <div class="d-flex justify-content-center">
-              <router-link :to="'/boatOwner/specialOffer/' + this.$route.params.id" class="btn mt-3 me-1"><font-awesome-icon style="margin-right: 10px" icon="tag"></font-awesome-icon>Special Offer</router-link>
+              <router-link :to="'/boatOwner/specialOfferBoat/' + this.$route.params.id" class="btn mt-3 me-1"><font-awesome-icon style="margin-right: 10px" icon="tag"></font-awesome-icon>Special Offer</router-link>
             </div>
           </div>
 
