@@ -13,7 +13,7 @@
                 <div class="row justify-content-center mt-4">
                   <label class="ms-3">Period</label>
                   <div class="container p-0 m-0 text-center" style="max-width: 400px">
-                    <date-picker v-model="range" is-range mode="dateTime" is24hr :firstDayOfWeek=2>
+                    <date-picker :disabled-dates="excluded" v-model="date" mode="dateTime" is24hr :firstDayOfWeek=2>
                     </date-picker>
                   </div>
                 </div>
@@ -22,10 +22,7 @@
                   <label for="client">Client</label>
                   <div class="container p-0 m-0 text-center" style="max-width: 400px">
                     <select class="form-control" v-model="client" id="client">
-                      <option value="Client" selected="selected">Client</option>
-                      <option value="VacationRentalOwner">House Owner</option>
-                      <option value="BoatOwner">Boat Owner</option>
-                      <option value="Instructor">Fishing Instructor</option>
+                      <option value="{{client}}" v-for="(index, client) in clients" :key="index">{{client.name + " " + client.surname}}</option>
                     </select>
                     <p v-if='!clientIsSelected'>'Client' is a mandatory field.</p>
                   </div>
@@ -48,20 +45,43 @@
 
 <script>
 import {DatePicker} from "v-calendar";
+import axios from "axios";
+import store from "@/store";
 
 export default {
   name: "ReservationCreationPage",
   components: {DatePicker},
   data() {
    return {
-     range: {
-       start: null,
-       end: null
-     },
+     date: null,
+     excluded: [],
+     clients: [],
      client: null,
      dateIsSelected: true,
      clientIsSelected: true
    }
+  },
+  mounted() {
+    axios.get("/Reservations/instructorReservationLimits", {
+      headers: {
+        Authorization: "Bearer " + store.getters.access_token,
+      },
+      params: {
+        id: this.$route.params.id
+      }
+    })
+    .then((response) => {
+      const dto = response.data;
+      this.excluded.push({start:new Date(dto.ownerInitDate), end:new Date(dto.ownerTermDate)});
+      this.excluded.push({start:null, end:new Date()});
+      this.excluded.push({start:new Date(dto.rentalTermDate), end:null});
+      for (let i = 0; i < dto.reservationsPeriods.length; i++) {
+        this.excluded.push({start:new Date(dto.reservationsPeriods[i].start), end:new Date(dto.reservationsPeriods[i].end)})
+      }
+      console.log(response.data.clients);
+      this.clients = response.data.clients;
+    })
+    .catch()
   }
 }
 </script>
