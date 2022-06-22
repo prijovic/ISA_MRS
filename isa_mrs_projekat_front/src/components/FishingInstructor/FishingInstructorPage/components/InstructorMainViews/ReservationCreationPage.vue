@@ -11,10 +11,11 @@
               <div class="col-6">
 
                 <div class="row justify-content-center mt-4">
-                  <label class="ms-3">Period</label>
+                  <label class="ms-3">Date</label>
                   <div class="container p-0 m-0 text-center" style="max-width: 400px">
                     <date-picker :disabled-dates="excluded" v-model="date" mode="dateTime" is24hr :firstDayOfWeek=2>
                     </date-picker>
+                    <p v-if='!dateIsSelected'>'Date' is a mandatory field.</p>
                   </div>
                 </div>
 
@@ -22,7 +23,7 @@
                   <label for="client">Client</label>
                   <div class="container p-0 m-0 text-center" style="max-width: 400px">
                     <select class="form-control" v-model="client" id="client">
-                      <option value="{{client}}" v-for="(index, client) in clients" :key="index">{{client.name + " " + client.surname}}</option>
+                      <option :value="clients[client]" v-for="(index, client) in clients" :key="index">{{clients[client].name + " " + clients[client].surname}}</option>
                     </select>
                     <p v-if='!clientIsSelected'>'Client' is a mandatory field.</p>
                   </div>
@@ -37,7 +38,7 @@
               <div class="col-3"></div>
               <div class="d-flex pt-3 justify-content-center">
                 <router-link to="/fishingInstructor/adventures" class="btn btn-red mt-3 me-1">Cancel</router-link>
-                <button type="button" class="btn mt-3" @click.prevent="submit">Submit</button>
+                <button type="button" class="btn mt-3" @click.prevent="book">Submit</button>
               </div>
             </div>
           </div>
@@ -58,7 +59,7 @@ export default {
   components: {DatePicker},
   data() {
    return {
-     date: null,
+     date: new Date(),
      excluded: [],
      clients: [],
      client: null,
@@ -84,7 +85,11 @@ export default {
       for (let i = 0; i < dto.reservationsPeriods.length; i++) {
         this.excluded.push({start:new Date(dto.reservationsPeriods[i].start), end:new Date(dto.reservationsPeriods[i].end)})
       }
-      this.clients = response.data.clients;
+      console.log(dto);
+      response.data.clients.forEach(client => {
+        this.clients.push(client);
+      });
+      console.log(this.clients)
     })
     .catch()
   },
@@ -94,14 +99,19 @@ export default {
         this.dateIsSelected = false;
         return false;
       }
+      this.dateIsSelected = true
       if (this.client === null) {
         this.clientIsSelected = false;
         return false;
       }
+      this.clientIsSelected = true;
+      return true;
     },
     book() {
       if (this.isDataEntered()) {
-        axios.post("/Reservations/bookForClient", {clientId: this.clientId, rentalId: this.$route.params.id, initDate: this.date, isEquipmentNeeded: this.isEquipmentNeeded}, {
+        console.log(this.date);
+        const dto = {clientId: this.client.id, rentalId: this.$route.params.id, initDate: this.date, isEquipmentNeeded: this.isEquipmentNeeded};
+        axios.post("/Reservations/bookForClient", dto, {
           headers: {
             Authorization: "Bearer " + store.getters.access_token,
           }

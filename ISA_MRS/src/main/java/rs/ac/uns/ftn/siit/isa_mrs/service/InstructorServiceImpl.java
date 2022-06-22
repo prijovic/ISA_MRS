@@ -33,6 +33,7 @@ import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.UserType;
 import rs.ac.uns.ftn.siit.isa_mrs.repository.IncomeRepo;
 import rs.ac.uns.ftn.siit.isa_mrs.repository.RentalObjectOwnerRepo;
 import rs.ac.uns.ftn.siit.isa_mrs.repository.RentalObjectRepo;
+import rs.ac.uns.ftn.siit.isa_mrs.repository.ReservationRepo;
 import rs.ac.uns.ftn.siit.isa_mrs.security.JwtDecoder;
 
 import java.time.LocalDateTime;
@@ -49,6 +50,7 @@ public class InstructorServiceImpl implements InstructorService{
     private final IncomeRepo incomeRepo;
     private final ModelMapper modelMapper;
     private final JwtDecoder jwtDecoder;
+    private final ReservationRepo reservationRepo;
 
     @Override
     public ResponseEntity<Collection<InstructorReservationDto>> getAllInstructrorReservations(String token) {
@@ -256,11 +258,13 @@ public class InstructorServiceImpl implements InstructorService{
             Collection<TimePeriodDto> timePeriodDtos = new ArrayList<>();
             Collection<ClientDto> clients = new ArrayList<>();
             rentalObject.get().getReservations().forEach(reservation -> {
+                timePeriodDtos.add(new TimePeriodDto(reservation.getInitDate(), reservation.getTermDate()));
+            });
+            reservationRepo.findAllByRentalObjectRentalObjectOwner(instructor).forEach(reservation -> {
                 LocalDateTime now = LocalDateTime.now();
                 if (reservation.getInitDate().isBefore(now) && reservation.getTermDate().isAfter(now)) {
                     clients.add(modelMapper.map(reservation.getClient(), ClientDto.class));
                 }
-                timePeriodDtos.add(new TimePeriodDto(reservation.getInitDate(), reservation.getTermDate()));
             });
             result.setClients(clients);
             result.setReservationsPeriods(timePeriodDtos);

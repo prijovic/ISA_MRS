@@ -519,5 +519,5 @@ INSERT INTO income (id, fee, time_stamp, value, reservation_id) VALUES (25, 10, 
 INSERT INTO service (id, name, special_offer_id) VALUES (4, 'Fish baits', 3);
 INSERT INTO service (id, name, special_offer_id) VALUES (5, 'Protective geer', 3);
 
-INSERT INTO reservation (id, price, equipment_required, people, time_stamp, client_id, rental_object_id, cancelled, init_date, term_date, special_offer_id) VALUES (26, 80, false, 1, '2022-06-19 15:26:41', 3, 18, false, '2022-06-22 12:00:00', '2022-06-22 18:30:00', 3);
+INSERT INTO reservation (id, price, equipment_required, people, time_stamp, client_id, rental_object_id, cancelled, init_date, term_date) VALUES (26, 80, false, 1, '2022-06-19 15:26:41', 3, 18, false, '2022-06-22 12:00:00', '2022-06-22 18:30:00');
 INSERT INTO income (id, fee, time_stamp, value, reservation_id) VALUES (26, 10, '2022-06-19 15:26:41', 8, 26);

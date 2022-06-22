@@ -331,8 +331,8 @@ public class ReservationServiceImpl implements ReservationService {
             reservation.setEquipmentRequired(dto.isEquipmentNeeded());
             LocalDateTime time = LocalDateTime.now();
             reservation.setTimeStamp(time);
-            reservation.setInitDate(dto.getInitDate());
-            reservation.setTermDate(dto.getInitDate().plusMinutes((long) (((Adventure)rental).getDuration() * 60)));
+            reservation.setInitDate(dto.getInitDate().plusHours(2));
+            reservation.setTermDate(reservation.getInitDate().plusMinutes((long) (((Adventure)rental).getDuration() * 60)));
             reservation.setRentalObject(rental);
             reservation.setClient(client);
             reservationRepo.save(reservation);
