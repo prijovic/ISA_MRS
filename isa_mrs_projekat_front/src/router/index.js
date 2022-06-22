@@ -7,9 +7,7 @@ import AccountDeletionForm from "@/components/GeneralComponents/UserAccountForms
 import TheUnregisteredUserSidebar from "@/components/UnregisteredUser/TheUnregisteredUserSidebar";
 import store from "@/store";
 import TheFishingInstructorSidebar from "@/components/FishingInstructor/FishingInstructorPage/components/TheFishingInstructorSidebar";
-import OwnerContentPage from "@/components/VacationRentalOwner/VacationRentalOwnerPage/components/OwnerContentPage/OwnerContentPage";
 import TheOwnerSidebar from "@/components/VacationRentalOwner/VacationRentalOwnerPage/components/TheOwnerSidebar/TheOwnerSidebar";
-import BoatOwnerContentPage from "@/components/BoatOwner/BoatOwnerPage/components/BoatOwnerMainView/BoatOwnerContentPage";
 import TheBoatOwnerSidebar from "@/components/BoatOwner/BoatOwnerPage/components/TheBoatOwnerSidebar/TheBoatOwnerSidebar";
 import AdminRequestsView from "@/components/Administrator/AdminPage/components/AdminMainViews/AdminRequestsView/AdminRequestsView";
 import InitView from "@/components/UnregisteredUser/InitView";
@@ -52,6 +50,13 @@ import InstructorBusinessReports
     from "@/components/FishingInstructor/FishingInstructorPage/components/InstructorMainViews/InstructorBusinessReports";
 import SpecialOfferCreationPage
     from "@/components/FishingInstructor/FishingInstructorPage/components/InstructorMainViews/SpecialOfferCreationPage";
+import VacationRentalOwnerProfilPage
+    from "@/components/VacationRentalOwner/VacationRentalOwnerPage/components/VacationRentalOwnerProfile/VacationRentalOwnerProfilPage";
+import VacationRentalAdditionForm
+    from "@/components/VacationRentalOwner/VacationRentalOwnerPage/components/VacationRentalAdditionForm";
+import BoatAdditionForm from "@/components/BoatOwner/BoatOwnerPage/components/BoatAdditionForm";
+import BoatOwnerProfilePage
+    from "@/components/BoatOwner/BoatOwnerPage/components/BoatOwnerMainView/BoatOwnerProfile/BoatOwnerProfilePage";
 //import InstructorCardView from "@/components/UnregisteredUser/components/InstructorCardView";
 
 
@@ -416,7 +421,7 @@ const routes = [
         path: "/vacationRentalOwner",
         name: "VacationRentalOwnerHome",
         components: {
-            default: OwnerContentPage,
+            default: InstructorReservations,
             sidebar: TheOwnerSidebar,
         },
         meta: {
@@ -457,10 +462,76 @@ const routes = [
         }
     },
     {
+        path: "/vacationRentalOwner/newCottage",
+        name: "VacationRentalAdding",
+        components: {
+            default: VacationRentalAdditionForm,
+            sidebar: TheOwnerSidebar
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
+        path: "/vacationRentalOwner/updateVacationRental/:id",
+        name: "VacationRentalUpdate",
+        components: {
+            default: VacationRentalAdditionForm,
+            sidebar: TheOwnerSidebar
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
+        path: "/vacationRentalOwner/profile",
+        name: "VacationRentalOwnerView",
+        components: {
+            default: VacationRentalOwnerProfilPage,
+            sidebar: TheOwnerSidebar,
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
+        path: "/vacationRentalOwner/profile/:id",
+        name: "VacationRentalOwnerProfileUpdate",
+        components: {
+            default: RegistrationPage,
+            sidebar: TheOwnerSidebar,
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
+        path: "/vacationRentalOwner/specialOffer/:id",
+        name: "VacationRentalOwnerSpecialOffer",
+        components: {
+            default: SpecialOfferCreationPage,
+            sidebar: TheOwnerSidebar,
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
+        path: "/vacationRentalOwner/finances",
+        name: "VacationRentalOwnerReports",
+        components: {
+            default: InstructorBusinessReports,
+            sidebar: TheOwnerSidebar,
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
         path: "/boatOwner",
         name: "BoatOwnerHome",
         components: {
-            default: BoatOwnerContentPage,
+            default: InstructorReservations,
             sidebar: TheBoatOwnerSidebar,
         },
         meta: {
@@ -483,6 +554,72 @@ const routes = [
         name: "ViewBoats",
         components: {
             default: AllBoatsView,
+            sidebar: TheBoatOwnerSidebar,
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
+        path: "/boatOwner/newBoat",
+        name: "BoatAdding",
+        components: {
+            default: BoatAdditionForm,
+            sidebar: TheBoatOwnerSidebar
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
+        path: "/boatOwner/updateBoat/:id",
+        name: "BoatUpdate",
+        components: {
+            default: BoatAdditionForm,
+            sidebar: TheBoatOwnerSidebar
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
+        path: "/boatOwner/profile",
+        name: "BoatOwnerView",
+        components: {
+            default: BoatOwnerProfilePage,
+            sidebar: TheBoatOwnerSidebar,
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
+        path: "/boatOwner/profile/:id",
+        name: "boatOwnerProfileUpdate",
+        components: {
+            default: RegistrationPage,
+            sidebar: TheBoatOwnerSidebar,
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
+        path: "/boatOwner/specialOffer/:id",
+        name: "BoatOwnerSpecialOffer",
+        components: {
+            default: SpecialOfferCreationPage,
+            sidebar: TheBoatOwnerSidebar,
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
+        path: "/boatOwner/finances",
+        name: "BoatOwnerReports",
+        components: {
+            default: InstructorBusinessReports,
             sidebar: TheBoatOwnerSidebar,
         },
         meta: {

@@ -11,7 +11,7 @@
                 <img v-else class="card-profile-img" src="../../../../Images/vacationRentalNoProfilePic.png" alt=""/>
                 <div class="d-flex justify-content-center">
                   <p class="h3">{{ fullName }}</p>
-                  <router-link :to="'/vacationRentalOwner/editPersonalData/' + this.$route.params.id" class="btn btn-default ms-2" style="height: fit-content;">
+                  <router-link :to="'/vacationRentalOwner/profile/' + this.vacationRentalOwner.id" class="btn btn-default ms-2" style="height: fit-content;">
                     <font-awesome-icon class="h5" icon="pencil" style="color: #008970"></font-awesome-icon>
                   </router-link>
                 </div>

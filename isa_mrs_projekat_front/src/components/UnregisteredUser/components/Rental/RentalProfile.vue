@@ -99,6 +99,33 @@
               <router-link :to="'/fishingInstructor/specialOffer/' + this.$route.params.id" class="btn mt-3 me-1"><font-awesome-icon style="margin-right: 10px" icon="tag"></font-awesome-icon>Special Offer</router-link>
             </div>
           </div>
+
+          <div v-if="isVacationRentalOwner" class="row">
+            <div class="d-flex justify-content-center">
+              <button class="btn btn-red mt-3 me-1" :class="!this.rentalObject.isDeletable ? 'disabled':''" ><font-awesome-icon style="margin-right: 10px" icon="trash"></font-awesome-icon>Delete</button>
+              <router-link :to="'/vacationRentalOwner/updateVacationRental/' + this.$route.params.id" class="btn btn-yellow mt-3 me-1" :class="!this.rentalObject.isDeletable ? 'disabled':''"><font-awesome-icon style="margin-right: 10px" icon="pencil"></font-awesome-icon>Edit</router-link>
+            </div>
+          </div>
+
+          <div v-if="isVacationRentalOwner" class="row">
+            <div class="d-flex justify-content-center">
+              <router-link :to="'/vacationRentalOwner/specialOffer/' + this.$route.params.id" class="btn mt-3 me-1"><font-awesome-icon style="margin-right: 10px" icon="tag"></font-awesome-icon>Special Offer</router-link>
+            </div>
+          </div>
+
+          <div v-if="isBoatOwner" class="row">
+            <div class="d-flex justify-content-center">
+              <button class="btn btn-red mt-3 me-1" :class="!this.rentalObject.isDeletable ? 'disabled':''" ><font-awesome-icon style="margin-right: 10px" icon="trash"></font-awesome-icon>Delete</button>
+              <router-link :to="'/boatOwner/updateBoat/' + this.$route.params.id" class="btn btn-yellow mt-3 me-1" :class="!this.rentalObject.isDeletable ? 'disabled':''"><font-awesome-icon style="margin-right: 10px" icon="pencil"></font-awesome-icon>Edit</router-link>
+            </div>
+          </div>
+
+          <div v-if="isBoatOwner" class="row">
+            <div class="d-flex justify-content-center">
+              <router-link :to="'/boatOwner/specialOffer/' + this.$route.params.id" class="btn mt-3 me-1"><font-awesome-icon style="margin-right: 10px" icon="tag"></font-awesome-icon>Special Offer</router-link>
+            </div>
+          </div>
+
         </div>
       </div>
     </div>
@@ -315,6 +342,12 @@ export default {
     },
     isOwner() {
       return this.$store.getters.user === "fishingInstructor";
+    },
+    isVacationRentalOwner() {
+      return this.$store.getters.user === "vacationRentalOwner";
+    },
+    isBoatOwner() {
+      return this.$store.getters.user === "boatOwner";
     },
     buttonText() {
       return this.isUserSubscribed ? "Subscribed!" : "Subscribe";
