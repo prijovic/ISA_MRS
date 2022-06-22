@@ -99,6 +99,10 @@ public class SpecialOfferServiceImpl implements SpecialOfferService {
                 service.setSpecialOffer(specialOffer);
                 serviceRepo.save(service);
             });
+            Collection<Client> subscribers = rentalObject.get().getSubscribers();
+            for (Client client: subscribers) {
+                emailSenderService.sendNewOfferEmail(client.getEmail(), specialOffer.getRentalObject().getName());
+            }
             return new ResponseEntity<>(modelMapper.map(rentalObject, RentalObjectDto.class), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -133,6 +137,10 @@ public class SpecialOfferServiceImpl implements SpecialOfferService {
                 service.setSpecialOffer(specialOffer);
                 serviceRepo.save(service);
             });
+            Collection<Client> subscribers = rentalObject.get().getSubscribers();
+            for (Client client: subscribers) {
+                emailSenderService.sendNewOfferEmail(client.getEmail(), specialOffer.getRentalObject().getName());
+            }
             return new ResponseEntity<>(modelMapper.map(rentalObject, RentalObjectDto.class), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
