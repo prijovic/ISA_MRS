@@ -44,7 +44,7 @@
             </div>
           </div>
 
-          <div v-if="isVacationRental" class="row">
+          <div v-if="isVacationRental && !isVacationRentalOwner" class="row">
             <div class="col d-flex justify-content-center">
               <p class="h3">
                 <font-awesome-icon class="me-1" icon="clock"></font-awesome-icon>{{ "Check in:  " +
@@ -111,6 +111,7 @@
           <div v-if="isVacationRentalOwner" class="row">
             <div class="d-flex justify-content-center">
               <router-link :to="'/vacationRentalOwner/specialOfferVacationRental/' + this.$route.params.id" class="btn mt-3 me-1"><font-awesome-icon style="margin-right: 10px" icon="tag"></font-awesome-icon>Special Offer</router-link>
+              <router-link :to="'/vacationRentalOwner/reservation/' + this.$route.params.id" class="btn mt-3 me-1"><font-awesome-icon style="margin-right: 10px" icon="bookmark"></font-awesome-icon>Book</router-link>
             </div>
           </div>
 
@@ -124,6 +125,7 @@
           <div v-if="isBoatOwner" class="row">
             <div class="d-flex justify-content-center">
               <router-link :to="'/boatOwner/specialOfferBoat/' + this.$route.params.id" class="btn mt-3 me-1"><font-awesome-icon style="margin-right: 10px" icon="tag"></font-awesome-icon>Special Offer</router-link>
+              <router-link :to="'/boatOwner/reservation/' + this.$route.params.id" class="btn mt-3 me-1"><font-awesome-icon style="margin-right: 10px" icon="bookmark"></font-awesome-icon>Book</router-link>
             </div>
           </div>
 

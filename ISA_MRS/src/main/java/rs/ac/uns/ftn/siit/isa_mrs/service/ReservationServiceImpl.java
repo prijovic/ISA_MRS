@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.InstructorReservationDto;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.OwnerReservationDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.ReportDtos.AddInstructorReportDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.ReportDtos.AddReportDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.ReviewDtos.AddInstructorReviewDto;
@@ -333,6 +334,47 @@ public class ReservationServiceImpl implements ReservationService {
             reservation.setTimeStamp(time);
             reservation.setInitDate(dto.getInitDate().plusHours(2));
             reservation.setTermDate(reservation.getInitDate().plusMinutes((long) (((Adventure)rental).getDuration() * 60)));
+            reservation.setRentalObject(rental);
+            reservation.setClient(client);
+            reservationRepo.save(reservation);
+            rental.getReservations().add(reservation);
+            rentalObjectRepo.save(rental);
+            client.getReservations().add(reservation);
+            clientRepo.save(client);
+            Optional<ProfitFee> proFee = profitFeeRepo.findProfitFeeByRentalObjectType(rental.getRentalObjectType());
+            if(proFee.isPresent()) {
+                ProfitFee profitFee = proFee.get();
+                Income income = new Income();
+                income.setTimeStamp(time);
+                income.setFee(profitFee.getValue());
+                income.setValue(rental.getPrice()/100 * profitFee.getValue());
+                income.setReservation(reservation);
+                incomeRepo.save(income);
+                emailSenderService.sendSuccessfulReservationEmail(reservation);
+            }
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    public ResponseEntity<Void> ownerBookForClient(OwnerReservationDto dto) {
+        try {
+            Optional<Client> cli = clientRepo.findById(dto.getClientId());
+            Optional<RentalObject> rentalObject = rentalObjectRepo.findById(dto.getRentalId());
+            if(cli.isEmpty() || rentalObject.isEmpty()) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            Client client = cli.get();
+            RentalObject rental = rentalObject.get();
+            Reservation reservation = new Reservation();
+            reservation.setPrice(rental.getPrice());
+            reservation.setPeople(rental.getCapacity());
+            reservation.setCancelled(false);
+            reservation.setEquipmentRequired(dto.isEquipmentNeeded());
+            LocalDateTime time = LocalDateTime.now();
+            reservation.setTimeStamp(time);
+            reservation.setInitDate(dto.getInitDate().plusHours(2));
+            reservation.setTermDate(dto.getTermDate().plusHours(2));
             reservation.setRentalObject(rental);
             reservation.setClient(client);
             reservationRepo.save(reservation);

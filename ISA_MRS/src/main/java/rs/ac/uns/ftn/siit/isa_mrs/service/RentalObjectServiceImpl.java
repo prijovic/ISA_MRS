@@ -14,7 +14,10 @@ import org.springframework.stereotype.Service;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.AdminDtos.GraphDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.AdminDtos.GraphNodeDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.InstructorDtos.RentalGradeDto;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.InstructorDtos.TimePeriodDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.RentalProfileDtos.SpecialOfferDto;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.VacationRentalOwnerDtos.ReservationRentalLimitsDto;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.ClientDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.PageDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.RentalObjectDto;
 import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.RentalObjectType;
@@ -274,6 +277,44 @@ public class RentalObjectServiceImpl implements RentalObjectService {
             }
         }
         return graph;
+    }
+
+    @Override
+    public ResponseEntity<ReservationRentalLimitsDto> getReservationRentalLimits(long rentalId, String token) {
+        try{
+            JwtDecoder.DecodedToken decodedToken;
+            try {
+                decodedToken = jwtDecoder.decodeToken(token);
+            } catch (Exception e) {
+                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            }
+            Optional<RentalObjectOwner> owner = rentalObjectOwnerRepo.findByEmail(decodedToken.getEmail());
+            if(owner.isEmpty()) return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+            RentalObjectOwner owner1 = owner.get();
+            ReservationRentalLimitsDto result = new ReservationRentalLimitsDto();
+            Optional<RentalObject> rentalObject = rentalObjectRepo.findById(rentalId);
+            if(rentalObject.isEmpty()) return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+            result.setInitDate(rentalObject.get().getInitDate());
+            result.setTermDate(rentalObject.get().getTermDate());
+            Collection<TimePeriodDto> timePeriodDtos = new ArrayList<>();
+            Collection<ClientDto> clients = new ArrayList<>();
+            rentalObject.get().getReservations().forEach(reservation -> {
+                timePeriodDtos.add(new TimePeriodDto(reservation.getInitDate(), reservation.getTermDate()));
+            });
+            reservationRepo.findAllByRentalObjectRentalObjectOwner(owner1).forEach(reservation -> {
+                LocalDateTime now = LocalDateTime.now();
+                if (reservation.getInitDate().isBefore(now) && reservation.getTermDate().isAfter(now)) {
+                    clients.add(modelMapper.map(reservation.getClient(), ClientDto.class));
+                }
+            });
+            result.setClients(clients);
+            result.setReservationsPeriods(timePeriodDtos);
+            return new ResponseEntity<>(result, HttpStatus.OK);
+        }
+        catch (Exception e) {
+            log.error(e.getMessage());
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @Override

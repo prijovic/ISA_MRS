@@ -2,6 +2,7 @@ package rs.ac.uns.ftn.siit.isa_mrs.service;
 
 import org.springframework.http.ResponseEntity;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.InstructorReservationDto;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.OwnerReservationDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.ReportDtos.AddInstructorReportDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.ReportDtos.AddReportDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.ReviewDtos.AddInstructorReviewDto;
@@ -28,4 +29,5 @@ public interface ReservationService {
     ResponseEntity<Void> addInstructorReport(AddInstructorReportDto aird, String token);
 
     ResponseEntity<Void> bookForClient(InstructorReservationDto dto);
+    ResponseEntity<Void> ownerBookForClient(OwnerReservationDto dto);
 }

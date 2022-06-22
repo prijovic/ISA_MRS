@@ -7,8 +7,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.BoatOwnerDtos.BoatOwnerReservationDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.InstructorDtos.InstructorReservationsDtos.InstructorReservationDto;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.VacationRentalOwnerDtos.ReservationRentalLimitsDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.VacationRentalOwnerDtos.VacationRentalOwnerReservationDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.InstructorDtos.ReservationLimitsDto;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.OwnerReservationDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.ReportDtos.AddInstructorReportDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.ReportDtos.AddReportDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.ReservationDtos.ReserveSpecialOfferDto;
@@ -17,6 +19,7 @@ import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.ReviewDtos.AddReviewDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.ReservationDto;
 import rs.ac.uns.ftn.siit.isa_mrs.service.InstructorService;
 import rs.ac.uns.ftn.siit.isa_mrs.service.RentalObjectOwnerService;
+import rs.ac.uns.ftn.siit.isa_mrs.service.RentalObjectService;
 import rs.ac.uns.ftn.siit.isa_mrs.service.ReservationService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -33,6 +36,7 @@ public class ReservationController {
     private final ReservationService reservationService;
     private final InstructorService instructorService;
     private final RentalObjectOwnerService rentalObjectOwnerService;
+    private final RentalObjectService rentalObjectService;
 
     @PostMapping("/bookSpecialOffer")
     public ResponseEntity<Void> bookSpecialOffer(@RequestBody ReserveSpecialOfferDto rsod, HttpServletRequest request) {
@@ -92,5 +96,15 @@ public class ReservationController {
     @GetMapping("/getVacationRentalOwnerReservations")
     public ResponseEntity<Collection<VacationRentalOwnerReservationDto>> getAllVacationRentalOwnerReservations(HttpServletRequest request) {
         return rentalObjectOwnerService.getAllVacationRentalOwnerReservations(request.getHeader(AUTHORIZATION));
+    }
+
+    @GetMapping("/ownerReservationLimits")
+    public ResponseEntity<ReservationRentalLimitsDto> getReservationRentalLimits(@RequestParam long id, HttpServletRequest request) {
+        return rentalObjectService.getReservationRentalLimits(id, request.getHeader(AUTHORIZATION));
+    }
+
+    @PostMapping("/ownerBookForClient")
+    public ResponseEntity<Void> ownerBookForClient(@RequestBody OwnerReservationDto dto) {
+        return reservationService.ownerBookForClient(dto);
     }
 }

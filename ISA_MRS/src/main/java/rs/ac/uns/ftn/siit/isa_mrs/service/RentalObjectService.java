@@ -3,6 +3,7 @@ package rs.ac.uns.ftn.siit.isa_mrs.service;
 import org.springframework.http.ResponseEntity;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.AdminDtos.GraphDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.InstructorDtos.RentalGradeDto;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.VacationRentalOwnerDtos.ReservationRentalLimitsDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.PageDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.RentalObjectDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.RentalProfileDtos.ReviewDtos.ReviewDto;
@@ -27,4 +28,5 @@ public interface RentalObjectService {
     GraphDto getLastYearRentalReservationsGraph(String token);
     GraphDto getLastMonthRentalReservationsGraph(String token);
     GraphDto getLastWeekRentalReservationsGraph(String token);
+    ResponseEntity<ReservationRentalLimitsDto> getReservationRentalLimits(long rentalId, String token);
 }

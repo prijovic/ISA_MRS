@@ -62,6 +62,8 @@ import ReservationCreationPage
 import VacationRentalSpecialOffer
     from "@/components/VacationRentalOwner/VacationRentalOwnerPage/components/VacationRentalSpecialOffer";
 import BoatSpecialOffer from "@/components/BoatOwner/BoatOwnerPage/components/BoatOwnerMainView/BoatSpecialOffer";
+import OwnerReservationCreationPage
+    from "@/components/BoatOwner/BoatOwnerPage/components/BoatOwnerMainView/OwnerReservationCreationPage";
 //import InstructorCardView from "@/components/UnregisteredUser/components/InstructorCardView";
 
 
@@ -544,6 +546,17 @@ const routes = [
         }
     },
     {
+        path: "/vacationRentalOwner/reservation/:id",
+        name: "VacationRentalOwnerReservationCreation",
+        components: {
+            default: OwnerReservationCreationPage,
+            sidebar: TheOwnerSidebar,
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
         path: "/vacationRentalOwner/finances",
         name: "VacationRentalOwnerReports",
         components: {
@@ -647,6 +660,17 @@ const routes = [
         name: "BoatOwnerSpecialOffer",
         components: {
             default: BoatSpecialOffer,
+            sidebar: TheBoatOwnerSidebar,
+        },
+        meta: {
+            public: false
+        }
+    },
+    {
+        path: "/boatOwner/reservation/:id",
+        name: "BoatOwnerReservationCreation",
+        components: {
+            default: OwnerReservationCreationPage,
             sidebar: TheBoatOwnerSidebar,
         },
         meta: {
