@@ -469,11 +469,11 @@ INSERT INTO reservation (id, price, equipment_required, people, time_stamp, clie
 INSERT INTO income (id, fee, time_stamp, value, reservation_id) VALUES (17, 10, '2022-07-01 01:22:14', 8.5, 17);
 INSERT INTO reservation (id, price, equipment_required, people, time_stamp, client_id, rental_object_id, cancelled, init_date, term_date) VALUES (18, 75, true, 1, '2022-05-30 03:15:44', 3, 19, false, '2022-06-06 15:00:00', '2022-06-06 16:30:00');
 INSERT INTO income (id, fee, time_stamp, value, reservation_id) VALUES (18, 10, '2022-05-30 03:15:44', 7.5, 18);
-INSERT INTO report (id, comment, author_id, status, showed_up, reservation_id, time_stamp) VALUES (2, '', 2, 0, false, 18, '2022-06-07 11:03:00');
+-- INSERT INTO report (id, comment, author_id, status, showed_up, reservation_id, time_stamp) VALUES (2, '', 2, 1, false, 18, '2022-06-07 11:03:00');
 INSERT INTO reservation (id, price, equipment_required, people, time_stamp, client_id, rental_object_id, cancelled, init_date, term_date) VALUES (19, 88, true, 1, '2022-06-01 12:05:50', 3, 20, false, '2022-06-07 17:00:00', '2022-06-07 21:00:00');
 INSERT INTO income (id, fee, time_stamp, value, reservation_id) VALUES (19, 10, '2022-06-01 12:05:50', 8.8, 19);
-INSERT INTO review (id, status, comment, grade, review_type, time_stamp, author_id, reservation_id) VALUES (33, 1, 'Adventure went quite well. Client was great. They were vwry cooperative. Overall experience is good. ', 5, 2, '2022-01-09 8:06:00', 2, 19);
-INSERT INTO report (id, comment, author_id, status, showed_up, reservation_id, time_stamp) VALUES (3, 'Client tried to drown me.', 2, 0, true, 19, '2022-01-10 12:00:00');
+INSERT INTO review (id, status, comment, grade, review_type, time_stamp, author_id, reservation_id) VALUES (33, 1, 'Adventure went quite well. Client was great. They were very cooperative. Overall experience is good. ', 5, 2, '2022-01-09 8:06:00', 2, 19);
+INSERT INTO report (id, comment, author_id, status, showed_up, reservation_id, time_stamp) VALUES (3, 'Client tried to drown me.', 2, 0, true, 19, '2022-06-10 12:00:00');
 INSERT INTO reservation (id, price, equipment_required, people, time_stamp, client_id, rental_object_id, cancelled, init_date, term_date) VALUES (20, 88, false, 1, '2022-06-01 12:05:50', 3, 20, false, '2022-06-25 17:00:00', '2022-06-25 21:00:00');
 INSERT INTO reservation_additional_services (additional_service_id, reservation_id) VALUES (10, 20);
 INSERT INTO reservation_additional_services (additional_service_id, reservation_id) VALUES (11, 20);
@@ -519,5 +519,5 @@ INSERT INTO income (id, fee, time_stamp, value, reservation_id) VALUES (25, 10, 
 INSERT INTO service (id, name, special_offer_id) VALUES (4, 'Fish baits', 3);
 INSERT INTO service (id, name, special_offer_id) VALUES (5, 'Protective geer', 3);
 
-INSERT INTO reservation (id, price, equipment_required, people, time_stamp, client_id, rental_object_id, cancelled, init_date, term_date, special_offer_id) VALUES (26, 80, false, 1, '2022-06-19 15:26:41', 3, 18, false, '2022-06-22 12:00:00', '2022-06-22 18:30:00', 3);
+INSERT INTO reservation (id, price, equipment_required, people, time_stamp, client_id, rental_object_id, cancelled, init_date, term_date) VALUES (26, 80, false, 1, '2022-06-19 15:26:41', 3, 18, false, '2022-06-22 12:00:00', '2022-06-22 18:30:00');
 INSERT INTO income (id, fee, time_stamp, value, reservation_id) VALUES (26, 10, '2022-06-19 15:26:41', 8, 26);
