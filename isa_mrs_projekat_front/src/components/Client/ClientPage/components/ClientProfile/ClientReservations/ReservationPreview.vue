@@ -8,14 +8,30 @@
           <div class="row text-center pb-0 mb-0" style="border-bottom: 1px solid lightgray;">
             <h1 class="modal-title pb-1" style="color: #008970; font-weight: 700;">Receipt</h1>
           </div>
-          <div class="row my-0 py-0 " v-for="(service, i) in services" :key="i">
-            <div class="col-md-9">
+
+          <div v-if="hasSpecialOffer" class="p-0 m-0">
+            <div class="row my-0 py-0 " v-for="(service, i) in specialOffer.includedServices" :key="i">
+              <div class="col-md-9">
                 <p class="h5">{{ service.name }}</p>
-            </div>
-            <div class="col-md-3 align-items-end" style="border-left: 1px solid lightgray;">
-              <p class="h5" style="font-weight: 800;">${{ service.price }}</p>
+              </div>
+              <div class="col-md-3 align-items-end" style="border-left: 1px solid lightgray;">
+                <p class="h5">Free</p>
+              </div>
             </div>
           </div>
+
+          <div v-else class="p-0 m-0">
+            <div class="row my-0 py-0 " v-for="(service, i) in services" :key="i">
+              <div class="col-md-9">
+                <p class="h5">{{ service.name }}</p>
+              </div>
+              <div class="col-md-3 align-items-end" style="border-left: 1px solid lightgray;">
+                <p class="h5" style="font-weight: 800;">${{ service.price }}</p>
+              </div>
+            </div>
+          </div>
+
+
           <div class="row my-0 py-0" style="border-top: 1px solid lightgray;">
             <div class="col-md-9">
               <p class="h5">Renting period:</p>
@@ -40,6 +56,16 @@
               <p class="h5" style="font-weight: 800;">${{ calculateTotal }}</p>
             </div>
           </div>
+
+          <div v-if="hasSpecialOffer" class="row my-0 py-0" style="border-bottom: 1px solid lightgray;">
+            <div class="col-md-9">
+              <p class="h5">Discount:</p>
+            </div>
+            <div class="col-md-3 align-items-end" style="border-left: 1px solid lightgray;">
+              <p class="h5" style="font-weight: 800;">-{{ specialOffer.discount }}%</p>
+            </div>
+          </div>
+
           <div class="row my-0 py-0" style="color:#008970; font-weight: 700;">
             <div class="col-md-9" style="text-align: right;">
               <p class="h3"><strong>Total:</strong></p>
@@ -60,10 +86,13 @@
 <script>
 export default {
   name: "ReservationPreview",
-  props: ["services", "days", "price", "total", "id"],
+  props: ["services", "days", "price", "total", "id", "specialOffer"],
   computed: {
     calculateTotal() {
       return this.days*this.price;
+    },
+    hasSpecialOffer() {
+      return this.specialOffer !== null;
     }
   },
   mounted() {

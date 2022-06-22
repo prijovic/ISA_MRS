@@ -17,16 +17,14 @@ import rs.ac.uns.ftn.siit.isa_mrs.dto.BoatDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.AddBoatDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.AddVacationRentalDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.RentalPhotosDto;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.SpecialOfferDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.SubscribingDtos.SubscriptionDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.PageDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.VacationRentalDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.*;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.IdListWrapperClass;
-import rs.ac.uns.ftn.siit.isa_mrs.model.Service;
-import rs.ac.uns.ftn.siit.isa_mrs.service.AdventureService;
-import rs.ac.uns.ftn.siit.isa_mrs.service.BoatService;
-import rs.ac.uns.ftn.siit.isa_mrs.service.RentalObjectService;
-import rs.ac.uns.ftn.siit.isa_mrs.service.VacationRentalService;
+import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.UserType;
+import rs.ac.uns.ftn.siit.isa_mrs.service.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
@@ -46,6 +44,7 @@ public class RentalObjectController {
     private final VacationRentalService vacationRentalService;
     private final BoatService boatService;
     private final AdventureService adventureService;
+    private final SpecialOfferService specialOfferService;
 
     @GetMapping("/getRentalObjectsPage")
     public ResponseEntity<PageDto<RentalObjectDto>> getRentalObjects(@RequestParam Integer page, @RequestParam Integer pageSize) {
@@ -167,8 +166,13 @@ public class RentalObjectController {
         return rentalObjectService.cancelSubscription(sd.getRentalId(), request.getHeader(AUTHORIZATION));
     }
 
+    @PostMapping("/addSpecialOffer")
+    public ResponseEntity<RentalObjectDto> addSpecialOffer(@RequestBody SpecialOfferDto dto) {
+        return specialOfferService.addSpecialOffer(dto);
+    }
+
     @Data
-    static class PeriodsSettingForm{
+    static class PeriodsSettingForm {
         private Long id;
         private List<LocalDate> dates;
     }

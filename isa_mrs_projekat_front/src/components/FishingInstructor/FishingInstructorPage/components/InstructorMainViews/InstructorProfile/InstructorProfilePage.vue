@@ -10,7 +10,7 @@
                 <img v-else class="card-profile-img" src="../../../../../Images/instructorNoProfilePic.png" alt=""/>
                 <div class="d-flex justify-content-center">
                   <p class="h3">{{ fullName }}</p>
-                  <router-link class="btn btn-default ms-2" to="" style="height: fit-content;">
+                  <router-link class="btn btn-default ms-2" :to="'/fishingInstructor/profile/' + this.instructor.id" style="height: fit-content;">
                     <font-awesome-icon class="h5" icon="pencil" style="color: #008970"></font-awesome-icon>
                   </router-link>
                 </div>

@@ -2,10 +2,7 @@ package rs.ac.uns.ftn.siit.isa_mrs.service;
 
 import freemarker.template.TemplateException;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.AdminDtos.ReviewDto;
-import rs.ac.uns.ftn.siit.isa_mrs.model.Report;
-import rs.ac.uns.ftn.siit.isa_mrs.model.Request;
-import rs.ac.uns.ftn.siit.isa_mrs.model.Review;
-import rs.ac.uns.ftn.siit.isa_mrs.model.User;
+import rs.ac.uns.ftn.siit.isa_mrs.model.*;
 
 import javax.mail.MessagingException;
 import java.io.IOException;
@@ -20,4 +17,5 @@ public interface EmailSenderService {
     void sendReportResponseNotificationEmailClient(Report report, String response) throws MessagingException, IOException, TemplateException;
     void sendReportResponseNotificationEmailOwner(Report report, String response) throws MessagingException, IOException, TemplateException;
     void sendPenaltyResponseNotificationEmailClient(Report report) throws MessagingException, IOException, TemplateException;
+    void sendSuccessfulReservationEmail(Reservation reservation) throws MessagingException, IOException, TemplateException;
 }

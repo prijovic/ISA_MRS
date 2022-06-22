@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.SignUpDtos.SignUpDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.PageDto;
 import rs.ac.uns.ftn.siit.isa_mrs.model.*;
@@ -27,10 +29,10 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
-
-@Service
-@RequiredArgsConstructor
 @Slf4j
+@Service
+@Transactional(readOnly = true)
+@RequiredArgsConstructor
 public class RequestServiceImpl implements RequestService {
     private final RequestRepo requestRepo;
     private final RequestResponseRepo requestResponseRepo;
@@ -45,6 +47,7 @@ public class RequestServiceImpl implements RequestService {
     private final ObjectConverter objectConverter;
 
     @Override
+    @Transactional(readOnly = false)
     public ResponseEntity<PageDto<RequestDto>> findRequestsWithPaginationSortedByField(int offset, int pageSize, String types, String field) {
         PageDto<RequestDto> result = new PageDto<>();
         try{
@@ -75,9 +78,13 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
+    @Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)
     public ResponseEntity<RespondedRequestDto> changeRequestStatus(Long id, String status, String reason, String adminEmail) {
         try {
             Request request = requestRepo.getById(id);
+            if (!request.getStatus().equals(RequestStatus.Pending)) {
+                return new ResponseEntity<>(HttpStatus.CONFLICT);
+            }
             RequestResponse requestResponse = new RequestResponse();
             requestResponse.setComment(reason);
             requestResponse.setTimeStamp(LocalDateTime.now());

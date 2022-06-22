@@ -206,12 +206,29 @@ export default {
             this.refreshPage();
             toggleProcessing();
           })
-          .catch(() => {
-            this.$notify({
-              title: "Server error",
-              text: "Server is currently off. Please try again later...",
-              type: "error"
-            });
+          .catch((error) => {
+            if (!error.response) {
+              this.$notify({
+                title: "Server error",
+                text: "Server is currently off. Please try again later...",
+                type: "error"
+              });
+            } else if (error.response.status === 500) {
+              this.$notify({
+                title: "Internal Server Error",
+                text: "Something went wrong on the server! Please try again later...",
+                position: "bottom right",
+                type: "error"
+              });
+            } else if (error.response.status === 409) {
+              this.$notify({
+                title: "Conflict",
+                text: "We are sorry, but another administrator has already managed the report.",
+                position: "bottom right",
+                type: "warn"
+              });
+              this.refreshPage();
+            }
             toggleProcessing();
           })
     },

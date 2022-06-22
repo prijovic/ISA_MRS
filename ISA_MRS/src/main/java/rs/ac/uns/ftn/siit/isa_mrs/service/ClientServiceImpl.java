@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.ClientDtos.ClientPenaltyDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.ClientDtos.ClientProfileDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.ClientDtos.ClientReservationDtos.ClientReservationDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.ReservationDtos.ReservationRentalObjectDto;
@@ -16,11 +17,14 @@ import rs.ac.uns.ftn.siit.isa_mrs.model.Client;
 import rs.ac.uns.ftn.siit.isa_mrs.model.Photo;
 import rs.ac.uns.ftn.siit.isa_mrs.model.RentalObject;
 import rs.ac.uns.ftn.siit.isa_mrs.model.Reservation;
+import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.RequestStatus;
 import rs.ac.uns.ftn.siit.isa_mrs.repository.ClientRepo;
 import rs.ac.uns.ftn.siit.isa_mrs.repository.PhotoRepo;
 import rs.ac.uns.ftn.siit.isa_mrs.repository.ReservationRepo;
 import rs.ac.uns.ftn.siit.isa_mrs.security.JwtDecoder;
 
+import java.time.LocalDateTime;
+import java.time.chrono.ChronoLocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
@@ -50,6 +54,7 @@ public class ClientServiceImpl implements ClientService {
             Client client = optionalClient.get();
             ClientProfileDto clientProfileDto = modelMapper.map(client, ClientProfileDto.class);
             clientProfileDto.setReservations(setUpReservationDtos(client.getId()));
+            clientProfileDto.setPenalties(setUpPenalties(client));
             return new ResponseEntity<>(clientProfileDto, HttpStatus.OK);
         }
         return new ResponseEntity<>(null, HttpStatus.OK);
@@ -93,5 +98,24 @@ public class ClientServiceImpl implements ClientService {
             }
         }
         return rentalDto;
+    }
+
+    public Collection<ClientPenaltyDto> setUpPenalties(Client c) {
+        Collection<ClientPenaltyDto> penalties = new ArrayList<>();
+        for(var reservation : c.getReservations()) {
+            for(var report : reservation.getReports()) {
+                if(report.getStatus() == RequestStatus.Accepted && report.getAuthor() != c) {
+                    if(report.getTimeStamp().isAfter(ChronoLocalDateTime.from(getFirstOfTheMonth())) &&
+                        report.getTimeStamp().isBefore(ChronoLocalDateTime.from(LocalDateTime.now())))
+                        penalties.add(modelMapper.map(report, ClientPenaltyDto.class));
+        }}}
+        return penalties;
+    }
+
+    private LocalDateTime getFirstOfTheMonth() {
+        LocalDateTime today = LocalDateTime.now();
+        LocalDateTime firstInMonth = today.withDayOfMonth(1);
+        firstInMonth = firstInMonth.withHour(0).withMinute(0).withSecond(0);
+        return firstInMonth;
     }
 }

@@ -10,12 +10,11 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.AdminDtos.ReportDto;
-import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.AdminDtos.ReviewDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.PageDto;
 import rs.ac.uns.ftn.siit.isa_mrs.model.*;
 import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.RequestStatus;
-import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.ReviewType;
 import rs.ac.uns.ftn.siit.isa_mrs.model.enumeration.UserType;
 import rs.ac.uns.ftn.siit.isa_mrs.repository.ReportRepo;
 import rs.ac.uns.ftn.siit.isa_mrs.repository.ReservationRepo;
@@ -23,9 +22,10 @@ import rs.ac.uns.ftn.siit.isa_mrs.repository.ReservationRepo;
 import java.util.ArrayList;
 import java.util.Collection;
 
-@Service
-@RequiredArgsConstructor
 @Slf4j
+@Service
+@Transactional
+@RequiredArgsConstructor
 public class ReportServiceImpl implements ReportService{
     private final ReportRepo reportRepo;
     private final ModelMapper modelMapper;
@@ -68,11 +68,15 @@ public class ReportServiceImpl implements ReportService{
     @Override
     public ResponseEntity<ReportDto> changeReportStatus(Long id, boolean accepted, String response) {
         try {
-            Report report = reportRepo.getById(id);
+            Report report = reportRepo.getReport(id);
+            if (!report.getStatus().equals(RequestStatus.Pending)) {
+                return new ResponseEntity<>(HttpStatus.CONFLICT);
+            }
+            report.setStatus(accepted?RequestStatus.Accepted:RequestStatus.Rejected);
+            reportRepo.save(report);
             Reservation reservation = reservationRepo.findByReportsIsContaining(report);
             Client client = reservation.getClient();
             if (accepted) {
-                report.setStatus(RequestStatus.Accepted);
                 if (report.getAuthor().getUserType().equals(UserType.Client)) {
                     emailSenderService.sendReportResponseNotificationEmailClient(report, response);
                     emailSenderService.sendReportResponseNotificationEmailOwner(report, response);
@@ -81,11 +85,9 @@ public class ReportServiceImpl implements ReportService{
                     emailSenderService.sendPenaltyResponseNotificationEmailOwner(report, client.getName() + " " + client.getSurname());
                 }
             } else {
-                report.setStatus(RequestStatus.Rejected);
                 emailSenderService.sendPenaltyResponseNotificationEmailClient(report);
                 emailSenderService.sendPenaltyResponseNotificationEmailOwner(report, client.getName() + " " + client.getSurname());
             }
-            reportRepo.save(report);
             return new ResponseEntity<>(modelMapper.map(report, ReportDto.class), HttpStatus.OK);
         } catch (Exception e) {
             log.error(e.getMessage());

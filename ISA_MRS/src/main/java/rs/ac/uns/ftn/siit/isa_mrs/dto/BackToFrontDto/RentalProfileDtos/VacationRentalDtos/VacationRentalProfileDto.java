@@ -3,6 +3,7 @@ package rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.RentalProfileDtos.Vacation
 import lombok.Data;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.*;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.RentalProfileDtos.ReviewDtos.ReviewDto;
+import rs.ac.uns.ftn.siit.isa_mrs.dto.BackToFrontDto.RentalProfileDtos.SpecialOfferDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.AdditionalServiceDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.AddressDto;
 import rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.ConductRuleDto;
@@ -38,4 +39,5 @@ public class VacationRentalProfileDto implements Serializable {
     private Boolean isDeletable;
     private LocalDateTime initDate;
     private LocalDateTime termDate;
+    private Integer penalties;
 }

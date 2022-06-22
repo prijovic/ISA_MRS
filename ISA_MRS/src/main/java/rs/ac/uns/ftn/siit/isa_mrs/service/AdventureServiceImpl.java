@@ -39,7 +39,8 @@ public class AdventureServiceImpl implements AdventureService{
     private final AdditionalServiceRepo additionalServiceRepo;
     private final AdventureEquipmentRepo adventureEquipmentRepo;
     private final ConductRuleRepo conductRuleRepo;
-    private final RentalObjectService rentalService;
+    private final RentalObjectServiceImpl rentalService;
+    private final ClientServiceImpl clientService;
     private final AdventureRepo adventureRepo;
     private final AddressRepo addressRepo;
     private final ModelMapper modelMapper;
@@ -63,11 +64,13 @@ public class AdventureServiceImpl implements AdventureService{
             adventureDto.setReviews(rentalService.getRentalReviews(adventure, page, pageSize));
             adventureDto.setGrade(rentalService.calculateRentalRating(adventure));
             adventureDto.setOwnerGrade(rentalService.calculateOwnerRating(adventure.getRentalObjectOwner()));
+            adventureDto.setSpecialOffers(rentalService.getFutureSpecialOffers(adventure.getSpecialOffers()));
             adventureDto.setIsDeletable(isAdventureDeletable(adventure));
             Optional<Client> optionalClient = clientRepo.findByEmail(decodedToken.getEmail());
             if(optionalClient.isPresent()){
                 Client client = optionalClient.get();
                 if(adventure.getSubscribers().contains(client)) adventureDto.setIsUserSubscribed(true);
+                adventureDto.setPenalties((clientService.setUpPenalties(client)).size());
             }
             return new ResponseEntity<>(adventureDto, HttpStatus.OK);
         }

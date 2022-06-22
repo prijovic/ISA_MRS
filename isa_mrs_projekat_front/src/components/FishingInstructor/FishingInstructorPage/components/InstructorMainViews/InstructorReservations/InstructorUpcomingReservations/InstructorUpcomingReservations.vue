@@ -39,7 +39,8 @@
               Services
             </button>
             <InstructorReservationServices :additionalServices="reservation.additionalServices"
-                                           :resId="reservation.id"/>
+                                           :resId="reservation.id"
+                                           :specialOffer="reservation.specialOffer"/>
           </div>
           <div class="row">
             <button class="w-100 btn mb-2" style="font-weight: 500; color: white;" data-bs-toggle="modal"
@@ -105,6 +106,10 @@ export default {
       let days = this.getNumberOfDays(reservation);
       let services = this.calculateAdditionalServices(reservation);
       let price = reservation.price;
+      if(reservation.specialOffer !== undefined && reservation.specialOffer !== null) {
+        console.log(reservation.specialOffer);
+        return (days*price)/100 * (100-reservation.specialOffer.discount);
+      }
       return days*price+services;
     },
     getNumberOfDays(reservation) {

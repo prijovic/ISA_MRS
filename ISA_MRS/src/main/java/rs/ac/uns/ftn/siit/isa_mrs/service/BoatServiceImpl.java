@@ -52,6 +52,7 @@ public class BoatServiceImpl implements BoatService{
     private final ConductRuleRepo conductRuleRepo;
     private final FishingEquipmentRepo fishingEquipmentRepo;
     private final NavigationEquipmentRepo navigationEquipmentRepo;
+    private final ClientServiceImpl clientService;
     private final JwtDecoder jwtDecoder;
     private final PhotoRepo photoRepo;
 
@@ -70,12 +71,14 @@ public class BoatServiceImpl implements BoatService{
             Boat boat = rental.get();
             boatDto.setReviews(rentalService.getRentalReviews(boat, page, pageSize));
             boatDto.setGrade(rentalService.calculateRentalRating(boat));
+            boatDto.setSpecialOffers(rentalService.getFutureSpecialOffers(boat.getSpecialOffers()));
             boatDto.setOwnerGrade(rentalService.calculateOwnerRating(boat.getRentalObjectOwner()));
             boatDto.setIsDeletable(isBoatDeletable(boat));
             Optional<Client> optionalClient = clientRepo.findByEmail(decodedToken.getEmail());
             if(optionalClient.isPresent()){
                 Client client = optionalClient.get();
                 if(boat.getSubscribers().contains(client)) boatDto.setIsUserSubscribed(true);
+                boatDto.setPenalties((clientService.setUpPenalties(client)).size());
             }
             return new ResponseEntity<>(boatDto, HttpStatus.OK);
         }
