@@ -32,6 +32,7 @@ import java.util.Optional;
 
 @Slf4j
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class VacationRentalServiceImpl implements VacationRentalService{
     private final VacationRentalRepo vacationRentalRepo;

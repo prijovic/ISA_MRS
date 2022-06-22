@@ -8,12 +8,25 @@
           <div class="row text-center pb-0 mb-0" style="border-bottom: 1px solid lightgray;">
             <h1 class="modal-title pb-1" style="color: #008970; font-weight: 700;">Additional Services</h1>
           </div>
+
+          <div v-if="hasSpecialOffer" class="m-0 p-0">
+            <div v-if="hasIncludedServices" class="row mt-3">
+              <p class="h4" v-for="(service, i) in specialOffer.includedServices" :key="i">
+                ◆ {{ service.name }}
+              </p>
+            </div>
+            <div v-else class="m-0 p-0 row mt-3 text-center">
+              <p class="h4"><i>No included services.</i></p>
+            </div>
+          </div>
+
+
           <div v-if="hasAdditionalServices" class="row mt-3">
             <p class="h4" v-for="(service, i) in additionalServices" :key="i">
               ◆ {{ service.name }}
             </p>
           </div>
-          <div v-else class="row mt-3 text-center">
+          <div v-if="!hasAdditionalServices && !hasSpecialOffer" class="row mt-3 text-center">
             <p class="h4"><i>No additional services.</i></p>
           </div>
         </div>
@@ -29,11 +42,17 @@
 <script>
 export default {
   name: "InstructorReservationServices",
-  props: ["additionalServices", "resId"],
+  props: ["additionalServices", "resId", "specialOffer"],
   computed: {
     hasAdditionalServices() {
       return this.additionalServices.length > 0;
-    }
+    },
+    hasSpecialOffer() {
+      return this.specialOffer !== null;
+    },
+    hasIncludedServices() {
+      return this.specialOffer.includedServices.length > 0;
+    },
   }
 }
 </script>
