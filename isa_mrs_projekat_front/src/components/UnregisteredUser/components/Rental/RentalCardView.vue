@@ -46,6 +46,13 @@
               <p class="h5">{{ "Price: $" + rental.price }}</p>
             </div>
           </div>
+
+          <div class="row">
+            <p class="h5 cut-text" style="cursor: pointer; color: #008970;" :title="getAddress">
+              <font-awesome-icon class="me-1" icon="location-dot" style="color: #008970"></font-awesome-icon>
+              <small>{{ getAddress }}</small>
+            </p>
+          </div>
         </div>
 
 
@@ -81,6 +88,9 @@ export default {
     }
   },
   computed: {
+    getAddress() {
+      return this.rental.address.city + ', ' + this.rental.address.country;
+    },
     getPath() {
       const store = useStore();
       let path = "/RentalProfile/" + this.rental.rentalObjectType + "-" + this.rental.id;
