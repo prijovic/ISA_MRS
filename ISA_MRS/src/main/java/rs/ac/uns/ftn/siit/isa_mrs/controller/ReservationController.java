@@ -55,6 +55,11 @@ public class ReservationController {
         return reservationService.addInstructorReport(aird, request.getHeader(AUTHORIZATION));
     }
 
+    @PostMapping("/bookForClient")
+    public ResponseEntity<Void> bookForClient(@RequestBody rs.ac.uns.ftn.siit.isa_mrs.dto.FrontToBackDto.InstructorReservationDto dto) {
+        return reservationService.bookForClient(dto);
+    }
+
     @GetMapping("/instructorReservationLimits")
     public ResponseEntity<ReservationLimitsDto> getInstructorReservationLimits(@RequestParam long id, HttpServletRequest request) {
         return instructorService.getReservationLimits(id, request.getHeader(AUTHORIZATION));

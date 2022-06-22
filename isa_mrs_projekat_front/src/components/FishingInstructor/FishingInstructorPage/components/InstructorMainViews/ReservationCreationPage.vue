@@ -28,6 +28,11 @@
                   </div>
                 </div>
 
+                <div class="row justify-content-center mt-2">
+                  <input class="form-check-input" type="checkbox" id="equipment" v-model="isEquipmentNeeded">
+                  <label for="equipment">Is Equipment needed?</label>
+                </div>
+
               </div>
               <div class="col-3"></div>
               <div class="d-flex pt-3 justify-content-center">
@@ -58,7 +63,8 @@ export default {
      clients: [],
      client: null,
      dateIsSelected: true,
-     clientIsSelected: true
+     clientIsSelected: true,
+     isEquipmentNeeded: false
    }
   },
   mounted() {
@@ -78,10 +84,45 @@ export default {
       for (let i = 0; i < dto.reservationsPeriods.length; i++) {
         this.excluded.push({start:new Date(dto.reservationsPeriods[i].start), end:new Date(dto.reservationsPeriods[i].end)})
       }
-      console.log(response.data.clients);
       this.clients = response.data.clients;
     })
     .catch()
+  },
+  methods: {
+    isDataEntered() {
+      if (this.date === null) {
+        this.dateIsSelected = false;
+        return false;
+      }
+      if (this.client === null) {
+        this.clientIsSelected = false;
+        return false;
+      }
+    },
+    book() {
+      if (this.isDataEntered()) {
+        axios.post("/Reservations/bookForClient", {clientId: this.clientId, rentalId: this.$route.params.id, initDate: this.date, isEquipmentNeeded: this.isEquipmentNeeded}, {
+          headers: {
+            Authorization: "Bearer " + store.getters.access_token,
+          }
+        })
+        .then(() => {
+          this.$notify( {
+            title: "Successful reservation",
+            text: "You have successfully booked adventure for client.",
+            position: "bottom right",
+            type: "success"
+          });
+        })
+        .catch(() => {
+          this.$notify({
+            title: "Server error",
+            text: "Server is currently off. Please try again later...",
+            type: "error"
+          });
+        })
+      }
+    }
   }
 }
 </script>
