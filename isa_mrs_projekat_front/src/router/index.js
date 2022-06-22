@@ -747,6 +747,17 @@ const routes = [
             public: false
         },
     },
+    {
+        path: "/client/profile/:id",
+        name: "ClientProfileUpdate",
+        components: {
+            default: RegistrationPage,
+            sidebar: ClientSidebar,
+        },
+        meta: {
+            public: false
+        }
+    },
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     {
         path: "/vacationRentals",
