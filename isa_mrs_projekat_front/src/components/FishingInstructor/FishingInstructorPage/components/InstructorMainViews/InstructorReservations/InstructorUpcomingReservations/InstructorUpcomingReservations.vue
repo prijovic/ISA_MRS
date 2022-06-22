@@ -39,7 +39,8 @@
               Services
             </button>
             <InstructorReservationServices :additionalServices="reservation.additionalServices"
-                                           :resId="reservation.id"/>
+                                           :resId="reservation.id"
+                                           :specialOffer="reservation.specialOffer"/>
           </div>
           <div class="row">
             <button class="w-100 btn mb-2" style="font-weight: 500; color: white;" data-bs-toggle="modal"
