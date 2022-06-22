@@ -152,6 +152,7 @@ export default {
       return (this.price * days)/100 * (100 - offer.discount);
     },
     getNumberOfDays(offer) {
+      if(this.$route.params.type === 'Adventure') return 1;
       let initDate = offer.initDate, termDate = offer.termDate;
       let date1 = new Date(initDate), date2 = new Date(termDate);
       date1.setHours(0, 0, 0);
