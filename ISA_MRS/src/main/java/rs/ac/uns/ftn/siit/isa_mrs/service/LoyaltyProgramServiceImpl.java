@@ -14,9 +14,7 @@ import rs.ac.uns.ftn.siit.isa_mrs.model.RentalObjectOwner;
 import rs.ac.uns.ftn.siit.isa_mrs.repository.LoyaltyProgramCategoryRepo;
 import rs.ac.uns.ftn.siit.isa_mrs.repository.LoyaltyProgramRepo;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -39,7 +37,6 @@ public class LoyaltyProgramServiceImpl implements LoyaltyProgramService{
             });
             return new ResponseEntity<>(loyaltyCategoryDtos, HttpStatus.OK);
         } catch (Exception e) {
-            log.error(e.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -53,7 +50,6 @@ public class LoyaltyProgramServiceImpl implements LoyaltyProgramService{
             }
             return new ResponseEntity<>(modelMapper.map(loyaltyPrograms.iterator().next(), LoyaltyProgramDto.class), HttpStatus.OK);
         } catch (Exception e) {
-            log.error(e.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -64,7 +60,6 @@ public class LoyaltyProgramServiceImpl implements LoyaltyProgramService{
             loyaltyProgramCategoryRepo.delete(loyaltyProgramCategoryRepo.getById(id));
             return getLoyaltyProgram();
         } catch (Exception e) {
-            log.error(e.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -82,7 +77,6 @@ public class LoyaltyProgramServiceImpl implements LoyaltyProgramService{
             loyaltyProgramRepo.save(program);
             return getLoyaltyProgram();
         } catch (Exception e) {
-            log.error(e.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -102,7 +96,6 @@ public class LoyaltyProgramServiceImpl implements LoyaltyProgramService{
             loyaltyProgramCategoryRepo.save(category1);
             return new ResponseEntity<>(modelMapper.map(category1, LoyaltyCategoryDto.class), HttpStatus.OK);
         } catch (Exception e) {
-            log.error(e.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -119,7 +112,6 @@ public class LoyaltyProgramServiceImpl implements LoyaltyProgramService{
             loyaltyProgramCategoryRepo.save(category1);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (Exception e) {
-            log.error(e.getMessage());
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -131,10 +123,27 @@ public class LoyaltyProgramServiceImpl implements LoyaltyProgramService{
             if (loyaltyPrograms.isEmpty()) {
                 return 0;
             }
-            return loyaltyPrograms.iterator().next().getUserCategory(owner.getPoints()).getOwnerBenefit();
+            return getUserCategory(loyaltyPrograms.iterator().next(), owner.getPoints()).getOwnerBenefit();
         } catch (Exception e) {
-            log.error(e.getMessage());
             return 0;
         }
+    }
+
+    private LoyaltyCategory getUserCategory(LoyaltyProgram program, int points) {
+        Set<LoyaltyCategory> passedCategories = new HashSet<>();
+        for (LoyaltyCategory category : program.getLoyaltyCategories()) {
+            if (category.getRequiredPoints() < points) {
+                passedCategories.add(category);
+            }
+        }
+        int currentMax = 0;
+        LoyaltyCategory userCategory = null;
+        for (LoyaltyCategory category : passedCategories) {
+            if (category.getRequiredPoints() > currentMax) {
+                userCategory = category;
+                currentMax = category.getRequiredPoints();
+            }
+        }
+        return userCategory;
     }
 }
